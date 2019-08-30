@@ -2,3 +2,7 @@
 	path = server/third_party/pistache
 	url = https://github.com/oktal/pistache.git
 	branch = master
+[submodule "server/third_party/nlohmann_json"]
+	path = server/third_party/nlohmann_json
+	url = https://github.com/nlohmann/json.git
+	branch = master

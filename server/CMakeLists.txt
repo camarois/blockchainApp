@@ -18,4 +18,8 @@ endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/pistache)
 include_directories(${pistache_SOURCE_DIR}/include ${pistache_SOURCE_DIR})
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/nlohmann_json)
+include_directories(${nlohmann_json_SOURCE_DIR}/include ${nlohmann_json_SOURCE_DIR})
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
