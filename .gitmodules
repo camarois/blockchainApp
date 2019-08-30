@@ -1,4 +1,0 @@
-[submodule "server/third_party/pistache"]
-	path = server/third_party/pistache
-	url = https://github.com/oktal/pistache.git
-	branch = master
