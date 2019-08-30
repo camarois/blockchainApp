@@ -1,0 +1,4 @@
+[submodule "third_party/pistache"]
+	path = third_party/pistache
+	url = https://github.com/oktal/pistache.git
+	branch = master
