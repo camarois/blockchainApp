@@ -1,6 +1,8 @@
 #!/bin/bash
+set -o xtrace
 
 mkdir -p build
-cd build
+pushd build
 cmake -G "Unix Makefiles" ..
-make -j && src/run_rest_server
+make -j $1 && src/run_rest_server
+popd
