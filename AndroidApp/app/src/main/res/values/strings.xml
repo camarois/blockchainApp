@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidApp</string>
+    <string name="refresh_btn">Refresh!</string>
+</resources>
