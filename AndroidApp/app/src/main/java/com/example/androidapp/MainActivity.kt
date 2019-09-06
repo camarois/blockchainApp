@@ -10,8 +10,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 
-
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val textView = findViewById<TextView>(R.id.lolVar)
         // Instantiate the RequestQueue
         val queue = Volley.newRequestQueue(this)
-        val url = "http://10.200.1.195:10000/lol"
+        val url = getString(R.string.host) + "/lol"
 
         // Request a string response from the provided URL.
         val stringRequest = StringRequest(

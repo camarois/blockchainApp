@@ -14,8 +14,8 @@
             android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.424"
-            android:textSize="20sp"/>
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.381"
+            android:textSize="30sp"/>
     <Button
             android:text="@string/refresh_btn"
             android:layout_width="wrap_content"
