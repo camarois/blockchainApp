@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">android</string>
     <string name="refresh_btn">Refresh!</string>
     <string name="host">http://10.200.1.195:10000</string>
 </resources>
