@@ -1,8 +1,19 @@
 #!/bin/bash
+#
+# Usage: ./build.sh [JOB COUNT]
+
 set -o xtrace
 
-mkdir -p build
-pushd build
+BUILD_DIRECTORY=$(dirname "$0")/build
+mkdir -p "$BUILD_DIRECTORY"
+cd "$BUILD_DIRECTORY" || exit
+
+if [[ -z ${1+x} ]]; then
+	JOB_COUNT=1
+else
+	JOB_COUNT=$1
+fi
+
 cmake -G "Unix Makefiles" ..
-make -j $1 && src/run_rest_server
-popd
+make -j "$JOB_COUNT"
+
