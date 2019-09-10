@@ -16,7 +16,19 @@ build-server:
     stage: build
     image: rikorose/gcc-cmake
     script:
-        - cd server && ./build.sh
+        - mkdir -p server/build
+        - cd server/build && cmake .. && make
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
+
+build-server:armv7:
+    stage: build
+    image: rikorose/gcc-cmake
+    script:
+        - mkdir -p server/build
+        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
     only:
         changes:
             - server/**/*
