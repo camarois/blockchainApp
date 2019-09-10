@@ -1,6 +1,41 @@
-image: rikorose/gcc-cmake
+stages:
+    - build
+    - test
 
-build:
-  script:
-    - chmod +x server/build.sh
-    - cd server && ./build.sh && cd ..
+cache:
+    paths:
+        - server/build
+        - desktop/build
+
+################
+# Build Stages #
+################
+
+build-server:
+    stage: build
+    image: rikorose/gcc-cmake
+    script:
+        - cd server && ./build.sh
+
+build-desktop:
+    stage: build
+    image: gradle:jdk12
+    script:
+        - cd desktop && gradle build
+
+###############
+# Test Stages #
+###############
+
+test-server:
+    stage: test
+    image: rikorose/gcc-cmake
+    script:
+        - cd server && echo "TODO"
+
+test-desktop:
+    stage: test
+    image: gradle:jdk12
+    script:
+        - cd desktop && gradle test
+
