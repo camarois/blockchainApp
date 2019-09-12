@@ -20,8 +20,7 @@ namespace Generic {
 void handleReady(const Rest::Request&, Http::ResponseWriter response) {
     static int lol = 0;
     json j = {
-        {"lol", lol++},
-        {"lol2", lol++}
+        {"lol", lol++}
     };
     response.send(Http::Code::Ok, j.dump(4));
 }
