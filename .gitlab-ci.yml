@@ -6,6 +6,7 @@ cache:
     paths:
         - server/build
         - desktop/build
+        - android/build
 
 ################
 # Build Stages #
@@ -23,6 +24,12 @@ build-desktop:
     script:
         - cd desktop && gradle build
 
+build-android:
+    stage: build
+    image: thyrlian/android-sdk
+    script:
+        - cd android && gradle build
+
 ###############
 # Test Stages #
 ###############
@@ -39,3 +46,8 @@ test-desktop:
     script:
         - cd desktop && gradle test
 
+test-android:
+    stage: test
+    image: thyrlian/android-sdk
+    script:
+        - cd android && gradle test
