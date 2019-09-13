@@ -17,18 +17,30 @@ build-server:
     image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
 
 build-desktop:
     stage: build
     image: gradle:jdk12
     script:
         - cd desktop && gradle build
+    only:
+        changes:
+            - desktop/**/*
+            - .gitlab-ci.yml
 
 build-android:
     stage: build
     image: thyrlian/android-sdk
     script:
         - cd android && gradle build
+    only:
+        changes:
+            - android/**/*
+            - .gitlab-ci.yml
 
 ###############
 # Test Stages #
@@ -39,15 +51,27 @@ test-server:
     image: rikorose/gcc-cmake
     script:
         - cd server && echo "TODO"
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
 
 test-desktop:
     stage: test
     image: gradle:jdk12
     script:
         - cd desktop && gradle test
+    only:
+        changes:
+            - desktop/**/*
+            - .gitlab-ci.yml
 
 test-android:
     stage: test
     image: thyrlian/android-sdk
     script:
         - cd android && gradle test
+    only:
+        changes:
+            - android/**/*
+            - .gitlab-ci.yml
