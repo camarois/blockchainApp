@@ -4,7 +4,7 @@ stages:
 
 cache:
     paths:
-        - server/build
+        # - server/build
         - desktop/build
 
 ################
@@ -13,9 +13,10 @@ cache:
 
 build-server:
     stage: build
-    image: rikorose/gcc-cmake
+    image: rsmmr/clang
     script:
         - cd server && ./build.sh
+        - chmod +x clang.sh && ./clang.sh
 
 build-desktop:
     stage: build
@@ -38,4 +39,3 @@ test-desktop:
     image: gradle:jdk12
     script:
         - cd desktop && gradle test
-
