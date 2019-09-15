@@ -14,7 +14,7 @@ cache:
 build-server:
     stage: build
     # image: rikorose/gcc-cmake
-    image: matrim/cmake-examples
+    image: teeks99/clang-ubuntu
     script:
         - cd server && ./build.sh
         - chmod +x clang.sh && ./clang.sh
