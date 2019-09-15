@@ -13,7 +13,7 @@ cache:
 
 build-server:
     stage: build
-    image: rsmmr/clang
+    image: unibeautify/clang-format
     script:
         - cd server && ./build.sh
         - chmod +x clang.sh && ./clang.sh
