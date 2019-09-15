@@ -16,7 +16,7 @@ build-server:
     image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
-        - ./clang.sh
+        - chmod +x clang.sh && ./clang.sh
 
 build-desktop:
     stage: build
