@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.10.0)
 project (inf3995)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/../.git")
     message(STATUS "Submodule update")
