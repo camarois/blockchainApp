@@ -4,7 +4,7 @@ stages:
 
 cache:
     paths:
-        # - server/build
+        - server/build
         - desktop/build
 
 ################
@@ -17,7 +17,6 @@ build-server:
     image: unibeautify/clang-format
     script:
         - cd server && ./build.sh
-        - chmod +x clang.sh && ./clang.sh
 
 build-desktop:
     stage: build
