@@ -47,6 +47,6 @@ test-desktop:
 
 lint-server:
     stage: lint
-    image: ethereum/cpp-build-envy
+    image: teeks99/clang-ubuntu
     script:
         - cd server && chmod +x clang.sh &&./clang.sh format -8
