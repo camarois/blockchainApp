@@ -4,8 +4,8 @@
    Example of a REST endpoint with routing
 */
 
-#include <algorithm>
 #include <nlohmann/json.hpp>
+#include <algorithm>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>

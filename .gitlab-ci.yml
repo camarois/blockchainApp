@@ -1,10 +1,11 @@
 stages:
     - build
+    - lint
     - test
 
 cache:
     paths:
-        # - server/build
+        - server/build
         - desktop/build
 
 ################
@@ -13,16 +14,25 @@ cache:
 
 build-server:
     stage: build
-    image: unibeautify/clang-format
+    image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
-        - chmod +x clang.sh && ./clang.sh
 
 build-desktop:
     stage: build
     image: gradle:jdk12
     script:
         - cd desktop && gradle build
+
+###############
+# Lint Stages #
+###############
+
+lint-server:
+    stage: lint
+    image: unibeautify/clang-format
+    script:
+        - cd server && clang-format -style=file src/*.cc -output-replacements-xml | grep "<replacement "
 
 ###############
 # Test Stages #
