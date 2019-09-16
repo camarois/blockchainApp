@@ -30,7 +30,8 @@ build-desktop:
 
 lint-server:
     stage: lint
-    image: unibeautify/clang-format
+    image: teeks99/clang-ubuntu
+    allow_failure: true
     script:
         - cd server && clang-format -style=file src/*.cc -output-replacements-xml | grep "<replacement "
 
