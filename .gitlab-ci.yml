@@ -31,7 +31,7 @@ build-desktop:
 lint-server:
     stage: lint
     image: teeks99/clang-ubuntu
-    allow_failure: true
+    # allow_failure: true
     script:
         - cd server && clang-format-8 -style=file src/*.cc -output-replacements-xml | grep "<replacement "
 
