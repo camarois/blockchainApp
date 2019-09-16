@@ -30,10 +30,10 @@ build-desktop:
 
 lint-server:
     stage: lint
-    image: unibeautify/clang-format
+    image: teeks99/clang-ubuntu
     allow_failure: true
     script:
-        - cd server && chmod +x clang.sh &&./clang.sh format
+        - cd server && chmod +x clang.sh &&./clang.sh format -8
 
 ###############
 # Test Stages #

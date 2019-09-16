@@ -10,7 +10,7 @@ tidy)
     fi
     ;;
 format)
-    clang-format -style=file src/*.cc -output-replacements-xml | grep -c "<replacement " > /dev/null
+    clang-format$2 -style=file src/*.cc -output-replacements-xml | grep -c "<replacement " > /dev/null
     # Exit if grep did find replacements.
     if [ $? -ne 1 ]; then 
         exit 1
