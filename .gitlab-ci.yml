@@ -14,11 +14,11 @@ cache:
 
 build-server:
     stage: build
-    # image: ethereum/cpp-build-env
-    image: rikorose/gcc-cmake
+    image: ingomuellernet/buildenv
+    # image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
-        - chmod +x clang.sh &&./clang.sh tidy -8
+        - chmod +x clang.sh &&./clang.sh tidy -3.8
 
 build-desktop:
     stage: build
