@@ -33,7 +33,7 @@ lint-server:
     image: teeks99/clang-ubuntu
     allow_failure: true
     script:
-        - cd server && ./clang.sh format
+        - cd server && chmod +x clang.sh &&./clang.sh format
 
 ###############
 # Test Stages #
