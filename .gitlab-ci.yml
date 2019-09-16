@@ -14,7 +14,8 @@ cache:
 
 build-server:
     stage: build
-    image: ethereum/cpp-build-env
+    # image: ethereum/cpp-build-env
+    image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
         - chmod +x clang.sh &&./clang.sh tidy -8
@@ -47,6 +48,6 @@ test-desktop:
 
 lint-server:
     stage: lint
-    image: ethereum/cpp-build-env
+    image: ethereum/cpp-build-envy
     script:
         - cd server && chmod +x clang.sh &&./clang.sh format -8
