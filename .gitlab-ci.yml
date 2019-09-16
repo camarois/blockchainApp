@@ -14,10 +14,10 @@ cache:
 
 build-server:
     stage: build
-    image: ingomuellernet/buildenv
-    # image: rikorose/gcc-cmake
+    image: teeks99/clang-ubuntu
     script:
         - cd server && ./build.sh
+        - apt-get install cmake
         - chmod +x clang.sh &&./clang.sh tidy -3.8
 
 build-desktop:
