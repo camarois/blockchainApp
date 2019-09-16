@@ -1,7 +1,7 @@
 stages:
-    - lint
     - build
     - test
+    - lint
 
 cache:
     paths:
