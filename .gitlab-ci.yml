@@ -49,4 +49,4 @@ lint-server:
     stage: lint
     image: teeks99/clang-ubuntu
     script:
-        - cd server && chmod +x lint.sh &&./lint.sh format -8
+        - cd server && ./lint.sh format -8
