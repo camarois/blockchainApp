@@ -1,26 +1,21 @@
-cmake_minimum_required (VERSION 3.10.0)
-project (inf3995)
+cmake_minimum_required(VERSION 3.10.0)
+project(inf3995)
 
-find_package(Git QUIET)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/../.git")
-    message(STATUS "Submodule update")
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-    endif()
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(WARNING_FLAGS -Wextra -Wall -Wpedantic)
 
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/pistache/CMakeLists.txt")
-    message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-endif()
+execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                RESULT_VARIABLE GIT_SUBMOD_RESULT)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/pistache)
-include_directories(${pistache_SOURCE_DIR}/include ${pistache_SOURCE_DIR})
+add_subdirectory(third_party/pistache)
+include_directories(third_party/pistache/include)
 
 set(JSON_BuildTests OFF CACHE BOOL "Don't build JSON tests" FORCE)
-add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/nlohmann_json)
-include_directories(${nlohmann_json_SOURCE_DIR}/include ${nlohmann_json_SOURCE_DIR})
+add_subdirectory(third_party/nlohmann_json)
+include_directories(third_party/nlohmann_json/include)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+add_subdirectory(common)
+include_directories(common/include)
+
+add_subdirectory(rest)

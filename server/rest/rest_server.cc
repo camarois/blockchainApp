@@ -11,6 +11,8 @@
 #include <pistache/endpoint.h>
 #include <nlohmann/json.hpp>
 
+#include <example.h>
+
 using namespace std;
 using namespace Pistache;
 using json = nlohmann::json;
@@ -19,8 +21,10 @@ namespace Generic {
 
 void handleReady(const Rest::Request&, Http::ResponseWriter response) {
     static int lol = 0;
+    Example example;
     json j = {
-        {"lol", lol++}
+        {"lol", lol++},
+        {"example", example.example()}
     };
     response.send(Http::Code::Ok, j.dump(4));
 }
