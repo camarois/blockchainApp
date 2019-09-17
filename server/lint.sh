@@ -17,7 +17,7 @@ format)
     fi
     ;;
 *)
-    ./clang.sh tidy
-    ./clang.sh format
+    ./lint.sh tidy
+    ./lint.sh format
     ;;
 esac

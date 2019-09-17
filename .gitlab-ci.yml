@@ -17,7 +17,7 @@ build-server:
     image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
-        # - chmod +x clang.sh &&./clang.sh tidy -3.8
+        # - lint.sh &&./lint.sh tidy TODO
 
 build-desktop:
     stage: build
@@ -49,4 +49,4 @@ lint-server:
     stage: lint
     image: teeks99/clang-ubuntu
     script:
-        - cd server && chmod +x clang.sh &&./clang.sh format -8
+        - cd server && chmod +x lint.sh &&./lint.sh format -8
