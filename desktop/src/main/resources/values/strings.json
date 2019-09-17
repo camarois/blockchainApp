@@ -1,3 +1,4 @@
 {
-    "host":"http://localhost:10000"
+    "host":"http://localhost:10000",
+    "lol": "/lol"
 }

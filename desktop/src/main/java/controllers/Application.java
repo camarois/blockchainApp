@@ -1,7 +1,7 @@
 package controllers;
 
+import constants.ServerUrls;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import javafx.event.ActionEvent;
 
 import java.io.InputStreamReader;
@@ -13,12 +13,12 @@ import java.net.http.HttpResponse;
 public class Application {
     public void onClickHelloWorld(ActionEvent event) throws Exception {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("values/strings.json"));
-        JsonObject urls  = new Gson().fromJson(reader, JsonObject.class);
+        ServerUrls urls = new Gson().fromJson(reader, ServerUrls.class);
 
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urls.get("host").getAsString() + "/lol"))
+                    .uri(URI.create(urls.getHost() + urls.getLol()))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
