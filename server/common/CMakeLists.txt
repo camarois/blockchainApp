@@ -1,3 +1,3 @@
-add_library(common example.cc)
+file (GLOB COMMON_SOURCE_FILES "src/*.cc")
+add_library(common ${COMMON_SOURCE_FILES})
 target_include_directories(common PUBLIC include)
-target_link_libraries(common PUBLIC pistache_static)
