@@ -8,9 +8,9 @@ BUILD_DIRECTORY=$(dirname "$0")/build
 mkdir -p "$BUILD_DIRECTORY"
 cd "$BUILD_DIRECTORY" || exit
 
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
 if [[ -z ${1+x} ]]; then
-	make -j
+	ninja
 else
-	make -j "$1"
+	ninja -j "$1"
 fi

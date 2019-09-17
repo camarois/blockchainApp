@@ -17,7 +17,7 @@ build-server:
     image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
-        # - lint.sh &&./lint.sh tidy TODO
+        # - lint.sh &&./lint.sh tidy TODO add docker image
 
 build-desktop:
     stage: build
@@ -49,4 +49,4 @@ lint-server:
     stage: lint
     image: teeks99/clang-ubuntu
     script:
-        - cd server && ./lint.sh format -8
+        - cd server && chmod + lint.sh && ./lint.sh format -8 # TODO remove chmod
