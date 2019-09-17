@@ -1,3 +1,5 @@
+image: rikorose/gcc-cmake # TODO Change to our container
+
 stages:
     - build
     - test
@@ -14,14 +16,12 @@ cache:
 
 build-server:
     stage: build
-    image: rikorose/gcc-cmake
     script:
         - cd server && ./build.sh
         # - lint.sh &&./lint.sh tidy TODO add docker image
 
 build-desktop:
     stage: build
-    image: gradle:jdk12
     script:
         - cd desktop && gradle build
 
@@ -31,13 +31,11 @@ build-desktop:
 
 test-server:
     stage: test
-    image: rikorose/gcc-cmake
     script:
         - cd server && echo "TODO"
 
 test-desktop:
     stage: test
-    image: gradle:jdk12
     script:
         - cd desktop && gradle test
 
@@ -47,6 +45,5 @@ test-desktop:
 
 lint-server:
     stage: lint
-    image: teeks99/clang-ubuntu
     script:
-        - cd server && chmod + lint.sh && ./lint.sh format -8 # TODO remove chmod
+        - cd server && ./lint.sh format -8
