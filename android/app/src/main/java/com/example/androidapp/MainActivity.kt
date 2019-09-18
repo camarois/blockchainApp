@@ -9,11 +9,19 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_main)
         findViewById<TextView>(R.id.lolVar).text = "lol!"
         findViewById<Button>(R.id.refreshBtn).setOnClickListener{ refreshLol() }
