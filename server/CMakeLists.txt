@@ -9,13 +9,8 @@ execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                 RESULT_VARIABLE GIT_SUBMOD_RESULT)
 
 add_subdirectory(third_party/pistache)
-include_directories(third_party/pistache/include)
-
 set(JSON_BuildTests OFF CACHE BOOL "Don't build JSON tests" FORCE)
 add_subdirectory(third_party/nlohmann_json)
-include_directories(third_party/nlohmann_json/include)
 
 add_subdirectory(common)
-include_directories(common/include)
-
 add_subdirectory(rest)
