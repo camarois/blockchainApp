@@ -1,3 +1,5 @@
+image: gpol/inf3995
+
 stages:
     - build
     - test
@@ -14,10 +16,10 @@ cache:
 
 build-server:
     stage: build
-    image: rikorose/gcc-cmake
-    script:
+    before_script:
         - mkdir -p server/build
-        - cd server/build && cmake .. && make
+    script:
+        - cd server/build && cmake .. -DCMAKE_CXX_COMPILER=$(which g++) && make
     only:
         changes:
             - server/**/*
@@ -25,9 +27,9 @@ build-server:
 
 build-server:armv7:
     stage: build
-    image: rikorose/gcc-cmake
-    script:
+    before_script:
         - mkdir -p server/build
+    script:
         - cd server/build && cmake .. -DBUILD_ARMV7=on && make
     only:
         changes:
@@ -36,7 +38,8 @@ build-server:armv7:
 
 build-desktop:
     stage: build
-    image: gradle:jdk12
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle build
     only:
@@ -46,7 +49,8 @@ build-desktop:
 
 build-android:
     stage: build
-    image: thyrlian/android-sdk
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
         - cd android && gradle build
     only:
@@ -60,7 +64,6 @@ build-android:
 
 test-server:
     stage: test
-    image: rikorose/gcc-cmake
     script:
         - cd server && echo "TODO"
     only:
@@ -70,7 +73,8 @@ test-server:
 
 test-desktop:
     stage: test
-    image: gradle:jdk12
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle test
     only:
@@ -80,7 +84,8 @@ test-desktop:
 
 test-android:
     stage: test
-    image: thyrlian/android-sdk
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
         - cd android && gradle test
     only:
