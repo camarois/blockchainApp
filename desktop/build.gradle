@@ -25,6 +25,7 @@ apply plugin: 'checkstyle'
 checkstyle {
     toolVersion '8.24'
     configFile file("config/checkstyle/checkstyle.xml")
+    maxWarnings 0
 }
 checkstyleMain {
     source ='src/main/java'
