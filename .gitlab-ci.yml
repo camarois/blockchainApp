@@ -1,4 +1,4 @@
-image: rikorose/gcc-cmake # TODO Change to our container
+image: gpol/inf3995
 
 stages:
     - build
@@ -9,6 +9,7 @@ cache:
     paths:
         - server/build
         - desktop/build
+        - android/build
 
 ################
 # Build Stages #
@@ -16,14 +17,47 @@ cache:
 
 build-server:
     stage: build
+    before_script:
+        - mkdir -p server/build
     script:
-        - cd server && ./build.sh
-        # - lint.sh &&./lint.sh tidy TODO add docker image
+        - cd server/build && cmake .. && make
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
+
+build-server:armv7:
+    stage: build
+    before_script:
+        - mkdir -p server/build
+    script:
+        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
 
 build-desktop:
     stage: build
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle build
+    only:
+        changes:
+            - desktop/**/*
+            - .gitlab-ci.yml
+
+build-android:
+    stage: build
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
+    script:
+        - cd android && gradle build
+    only:
+        changes:
+            - android/**/*
+            - .gitlab-ci.yml
 
 ###############
 # Test Stages #
@@ -33,11 +67,32 @@ test-server:
     stage: test
     script:
         - cd server && echo "TODO"
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
 
 test-desktop:
     stage: test
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle test
+    only:
+        changes:
+            - desktop/**/*
+            - .gitlab-ci.yml
+
+test-android:
+    stage: test
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
+    script:
+        - cd android && gradle test
+    only:
+        changes:
+            - android/**/*
+            - .gitlab-ci.yml
 
 ###############
 # Lint Stages #
@@ -46,4 +101,8 @@ test-desktop:
 lint-server:
     stage: lint
     script:
-        - cd server && ./lint.sh format -8
+        - cd server && ./lint.sh tidy && ./lint.sh format
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
