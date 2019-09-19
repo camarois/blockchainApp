@@ -21,3 +21,16 @@ dependencies {
 group 'desktop'
 version '1.0-SNAPSHOT'
 mainClassName = 'Main'
+
+apply plugin: 'checkstyle'
+checkstyle {
+    toolVersion '8.24'
+    configFile file("config/checkstyle/checkstyle.xml")
+    maxWarnings 0
+}
+checkstyleMain {
+    source ='src/main/java'
+}
+checkstyleTest {
+    source ='src/test/java'
+}
