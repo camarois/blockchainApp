@@ -14,16 +14,17 @@ int main(int argc, char *argv[]) {
         zmq::message_t request;
 
         //  Wait for next request from client
-        socket.recv (&request);
-        std::cout << "Received Hello" << std::endl;
+        socket.recv(&request);
+        auto str = std::string(static_cast<char*>(request.data()), request.size());
+        std::cout << str << std::endl;
 
         //  Do some 'work'
         sleep(1);
 
         //  Send reply back to client
-        zmq::message_t reply (5);
-        memcpy (reply.data (), "World", 5);
-        socket.send (reply);
+        zmq::message_t reply (9);
+        memcpy(reply.data(), "from rest", 9);
+        socket.send(reply);
     }
     return 0;
 
