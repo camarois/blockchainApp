@@ -19,7 +19,7 @@ build-server:
     before_script:
         - mkdir -p server/build
     script:
-        - cd server/build && cmake .. -DCMAKE_CXX_COMPILER=$(which g++) && make
+        - cd server/build && cmake .. && make
     only:
         changes:
             - server/**/*
