@@ -9,7 +9,7 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
         exit 1
     elif [ -z "$ANDROID_NDK_HOME" ]
     then
-        echo "Please set ANDROID_HOME env variable"
+        echo "Please set ANDROID_NDK_HOME env variable"
         exit 1
     else
         # if in windows, "remove" local.properties
