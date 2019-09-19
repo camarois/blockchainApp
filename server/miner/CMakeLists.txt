@@ -1,5 +1,4 @@
-file (GLOB_RECURSE SOURCE_FILES "*.cc")
+file (GLOB_RECURSE SOURCE_FILES "*.cpp")
 add_executable(miner ${SOURCE_FILES})
-target_include_directories(miner PRIVATE include
-    ${CMAKE_SOURCE_DIR}/third_party/libzmp/include ${CMAKE_SOURCE_DIR}/third_party/cppzmq)
-target_link_libraries(miner PRIVATE common libzmq-static)
+target_include_directories(miner PRIVATE include)
+target_link_libraries(miner PRIVATE common)

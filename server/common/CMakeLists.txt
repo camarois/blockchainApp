@@ -1,4 +1,5 @@
-file (GLOB_RECURSE COMMON_SOURCE_FILES "*.cc")
+file (GLOB_RECURSE COMMON_SOURCE_FILES "*.cpp")
 add_library(common ${COMMON_SOURCE_FILES})
-target_link_libraries(common PUBLIC nlohmann_json)
-target_include_directories(common PUBLIC include)
+target_include_directories(common PUBLIC include
+    ${CMAKE_SOURCE_DIR}/third_party/libzmp/include ${CMAKE_SOURCE_DIR}/third_party/cppzmq)
+target_link_libraries(common PUBLIC nlohmann_json libzmq-static)

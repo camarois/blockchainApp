@@ -1,4 +1,4 @@
-#include <example.h>
+#include <example.hpp>
 
 using namespace std;
 using namespace Pistache;

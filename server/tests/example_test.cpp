@@ -1,4 +1,4 @@
-#include "common/example.h"
+#include "common/example.hpp"
 #include <gtest/gtest.h>
 
 class ExampleTest : public ::testing::Test {

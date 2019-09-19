@@ -5,7 +5,7 @@
 #include <pistache/endpoint.h>
 #include <nlohmann/json.hpp>
 
-#include <common/example.h>
+#include <common/example.hpp>
 
 using namespace std;
 using namespace Pistache;

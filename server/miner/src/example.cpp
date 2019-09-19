@@ -1,3 +1,3 @@
-#include "common/example.h"
+#include "example.hpp"
 
 int Example::example() { return 123; }
