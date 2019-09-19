@@ -13,3 +13,6 @@
 	path = server/third_party/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
 	
+[submodule "server/third_party/libzmq"]
+	path = server/third_party/libzmq
+	url = https://github.com/zeromq/libzmq.git
