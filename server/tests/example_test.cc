@@ -11,9 +11,9 @@ protected:
 };
 
 TEST_F(ExampleTest, sample_method_1) {
-  ASSERT_EQ(example->example(), 0);
+  ASSERT_EQ(example->example(), 123);
 }
 
 TEST_F(ExampleTest, sample_method_2) {
-  ASSERT_NE(example->example(), 1);
+  ASSERT_NE(example->example(), 0);
 }
