@@ -11,8 +11,11 @@ execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
 add_subdirectory(third_party/pistache)
 set(JSON_BuildTests OFF CACHE BOOL "Don't build JSON tests" FORCE)
 add_subdirectory(third_party/nlohmann_json)
+add_subdirectory(third_party/libzmq)
+add_subdirectory(third_party/cppzmq)
 add_subdirectory(third_party/googletest)
 
 add_subdirectory(common)
 add_subdirectory(rest)
+add_subdirectory(miner)
 add_subdirectory(tests)
