@@ -5,25 +5,22 @@
 #include <zmq.hpp>
 
 int main(int argc, char *argv[]) {
-    //  Prepare our context and socket
-    zmq::context_t context (1);
+    zmq::context_t context(1);
     zmq::socket_t socket (context, ZMQ_REP);
     socket.bind ("tcp://*:5555");
 
     while (true) {
         zmq::message_t request;
 
-        //  Wait for next request from client
         socket.recv(&request);
         auto str = std::string(static_cast<char*>(request.data()), request.size());
         std::cout << str << std::endl;
 
-        //  Do some 'work'
         sleep(1);
 
-        //  Send reply back to client
-        zmq::message_t reply (9);
-        memcpy(reply.data(), "from rest", 9);
+        std::string message = "from rest";
+        zmq::message_t reply(message.length());
+        memcpy(reply.data(), message.data(), message.length());
         socket.send(reply);
     }
     return 0;
