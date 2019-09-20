@@ -1,4 +1,6 @@
 package com.example.androidapp.ui
 
-class MainPresenter {
+import org.koin.core.KoinComponent
+
+class MainPresenter : MainContract.Presenter, KoinComponent {
 }

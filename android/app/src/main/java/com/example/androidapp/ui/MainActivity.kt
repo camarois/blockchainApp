@@ -1,4 +1,4 @@
-package com.example.androidapp
+package com.example.androidapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,13 +11,13 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import com.example.androidapp.R
+import org.koin.android.ext.android.inject
 
 
+class MainActivity : AppCompatActivity(), MainContract.View {
 
-class MainActivity : AppCompatActivity() {
+    val presenter: MainContract.Presenter by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
