@@ -21,6 +21,4 @@ else
     ./gradlew ktlint
 fi
 
-# return 1 exit code if running checks fails
-[ $? -ne 0 ] && exit 1
-exit 0
+exit $?
