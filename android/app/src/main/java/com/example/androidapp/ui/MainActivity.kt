@@ -1,58 +1,81 @@
 package com.example.androidapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import org.json.JSONObject
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
+import android.widget.Toast
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 import com.example.androidapp.R
+import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
+class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
 
-class MainActivity : AppCompatActivity(), MainContract.View {
+    private val controller: MainContract.Controller by inject()
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var toolbar: Toolbar
+    private lateinit var navView: NavigationView
+    private lateinit var textView: TextView
+    private lateinit var job: Job
 
-    val presenter: MainContract.Presenter by inject()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Crashlytics())
+        job = Job()
+
         setContentView(R.layout.activity_main)
+
+        toolbar = findViewById(R.id.toolbar)
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+        textView = findViewById(R.id.lolVar)
+
+        setSupportActionBar(toolbar)
+
+        val actionbar: ActionBar? = supportActionBar
+        actionbar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            menuItem.isChecked = true
+            drawerLayout.closeDrawers()
+
+            when (menuItem.itemId) {
+                R.id.action_home -> {
+                    Toast.makeText(this, "Home", Toast.LENGTH_LONG).show()
+                }
+                R.id.action_settings -> {
+                    Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show()
+                }
+            }
+            true
+        }
+
         findViewById<TextView>(R.id.lolVar).text = "lol!"
-        findViewById<Button>(R.id.refreshBtn).setOnClickListener{ refreshLol() }
+        findViewById<Button>(R.id.refreshBtn).setOnClickListener{ launch { textView.text = controller.onRefreshLolAsync() } }
     }
 
-    private fun refreshLol() {
-        val textView = findViewById<TextView>(R.id.lolVar)
-        // Instantiate the RequestQueue
-        val queue = Volley.newRequestQueue(this)
-        val url = getString(R.string.host) + "/lol"
-
-        // Request a string response from the provided URL.
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                // Display the response string.
-                textView.text = response
-
-                try {
-                    val obj = JSONObject(response)
-                    textView.text = obj.getInt("lol").toString()
-
-                } catch (t: Throwable) {
-                    textView.text = "Malformed response"
-                }
-
-            },
-            Response.ErrorListener { textView.text = "That didn't work!" })
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
