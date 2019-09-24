@@ -5,12 +5,6 @@ stages:
     - test
     - lint
 
-cache:
-    paths:
-        - server/build
-        - desktop/build
-        - android/build
-
 ################
 # Build Stages #
 ################
@@ -25,6 +19,9 @@ build-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - server/build
 
 build-server:armv7:
     stage: build
@@ -47,6 +44,9 @@ build-desktop:
         changes:
             - desktop/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - desktop/build
 
 build-android:
     stage: build
@@ -58,6 +58,9 @@ build-android:
         changes:
             - android/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - android/build
 
 ###############
 # Test Stages #
@@ -71,6 +74,8 @@ test-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-server
 
 test-desktop:
     stage: test
@@ -82,6 +87,8 @@ test-desktop:
         changes:
             - desktop/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-desktop
 
 test-android:
     stage: test
@@ -93,6 +100,8 @@ test-android:
         changes:
             - android/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-android
 
 ###############
 # Lint Stages #
