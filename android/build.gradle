@@ -21,10 +21,16 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task installGitHook(type: Copy) {
+    from new File(rootProject.rootDir, 'pre-commit')
+    into { new File(rootProject.rootDir, '.git/hooks/prepush') }
+    fileMode 0777
+}
+tasks.getByPath(':app:preBuild').dependsOn installGitHook

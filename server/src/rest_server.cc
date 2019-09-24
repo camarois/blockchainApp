@@ -5,77 +5,71 @@
 */
 
 #include <algorithm>
-
+#include <nlohmann/json.hpp>
+#include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
-#include <pistache/endpoint.h>
-#include <nlohmann/json.hpp>
 
-using namespace std;
 using namespace Pistache;
 using json = nlohmann::json;
 
-namespace Generic {
+namespace generic {
 
-void handleReady(const Rest::Request&, Http::ResponseWriter response) {
-    static int lol = 0;
-    json j = {
-        {"lol", lol++}
-    };
-    response.send(Http::Code::Ok, j.dump(4));
+void handleReady(const Rest::Request& /*request*/, Http::ResponseWriter response) {
+  static int lol = 0;
+  json j = {{"lol", lol++}, {"bonjour", "allo"}};
+  response.send(Http::Code::Ok, j.dump(4));
 }
 
-}
+}  // namespace generic
 
 class StatsEndpoint {
-public:
-    StatsEndpoint(Address addr)
-        : httpEndpoint(std::make_shared<Http::Endpoint>(addr))
-    { }
+ public:
+  explicit StatsEndpoint(Address addr) : httpEndpoint_(std::make_shared<Http::Endpoint>(addr)) {}
 
-    void init(size_t thr = 2) {
-        auto opts = Http::Endpoint::options()
-            .threads(thr);
-        httpEndpoint->init(opts);
-        setupRoutes();
-    }
+  void init(size_t thr) {
+    auto opts = Http::Endpoint::options().threads(thr);
+    httpEndpoint_->init(opts);
+    setupRoutes();
+  }
 
-    void start() {
-        httpEndpoint->setHandler(router.handler());
-        httpEndpoint->serve();
-    }
+  void start() {
+    httpEndpoint_->setHandler(router_.handler());
+    httpEndpoint_->serve();
+  }
 
-private:
-    void setupRoutes() {
-        using namespace Rest;
+ private:
+  void setupRoutes() {
+    using namespace Rest;
 
-        Routes::Get(router, "/lol", Routes::bind(&Generic::handleReady));
+    Routes::Get(router_, "/lol", Routes::bind(&generic::handleReady));
+  }
 
-    }
-
-    std::shared_ptr<Http::Endpoint> httpEndpoint;
-    Rest::Router router;
+  std::shared_ptr<Http::Endpoint> httpEndpoint_;
+  Rest::Router router_;
 };
 
-int main(int argc, char *argv[]) {
-    Port port(10000);
+int main(int argc, char* argv[]) {
+  const int kDefaultPort = 10000;
+  Port port(kDefaultPort);
 
-    int thr = 2;
+  int thr = 2;
 
-    if (argc >= 2) {
-        port = std::stol(argv[1]);
+  if (argc >= 2) {
+    port = std::stoi(argv[1]);
 
-        if (argc == 3)
-            thr = std::stol(argv[2]);
+    if (argc == 3) {
+      thr = std::stoi(argv[2]);
     }
+  }
 
-    Address addr(Ipv4::any(), port);
+  Address addr(Ipv4::any(), port);
 
-    cout << "Cores = " << hardware_concurrency() << endl;
-    cout << "Using " << thr << " threads" << endl;
+  std::cout << "Cores = " << hardware_concurrency() << std::endl;
+  std::cout << "Using " << thr << " threads" << std::endl;
 
-    StatsEndpoint stats(addr);
+  StatsEndpoint stats(addr);
 
-    stats.init(thr);
-    stats.start();
+  stats.init(thr);
+  stats.start();
 }

@@ -1,12 +1,9 @@
+image: gpol/inf3995
+
 stages:
     - build
     - test
-
-cache:
-    paths:
-        - server/build
-        - desktop/build
-        - android/build
+    - lint
 
 ################
 # Build Stages #
@@ -14,9 +11,24 @@ cache:
 
 build-server:
     stage: build
-    image: rikorose/gcc-cmake
+    before_script:
+        - mkdir -p server/build
     script:
-        - cd server && ./build.sh
+        - cd server/build && cmake .. && make
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - server/build
+
+build-server:armv7:
+    stage: build
+    before_script:
+        - mkdir -p server/build
+    script:
+        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
     only:
         changes:
             - server/**/*
@@ -24,23 +36,31 @@ build-server:
 
 build-desktop:
     stage: build
-    image: gradle:jdk12
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle build
     only:
         changes:
             - desktop/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - desktop/build
 
 build-android:
     stage: build
-    image: thyrlian/android-sdk
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
         - cd android && gradle build
     only:
         changes:
             - android/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - android/build
 
 ###############
 # Test Stages #
@@ -48,30 +68,50 @@ build-android:
 
 test-server:
     stage: test
-    image: rikorose/gcc-cmake
     script:
         - cd server && echo "TODO"
     only:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-server
 
 test-desktop:
     stage: test
-    image: gradle:jdk12
+    before_script:
+        - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
         - cd desktop && gradle test
     only:
         changes:
             - desktop/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-desktop
 
 test-android:
     stage: test
-    image: thyrlian/android-sdk
+    before_script:
+        - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
         - cd android && gradle test
     only:
         changes:
             - android/**/*
+            - .gitlab-ci.yml
+    dependencies:
+        - build-android
+
+###############
+# Lint Stages #
+###############
+
+lint-server:
+    stage: lint
+    script:
+        - cd server && ./lint.sh tidy && ./lint.sh format
+    only:
+        changes:
+            - server/**/*
             - .gitlab-ci.yml
