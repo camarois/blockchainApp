@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.10.0)
 project(inf3995)
 
 set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-Wextra -Wall -Wpedantic)
+# add_compile_options(-Wextra -Wall -Wpedantic)
 
+find_package(Git)
 execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 RESULT_VARIABLE GIT_SUBMOD_RESULT)

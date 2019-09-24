@@ -6,13 +6,11 @@ set -o xtrace
 
 BUILD_DIRECTORY=$(dirname "$0")/build
 mkdir -p "$BUILD_DIRECTORY"
-pushd "$BUILD_DIRECTORY" || exit
+cd "$BUILD_DIRECTORY" || exit
 
-cmake -G "Unix Makefiles" ..
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
 if [[ -z ${1+x} ]]; then
-	make -j5
+	ninja
 else
-	make -j$1
+	ninja -j "$1"
 fi
-
-

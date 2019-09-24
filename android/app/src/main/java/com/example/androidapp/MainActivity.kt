@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<TextView>(R.id.lolVar).text = "lol!"
-        findViewById<Button>(R.id.refreshBtn).setOnClickListener{ refreshLol() }
+        findViewById<Button>(R.id.refreshBtn).setOnClickListener { refreshLol() }
     }
 
     private fun refreshLol() {
@@ -35,16 +35,12 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val obj = JSONObject(response)
                     textView.text = obj.getInt("lol").toString()
-
                 } catch (t: Throwable) {
                     textView.text = "Malformed response"
                 }
-
             },
             Response.ErrorListener { textView.text = "That didn't work!" })
-
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
-
     }
 }

@@ -6,13 +6,12 @@
 
 int main(int argc, char *argv[]) {
     zmq::context_t context(1);
-    zmq::socket_t socket (context, ZMQ_REP);
-    socket.bind ("tcp://*:5555");
+    zmq::socket_t socket(context, ZMQ_REP);
+    socket.bind("tcp://*:5555");
 
     while (true) {
         zmq::message_t request;
-
-        socket.recv(&request);
+        socket.recv(request, zmq::recv_flags::none);
         auto str = std::string(static_cast<char*>(request.data()), request.size());
         std::cout << str << std::endl;
 
@@ -21,7 +20,7 @@ int main(int argc, char *argv[]) {
         std::string message = "from rest";
         zmq::message_t reply(message.length());
         memcpy(reply.data(), message.data(), message.length());
-        socket.send(reply);
+        socket.send(reply, zmq::send_flags::none);
     }
     return 0;
 
