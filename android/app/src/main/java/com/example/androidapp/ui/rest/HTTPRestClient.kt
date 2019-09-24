@@ -17,7 +17,7 @@ class HTTPRestClient(private val preferences: SharedPreferences, private val con
     }
 
     fun getBaseURL(): String {
-        //TODO: add sharedpreferences logic
+        // TODO: add sharedpreferences logic
         return context.getString(R.string.host)
     }
 }

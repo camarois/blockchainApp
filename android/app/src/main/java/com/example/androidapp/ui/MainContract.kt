@@ -3,7 +3,7 @@ package com.example.androidapp.ui
 interface MainContract {
     interface View
 
-    interface Controller{
+    interface Controller {
         suspend fun onRefreshLolAsync(): String
     }
 }

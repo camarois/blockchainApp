@@ -13,7 +13,7 @@ class RestRequestService(
     private val appCtx: Context,
     private val httpClient: HTTPRestClient
 ) {
-     suspend fun getLol(): String {
+    suspend fun getLol(): String {
          return suspendCoroutine { continuation ->
              val request = StringRequest(
                  Request.Method.GET, httpClient.getBaseURL() + "/lol",
