@@ -14,16 +14,16 @@ class RestRequestService(
     private val httpClient: HTTPRestClient
 ) {
     suspend fun getLol(): String {
-         return suspendCoroutine { continuation ->
-             val request = StringRequest(
-                 Request.Method.GET, httpClient.getBaseURL() + "/lol",
-                 Response.Listener<String> { response ->
-                     continuation.resume(JSONObject(response).getInt("lol").toString())
-                 },
-                 Response.ErrorListener {
-                     continuation.resume(appCtx.getString(R.string.errorMessageUnknown))
-                 })
-             httpClient.addToRequestQueue(request)
-         }
+        return suspendCoroutine { continuation ->
+            val request = StringRequest(
+                Request.Method.GET, httpClient.getBaseURL() + "/lol",
+                Response.Listener<String> { response ->
+                    continuation.resume(JSONObject(response).getInt("lol").toString())
+                },
+                Response.ErrorListener {
+                    continuation.resume(appCtx.getString(R.string.errorMessageUnknown))
+                })
+            httpClient.addToRequestQueue(request)
+        }
     }
 }
