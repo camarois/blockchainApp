@@ -50,15 +50,16 @@ class StatsEndpoint {
 };
 
 int main(int argc, char* argv[]) {
-  Port port(10000);
+  const int kDefaultPort = 10000;
+  Port port(kDefaultPort);
 
   int thr = 2;
 
   if (argc >= 2) {
-    port = std::stol(argv[1]);
+    port = std::stoi(argv[1]);
 
     if (argc == 3) {
-      thr = std::stol(argv[2]);
+      thr = std::stoi(argv[2]);
     }
   }
 
