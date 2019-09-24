@@ -21,7 +21,7 @@ class RestRequestService(
                      continuation.resume(JSONObject(response).getInt("lol").toString())
                  },
                  Response.ErrorListener {
-                     continuation.resume(appCtx.getString(R.string.error_message_unknown))
+                     continuation.resume(appCtx.getString(R.string.errorMessageUnknown))
                  })
              httpClient.addToRequestQueue(request)
          }

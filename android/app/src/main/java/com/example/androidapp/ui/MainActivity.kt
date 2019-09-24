@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
         setContentView(R.layout.activity_main)
 
         toolbar = findViewById(R.id.toolbar)
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navView = findViewById(R.id.nav_view)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navView = findViewById(R.id.navView)
         textView = findViewById(R.id.lolVar)
 
         setSupportActionBar(toolbar)
@@ -55,10 +55,10 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
             drawerLayout.closeDrawers()
 
             when (menuItem.itemId) {
-                R.id.action_home -> {
+                R.id.actionHome -> {
                     Toast.makeText(this, "Home", Toast.LENGTH_LONG).show()
                 }
-                R.id.action_settings -> {
+                R.id.actionSettings -> {
                     Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show()
                 }
             }

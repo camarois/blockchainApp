@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Classbook</string>
-    <string name="refresh_btn">Refresh!</string>
-    <string name="test_placeholder">lol!</string>
+    <string name="appName">Classbook</string>
+    <string name="refreshBtn">Refresh!</string>
+    <string name="testPlaceholder">lol!</string>
     <string name="settings">Settings</string>
     <string name="host">http://192.168.1.2:10000</string>
-    <string name="action_activity_main">Homepage</string>
-    <string name="action_activity_settings">Settings</string>
-    <string name="action_activity_menu">Menu</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="error_message_unknown">Malformed Request</string>
+    <string name="actionActivityMain">Homepage</string>
+    <string name="actionActivitySettings">Settings</string>
+    <string name="actionActivityMenu">Menu</string>
+    <string name="navigationDrawerOpen">Open navigation drawer</string>
+    <string name="navigationDrawerClose">Close navigation drawer</string>
+    <string name="errorMessageUnknown">Malformed Request</string>
 </resources>

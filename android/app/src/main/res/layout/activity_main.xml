@@ -2,13 +2,13 @@
 <androidx.drawerlayout.widget.DrawerLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawerLayout"
     tools:context=".ui.MainActivity"
     xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <FrameLayout
-            android:id="@+id/content_frame"
+            android:id="@+id/contentFrame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay">
@@ -23,7 +23,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
     </FrameLayout>
     <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
+            android:id="@+id/navView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -62,7 +62,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/refresh_btn"
+            android:text="@string/refreshBtn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"

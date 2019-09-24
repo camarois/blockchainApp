@@ -5,7 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/classbook"
-        android:label="@string/app_name"
+        android:label="@string/appName"
         android:roundIcon="@mipmap/classbook_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
