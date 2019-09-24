@@ -8,6 +8,8 @@ endif()
 
 project(inf3995)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/../.git")
     message(STATUS "Submodule update")

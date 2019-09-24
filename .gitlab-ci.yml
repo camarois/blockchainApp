@@ -3,6 +3,7 @@ image: gpol/inf3995
 stages:
     - build
     - test
+    - lint
 
 ################
 # Build Stages #
@@ -13,7 +14,7 @@ build-server:
     before_script:
         - mkdir -p server/build
     script:
-        - cd server/build && cmake .. -DCMAKE_CXX_COMPILER=$(which g++) && make
+        - cd server/build && cmake .. && make
     only:
         changes:
             - server/**/*
@@ -101,3 +102,16 @@ test-android:
             - .gitlab-ci.yml
     dependencies:
         - build-android
+
+###############
+# Lint Stages #
+###############
+
+lint-server:
+    stage: lint
+    script:
+        - cd server && ./lint.sh tidy && ./lint.sh format
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
