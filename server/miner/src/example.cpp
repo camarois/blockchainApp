@@ -1,3 +1,6 @@
 #include "example.hpp"
 
-int Example::example() { return 123; }
+int Example::example() {
+  const int zExampleConst = 123;
+  return zExampleConst;
+}

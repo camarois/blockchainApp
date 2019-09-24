@@ -1,6 +1,5 @@
 Checks: >
   *,
-  -google-build-using-namespace,
   -fuchsia-default-arguments,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
 

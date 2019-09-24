@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 3.10.0)
 project(inf3995)
 
 set(CMAKE_CXX_STANDARD 17)
-# add_compile_options(-Wextra -Wall -Wpedantic)
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+add_compile_options(-Wextra -Wall -Wpedantic)
+
+option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
+if(BUILD_ARMV7)
+    include(${CMAKE_SOURCE_DIR}/cmake/armv7_setup.cmake)
+    setup_armv7_toolchain()
+endif()
 
 find_package(Git)
 execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive

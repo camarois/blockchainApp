@@ -1,24 +1,28 @@
-#include <string>
-#include <zmq.hpp>
 #include "example.hpp"
+#include <common/message_helper.hpp>
 #include <iostream>
+#include <string>
 #include <unistd.h>
+#include <zmq.hpp>
 
 int main() {
-    zmq::context_t context (1);
-    zmq::socket_t socket (context, ZMQ_REQ);
+  try {
+    zmq::context_t context(1);
+    zmq::socket_t socket(context, ZMQ_REQ);
     socket.connect("tcp://localhost:5555");
 
     while (true) {
-        std::string message = "from miner";
-        zmq::message_t request(message.length());
-        memcpy(request.data(), message.data(), message.length());
-        socket.send(request, zmq::send_flags::none);
+      auto request = MessageHelper::from_string("from miner");
+      socket.send(request, zmq::send_flags::none);
 
-        zmq::message_t reply;
-        socket.recv(reply, zmq::recv_flags::none);
-        auto str = std::string(static_cast<char*>(reply.data()), reply.size());
-        std::cout << str << std::endl;
+      zmq::message_t reply;
+      socket.recv(reply, zmq::recv_flags::none);
+      auto str = MessageHelper::to_string(reply);
+      std::cout << str << std::endl;
     }
     return 0;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
 }

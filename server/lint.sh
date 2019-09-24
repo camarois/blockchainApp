@@ -3,7 +3,8 @@ set -o xtrace
 
 case "$1" in
 tidy)
-    clang-tidy-8 src/*.cc -p build/src/ --quiet
+    find -name "*.cpp" -not -path "./tests/*" -not -path "./third_party/*" -not -path "./build/*" | 
+    xargs run-clang-tidy-8 -p build/ -quiet
     # Exit if there are some c++ warnings
     if [ $? -ne 0 ]; then 
         exit 1

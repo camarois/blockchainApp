@@ -3,17 +3,17 @@
 
 class ExampleTest : public ::testing::Test {
 protected:
-  void SetUp() override { example = std::make_unique<Example>(); }
+  void SetUp() override { example_ = std::make_unique<Example>(); }
 
-  void TearDown() override { example.reset(); }
+  void TearDown() override { example_.reset(); }
 
-  std::unique_ptr<Example> example;
+  std::unique_ptr<Example> example_;
 };
 
 TEST_F(ExampleTest, sample_method_1) {
-  ASSERT_EQ(example->example(), 123);
+  ASSERT_EQ(example_->example(), 123);
 }
 
 TEST_F(ExampleTest, sample_method_2) {
-  ASSERT_NE(example->example(), 0);
+  ASSERT_NE(example_->example(), 0);
 }
