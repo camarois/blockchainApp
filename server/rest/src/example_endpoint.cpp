@@ -1,32 +1,32 @@
 #include <common/message_helper.hpp>
-#include <example_endpoint.hpp>
+#include <rest/example_endpoint.hpp>
 
 using json = nlohmann::json;
 
 ExampleEndpoint::ExampleEndpoint(Pistache::Address addr)
-    : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)),
-      context(1),
-      socket(context, ZMQ_REP) {
-  socket.bind("tcp://*:5555");
+    : httpEndpoint_(std::make_shared<Pistache::Http::Endpoint>(addr)),
+      context_(1),
+      socket_(context_, ZMQ_REP) {
+  socket_.bind("tcp://*:5555");
   std::cout << "zmq socket created" << std::endl;
 }
 
 void ExampleEndpoint::init(size_t thr) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
-  httpEndpoint->init(opts);
+  httpEndpoint_->init(opts);
   setupRoutes();
 }
 
 void ExampleEndpoint::start() {
-  httpEndpoint->setHandler(router.handler());
-  httpEndpoint->serve();
+  httpEndpoint_->setHandler(router_.handler());
+  httpEndpoint_->serve();
 }
 
 void ExampleEndpoint::setupRoutes() {
-  Pistache::Rest::Routes::Get(router, "/lol",
+  Pistache::Rest::Routes::Get(router_, "/lol",
 			      Pistache::Rest::Routes::bind(&ExampleEndpoint::handleLol, this));
 
-  Pistache::Rest::Routes::Get(router, "/start",
+  Pistache::Rest::Routes::Get(router_, "/start",
 			      Pistache::Rest::Routes::bind(&ExampleEndpoint::handleStart, this));
 }
 
@@ -43,7 +43,7 @@ void ExampleEndpoint::handleStart(const Pistache::Rest::Request& /*unused*/,
   for (int i = 0; i < 3; ++i) {
     zmq::message_t reply;
     std::cout << "Receving " << std::flush;
-    socket.recv(reply, zmq::recv_flags::none);
+    socket_.recv(reply, zmq::recv_flags::none);
     auto str = MessageHelper::toString(reply);
     std::cout << str << std::endl;
 
@@ -51,7 +51,7 @@ void ExampleEndpoint::handleStart(const Pistache::Rest::Request& /*unused*/,
 
     std::cout << "Sending " << std::flush;
     auto request = MessageHelper::fromString("from rest");
-    socket.send(request, zmq::send_flags::none);
+    socket_.send(request, zmq::send_flags::none);
     std::cout << "Sent " << std::flush;
   }
 

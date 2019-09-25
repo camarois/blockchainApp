@@ -1,5 +1,5 @@
-#include <example_endpoint.hpp>
 #include <iostream>
+#include <rest/example_endpoint.hpp>
 #include <string>
 #include <unistd.h>
 
