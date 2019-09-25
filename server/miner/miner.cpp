@@ -1,5 +1,4 @@
 #include "example.hpp"
-#include <common/message_helper.hpp>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -13,14 +12,14 @@ int main() {
 
     while (true) {
       std::cout << "Sending " << std::flush;
-      auto request = MessageHelper::from_string("from miner");
+      auto request = message_helper::fromString("from miner");
       socket.send(request, zmq::send_flags::none);
       std::cout << "Sent " << std::flush;
 
       zmq::message_t reply;
       std::cout << "Receving " << std::flush;
       socket.recv(reply, zmq::recv_flags::none);
-      auto str = MessageHelper::to_string(reply);
+      auto str = message_helper::toString(reply);
       std::cout << str << std::endl;
     }
     return 0;
