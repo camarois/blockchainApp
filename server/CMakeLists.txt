@@ -27,4 +27,7 @@ add_subdirectory(third_party/googletest)
 add_subdirectory(common)
 add_subdirectory(rest)
 add_subdirectory(miner)
-add_subdirectory(tests)
+
+if(NOT BUILD_ARMV7)
+    add_subdirectory(tests)
+endif()
