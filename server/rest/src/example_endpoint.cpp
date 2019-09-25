@@ -5,8 +5,8 @@ using json = nlohmann::json;
 
 ExampleEndpoint::ExampleEndpoint(Pistache::Address addr)
     : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)),
-    context(1),
-          socket(context, ZMQ_REP) {
+      context(1),
+      socket(context, ZMQ_REP) {
   socket.bind("tcp://*:5555");
   std::cout << "zmq socket created" << std::endl;
 }
