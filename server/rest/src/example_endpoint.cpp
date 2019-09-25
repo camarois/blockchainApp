@@ -1,8 +1,15 @@
 #include <common/message_helper.hpp>
 #include <example_endpoint.hpp>
-#include <zmq.hpp>
 
 using json = nlohmann::json;
+
+ExampleEndpoint::ExampleEndpoint(Pistache::Address addr)
+    : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)),
+    context(1),
+          socket(context, ZMQ_REP) {
+  socket.bind("tcp://*:5555");
+  std::cout << "zmq socket created" << std::endl;
+}
 
 void ExampleEndpoint::init(size_t thr) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
@@ -33,27 +40,20 @@ void ExampleEndpoint::handleLol(const Pistache::Rest::Request& /*unused*/,
 
 void ExampleEndpoint::handleStart(const Pistache::Rest::Request& /*unused*/,
 				  Pistache::Http::ResponseWriter response) {
-  const std::string kMessageStarting = "Starting the fake mining.";
-  response.send(Pistache::Http::Code::Ok, kMessageStarting)
-      .then(
-	  [&](ssize_t /*unused*/) {
-	    std::cout << kMessageStarting << std::endl;
+  for (int i = 0; i < 3; ++i) {
+    zmq::message_t reply;
+    std::cout << "Receving " << std::flush;
+    socket.recv(reply, zmq::recv_flags::none);
+    auto str = MessageHelper::to_string(reply);
+    std::cout << str << std::endl;
 
-	    zmq::context_t context(1);
-	    zmq::socket_t socket(context, ZMQ_REP);
-	    socket.bind("tcp://*:5555");
+    sleep(1);
 
-	    while (true) {
-	      zmq::message_t request;
-	      socket.recv(request, zmq::recv_flags::none);
-	      auto str = MessageHelper::to_string(request);
-	      std::cout << str << std::endl;
+    std::cout << "Sending " << std::flush;
+    auto request = MessageHelper::from_string("from rest");
+    socket.send(request, zmq::send_flags::none);
+    std::cout << "Sent " << std::flush;
+  }
 
-	      sleep(1);
-
-	      auto reply = MessageHelper::from_string("from rest");
-	      socket.send(reply, zmq::send_flags::none);
-	    }
-	  },
-	  Pistache::Async::Throw);
+  response.send(Pistache::Http::Code::Ok, "Fake mining completed.");
 }
