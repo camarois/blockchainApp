@@ -7,7 +7,8 @@ tidy)
     if [ ! -z "$2" ]; then
         fix="-fix"
     fi
-    find \( -name "*.hpp" -o -name "*.cpp" \) -not -path "./tests/*" -not -path "./third_party/*" -not -path "./build/*" | 
+    # TODO test header files
+    find -name "*.cpp" -not -path "./tests/*" -not -path "./third_party/*" -not -path "./build/*" | 
     xargs run-clang-tidy-8 -p build/ -quiet $fix
     # Exit if there are some c++ warnings
     if [ $? -ne 0 ]; then
@@ -15,7 +16,7 @@ tidy)
     fi
     ;;
 format)
-    find \( -name "*.hpp" -o -name "*.cpp" \) -not -path "./third_party/*" -not -path "./build/*" |
+    find -name "*.cpp" -not -path "./third_party/*" -not -path "./build/*" |
     if [ ! -z "$2" ]; then
         xargs clang-format-8 -style=file -i
     else
