@@ -1,4 +1,3 @@
-#pragma once
 #include "common/example.hpp"
 
 int Example::example() {

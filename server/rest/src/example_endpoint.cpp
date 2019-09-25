@@ -44,13 +44,13 @@ void ExampleEndpoint::handleStart(const Pistache::Rest::Request& /*unused*/,
     zmq::message_t reply;
     std::cout << "Receving " << std::flush;
     socket.recv(reply, zmq::recv_flags::none);
-    auto str = message_helper::toString(reply);
+    auto str = MessageHelper::toString(reply);
     std::cout << str << std::endl;
 
     sleep(1);
 
     std::cout << "Sending " << std::flush;
-    auto request = message_helper::fromString("from rest");
+    auto request = MessageHelper::fromString("from rest");
     socket.send(request, zmq::send_flags::none);
     std::cout << "Sent " << std::flush;
   }

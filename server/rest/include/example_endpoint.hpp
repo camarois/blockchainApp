@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EXAMPLE_ENDPOINT_HPP
+#define EXAMPLE_ENDPOINT_HPP
 
 #include <nlohmann/json.hpp>
 #include <pistache/endpoint.h>
@@ -27,3 +28,5 @@ class ExampleEndpoint {
   zmq::context_t context;
   zmq::socket_t socket;
 };
+
+#endif // EXAMPLE_ENDPOINT_HPP
