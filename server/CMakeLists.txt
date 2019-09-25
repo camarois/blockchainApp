@@ -3,7 +3,8 @@ project(inf3995)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
-add_compile_options(-Wextra -Wall -Wpedantic)
+# TODO add compile options only for our projects, exlude third_party
+# add_compile_options(-Wextra -Wall -Wpedantic)
 
 option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
 if(BUILD_ARMV7)
