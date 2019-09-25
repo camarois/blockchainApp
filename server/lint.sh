@@ -2,6 +2,8 @@
 # ./lint.sh [tidy|format] [fix]
 set -o xtrace
 
+echo add .hpp
+exit 1
 case "$1" in
 tidy)
     if [ ! -z "$2" ]; then
@@ -15,7 +17,7 @@ tidy)
     fi
     ;;
 format)
-    find -name "*.cpp" -not -path "./third_party/*" -not -path "./build/*" | 
+    find -name "*.cpp" -not -path "./third_party/*" -not -path "./build/*" |
     if [ ! -z "$2" ]; then
         xargs clang-format-8 -style=file -i
     else
