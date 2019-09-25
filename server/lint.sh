@@ -9,7 +9,7 @@ tidy)
     fi
     # TODO test header files
     find -name "*.cpp" -not -path "./tests/*" -not -path "./third_party/*" -not -path "./build/*" | 
-    xargs run-clang-tidy-8 -p build/ -quiet $fix
+    xargs run-clang-tidy-8 -p build/ -quiet -header-filter=common/\|rest/\|miner/ $fix
     # Exit if there are some c++ warnings
     if [ $? -ne 0 ]; then
         exit 1

@@ -7,7 +7,7 @@ class ExampleTest : public ::testing::Test {
 
   void TearDown() override { example_.reset(); }
 
-  std::unique_ptr<Example> example_;
+  std::unique_ptr<Example> example_;  // NOLINT
 };
 
 TEST_F(ExampleTest, sample_method_1) { ASSERT_EQ(example_->example(), 123); }
