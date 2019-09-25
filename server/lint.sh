@@ -1,4 +1,5 @@
 #!/bin/bash
+# ./lint.sh [tidy|format] [fix]
 set -o xtrace
 
 case "$1" in
@@ -11,7 +12,8 @@ tidy)
     fi
     ;;
 format)
-    clang-format-8 -style=file src/*.cc -output-replacements-xml | grep "<replacement "
+    find -name "*.cpp" -not -path "./third_party/*" -not -path "./build/*" | 
+    xargs clang-format-8 -style=file -output-replacements-xml | grep "<replacement "
     # Exit if grep did find replacements.
     if [ $? -ne 1 ]; then 
         exit 1
