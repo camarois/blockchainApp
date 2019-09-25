@@ -19,13 +19,27 @@ execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                 RESULT_VARIABLE GIT_SUBMOD_RESULT)
 
 add_subdirectory(third_party/pistache)
+
 set(JSON_BuildTests OFF CACHE BOOL "Don't build tests" FORCE)
 add_subdirectory(third_party/nlohmann_json)
+
 set(BUILD_TESTS OFF CACHE BOOL "Don't build tests" FORCE)
+set(ENABLE_DRAFTS OFF CACHE BOOL "Don't build tests" FORCE)
+set(LIBZMQ_PEDANTIC OFF CACHE BOOL "Don't build tests" FORCE)
+set(WITH_DOC OFF CACHE BOOL "Don't build tests" FORCE)
+set(BUILD_SHARED OFF CACHE BOOL "Don't build tests" FORCE)
 add_subdirectory(third_party/libzmq)
+
+set(gmock_build_tests OFF CACHE BOOL "Don't build tests" FORCE)
+set(gtest_build_tests OFF CACHE BOOL "Don't build tests" FORCE)
+set(gtest_build_samples OFF CACHE BOOL "Don't build tests" FORCE)
+set(gtest_disable_pthreads OFF CACHE BOOL "Don't build tests" FORCE)
 add_subdirectory(third_party/googletest)
 
 add_subdirectory(common)
 add_subdirectory(rest)
 add_subdirectory(miner)
-add_subdirectory(tests)
+
+if(NOT BUILD_ARMV7)
+    add_subdirectory(tests)
+endif()
