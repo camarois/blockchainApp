@@ -33,6 +33,9 @@ build-server:armv7:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - server/build
 
 build-desktop:
     stage: build
