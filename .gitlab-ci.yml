@@ -33,6 +33,10 @@ build-server:armv7:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - server/build/miner/miner
+            - server/build/rest/rest
     allow_failure: true
 
 build-desktop:
