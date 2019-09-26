@@ -66,7 +66,13 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
         }
 
         findViewById<TextView>(R.id.lolVar).text = "lol!"
-        findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch { textView.text = controller.onRefreshLolAsync() } }
+        findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch {
+            try {
+                textView.text = controller.onRefreshLolAsync()
+            } catch (e: Exception) {
+                textView.text = getString(R.string.errorMessageUnknown)
+            }
+        } }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
