@@ -3,6 +3,14 @@ cmake_minimum_required(VERSION 3.10.0)
 option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
 if(BUILD_ARMV7)
     include(${CMAKE_SOURCE_DIR}/cmake/armv7_setup.cmake)
+    set(TOOLCHAIN_DEFINES
+        -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+    )
+else()
+    set(TOOLCHAIN_DEFINES
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+    )
 endif()
 
 project(inf3995)
@@ -13,6 +21,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 ExternalProject_Add(libgflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     CMAKE_ARGS -DBUILD_STATIC_LIBS=on
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     INSTALL_COMMAND ""
     PREFIX libgflags
 )
@@ -22,6 +31,7 @@ link_directories(${CMAKE_BINARY_DIR}/libgflags/src/libgflags-build/lib)
 ExternalProject_Add(libjson
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     CMAKE_ARGS -DBUILD_TESTING=off
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     INSTALL_COMMAND ""
     PREFIX libjson
 )
@@ -34,6 +44,7 @@ ExternalProject_Add(libzmq
     CMAKE_ARGS -DLIBZMQ_PEDANTIC=off
     CMAKE_ARGS -DWITH_DOCS=off
     CMAKE_ARGS -DBUILD_SHARED=off
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     INSTALL_COMMAND ""
     PREFIX libzmq
 )
@@ -46,6 +57,7 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
     CMAKE_ARGS -Dgtest_disable_pthreads=off
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     INSTALL_COMMAND ""
     PREFIX libgtest
 )
@@ -57,6 +69,7 @@ ExternalProject_Add(libpistache
     GIT_REPOSITORY https://github.com/oktal/pistache.git
     CMAKE_ARGS -DPISTACHE_INSTALL=off
     CMAKE_ARGS -DPISTACHE_USE_SSL=off
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     INSTALL_COMMAND ""
     PREFIX libpistache
 )
@@ -66,6 +79,7 @@ link_directories(${CMAKE_BINARY_DIR}/libpistache/src/libpistache-build/src)
 ExternalProject_Add(libcppzmq
     GIT_REPOSITORY https://github.com/zeromq/cppzmq.git
     CMAKE_ARGS -DCPPZMQ_BUILD_TESTS=off
+    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
