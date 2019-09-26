@@ -6,34 +6,72 @@ if(BUILD_ARMV7)
 endif()
 
 project(inf3995)
-
+include(ExternalProject)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
-# TODO add compile options only for our projects, exlude third_party
-# add_compile_options(-Wextra -Wall -Wpedantic)
 
-find_package(Git)
-execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                RESULT_VARIABLE GIT_SUBMOD_RESULT)
+ExternalProject_Add(libgflags
+    GIT_REPOSITORY https://github.com/gflags/gflags.git
+    CMAKE_ARGS -DBUILD_STATIC_LIBS=on
+    INSTALL_COMMAND ""
+    PREFIX libgflags
+)
+include_directories(${CMAKE_BINARY_DIR}/libgflags/src/libgflags-build/include)
+link_directories(${CMAKE_BINARY_DIR}/libgflags/src/libgflags-build/lib)
 
-add_subdirectory(third_party/pistache)
+ExternalProject_Add(libjson
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    CMAKE_ARGS -DBUILD_TESTING=off
+    INSTALL_COMMAND ""
+    PREFIX libjson
+)
+include_directories(${CMAKE_BINARY_DIR}/libjson/src/libjson/include)
 
-set(JSON_BuildTests OFF CACHE BOOL "Don't build tests" FORCE)
-add_subdirectory(third_party/nlohmann_json)
+ExternalProject_Add(libzmq
+    GIT_REPOSITORY https://github.com/zeromq/libzmq.git
+    CMAKE_ARGS -DBUILD_TESTS=off
+    CMAKE_ARGS -DENABLE_DRAFTS=off
+    CMAKE_ARGS -DLIBZMQ_PEDANTIC=off
+    CMAKE_ARGS -DWITH_DOCS=off
+    CMAKE_ARGS -DBUILD_SHARED=off
+    INSTALL_COMMAND ""
+    PREFIX libzmq
+)
+include_directories(${CMAKE_BINARY_DIR}/libzmq/src/libzmq/include)
+link_directories(${CMAKE_BINARY_DIR}/libzmq/src/libzmq-build/lib)
 
-set(BUILD_TESTS OFF CACHE BOOL "Don't build tests" FORCE)
-set(ENABLE_DRAFTS OFF CACHE BOOL "Don't build tests" FORCE)
-set(LIBZMQ_PEDANTIC OFF CACHE BOOL "Don't build tests" FORCE)
-set(WITH_DOC OFF CACHE BOOL "Don't build tests" FORCE)
-set(BUILD_SHARED OFF CACHE BOOL "Don't build tests" FORCE)
-add_subdirectory(third_party/libzmq)
+ExternalProject_Add(libgtest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    CMAKE_ARGS -Dgmock_build_tests=off
+    CMAKE_ARGS -Dgtest_build_tests=off
+    CMAKE_ARGS -Dgtest_build_samples=off
+    CMAKE_ARGS -Dgtest_disable_pthreads=off
+    INSTALL_COMMAND ""
+    PREFIX libgtest
+)
+include_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest/googlemock/include)
+include_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest/googletest/include)
+link_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest-build/lib)
 
-set(gmock_build_tests OFF CACHE BOOL "Don't build tests" FORCE)
-set(gtest_build_tests OFF CACHE BOOL "Don't build tests" FORCE)
-set(gtest_build_samples OFF CACHE BOOL "Don't build tests" FORCE)
-set(gtest_disable_pthreads OFF CACHE BOOL "Don't build tests" FORCE)
-add_subdirectory(third_party/googletest)
+ExternalProject_Add(libpistache
+    GIT_REPOSITORY https://github.com/oktal/pistache.git
+    CMAKE_ARGS -DPISTACHE_INSTALL=off
+    CMAKE_ARGS -DPISTACHE_USE_SSL=off
+    INSTALL_COMMAND ""
+    PREFIX libpistache
+)
+include_directories(${CMAKE_BINARY_DIR}/libpistache/src/libpistache/include)
+link_directories(${CMAKE_BINARY_DIR}/libpistache/src/libpistache-build/src)
+
+ExternalProject_Add(libcppzmq
+    GIT_REPOSITORY https://github.com/zeromq/cppzmq.git
+    CMAKE_ARGS -DCPPZMQ_BUILD_TESTS=off
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    PREFIX libcppzmq
+)
+include_directories(${CMAKE_BINARY_DIR}/libcppzmq/src/libcppzmq)
 
 add_subdirectory(common)
 add_subdirectory(rest)
