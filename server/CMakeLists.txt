@@ -21,6 +21,9 @@ include(ExternalProject)
 include(cmake/third_party.cmake)
 
 add_subdirectory(common)
+set(COMMON_LIBS_DIR ${CMAKE_BINARY_DIR}/common)
+set(COMMON_SRCS_DIR ${CMAKE_SOURCE_DIR}/common)
+
 add_subdirectory(rest)
 add_subdirectory(miner)
 

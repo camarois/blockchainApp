@@ -1,35 +1,29 @@
+set(INSTALL_DEFINES -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/externals)
+set(BUILD_TYPE_DEFINES -DCMAKE_BUILD_TYPE=Release )
+set(COMMON_DEFINES
+    ${BUILD_TYPE_DEFINES}
+    ${TOOLCHAIN_DEFINES}
+    ${INSTALL_DEFINES}
+)
+
+include_directories(${CMAKE_BINARY_DIR}/externals/include)
+link_directories(${CMAKE_BINARY_DIR}/externals/lib)
+
+set(EXTERNAL_LIBS_DIR ${CMAKE_BINARY_DIR}/externals/lib)
+
 ExternalProject_Add(libgflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     CMAKE_ARGS -DBUILD_STATIC_LIBS=on
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    INSTALL_COMMAND ""
+    CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgflags
 )
-include_directories(${CMAKE_BINARY_DIR}/libgflags/src/libgflags-build/include)
-link_directories(${CMAKE_BINARY_DIR}/libgflags/src/libgflags-build/lib)
 
 ExternalProject_Add(libjson
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     CMAKE_ARGS -DBUILD_TESTING=off
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    INSTALL_COMMAND ""
+    CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libjson
 )
-include_directories(${CMAKE_BINARY_DIR}/libjson/src/libjson/include)
-
-ExternalProject_Add(libzmq
-    GIT_REPOSITORY https://github.com/zeromq/libzmq.git
-    CMAKE_ARGS -DBUILD_TESTS=off
-    CMAKE_ARGS -DENABLE_DRAFTS=off
-    CMAKE_ARGS -DLIBZMQ_PEDANTIC=off
-    CMAKE_ARGS -DWITH_DOCS=off
-    CMAKE_ARGS -DBUILD_SHARED=off
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    INSTALL_COMMAND ""
-    PREFIX libzmq
-)
-include_directories(${CMAKE_BINARY_DIR}/libzmq/src/libzmq/include)
-link_directories(${CMAKE_BINARY_DIR}/libzmq/src/libzmq-build/lib)
 
 ExternalProject_Add(libgtest
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -37,32 +31,32 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
     CMAKE_ARGS -Dgtest_disable_pthreads=off
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    INSTALL_COMMAND ""
+    CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
 )
-include_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest/googlemock/include)
-include_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest/googletest/include)
-link_directories(${CMAKE_BINARY_DIR}/libgtest/src/libgtest-build/lib)
 
 ExternalProject_Add(libpistache
     GIT_REPOSITORY https://github.com/oktal/pistache.git
-    CMAKE_ARGS -DPISTACHE_INSTALL=off
+    CMAKE_ARGS -DPISTACHE_INSTALL=on
     CMAKE_ARGS -DPISTACHE_USE_SSL=off
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    INSTALL_COMMAND ""
+    CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libpistache
 )
-include_directories(${CMAKE_BINARY_DIR}/libpistache/src/libpistache/include)
-link_directories(${CMAKE_BINARY_DIR}/libpistache/src/libpistache-build/src)
+
+ExternalProject_Add(libzmq
+    GIT_REPOSITORY https://github.com/zeromq/libzmq.git
+    CMAKE_ARGS -DBUILD_TESTS=off
+    CMAKE_ARGS -DENABLE_DRAFTS=off
+    CMAKE_ARGS -DLIBZMQ_PEDANTIC=off
+    CMAKE_ARGS -DWITH_DOCS=off
+    CMAKE_ARGS ${COMMON_DEFINES}
+    PREFIX libzmq
+)
 
 ExternalProject_Add(libcppzmq
     GIT_REPOSITORY https://github.com/zeromq/cppzmq.git
     CMAKE_ARGS -DCPPZMQ_BUILD_TESTS=off
-    CMAKE_ARGS ${TOOLCHAIN_DEFINES}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
+    CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libcppzmq
 )
-include_directories(${CMAKE_BINARY_DIR}/libcppzmq/src/libcppzmq)
+add_dependencies(libcppzmq libzmq)

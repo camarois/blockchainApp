@@ -1,6 +1,20 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+
 add_executable(miner ${SOURCE_FILES})
 add_dependencies(miner common libgflags)
-target_include_directories(miner PRIVATE include)
-target_link_libraries(miner PRIVATE common pthread)
-target_compile_options(miner PRIVATE -Wno-write-strings)
+
+target_include_directories(miner PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${COMMON_SRCS_DIR}/include
+)
+
+target_link_libraries(miner PRIVATE
+    ${COMMON_LIBS_DIR}/libcommon.a
+    ${EXTERNAL_LIBS_DIR}/libgflags.a
+    ${EXTERNAL_LIBS_DIR}/libzmq.a
+    pthread
+)
+
+target_compile_options(miner PRIVATE
+    -Wno-write-strings
+)
