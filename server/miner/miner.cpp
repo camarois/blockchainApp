@@ -5,18 +5,18 @@
 #include <unistd.h>
 #include <zmq.hpp>
 
-DEFINE_string(addr, "127.0.0.1", "REST service address"); // NOLINT
-DEFINE_int32(port, 8000, "REST service port"); // NOLINT
+DEFINE_string(addr, "127.0.0.1", "REST service address");  // NOLINT
+DEFINE_int32(port, 8000, "REST service port");		   // NOLINT
 
 int main(int argc, char* argv[]) {
-  for(int i = 0; i < argc; i++) {
-    if(strcmp("--help", argv[i]) == 0) {
+  for (int i = 0; i < argc; i++) {
+    if (strcmp("--help", argv[i]) == 0) {
       argv[i] = "--helpshort";
     }
   }
 
-  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service"); // NOLINT
-  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false); // NOLINT
+  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service");  // NOLINT
+  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);   // NOLINT
 
   std::string addr = "tcp://" + std::string(FLAGS_addr) + ":" + std::to_string(FLAGS_port);
 
