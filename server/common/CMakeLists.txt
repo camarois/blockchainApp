@@ -1,5 +1,5 @@
 file(GLOB_RECURSE COMMON_SOURCE_FILES "*.cpp")
 add_library(common ${COMMON_SOURCE_FILES})
-add_dependencies(common libzmq)
+add_dependencies(common libzmq libjson)
 target_include_directories(common PUBLIC include)
 target_link_libraries(common PUBLIC zmq)

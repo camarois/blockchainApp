@@ -1,5 +1,5 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 add_executable(rest ${SOURCE_FILES})
-add_dependencies(rest common libpistache libjson)
+add_dependencies(rest common libpistache)
 target_include_directories(rest PRIVATE include)
 target_link_libraries(rest PRIVATE common pistache pthread)
