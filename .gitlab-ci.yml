@@ -118,3 +118,5 @@ lint-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+    dependencies:
+        - build-server
