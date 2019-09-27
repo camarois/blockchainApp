@@ -1,16 +1,16 @@
 image: gpol/inf3995
 
-# stages:
-#     - build
-#     - test
-#     - lint
+stages:
+    - build
+    - test
+    - lint
 
 ################
 # Build Stages #
 ################
 
 build-server:
-    # stage: build
+    stage: build
     before_script:
         - mkdir -p server/build
     script:
@@ -24,7 +24,7 @@ build-server:
             - server/build
 
 build-server:armv7:
-    # stage: build
+    stage: build
     before_script:
         - mkdir -p server/build
     script:
@@ -38,7 +38,7 @@ build-server:armv7:
             - server/build
 
 build-desktop:
-    # stage: build
+    stage: build
     before_script:
         - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
@@ -52,7 +52,7 @@ build-desktop:
             - desktop/build
 
 build-android:
-    # stage: build
+    stage: build
     before_script:
         - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
@@ -70,7 +70,7 @@ build-android:
 ###############
 
 test-server:
-    # stage: test
+    stage: test
     script:
         - cd server && echo "TODO"
     only:
@@ -81,7 +81,7 @@ test-server:
         - build-server
 
 test-desktop:
-    # stage: test
+    stage: test
     before_script:
         - update-java-alternatives --set java-1.12.0-openjdk-amd64
     script:
@@ -94,7 +94,7 @@ test-desktop:
         - build-desktop
 
 test-android:
-    # stage: test
+    stage: test
     before_script:
         - update-java-alternatives --set java-1.8.0-openjdk-amd64
     script:
@@ -111,7 +111,7 @@ test-android:
 ###############
 
 lint-server:
-    # stage: lint
+    stage: lint
     script:
         - cd server && ./lint.sh tidy && ./lint.sh format
     only:
