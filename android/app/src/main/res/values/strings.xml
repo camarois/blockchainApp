@@ -1,4 +1,13 @@
 <resources>
-    <string name="app_name">android</string>
-    <string name="refresh_btn">Refresh!</string>
+    <string name="host">192.168.1.19</string>
+    <string name="appName">Classbook</string>
+    <string name="refreshBtn">Refresh!</string>
+    <string name="testPlaceholder">lol!</string>
+    <string name="settings">Settings</string>
+    <string name="actionActivityMain">Homepage</string>
+    <string name="actionActivitySettings">Settings</string>
+    <string name="actionActivityMenu">Menu</string>
+    <string name="navigationDrawerOpen">Open navigation drawer</string>
+    <string name="navigationDrawerClose">Close navigation drawer</string>
+    <string name="errorMessageUnknown">Malformed Request</string>
 </resources>
