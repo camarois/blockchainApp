@@ -10,4 +10,12 @@
     <string name="navigationDrawerOpen">Open navigation drawer</string>
     <string name="navigationDrawerClose">Close navigation drawer</string>
     <string name="errorMessageUnknown">Malformed Request</string>
+
+    <!-- LOGIN Activity-->
+    <string name="logoAltText">logo de classbook</string>
+    <string name="username">Nom d\'utilisateur</string>
+    <string name="password">password</string>
+    <string name="submit">CONNEXION</string>
+    <string name="noAccount">Pas encore de compte?</string>
+    <string name="register">S\'ENREGISTRER</string>
 </resources>
