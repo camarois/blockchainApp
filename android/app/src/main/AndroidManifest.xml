@@ -13,7 +13,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <activity android:name=".ui.SidePanelActivity"></activity>
+        <activity
+                android:name=".ui.SidePanelActivity"
+                android:label="@string/title_activity_side_panel"
+                android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
                 android:name=".ui.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">

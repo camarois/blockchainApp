@@ -1,89 +1,58 @@
 package com.example.androidapp.ui
 
 import android.os.Bundle
-import android.view.MenuItem
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.ActionBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
+import android.view.Menu
 import com.example.androidapp.R
-import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
-import kotlin.coroutines.CoroutineContext
 
+class SidePanelActivity : AppCompatActivity() {
 
-class SidePanelActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
-
-    private val controller: MainContract.Controller by inject()
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var toolbar: Toolbar
-    private lateinit var navView: NavigationView
-    private lateinit var textView: TextView
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
-        job = Job()
-
-        setContentView(R.layout.activity_main)
-
-        toolbar = findViewById(R.id.toolbar)
-        drawerLayout = findViewById(R.id.drawerLayout)
-        navView = findViewById(R.id.navView)
-        textView = findViewById(R.id.lolVar)
-
+        setContentView(R.layout.activity_side_panel)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val actionbar: ActionBar? = supportActionBar
-        actionbar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_menu)
+        val fab: FloatingActionButton = findViewById(R.id.fab)
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
         }
-
-        navView.setNavigationItemSelectedListener { menuItem ->
-            menuItem.isChecked = true
-            drawerLayout.closeDrawers()
-
-            when (menuItem.itemId) {
-                R.id.actionHome -> {
-                    Toast.makeText(this, "Home", Toast.LENGTH_LONG).show()
-                }
-                R.id.actionSettings -> {
-                    Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show()
-                }
-            }
-            true
-        }
-
-        findViewById<TextView>(R.id.lolVar).text = "lol!"
-        findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch {
-            try {
-                textView.text = controller.onRefreshLolAsync()
-            } catch (e: Exception) {
-                textView.text = getString(R.string.errorMessageUnknown)
-            }
-        } }
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
+                R.id.nav_tools, R.id.nav_share, R.id.nav_send
+            ), drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                drawerLayout.openDrawer(GravityCompat.START)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.side_panel, menu)
+        return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
