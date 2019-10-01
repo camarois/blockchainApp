@@ -13,9 +13,15 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <item name="android:textColor">@color/colorWhiteText</item>
         <item name="android:textColorPrimaryInverse">@color/colorPrimaryDark</item>
+        <item name="actionOverflowButtonStyle">@style/DotsDarkTheme</item>
         <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="DotsDarkTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow" >
+        <item name="android:tint">@android:color/white</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="Theme.MaterialComponents.Light">
@@ -34,5 +40,4 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
-
 </resources>

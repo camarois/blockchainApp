@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
     private fun submitLogin() {
         val username = findViewById<EditText>(R.id.usernameVal).text.toString()
         val password = findViewById<EditText>(R.id.passwordVal).text.toString()
-        // TODO: Actual call to the database
+        // TODO: Actually call the database
         if (username == "rose" && password == "1234") {
-            val user = "rose;rooose;1234;rose@email.com;10"
+            val user = "rose;rooose;1234;rose@email.com;10" // information passed to the next activity
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
                 putExtra("user", user)
             }
