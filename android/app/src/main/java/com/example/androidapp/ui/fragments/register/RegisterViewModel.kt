@@ -1,13 +1,13 @@
-package com.example.androidapp.ui.ui.home
+package com.example.androidapp.ui.fragments.register
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
+class RegisterViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "This is send Fragment"
     }
     val text: LiveData<String> = _text
 }
