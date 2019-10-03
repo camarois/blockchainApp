@@ -1,9 +1,9 @@
-#include <sstream>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <miner/block.hpp>
 #include <nlohmann/json.hpp>
 #include <picosha2.h>
+#include <sstream>
 
 Block::Block(std::string previous) {
   dirty_ = true;
@@ -16,18 +16,15 @@ Block::Block(std::string previous, int nonce, std::vector<std::string> data) : B
   data_ = data;
 }
 
-void Block::AppendData(std::string data) {
+void Block::append(const std::string& data) {
   dirty_ = true;
+  data_.push_back(data);
 }
 
-void Block::Mine(int difficulty) {
-  assert(difficulty > 0);
-  assert(difficulty < 64);
-
+void Block::mine(int difficulty) {
   nonce_ = 0;
-  while(1) {
-    std::string hash = get_hash();
-    assert(hash.length() == 64);
+  while(true) {
+    std::string hash = getHash();
 
     bool invalid = false;
     for(int i = 0; i < difficulty; i++) {
@@ -40,21 +37,21 @@ void Block::Mine(int difficulty) {
 
     if(invalid) {
         continue;
-    } else {
-        break;
     }
+
+    break;
   }
 }
 
-std::string Block::get_hash() {
+std::string Block::getHash() {
   if(!dirty_) {
     return hash_;
   }
 
   std::stringstream stream;
   stream << nonce_ << previous_hash_;
-  for (auto str = data_.begin(); str != data_.end(); ++str) {
-    stream << *str;
+  for(std::string& str : data_) {
+    stream << str;
   }
   std::string str = stream.str();
 
@@ -66,6 +63,6 @@ std::string Block::get_hash() {
   return hash_;
 }
 
-std::string Block::get_previous_hash() const {
+std::string Block::getPreviousHash() const {
   return previous_hash_;
 }

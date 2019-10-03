@@ -2,6 +2,8 @@ Checks: >
   *,
   -fuchsia-default-arguments,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -modernize-use-nodiscard,
+  -performance-unnecessary-value-param,
 
 WarningsAsErrors: "*"
 

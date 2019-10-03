@@ -1,19 +1,19 @@
 #ifndef MINER_BLOCK_HPP
 #define MINER_BLOCK_HPP
 
-#include <vector>
 #include <string>
+#include <vector>
 
 class Block {
  public:
-  Block(std::string previous);
-  Block(std::string previous, int nonce, std::vector<std::string> data);
+  explicit Block(std::string previous);
+  explicit Block(std::string previous, int nonce, std::vector<std::string> data);
 
-  void AppendData(std::string data);
-  void Mine(int difficulty);
+  void append(const std::string& data);
+  void mine(int difficulty);
 
-  std::string get_hash();
-  std::string get_previous_hash() const;
+  std::string getHash();
+  std::string getPreviousHash() const;
 
  private:
   bool dirty_;
