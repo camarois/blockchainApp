@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
     }
 
     private fun submitRegister() {
+        // TODO : Decide how we want people to register. Do they send a request? Does the PC admin adds them?
         // val intent = Intent(this@MainActivity, RegisterActivity::class.java).apply { }
         // startActivity(intent)
     }
