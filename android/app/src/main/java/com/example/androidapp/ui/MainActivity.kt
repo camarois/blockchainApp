@@ -20,7 +20,7 @@ import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    private lateinit var controller: MainController
+    private var controller: MainController = get()
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: Toolbar
     private lateinit var navView: NavigationView
@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        controller = get()
         Fabric.with(this, Crashlytics())
         job = Job()
 
@@ -78,7 +77,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onStart() {
         super.onStart()
-        controller = get()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
