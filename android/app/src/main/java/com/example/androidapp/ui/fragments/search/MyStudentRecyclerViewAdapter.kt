@@ -10,8 +10,8 @@ import com.example.androidapp.R
 
 import com.example.androidapp.ui.fragments.search.SearchFragment.OnListFragmentInteractionListener
 import com.example.androidapp.ui.fragments.search.student.StudentItem
-
 import kotlinx.android.synthetic.main.fragment_student.view.*
+
 
 /**
  * [RecyclerView.Adapter] that can display a [StudentItem] and makes a call to the
@@ -41,8 +41,9 @@ class MyStudentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.toString()
+        holder.mNameView.text = item.name
+        holder.mDegreeView.text = item.degree
+        holder.mGPAView.text = item.gpa.toString()
 
         with(holder.mView) {
             tag = item
@@ -53,11 +54,8 @@ class MyStudentRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
-
-        override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
-        }
+        val mNameView: TextView = mView.name
+        val mDegreeView: TextView = mView.degree
+        val mGPAView: TextView = mView.gpa
     }
 }

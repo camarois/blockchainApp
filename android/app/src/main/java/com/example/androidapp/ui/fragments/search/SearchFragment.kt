@@ -2,7 +2,6 @@ package com.example.androidapp.ui.fragments.search
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +36,6 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.findViewById<RecyclerView>(R.id.list)
-        Log.d("DEBUG", "U wot m8")
         viewCreated.adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
         super.onViewCreated(view, savedInstanceState)
     }
