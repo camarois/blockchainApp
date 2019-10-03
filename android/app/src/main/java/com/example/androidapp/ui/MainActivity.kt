@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             try {
                 textView.text = controller.onRefreshLolAsync()
             } catch (e: Exception) {
-                textView.text = getString(R.string.errorMessageUnknown) + ": " + e.message
+                textView.text = "${getString(R.string.errorMessageUnknown)}: ${e.message}"
             }
         } }
     }
