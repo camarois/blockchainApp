@@ -4,7 +4,7 @@
 using json = nlohmann::json;
 
 ExampleEndpoint::ExampleEndpoint(Pistache::Address addr)
-    : httpEndpoint_(std::make_shared<Pistache::Http::Endpoint>(addr)),
+    : httpEndpoint_(addr),
       context_(1),
       socket_(context_, ZMQ_REP) {
   socket_.bind("tcp://*:5555");
@@ -13,13 +13,13 @@ ExampleEndpoint::ExampleEndpoint(Pistache::Address addr)
 
 void ExampleEndpoint::init(size_t thr) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
-  httpEndpoint_->init(opts);
+  httpEndpoint_.init(opts);
   setupRoutes();
 }
 
 void ExampleEndpoint::start() {
-  httpEndpoint_->setHandler(router_.handler());
-  httpEndpoint_->serve();
+  httpEndpoint_.setHandler(router_.handler());
+  httpEndpoint_.serve();
 }
 
 void ExampleEndpoint::setupRoutes() {

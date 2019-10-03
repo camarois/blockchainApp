@@ -15,12 +15,12 @@ import io.fabric.sdk.android.Fabric
 import com.example.androidapp.R
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
+class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    private val controller: MainContract.Controller by inject()
+    private var controller: MainController = get()
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: Toolbar
     private lateinit var navView: NavigationView
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, CoroutineScope {
             try {
                 textView.text = controller.onRefreshLolAsync()
             } catch (e: Exception) {
-                textView.text = getString(R.string.errorMessageUnknown)
+                textView.text = "${getString(R.string.errorMessageUnknown)}: ${e.message}"
             }
         } }
     }
