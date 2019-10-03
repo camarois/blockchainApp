@@ -1,12 +1,9 @@
-file(GLOB_RECURSE TEST_SRC *.cpp)
-
-add_executable(tests ${TEST_SRC})
-
-target_include_directories(tests PRIVATE
+include_directories(tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/miner/include
     ${COMMON_SRCS_DIR}/include
 )
 
-target_link_libraries(tests PRIVATE
+link_libraries(
     common
     gmock
     gtest
@@ -14,4 +11,8 @@ target_link_libraries(tests PRIVATE
     pthread
 )
 
-add_test(tests COMMAND tests)
+add_executable(block_tests
+    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+    block_test.cpp
+)
+add_test(block_tests block_tests)
