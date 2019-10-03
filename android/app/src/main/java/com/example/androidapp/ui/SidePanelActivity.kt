@@ -2,7 +2,6 @@ package com.example.androidapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -48,7 +47,8 @@ class SidePanelActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        //TODO: Actually logout properly
+        // TODO: HOW TO CALL THIS METHOD ;-;
+        // TODO: Actually logout properly
         val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
         startActivity(intent)
     }
