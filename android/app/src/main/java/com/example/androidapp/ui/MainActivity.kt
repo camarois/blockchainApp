@@ -75,10 +75,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         } }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

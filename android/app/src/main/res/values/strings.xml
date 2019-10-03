@@ -1,5 +1,4 @@
 <resources>
-    <string name="host">192.168.1.19</string>
     <string name="appName">Classbook</string>
     <string name="refreshBtn">Refresh!</string>
     <string name="testPlaceholder">lol!</string>
