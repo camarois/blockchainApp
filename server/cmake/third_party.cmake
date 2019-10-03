@@ -60,3 +60,9 @@ ExternalProject_Add(libcppzmq
     PREFIX libcppzmq
 )
 add_dependencies(libcppzmq libzmq)
+
+ExternalProject_Add(libcurlpp
+    GIT_REPOSITORY https://github.com/jpbarrette/curlpp.git
+    CMAKE_ARGS ${COMMON_DEFINES}
+    PREFIX libcurlpp
+)
