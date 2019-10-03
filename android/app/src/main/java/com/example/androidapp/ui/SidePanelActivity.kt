@@ -2,7 +2,6 @@ package com.example.androidapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -14,8 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import com.example.androidapp.R
+import com.example.androidapp.ui.fragments.search.SearchFragment
+import com.example.androidapp.ui.fragments.search.student.StudentItem
 
-class SidePanelActivity : AppCompatActivity() {
+
+class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInteractionListener {
+
+    override fun onListFragmentInteraction(item: StudentItem) {
+        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
