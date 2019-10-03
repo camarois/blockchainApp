@@ -2,6 +2,7 @@ package com.example.androidapp.ui.fragments.search
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +35,13 @@ class SearchFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val viewCreated = view.findViewById<RecyclerView>(R.id.list)
+        Log.d("DEBUG", "U wot m8")
+        viewCreated.adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,10 +51,10 @@ class SearchFragment : Fragment() {
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-                layoutManager = when {
+               layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
-                }
+               }
                 adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
             }
         }
@@ -58,7 +66,7 @@ class SearchFragment : Fragment() {
         if (context is OnListFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnListFragmentInteractionListener")
         }
     }
 

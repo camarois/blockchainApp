@@ -31,4 +31,6 @@
     <string name="menu_logout">Déconnexion</string>
     <string name="menu_register">Ajout</string>
     <string name="edition">Édition</string>
+
+    <string name="searchTitle">Étudiants</string>
 </resources>
