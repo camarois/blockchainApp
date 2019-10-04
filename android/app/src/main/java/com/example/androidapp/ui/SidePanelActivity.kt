@@ -54,7 +54,8 @@ class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInte
     }
 
     private fun logout() {
-        //TODO: Actually logout properly
+        // TODO: HOW TO CALL THIS METHOD ;-;
+        // TODO: Actually logout properly
         val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
         startActivity(intent)
     }

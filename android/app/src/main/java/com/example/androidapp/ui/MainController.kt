@@ -5,9 +5,9 @@ import org.koin.core.KoinComponent
 
 class MainController(
     private val restService: RestRequestService
-) : MainContract.Controller, KoinComponent {
+) : KoinComponent {
 
-    override suspend fun onRefreshLolAsync(): String {
+    suspend fun onRefreshLolAsync(): String {
         return restService.getLol()
     }
 }

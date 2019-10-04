@@ -1,5 +1,6 @@
 #ifndef COMMON_MESSAGE_HELPER_HPP
 #define COMMON_MESSAGE_HELPER_HPP
+
 #include <string>
 #include <zmq.hpp>
 
@@ -13,6 +14,7 @@ inline zmq::message_t fromString(const std::string& str) {
   memcpy(mnessage.data(), str.data(), str.length());
   return mnessage;
 }
+
 }  // namespace MessageHelper
 
 #endif // COMMON_MESSAGE_HELPER_HPP
