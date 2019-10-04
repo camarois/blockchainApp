@@ -16,7 +16,6 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-
 class HomeFragment : Fragment(), CoroutineScope {
 
     private var controller: MainController = get()
@@ -25,7 +24,6 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -38,8 +36,6 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-
-
         textView = root.findViewById(R.id.lolVar)
         textView.text = "lol!"
         root.findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch {
