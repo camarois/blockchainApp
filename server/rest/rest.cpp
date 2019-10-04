@@ -1,5 +1,5 @@
 #include <iostream>
-#include <rest/example_endpoint.hpp>
+#include <rest/main_controller.hpp>
 #include <common/firebase_helper.hpp>
 #include <string>
 #include <sys/types.h>
@@ -21,9 +21,8 @@ int main(int argc, char *argv[]) {
     Pistache::Port port(kPortNumber);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
-    ExampleEndpoint stats(addr);
-    stats.init(kNbThreads);
-    stats.start();
+    MainController mainController(addr, kNbThreads);
+    mainController.start();
 
     return 0;
   } catch (const std::exception& e) {
