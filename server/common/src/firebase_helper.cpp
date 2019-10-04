@@ -8,8 +8,8 @@
 #include <string>
 
 namespace FirebaseHelper {
-const std::string kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
-const std::string kDefaultUser = "server";
+const char* kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
+const char* kDefaultUser = "server";
 
 // Inspired by https://gist.github.com/quietcricket/2521037
 std::string getSelfIpAddress() {

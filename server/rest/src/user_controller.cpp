@@ -1,5 +1,5 @@
-#include <rest/user_controller.hpp>
 #include <common/message_helper.hpp>
+#include <rest/user_controller.hpp>
 
 using json = nlohmann::json;
 

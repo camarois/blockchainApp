@@ -6,7 +6,7 @@
 #include <zmq.hpp>
 
 DEFINE_string(addr, "127.0.0.1", "REST service address");  // NOLINT
-DEFINE_int32(port, 10000, "REST service port");		   // NOLINT
+DEFINE_int32(port, 5555, "REST service port");		   // NOLINT
 
 int main(int argc, char* argv[]) {
   for (int i = 0; i < argc; i++) {
