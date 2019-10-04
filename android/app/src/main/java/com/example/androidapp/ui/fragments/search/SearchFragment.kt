@@ -41,7 +41,8 @@ class SearchFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_student_list, container, false)
@@ -50,8 +51,8 @@ class SearchFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
+                   columnCount <= 1 -> LinearLayoutManager(context)
+                   else -> GridLayoutManager(context, columnCount)
                }
                 adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
             }
