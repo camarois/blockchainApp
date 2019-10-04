@@ -1,18 +1,25 @@
 #include <iostream>
 #include <rest/example_endpoint.hpp>
+#include <common/firebase_helper.hpp>
 #include <string>
+#include <sys/types.h>
 #include <unistd.h>
 
-int main() {
+int main(int argc, char *argv[]) {
   try {
-    const int kNbThreads = 4;
+    auto selfIpAddress = FirebaseHelper::getSelfIpAddress();
+    std::cout << "Running on: " << selfIpAddress << std::endl;
+    std::future<void> future;
+    if (argc > 1) {
+      future = FirebaseHelper::setIpAddressAsync(selfIpAddress, argv[1]);
+    } else {
+      future = FirebaseHelper::setIpAddressAsync(selfIpAddress);
+    }
+
     const int kPortNumber = 10000;
+    const int kNbThreads = 4;
     Pistache::Port port(kPortNumber);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
-
-    std::cout << "Number of cores: " << Pistache::hardware_concurrency() << std::endl;
-    std::cout << "Number of threads: " << kNbThreads << std::endl;
-    std::cout << "Running on port: " << kPortNumber << std::endl;
 
     ExampleEndpoint stats(addr);
     stats.init(kNbThreads);

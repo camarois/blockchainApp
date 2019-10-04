@@ -23,7 +23,7 @@ class ExampleEndpoint {
   void handleLol(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
   void handleStart(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
 
-  std::shared_ptr<Pistache::Http::Endpoint> httpEndpoint_;
+  Pistache::Http::Endpoint httpEndpoint_;
   Pistache::Rest::Router router_;
   zmq::context_t context_;
   zmq::socket_t socket_;
