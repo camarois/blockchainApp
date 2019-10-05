@@ -1,7 +1,7 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
 add_executable(rest ${SOURCE_FILES})
-add_dependencies(rest common libpistache libcurlpp)
+add_dependencies(rest common libgflags libpistache libcurlpp)
 
 target_include_directories(rest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include

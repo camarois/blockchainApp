@@ -1,7 +1,7 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
 add_executable(miner ${SOURCE_FILES})
-add_dependencies(miner common libgflags)
+add_dependencies(miner common libgflags libcurlpp)
 
 target_include_directories(miner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -12,6 +12,8 @@ target_link_libraries(miner PRIVATE
     ${COMMON_LIBS_DIR}/libcommon.a
     ${EXTERNAL_LIBS_DIR}/libgflags.a
     ${EXTERNAL_LIBS_DIR}/libzmq.a
+    ${EXTERNAL_LIBS_DIR}/libcurlpp.a
+    curl
     pthread
 )
 

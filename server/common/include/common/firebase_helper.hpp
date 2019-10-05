@@ -5,7 +5,9 @@
 #include <curlpp/Options.hpp>
 #include <future>
 #include <ifaddrs.h>
-#include <string>
+#include <string.h>
+#include <sstream>
+#include <stdio.h>
 
 namespace FirebaseHelper {
 const char* kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
