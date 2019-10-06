@@ -19,8 +19,8 @@ class MainController {
   void start();
 
  private:
-  std::shared_ptr<Pistache::Rest::Router> router_;
   Pistache::Http::Endpoint httpEndpoint_;
+  std::shared_ptr<Pistache::Rest::Router> router_;
   UserController userController_;
   ExampleController exampleController_;
 };
