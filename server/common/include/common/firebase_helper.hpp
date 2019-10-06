@@ -5,14 +5,14 @@
 #include <curlpp/Options.hpp>
 #include <future>
 #include <ifaddrs.h>
-#include <string.h>
 #include <sstream>
 #include <stdio.h>
+#include <string.h>
 
 namespace Common {
 namespace FirebaseHelper {
-const char* kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
-const char* kDefaultUser = "server";
+const std::string kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
+const std::string kDefaultUser = "server";
 
 // Inspired by https://gist.github.com/quietcricket/2521037
 inline std::string getSelfIpAddress() {
@@ -32,19 +32,15 @@ inline std::string getSelfIpAddress() {
 }
 
 inline std::string getServerIpAddress(const std::string& user = kDefaultUser) {
+  auto resp = curlpp::options::Url(kBasePath + "getServerURL?user=" + user);
   std::ostringstream oss;
-  oss << kBasePath << "getServerURL?user=" << user;
-  auto resp = curlpp::options::Url(oss.str());
-  oss.str("");
   oss << resp;
   return oss.str();
 }
 
 inline void setIpAddress(const std::string& ipAddress, const std::string& user = kDefaultUser) {
+  auto resp = curlpp::options::Url(kBasePath + "setServerURL?user=" + user + "&url=" + ipAddress);
   std::ostringstream oss;
-  oss << kBasePath << "setServerURL?user=" << user << "&url=" << ipAddress;
-  auto resp = curlpp::options::Url(oss.str());
-  oss.str("");
   oss << resp;
   if (oss.str() != "OK") {
     std::cout << oss.str() << std::endl;
@@ -56,11 +52,11 @@ inline void setIpAddress(const std::string& ipAddress, const std::string& user =
 }
 
 inline std::future<void> setIpAddressAsync(const std::string& ipAddress,
-				    const std::string& user = kDefaultUser) {
+					   const std::string& user = kDefaultUser) {
   return std::async(std::launch::async, setIpAddress, ipAddress, user);
 }
 
-} // namespace FirebaseHelper
-} // namespace Common
+}  // namespace FirebaseHelper
+}  // namespace Common
 
 #endif  // COMMON_FIREBASE_HELPER_HPP

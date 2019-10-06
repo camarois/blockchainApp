@@ -8,8 +8,6 @@
 
 #include <common/example.hpp>
 
-using json = nlohmann::json;
-
 namespace Rest {
 
 class UserController {
@@ -18,9 +16,13 @@ class UserController {
 
  private:
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
-  void handleLol(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
+  void handleLol(const Pistache::Rest::Request& /*unused*/,
+		 Pistache::Http::ResponseWriter response);
+  void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+
+  const std::string kBasePath = "/usager/";
 };
 
-} // namespace Rest
+}  // namespace Rest
 
-#endif // REST_USER_CONTROLLER_HPP
+#endif  // REST_USER_CONTROLLER_HPP

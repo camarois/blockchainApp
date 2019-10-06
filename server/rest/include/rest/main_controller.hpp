@@ -10,8 +10,6 @@
 #include <rest/example_controller.hpp>
 #include <common/example.hpp>
 
-using json = nlohmann::json;
-
 namespace Rest {
 
 class MainController {

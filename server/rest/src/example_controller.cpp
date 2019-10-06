@@ -1,8 +1,6 @@
 #include <common/message_helper.hpp>
 #include <rest/example_controller.hpp>
 
-using json = nlohmann::json;
-
 namespace Rest {
 
 ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router)

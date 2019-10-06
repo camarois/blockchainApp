@@ -9,8 +9,6 @@
 
 #include <common/example.hpp>
 
-using json = nlohmann::json;
-
 namespace Rest {
 
 class ExampleController {
