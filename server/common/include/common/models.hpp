@@ -122,6 +122,34 @@ inline void from_json(const nlohmann::json& j, ClassesRequest& obj) {
   j[kTrimester].get_to(obj.trimester);
 }
 
+struct StudentRequest {
+  std::string acronym;
+  int trimester;
+  std::string id;
+};
+
+inline void to_json(nlohmann::json& j, const StudentRequest& obj) {
+  j = {{kAcronym, obj.acronym}, {kTrimester, obj.trimester}, {kId, obj.id}};
+}
+
+inline void from_json(const nlohmann::json& j, StudentRequest& obj) {
+  j[kAcronym].get_to(obj.acronym);
+  j[kTrimester].get_to(obj.trimester);
+  j[kId].get_to(obj.id);
+}
+
+struct StudentResponse {
+  std::string todo;
+};
+
+inline void to_json(nlohmann::json& j, const StudentResponse& obj) {
+  j = {{"TODO", obj.todo}};
+}
+
+inline void from_json(const nlohmann::json& j, StudentResponse& obj) {
+  j["TODO"].get_to(obj.todo);
+}
+
 }  // namespace Models
 }  // namespace Common
 

@@ -17,6 +17,7 @@ class InfoController {
  private:
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
   void handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath = "/info/";
 };
