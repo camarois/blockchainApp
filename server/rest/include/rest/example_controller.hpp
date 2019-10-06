@@ -11,6 +11,8 @@
 
 using json = nlohmann::json;
 
+namespace rest {
+
 class ExampleController {
  public:
   explicit ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router);
@@ -22,5 +24,7 @@ class ExampleController {
   zmq::context_t context_;
   zmq::socket_t socket_;
 };
+
+} // namespace rest
 
 #endif // REST_EXAMPLE_CONTROLLER_HPP

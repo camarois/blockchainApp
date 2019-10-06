@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     Pistache::Port port(kPortNumber);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
-    MainController mainController(addr, kNbThreads);
+    rest::MainController mainController(addr, kNbThreads);
     mainController.start();
 
     return 0;

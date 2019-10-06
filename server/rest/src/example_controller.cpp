@@ -3,6 +3,8 @@
 
 using json = nlohmann::json;
 
+namespace rest {
+
 ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router)
     : context_(1),
       socket_(context_, ZMQ_REP) {
@@ -35,3 +37,5 @@ void ExampleController::handleStart(const Pistache::Rest::Request& /*unused*/,
 
   response.send(Pistache::Http::Code::Ok, "Fake mining completed.");
 }
+
+} // namespace rest

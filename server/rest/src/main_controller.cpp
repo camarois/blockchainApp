@@ -1,6 +1,8 @@
 #include <common/message_helper.hpp>
 #include <rest/main_controller.hpp>
 
+namespace rest {
+
 MainController::MainController(Pistache::Address addr, size_t thr)
     : httpEndpoint_(addr),
       router_(std::make_shared<Pistache::Rest::Router>()),
@@ -15,3 +17,5 @@ void MainController::start() {
   httpEndpoint_.setHandler(router_->handler());
   httpEndpoint_.serve();
 }
+
+} // namespace rest

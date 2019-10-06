@@ -12,6 +12,8 @@
 
 using json = nlohmann::json;
 
+namespace rest {
+
 class MainController {
  public:
   explicit MainController(Pistache::Address addr, size_t thr);
@@ -21,8 +23,10 @@ class MainController {
  private:
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Pistache::Rest::Router> router_;
-  UserController userController_;
-  ExampleController exampleController_;
+  rest::UserController userController_;
+  rest::ExampleController exampleController_;
 };
+
+} // namespace rest
 
 #endif // REST_MAIN_CONTROLLER_HPP

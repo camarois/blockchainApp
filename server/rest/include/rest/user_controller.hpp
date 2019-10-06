@@ -10,6 +10,8 @@
 
 using json = nlohmann::json;
 
+namespace rest {
+
 class UserController {
  public:
   explicit UserController(const std::shared_ptr<Pistache::Rest::Router>& router);
@@ -18,5 +20,7 @@ class UserController {
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
   void handleLol(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
 };
+
+} // namespace rest
 
 #endif // REST_USER_CONTROLLER_HPP
