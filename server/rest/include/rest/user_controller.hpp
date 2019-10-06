@@ -16,9 +16,9 @@ class UserController {
 
  private:
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
-  void handleLol(const Pistache::Rest::Request& /*unused*/,
-		 Pistache::Http::ResponseWriter response);
   void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath = "/usager/";
 };

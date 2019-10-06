@@ -7,8 +7,11 @@
 namespace Common {
 namespace Models {
 
-const std::string kUsernameStr = "usager";
-const std::string kPasswordStr = "mot_de_passe";
+const std::string kUsername = "usager";
+const std::string kPassword = "mot_de_passe";
+const std::string kEdtion = "edition";
+const std::string kOld = "ancien";
+const std::string kNew = "nouveau";
 
 template <typename T>
 inline T from_str(const std::string& str) {
@@ -17,7 +20,7 @@ inline T from_str(const std::string& str) {
 
 template <typename T>
 inline std::string to_str(const T& obj) {
-    return ((nlohmann::json)obj).dump();
+    return ((nlohmann::json)obj).dump(4);
 }
 
 struct LoginRequest {
@@ -26,12 +29,38 @@ struct LoginRequest {
 };
 
 inline void to_json(nlohmann::json& j, const LoginRequest& obj) {
-  j = nlohmann::json{{kUsernameStr, obj.username}, {kPasswordStr, obj.password}};
+  j = nlohmann::json{{kUsername, obj.username}, {kPassword, obj.password}};
 }
 
 inline void from_json(const nlohmann::json& j, LoginRequest& obj) {
-  j.at(kUsernameStr).get_to(obj.username);
-  j.at(kPasswordStr).get_to(obj.password);
+  j.at(kUsername).get_to(obj.username);
+  j.at(kPassword).get_to(obj.password);
+}
+
+struct LoginResponse {
+  bool edition;
+};
+
+inline void to_json(nlohmann::json& j, const LoginResponse& obj) {
+  j = nlohmann::json{{kEdtion, obj.edition}};
+}
+
+inline void from_json(const nlohmann::json& j, LoginResponse& obj) {
+  j.at(kEdtion).get_to(obj.edition);
+}
+
+struct PasswordRequest {
+  std::string oldPwd;
+  std::string newPwd;
+};
+
+inline void to_json(nlohmann::json& j, const PasswordRequest& obj) {
+  j = nlohmann::json{{kOld, obj.oldPwd}, {kNew, obj.newPwd}};
+}
+
+inline void from_json(const nlohmann::json& j, PasswordRequest& obj) {
+  j.at(kOld).get_to(obj.oldPwd);
+  j.at(kNew).get_to(obj.newPwd);
 }
 
 }  // namespace Models
