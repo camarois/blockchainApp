@@ -9,7 +9,8 @@ MainController::MainController(Pistache::Address addr, size_t thr)
       // List of controllers:
       userController_(router_),
       exampleController_(router_),
-      transactionController_(router_) {
+      transactionController_(router_),
+      infoController_(router_) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
   httpEndpoint_.init(opts);
 }

@@ -49,9 +49,7 @@ struct LoginResponse {
   bool edition;
 };
 
-inline void to_json(nlohmann::json& j, const LoginResponse& obj) {
-  j = {{kEdtion, obj.edition}};
-}
+inline void to_json(nlohmann::json& j, const LoginResponse& obj) { j = {{kEdtion, obj.edition}}; }
 
 inline void from_json(const nlohmann::json& j, LoginResponse& obj) {
   j[kEdtion].get_to(obj.edition);
@@ -108,6 +106,20 @@ inline void from_json(const nlohmann::json& j, TransactionRequest& obj) {
   j[kName].get_to(obj.name);
   j[kTrimester].get_to(obj.trimester);
   j[kResults].get_to(obj.results);
+}
+
+struct ClassesRequest {
+  std::string acronym;
+  int trimester;
+};
+
+inline void to_json(nlohmann::json& j, const ClassesRequest& obj) {
+  j = {{kAcronym, obj.acronym}, {kTrimester, obj.trimester}};
+}
+
+inline void from_json(const nlohmann::json& j, ClassesRequest& obj) {
+  j[kAcronym].get_to(obj.acronym);
+  j[kTrimester].get_to(obj.trimester);
 }
 
 }  // namespace Models
