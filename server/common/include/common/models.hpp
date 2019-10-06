@@ -150,6 +150,20 @@ inline void from_json(const nlohmann::json& j, StudentResponse& obj) {
   j["TODO"].get_to(obj.todo);
 }
 
+struct GradesRequest {
+  std::string acronym;
+  int trimester;
+};
+
+inline void to_json(nlohmann::json& j, const GradesRequest& obj) {
+  j = {{kAcronym, obj.acronym}, {kTrimester, obj.trimester}};
+}
+
+inline void from_json(const nlohmann::json& j, GradesRequest& obj) {
+  j[kAcronym].get_to(obj.acronym);
+  j[kTrimester].get_to(obj.trimester);
+}
+
 }  // namespace Models
 }  // namespace Common
 
