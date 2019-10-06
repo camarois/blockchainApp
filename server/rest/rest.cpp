@@ -20,16 +20,16 @@ int main(int argc, char* argv[]) {
   GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);  // NOLINT
 
   try {
-    auto selfIpAddress = FirebaseHelper::getSelfIpAddress();
+    auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
-    std::future<void> future = FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
+    std::future<void> future = Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
 
     const int kPortNumber = 10000;
     const int kNbThreads = 4;
     Pistache::Port port(kPortNumber);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
-    rest::MainController mainController(addr, kNbThreads);
+    Rest::MainController mainController(addr, kNbThreads);
     mainController.start();
 
     return 0;

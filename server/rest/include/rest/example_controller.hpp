@@ -11,7 +11,7 @@
 
 using json = nlohmann::json;
 
-namespace rest {
+namespace Rest {
 
 class ExampleController {
  public:
@@ -25,6 +25,6 @@ class ExampleController {
   zmq::socket_t socket_;
 };
 
-} // namespace rest
+} // namespace Rest
 
 #endif // REST_EXAMPLE_CONTROLLER_HPP

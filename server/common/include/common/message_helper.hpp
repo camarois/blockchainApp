@@ -4,6 +4,7 @@
 #include <string>
 #include <zmq.hpp>
 
+namespace Common {
 namespace MessageHelper {
 inline std::string toString(const zmq::message_t& message) {
   return std::string(static_cast<const char*>(message.data()), message.size());
@@ -15,6 +16,7 @@ inline zmq::message_t fromString(const std::string& str) {
   return mnessage;
 }
 
-}  // namespace MessageHelper
+} // namespace MessageHelper
+} // namespace Common
 
 #endif // COMMON_MESSAGE_HELPER_HPP

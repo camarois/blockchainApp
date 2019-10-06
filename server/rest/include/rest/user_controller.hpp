@@ -10,7 +10,7 @@
 
 using json = nlohmann::json;
 
-namespace rest {
+namespace Rest {
 
 class UserController {
  public:
@@ -21,6 +21,6 @@ class UserController {
   void handleLol(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
 };
 
-} // namespace rest
+} // namespace Rest
 
 #endif // REST_USER_CONTROLLER_HPP

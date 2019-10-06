@@ -9,6 +9,7 @@
 #include <sstream>
 #include <stdio.h>
 
+namespace Common {
 namespace FirebaseHelper {
 const char* kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
 const char* kDefaultUser = "server";
@@ -59,6 +60,7 @@ inline std::future<void> setIpAddressAsync(const std::string& ipAddress,
   return std::async(std::launch::async, setIpAddress, ipAddress, user);
 }
 
-}  // namespace FirebaseHelper
+} // namespace FirebaseHelper
+} // namespace Common
 
 #endif  // COMMON_FIREBASE_HELPER_HPP

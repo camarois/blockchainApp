@@ -1,7 +1,7 @@
 #include <common/message_helper.hpp>
 #include <rest/main_controller.hpp>
 
-namespace rest {
+namespace Rest {
 
 MainController::MainController(Pistache::Address addr, size_t thr)
     : httpEndpoint_(addr),
@@ -18,4 +18,4 @@ void MainController::start() {
   httpEndpoint_.serve();
 }
 
-} // namespace rest
+} // namespace Rest

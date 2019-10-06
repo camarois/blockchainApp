@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {
-    addr = "tcp://" + FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" +
+    addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" +
 	   std::to_string(FLAGS_port);
   }
   std::cout << "Server ip address: " << addr << std::endl;
@@ -34,14 +34,14 @@ int main(int argc, char* argv[]) {
 
     while (true) {
       std::cout << "Sending " << std::flush;
-      auto request = MessageHelper::fromString("from miner");
+      auto request = Common::MessageHelper::fromString("from miner");
       socket.send(request, zmq::send_flags::none);
       std::cout << "Sent " << std::flush;
 
       zmq::message_t reply;
       std::cout << "Receving " << std::flush;
       socket.recv(reply, zmq::recv_flags::none);
-      auto str = MessageHelper::toString(reply);
+      auto str = Common::MessageHelper::toString(reply);
       std::cout << str << std::endl;
     }
     return 0;
