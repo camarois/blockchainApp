@@ -37,12 +37,12 @@ struct LoginRequest {
 };
 
 inline void to_json(nlohmann::json& j, const LoginRequest& obj) {
-  j = nlohmann::json{{kUsername, obj.username}, {kPassword, obj.password}};
+  j = {{kUsername, obj.username}, {kPassword, obj.password}};
 }
 
 inline void from_json(const nlohmann::json& j, LoginRequest& obj) {
-  j.at(kUsername).get_to(obj.username);
-  j.at(kPassword).get_to(obj.password);
+  j[kUsername].get_to(obj.username);
+  j[kPassword].get_to(obj.password);
 }
 
 struct LoginResponse {
@@ -50,11 +50,11 @@ struct LoginResponse {
 };
 
 inline void to_json(nlohmann::json& j, const LoginResponse& obj) {
-  j = nlohmann::json{{kEdtion, obj.edition}};
+  j = {{kEdtion, obj.edition}};
 }
 
 inline void from_json(const nlohmann::json& j, LoginResponse& obj) {
-  j.at(kEdtion).get_to(obj.edition);
+  j[kEdtion].get_to(obj.edition);
 }
 
 struct PasswordRequest {
@@ -67,8 +67,8 @@ inline void to_json(nlohmann::json& j, const PasswordRequest& obj) {
 }
 
 inline void from_json(const nlohmann::json& j, PasswordRequest& obj) {
-  j.at(kOld).get_to(obj.oldPwd);
-  j.at(kNew).get_to(obj.newPwd);
+  j[kOld].get_to(obj.oldPwd);
+  j[kNew].get_to(obj.newPwd);
 }
 
 struct Result {
@@ -79,8 +79,7 @@ struct Result {
 };
 
 inline void to_json(nlohmann::json& j, const Result& obj) {
-  j = nlohmann::json{
-      {kName, obj.lastName}, {kFirstName, obj.firstName}, {kId, obj.id}, {kGrade, obj.grade}};
+  j = {{kName, obj.lastName}, {kFirstName, obj.firstName}, {kId, obj.id}, {kGrade, obj.grade}};
 }
 
 inline void from_json(const nlohmann::json& j, Result& obj) {
@@ -94,21 +93,21 @@ struct TransactionRequest {
   std::string acronym;
   std::string name;
   int trimester;
-  // std::vector<Result> results;
+  std::vector<Result> results;
 };
 
 inline void to_json(nlohmann::json& j, const TransactionRequest& obj) {
-  j = nlohmann::json{{kAcronym, obj.acronym},
-  	     {kName, obj.name},
-  	     {kTrimester, obj.trimester}/*,
-         {kResults, obj.results}*/};
+  j = {{kAcronym, obj.acronym},
+       {kName, obj.name},
+       {kTrimester, obj.trimester},
+       {kResults, obj.results}};
 }
 
 inline void from_json(const nlohmann::json& j, TransactionRequest& obj) {
   j[kAcronym].get_to(obj.acronym);
   j[kName].get_to(obj.name);
   j[kTrimester].get_to(obj.trimester);
-  // j[kResults].get_to(obj.results);
+  j[kResults].get_to(obj.results);
 }
 
 }  // namespace Models
