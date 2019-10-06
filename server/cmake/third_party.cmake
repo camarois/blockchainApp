@@ -1,8 +1,6 @@
-# set(GENERATOR_DEFINES -GNinja)
 set(INSTALL_DEFINES -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/externals)
 set(BUILD_TYPE_DEFINES -DCMAKE_BUILD_TYPE=Release)
 set(COMMON_DEFINES
-    # ${GENERATOR_DEFINES}
     ${BUILD_TYPE_DEFINES}
     ${TOOLCHAIN_DEFINES}
     ${INSTALL_DEFINES}
@@ -19,6 +17,7 @@ ExternalProject_Add(libgflags
     CMAKE_ARGS -DBUILD_STATIC_LIBS=on
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgflags
+    UPDATE_DISCONNECTED ON
 )
 
 ExternalProject_Add(libjson
@@ -27,37 +26,41 @@ ExternalProject_Add(libjson
     CMAKE_ARGS -DBUILD_TESTING=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libjson
+    UPDATE_DISCONNECTED ON
 )
 
 ExternalProject_Add(libgtest
     GIT_REPOSITORY https://github.com/google/googletest.git
+    BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libgtest.a
     CMAKE_ARGS -Dgmock_build_tests=off
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
-    BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libgtest.a
     CMAKE_ARGS -Dgtest_disable_pthreads=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
+    UPDATE_DISCONNECTED ON
 )
 
 ExternalProject_Add(libpistache
     GIT_REPOSITORY https://github.com/oktal/pistache.git
-    CMAKE_ARGS -DPISTACHE_INSTALL=on
     BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libpistache.a
+    CMAKE_ARGS -DPISTACHE_INSTALL=on
     CMAKE_ARGS -DPISTACHE_USE_SSL=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libpistache
+    UPDATE_DISCONNECTED ON
 )
 
 ExternalProject_Add(libzmq
     GIT_REPOSITORY https://github.com/zeromq/libzmq.git
+    BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libzmq.a
     CMAKE_ARGS -DBUILD_TESTS=off
     CMAKE_ARGS -DENABLE_DRAFTS=off
     CMAKE_ARGS -DLIBZMQ_PEDANTIC=off
-    BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libzmq.a
     CMAKE_ARGS -DWITH_DOCS=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libzmq
+    UPDATE_DISCONNECTED ON
 )
 
 ExternalProject_Add(libcppzmq
@@ -66,12 +69,14 @@ ExternalProject_Add(libcppzmq
     CMAKE_ARGS -DCPPZMQ_BUILD_TESTS=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libcppzmq
+    UPDATE_DISCONNECTED ON
 )
 add_dependencies(libcppzmq libzmq)
 
 ExternalProject_Add(libcurlpp
-BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     GIT_REPOSITORY https://github.com/jpbarrette/curlpp.git
+    BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libcurlpp
+    UPDATE_DISCONNECTED ON
 )
