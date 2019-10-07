@@ -11,7 +11,8 @@ MainController::MainController(Pistache::Address addr, size_t thr)
       exampleController_(router_),
       transactionController_(router_),
       infoController_(router_),
-      fileController_(router_) {
+      fileController_(router_),
+      adminController_(router_) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
   httpEndpoint_.init(opts);
 }

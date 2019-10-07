@@ -10,7 +10,7 @@ namespace Models {
 
 const std::string kUsername = "usager";
 const std::string kPassword = "mot_de_passe";
-const std::string kEdtion = "edition";
+const std::string kEdition = "edition";
 const std::string kOld = "ancien";
 const std::string kNew = "nouveau";
 const std::string kAcronym = "sigle";
@@ -20,6 +20,15 @@ const std::string kResults = "resultats";
 const std::string kFirstName = "prenom";
 const std::string kId = "matricule";
 const std::string kGrade = "note";
+const std::string kLastBlocks = "dernier_blocs";
+const std::string kBloc = "bloc";
+const std::string kNext = "suivant";
+const std::string kLast = "dernier";
+const std::string kInformation = "information";
+const std::string kNo = "no";
+const std::string kSeverity = "severite";
+const std::string kTime = "heure";
+const std::string kMessage = "message";
 
 template <typename T>
 inline T from_str(const std::string& str) {
@@ -49,10 +58,10 @@ struct LoginResponse {
   bool edition;
 };
 
-inline void to_json(nlohmann::json& j, const LoginResponse& obj) { j = {{kEdtion, obj.edition}}; }
+inline void to_json(nlohmann::json& j, const LoginResponse& obj) { j = {{kEdition, obj.edition}}; }
 
 inline void from_json(const nlohmann::json& j, LoginResponse& obj) {
-  j[kEdtion].get_to(obj.edition);
+  j[kEdition].get_to(obj.edition);
 }
 
 struct PasswordRequest {
@@ -142,13 +151,9 @@ struct StudentResponse {
   std::string todo;
 };
 
-inline void to_json(nlohmann::json& j, const StudentResponse& obj) {
-  j = {{"TODO", obj.todo}};
-}
+inline void to_json(nlohmann::json& j, const StudentResponse& obj) { j = {{"TODO", obj.todo}}; }
 
-inline void from_json(const nlohmann::json& j, StudentResponse& obj) {
-  j["TODO"].get_to(obj.todo);
-}
+inline void from_json(const nlohmann::json& j, StudentResponse& obj) { j["TODO"].get_to(obj.todo); }
 
 struct GradesRequest {
   std::string acronym;
@@ -162,6 +167,101 @@ inline void to_json(nlohmann::json& j, const GradesRequest& obj) {
 inline void from_json(const nlohmann::json& j, GradesRequest& obj) {
   j[kAcronym].get_to(obj.acronym);
   j[kTrimester].get_to(obj.trimester);
+}
+
+struct ChainRequest {
+  int lastBlocks;
+};
+
+inline void to_json(nlohmann::json& j, const ChainRequest& obj) {
+  j = {{kLastBlocks, obj.lastBlocks}};
+}
+
+inline void from_json(const nlohmann::json& j, ChainRequest& obj) {
+  j[kLastBlocks].get_to(obj.lastBlocks);
+}
+
+struct ChainResponse {
+  std::string bloc;  // TODO verify if string is better than generic object
+  std::unique_ptr<ChainResponse> next;
+};
+
+inline void to_json(nlohmann::json& j, const ChainResponse& obj) {
+  j = {{kBloc, obj.bloc}};
+  if (obj.next) {
+    j[kNext] = *obj.next;
+  }
+}
+
+inline void from_json(const nlohmann::json& j, ChainResponse& obj) {
+  j[kBloc].get_to(obj.bloc);
+  j[kNext].get_to(*obj.next);
+}
+
+struct LogsRequest {
+  int last;
+};
+
+inline void to_json(nlohmann::json& j, const LogsRequest& obj) { j = {{kLast, obj.last}}; }
+
+inline void from_json(const nlohmann::json& j, LogsRequest& obj) { j[kLast].get_to(obj.last); }
+
+struct Information {
+  int no;
+  std::string severity;
+  std::string time;
+  std::string message;
+};
+
+inline void to_json(nlohmann::json& j, const Information& obj) {
+  j = {{kNo, obj.no}, {kSeverity, obj.severity}, {kTime, obj.time}, {kMessage, obj.message}};
+}
+
+inline void from_json(const nlohmann::json& j, Information& obj) {
+  j[kNo].get_to(obj.no);
+  j[kSeverity].get_to(obj.severity);
+  j[kTime].get_to(obj.time);
+  j[kMessage].get_to(obj.message);
+}
+
+struct LogsResponse {
+  Information information;
+};
+
+inline void to_json(nlohmann::json& j, const LogsResponse& obj) {
+  j = {{kInformation, obj.information}};
+}
+
+inline void from_json(const nlohmann::json& j, LogsResponse& obj) {
+  j[kInformation].get_to(obj.information);
+}
+
+struct CreateAccountRequest {
+  std::string username;
+  std::string password;
+  bool edition;
+};
+
+inline void to_json(nlohmann::json& j, const CreateAccountRequest& obj) {
+  j = {{kUsername, obj.username}, {kPassword, obj.password}, {kEdition, obj.edition}};
+}
+
+inline void from_json(const nlohmann::json& j, CreateAccountRequest& obj) {
+  j[kUsername].get_to(obj.username);
+  j[kPassword].get_to(obj.password);
+  j[kEdition].get_to(obj.edition);
+}
+
+struct DeleteAccountRequest {
+  std::string username;
+};
+
+inline void to_json(nlohmann::json& j, const DeleteAccountRequest& obj) {
+  j = {{kUsername, obj.username}};
+}
+
+inline void from_json(const nlohmann::json& j, DeleteAccountRequest& obj) {
+  j[kUsername].get_to(obj.username);
 }
 
 }  // namespace Models

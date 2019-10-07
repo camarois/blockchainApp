@@ -10,6 +10,7 @@
 #include <rest/transaction_controller.hpp>
 #include <rest/info_controller.hpp>
 #include <rest/file_controller.hpp>
+#include <rest/admin_controller.hpp>
 
 namespace Rest {
 
@@ -27,6 +28,7 @@ class MainController {
   Rest::TransactionController transactionController_;
   Rest::InfoController infoController_;
   Rest::FileController fileController_;
+  Rest::AdminController adminController_;
 };
 
 }  // namespace Rest
