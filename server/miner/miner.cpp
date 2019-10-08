@@ -1,6 +1,6 @@
 #include "common/firebase_helper.hpp"
 #include "common/message_helper.hpp"
-#include <gflags/gflags.h>
+#include "common/gflags_helper.hpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -11,14 +11,7 @@ DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 DEFINE_int32(port, 5555, "REST service port");
 
 int main(int argc, char* argv[]) {
-  for (int i = 0; i < argc; i++) {
-    if (strcmp("--help", argv[i]) == 0) {
-      argv[i] = "--helpshort";
-    }
-  }
-
-  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service");
-  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);
+  Common::GflagsHelper::init("Blockchain miner service", argc, argv);
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {

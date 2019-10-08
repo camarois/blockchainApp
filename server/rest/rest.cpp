@@ -1,23 +1,15 @@
 #include <common/firebase_helper.hpp>
-#include <gflags/gflags.h>
 #include <iostream>
 #include <rest/main_controller.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include "common/gflags_helper.hpp"
 
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 
 int main(int argc, char* argv[]) {
-  for (int i = 0; i < argc; i++) {
-    if (strcmp("--help", argv[i]) == 0) {
-      argv[i] = "--helpshort";
-    }
-  }
-
-  // TODO put in method in common.
-  GFLAGS_NAMESPACE::SetUsageMessage("Rest service");		 // NOLINT
-  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);  // NOLINT
+  Common::GflagsHelper::init("Rest service", argc, argv);
 
   try {
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
