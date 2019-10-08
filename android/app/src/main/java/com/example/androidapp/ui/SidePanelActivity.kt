@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import com.example.androidapp.R
+import com.example.androidapp.ui.fragments.StudentInfoFragment
 import com.example.androidapp.ui.fragments.search.SearchFragment
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 
@@ -20,6 +21,7 @@ import com.example.androidapp.ui.fragments.search.student.StudentItem
 class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInteractionListener {
 
     override fun onListFragmentInteraction(item: StudentItem) {
+        // StudentInfoFragment.beginTransaction().replace(R.id.action_container,StudentInfoFragment.getInstance()).commit()
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
