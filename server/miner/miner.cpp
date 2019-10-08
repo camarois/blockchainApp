@@ -1,24 +1,36 @@
+#include "common/firebase_helper.hpp"
 #include "common/message_helper.hpp"
-#include <common/firebase_helper.hpp>
+#include <gflags/gflags.h>
 #include <iostream>
 #include <string>
 #include <unistd.h>
 #include <zmq.hpp>
 
+DEFINE_string(addr, "", "REST service address");		// NOLINT
+DEFINE_string(user, "server", "Developper using the service");  // NOLINT
+DEFINE_int32(port, 5555, "REST service port");
+
 int main(int argc, char* argv[]) {
+  for (int i = 0; i < argc; i++) {
+    if (strcmp("--help", argv[i]) == 0) {
+      argv[i] = "--helpshort";
+    }
+  }
+
+  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service");
+  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);
+
+  std::string addr = FLAGS_addr;
+  if (addr.empty()) {
+    addr = "tcp://" + FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" +
+	   std::to_string(FLAGS_port);
+  }
+  std::cout << "Server ip address: " << addr << std::endl;
+
   try {
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REQ);
-    std::ostringstream oss;
-    std::string serverIpAddress;
-    if (argc > 1) {
-      serverIpAddress = FirebaseHelper::getServerIpAddress(argv[1]);
-    } else {
-      serverIpAddress = FirebaseHelper::getServerIpAddress();
-    }
-    oss << "tcp://" << serverIpAddress << ":5555";
-    std::cout << "Server ip address: " << serverIpAddress << std::endl;
-    socket.connect(oss.str());
+    socket.connect(addr);
 
     while (true) {
       std::cout << "Sending " << std::flush;

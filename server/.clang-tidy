@@ -2,6 +2,8 @@ Checks: >
   *,
   -fuchsia-default-arguments,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -fuchsia-statically-constructed-objects,
+  -cert-err58-cpp,
 
 WarningsAsErrors: "*"
 

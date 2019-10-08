@@ -1,6 +1,13 @@
-file (GLOB_RECURSE COMMON_SOURCE_FILES "*.cpp")
-add_library(common ${COMMON_SOURCE_FILES})
-target_include_directories(common PUBLIC include
-    ${CMAKE_SOURCE_DIR}/third_party/libzmp/include ${CMAKE_SOURCE_DIR}/third_party/cppzmq
-    ${CMAKE_SOURCE_DIR}/third_party/curlpp/include)
-target_link_libraries(common PUBLIC nlohmann_json libzmq-static curlpp)
+file(GLOB_RECURSE COMMON_SOURCE_FILES "*.cpp")
+
+add_library(common STATIC ${COMMON_SOURCE_FILES})
+add_dependencies(common libcppzmq libzmq libjson libgflags libcurlpp)
+
+target_include_directories(common PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(common PRIVATE
+    ${EXTERNAL_LIBS_DIR}/libzmq.a
+    ${EXTERNAL_LIBS_DIR}/libgflags.a
+)
