@@ -17,16 +17,12 @@ class AdminController {
  private:
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
   void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
-  void handleLogout(const Pistache::Rest::Request& request,
-		    Pistache::Http::ResponseWriter response);
-  void handlePassword(const Pistache::Rest::Request& request,
-		      Pistache::Http::ResponseWriter response);
+  void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
-  void handleCreateAccount(const Pistache::Rest::Request& request,
-			   Pistache::Http::ResponseWriter response);
-  void handleDeleteAccount(const Pistache::Rest::Request& request,
-			   Pistache::Http::ResponseWriter response);
+  void handleCreateAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleDeleteAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/admin/";
   const std::string kId_ = ":id";

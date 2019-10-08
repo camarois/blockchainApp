@@ -22,7 +22,7 @@ inline std::string getSelfIpAddress() {
     struct ifaddrs* teamAddr = interfaces;
     while (teamAddr != nullptr) {
       if (teamAddr->ifa_addr->sa_family == AF_INET && strcmp(teamAddr->ifa_name, "wifi0") == 0) {
-	ipAddress = inet_ntoa(((struct sockaddr_in*)teamAddr->ifa_addr)->sin_addr);  // NOLINT
+        ipAddress = inet_ntoa(((struct sockaddr_in*)teamAddr->ifa_addr)->sin_addr);  // NOLINT
       }
       teamAddr = teamAddr->ifa_next;
     }
@@ -52,7 +52,7 @@ inline void setIpAddress(const std::string& ipAddress, const std::string& user =
 }
 
 inline std::future<void> setIpAddressAsync(const std::string& ipAddress,
-					   const std::string& user = kDefaultUser) {
+                                           const std::string& user = kDefaultUser) {
   return std::async(std::launch::async, setIpAddress, ipAddress, user);
 }
 

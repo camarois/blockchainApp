@@ -3,15 +3,13 @@
 
 namespace Rest {
 
-TransactionController::TransactionController(
-    const std::shared_ptr<Pistache::Rest::Router>& router) {
+TransactionController::TransactionController(const std::shared_ptr<Pistache::Rest::Router>& router) {
   setupRoutes(router);
 }
 
 void TransactionController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Post(
-      *router, kBasePath_,
-      Pistache::Rest::Routes::bind(&TransactionController::handleTransaction, this));
+  Pistache::Rest::Routes::Post(*router, kBasePath_,
+                               Pistache::Rest::Routes::bind(&TransactionController::handleTransaction, this));
 }
 
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,

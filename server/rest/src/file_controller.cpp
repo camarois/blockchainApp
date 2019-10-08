@@ -3,9 +3,7 @@
 
 namespace Rest {
 
-FileController::FileController(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  setupRoutes(router);
-}
+FileController::FileController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
 
 void FileController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
   Pistache::Rest::Routes::Post(*router, kBasePath_ + "notes",

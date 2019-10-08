@@ -23,6 +23,6 @@ class ExampleController {
   zmq::socket_t socket_;
 };
 
-} // namespace Rest
+}  // namespace Rest
 
-#endif // REST_EXAMPLE_CONTROLLER_HPP
+#endif  // REST_EXAMPLE_CONTROLLER_HPP

@@ -4,7 +4,7 @@ Language: Cpp
 BasedOnStyle: Google
 DerivePointerAlignment: false
 PointerAlignment: Left
-ColumnLimit: 100
+ColumnLimit: 110
 IncludeCategories:
   - Regex: ".*"
     Priority: 1
