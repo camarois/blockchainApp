@@ -5,6 +5,16 @@ stages:
     - test
     - lint
 
+cache:
+    paths:
+        - server/build/libcppzmq/**/*
+        - server/build/libcurlpp/**/*
+        - server/build/libgflags/**/*
+        - server/build/libgtest/**/*
+        - server/build/libjson/**/*
+        - server/build/libpistache/**/*
+        - server/build/libzmq/**/*
+
 ################
 # Build Stages #
 ################
@@ -120,5 +130,3 @@ lint-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
-    dependencies:
-        - build-server
