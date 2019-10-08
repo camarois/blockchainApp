@@ -23,21 +23,21 @@ build-server:
         paths:
             - server/build
 
-build-server:armv7:
-    stage: build
-    before_script:
-        - mkdir -p server/build
-    script:
-        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
-    only:
-        changes:
-            - server/**/*
-            - .gitlab-ci.yml
-    artifacts:
-        paths:
-            - server/build/miner/miner
-            - server/build/rest/rest
-    allow_failure: true
+#build-server:armv7:
+#    stage: build
+#    before_script:
+#        - mkdir -p server/build
+#    script:
+#        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
+#    only:
+#        changes:
+#            - server/**/*
+#            - .gitlab-ci.yml
+#    artifacts:
+#        paths:
+#            - server/build/miner/miner
+#            - server/build/rest/rest
+#    allow_failure: true
 
 build-desktop:
     stage: build
