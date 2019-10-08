@@ -1,11 +1,11 @@
+#include <common/firebase_helper.hpp>
 #include <iostream>
 #include <rest/example_endpoint.hpp>
-#include <common/firebase_helper.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   try {
     auto selfIpAddress = FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
