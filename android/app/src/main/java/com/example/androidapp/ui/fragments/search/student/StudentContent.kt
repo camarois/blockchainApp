@@ -36,6 +36,6 @@ object StudentContent {
 
     private fun createStudentItem(position: Int): StudentItem {
         return StudentItem(position.toString(),
-            "Prenom Nom $position", "GENIE INFO", (position * 4/25).toFloat(), 2000+position, "notes.pdf")
+            "Prenom Nom $position", "GENIE INFO", (position * 4 / 25).toFloat(), 2000 + position, "notes.pdf")
     }
 }

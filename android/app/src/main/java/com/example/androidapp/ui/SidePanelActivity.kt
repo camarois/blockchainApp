@@ -16,7 +16,6 @@ import com.example.androidapp.R
 import com.example.androidapp.ui.fragments.search.SearchFragment
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 
-
 class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInteractionListener {
 
     override fun onListFragmentInteraction(item: StudentItem) {

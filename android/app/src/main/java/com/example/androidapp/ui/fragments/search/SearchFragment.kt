@@ -50,10 +50,10 @@ class SearchFragment : Fragment() {
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-               layoutManager = when {
-                   columnCount <= 1 -> LinearLayoutManager(context)
-                   else -> GridLayoutManager(context, columnCount)
-               }
+                layoutManager = when {
+                    columnCount <= 1 -> LinearLayoutManager(context)
+                    else -> GridLayoutManager(context, columnCount)
+                }
                 adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
             }
         }
