@@ -4,8 +4,7 @@
 namespace Rest {
 
 ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router)
-    : context_(1),
-      socket_(context_, ZMQ_REP) {
+    : context_(1), socket_(context_, ZMQ_REP) {
   socket_.bind("tcp://*:5555");
   std::cout << "zmq socket created" << std::endl;
   setupRoutes(router);
@@ -17,7 +16,7 @@ void ExampleController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router
 }
 
 void ExampleController::handleStart(const Pistache::Rest::Request& /*unused*/,
-				  Pistache::Http::ResponseWriter response) {
+				    Pistache::Http::ResponseWriter response) {
   for (int i = 0; i < 3; ++i) {
     zmq::message_t reply;
     std::cout << "Receving " << std::flush;
@@ -36,4 +35,4 @@ void ExampleController::handleStart(const Pistache::Rest::Request& /*unused*/,
   response.send(Pistache::Http::Code::Ok, "Fake mining completed.");
 }
 
-} // namespace Rest
+}  // namespace Rest

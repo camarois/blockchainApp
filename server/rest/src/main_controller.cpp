@@ -22,4 +22,4 @@ void MainController::start() {
   httpEndpoint_.serve();
 }
 
-} // namespace Rest
+}  // namespace Rest

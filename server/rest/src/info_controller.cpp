@@ -25,7 +25,8 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request,
 				    Pistache::Http::ResponseWriter response) {
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
   Common::Models::StudentResponse studentResponse;
-  response.send(Pistache::Http::Code::I_m_a_teapot, static_cast<nlohmann::json>(studentResponse).dump(4));
+  response.send(Pistache::Http::Code::I_m_a_teapot,
+		static_cast<nlohmann::json>(studentResponse).dump(4));
 }
 
 }  // namespace Rest
