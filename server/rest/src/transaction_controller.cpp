@@ -15,7 +15,7 @@ void TransactionController::setupRoutes(const std::shared_ptr<Pistache::Rest::Ro
 }
 
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
-					      Pistache::Http::ResponseWriter response) {
+                                              Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }

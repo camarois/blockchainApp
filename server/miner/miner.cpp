@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <zmq.hpp>
 
-DEFINE_string(addr, "", "REST service address");		// NOLINT
+DEFINE_string(addr, "", "REST service address");                // NOLINT
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 DEFINE_int32(port, 5555, "REST service port");
 
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   std::string addr = FLAGS_addr;
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" +
-	   std::to_string(FLAGS_port);
+           std::to_string(FLAGS_port);
   }
   std::cout << "Server ip address: " << addr << std::endl;
 

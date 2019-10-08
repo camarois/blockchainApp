@@ -6,7 +6,6 @@ function get_source_files() {
     local without_tests=$1
     local without_build_files=('-not' '-path' './build/*' '-not' '-path' './third_party/*')
 
-    # TODO: test header files
     if [[ $without_tests = true ]]; then
         without_tests=('-not' '-path' './tests/*')
     else

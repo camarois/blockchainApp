@@ -12,11 +12,11 @@ ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Route
 
 void ExampleController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
   Pistache::Rest::Routes::Get(*router, "/start",
-			      Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
+                              Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
 }
 
 void ExampleController::handleStart(const Pistache::Rest::Request& /*unused*/,
-				    Pistache::Http::ResponseWriter response) {
+                                    Pistache::Http::ResponseWriter response) {
   for (int i = 0; i < 3; ++i) {
     zmq::message_t reply;
     std::cout << "Receving " << std::flush;

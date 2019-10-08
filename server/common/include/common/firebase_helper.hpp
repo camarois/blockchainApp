@@ -22,7 +22,6 @@ inline std::string getSelfIpAddress() {
     struct ifaddrs* teamAddr = interfaces;
     while (teamAddr != nullptr) {
       if (teamAddr->ifa_addr->sa_family == AF_INET && strcmp(teamAddr->ifa_name, "wifi0") == 0) {
-	// auto test = reinterpret_cast<struct sockaddr_in*>(teamAddr->ifa_addr);
 	ipAddress = inet_ntoa(((struct sockaddr_in*)teamAddr->ifa_addr)->sin_addr);  // NOLINT
       }
       teamAddr = teamAddr->ifa_next;
