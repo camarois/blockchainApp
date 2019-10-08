@@ -1,6 +1,6 @@
 #include "common/firebase_helper.hpp"
-#include "common/message_helper.hpp"
 #include "common/gflags_helper.hpp"
+#include "common/message_helper.hpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>

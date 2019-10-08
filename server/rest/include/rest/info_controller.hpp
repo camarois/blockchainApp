@@ -19,7 +19,7 @@ class InfoController {
   void handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  const std::string kBasePath = "/info/";
+  const std::string kBasePath_ = "/info/";
 };
 
 }  // namespace Rest

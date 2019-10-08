@@ -28,8 +28,8 @@ class AdminController {
   void handleDeleteAccount(const Pistache::Rest::Request& request,
 			   Pistache::Http::ResponseWriter response);
 
-  const std::string kBasePath = "/admin/";
-  const std::string kId = ":id";
+  const std::string kBasePath_ = "/admin/";
+  const std::string kId_ = ":id";
 };
 
 }  // namespace Rest

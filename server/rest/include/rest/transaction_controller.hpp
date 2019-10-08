@@ -18,7 +18,7 @@ class TransactionController {
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
   void handleTransaction(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  const std::string kBasePath = "/transaction/";
+  const std::string kBasePath_ = "/transaction/";
 };
 
 }  // namespace Rest

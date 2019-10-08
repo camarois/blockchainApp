@@ -18,7 +18,7 @@ class FileController {
   void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
   void handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  const std::string kBasePath = "/fichier/";
+  const std::string kBasePath_ = "/fichier/";
 };
 
 }  // namespace Rest

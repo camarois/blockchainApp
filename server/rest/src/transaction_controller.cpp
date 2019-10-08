@@ -10,7 +10,7 @@ TransactionController::TransactionController(
 
 void TransactionController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
   Pistache::Rest::Routes::Post(
-      *router, kBasePath,
+      *router, kBasePath_,
       Pistache::Rest::Routes::bind(&TransactionController::handleTransaction, this));
 }
 

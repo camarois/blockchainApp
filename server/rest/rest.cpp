@@ -1,10 +1,10 @@
+#include "common/gflags_helper.hpp"
 #include <common/firebase_helper.hpp>
 #include <iostream>
 #include <rest/main_controller.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
-#include "common/gflags_helper.hpp"
 
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 

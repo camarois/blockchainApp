@@ -1,19 +1,21 @@
 #ifndef COMMON_GFLAGS_HELPER_HPP
 #define COMMON_GFLAGS_HELPER_HPP
 
-#include <string>
+#include <cstdio>
+#include <cstring>
 #include <gflags/gflags.h>
 
 namespace Common {
 namespace GflagsHelper {
-inline void init(std::string name, int argc, char* argv[]) {
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+inline void init(const std::string& name, int argc, char* argv[]) {
   for (int i = 0; i < argc; i++) {
     if (strcmp("--help", argv[i]) == 0) {
       argv[i] = "--helpshort";
     }
   }
 
-  GFLAGS_NAMESPACE::SetUsageMessage("Rest service");
+  GFLAGS_NAMESPACE::SetUsageMessage(name);
   GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);
 }
 

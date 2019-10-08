@@ -5,12 +5,12 @@
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
-#include <rest/example_controller.hpp>
-#include <rest/user_controller.hpp>
-#include <rest/transaction_controller.hpp>
-#include <rest/info_controller.hpp>
-#include <rest/file_controller.hpp>
 #include <rest/admin_controller.hpp>
+#include <rest/example_controller.hpp>
+#include <rest/file_controller.hpp>
+#include <rest/info_controller.hpp>
+#include <rest/transaction_controller.hpp>
+#include <rest/user_controller.hpp>
 
 namespace Rest {
 

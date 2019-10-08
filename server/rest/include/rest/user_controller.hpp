@@ -20,7 +20,7 @@ class UserController {
   void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  const std::string kBasePath = "/usager/";
+  const std::string kBasePath_ = "/usager/";
 };
 
 }  // namespace Rest
