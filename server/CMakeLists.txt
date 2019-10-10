@@ -20,7 +20,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 include(ExternalProject)
 include(cmake/third_party.cmake)
 
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+find_package(SQLite3 REQUIRED)
+
 add_subdirectory(common)
+
 set(COMMON_LIBS_DIR ${CMAKE_BINARY_DIR}/common)
 set(COMMON_SRCS_DIR ${CMAKE_SOURCE_DIR}/common)
 
