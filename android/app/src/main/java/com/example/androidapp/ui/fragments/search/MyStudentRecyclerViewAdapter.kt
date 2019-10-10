@@ -32,14 +32,13 @@ class MyStudentRecyclerViewAdapter(
     }
 
     private fun toggleFavorite(button: ImageButton, studentItem: StudentItem) {
-        if(studentItem.isFav) {
+        // TODO: Actually save favorites
+        if (studentItem.isFav) {
             button.setImageResource(R.drawable.ic_star_border_black_24dp)
         } else {
             button.setImageResource(R.drawable.ic_star_black_24dp)
         }
         studentItem.isFav = !studentItem.isFav
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,7 +53,7 @@ class MyStudentRecyclerViewAdapter(
         holder.mDegreeView.text = item.degree
         holder.mGPAView.text = item.gpa.toString()
 
-        holder.mFavButton.setOnClickListener{ toggleFavorite(holder.mFavButton, item)}
+        holder.mFavButton.setOnClickListener { toggleFavorite(holder.mFavButton, item) }
 
         with(holder.mView) {
             tag = item
