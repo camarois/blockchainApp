@@ -1,16 +1,15 @@
 #ifndef COMMON_SQLITE_ERR_HPP
 #define COMMON_SQLITE_ERR_HPP
 
-#include <stdexcept>
 #include <sqlite3.h>
+#include <stdexcept>
 
 namespace Common {
 
-class sqlite_err : public std::runtime_error {
+class SqliteErr : public std::runtime_error {
 public:
-    sqlite_err(int code = SQLITE_OK);
-    sqlite_err(int, const std::string&);
-    virtual ~sqlite_err();
+    explicit SqliteErr(int code = SQLITE_OK);
+    SqliteErr(int code, const std::string& msg);
 
     int code();
 
@@ -18,6 +17,6 @@ private:
     int code_;
 };
 
-}
+} // namespace Common
 
 #endif // COMMON_SQLITE_ERR_HPP
