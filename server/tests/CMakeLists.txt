@@ -21,5 +21,5 @@ target_link_libraries(tests_sqlite3 PRIVATE
 )
 
 add_test(tests COMMAND tests)
-add_test(tests_sqlite3 COMMAND sqlite3)
+add_test(tests_sqlite3 COMMAND tests)
 
