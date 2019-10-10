@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.example.androidapp">
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -32,5 +31,4 @@
                 android:name="io.fabric.ApiKey"
                 android:value="050160dd797abd8447d7542d388eda2fe8ef3ae3" />
     </application>
-
 </manifest>
