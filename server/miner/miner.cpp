@@ -8,7 +8,7 @@
 
 DEFINE_string(addr, "", "REST service address");		// NOLINT
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
-DEFINE_int32(port, 5555, "REST service port");			// NOLINT
+DEFINE_int32(port, 5555, "REST service port");
 
 int main(int argc, char* argv[]) {
   for (int i = 0; i < argc; i++) {
@@ -17,8 +17,8 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service");  // NOLINT
-  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);   // NOLINT
+  GFLAGS_NAMESPACE::SetUsageMessage("Blockchain miner service");
+  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, false);
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {

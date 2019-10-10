@@ -4,6 +4,8 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -modernize-use-nodiscard,
   -performance-unnecessary-value-param,
+  -fuchsia-statically-constructed-objects,
+  -cert-err58-cpp,
 
 WarningsAsErrors: "*"
 
