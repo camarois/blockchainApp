@@ -84,7 +84,7 @@ build-android:
 test-server:
     stage: test
     script:
-        - cd server && echo "TODO"
+        - cd server/build && make test
     only:
         changes:
             - server/**/*
