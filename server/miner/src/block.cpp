@@ -23,20 +23,20 @@ void Block::append(const std::string& data) {
 
 void Block::mine(int difficulty) {
   nonce_ = 0;
-  while(true) {
+  while (true) {
     std::string hash = getHash();
 
     bool invalid = false;
-    for(int i = 0; i < difficulty; i++) {
-      if(hash[i] != '0') {
-        nonce_++;
-        dirty_ = true;
-        invalid = true;
+    for (int i = 0; i < difficulty; i++) {
+      if (hash[i] != '0') {
+	nonce_++;
+	dirty_ = true;
+	invalid = true;
       }
     }
 
-    if(invalid) {
-        continue;
+    if (invalid) {
+      continue;
     }
 
     break;
@@ -44,13 +44,13 @@ void Block::mine(int difficulty) {
 }
 
 std::string Block::getHash() {
-  if(!dirty_) {
+  if (!dirty_) {
     return hash_;
   }
 
   std::stringstream stream;
   stream << nonce_ << previous_hash_;
-  for(std::string& str : data_) {
+  for (std::string& str : data_) {
     stream << str;
   }
   std::string str = stream.str();
@@ -63,6 +63,4 @@ std::string Block::getHash() {
   return hash_;
 }
 
-std::string Block::getPreviousHash() const {
-  return previous_hash_;
-}
+std::string Block::getPreviousHash() const { return previous_hash_; }
