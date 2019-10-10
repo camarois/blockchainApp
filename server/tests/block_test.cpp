@@ -3,24 +3,22 @@
 
 TEST(BlockTest, simple_hash) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
-  std::vector<std::string> data;
-  data.push_back("Cédrik Deschênes");
-  data.push_back("Anne-Sophie Provencher");
-  data.push_back("Ellie Marier");
-  Miner::Block block(previous, 15, data);
+  Miner::Block block(previous);
+  block.append("Cédrik Deschênes");
+  block.append("Anne-Sophie Provencher");
+  block.append("Ellie Marier");
 
   std::string received = block.getHash();
-  std::string expected = "7969e3efd42eeb6249f211f131667b6996d644db63c9ccea49c9b8812e524cd2";
+  std::string expected = "c918e346a971a1f6ab12a2e90c5e3516890a2c6388df017eff629719e27f4db1";
   ASSERT_EQ(expected, received);
 }
 
 TEST(BlockTest, mine_block) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
-  std::vector<std::string> data;
-  data.push_back("Chloë Berger");
-  data.push_back("Sébastien Valcourt");
-  data.push_back("Dave Potvin");
-  Miner::Block block(previous, 15, data);
+  Miner::Block block(previous);
+  block.append("Chloë Berger");
+  block.append("Sébastien Valcourt");
+  block.append("Dave Potvin");
 
   block.mine(3);
 
