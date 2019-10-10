@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class RegisterViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
+    val text: LiveData<String> = MutableLiveData<String>().apply {
         value = "This is send Fragment"
     }
-    val text: LiveData<String> = _text
 }
