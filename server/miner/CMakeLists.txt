@@ -15,6 +15,7 @@ target_link_libraries(miner PRIVATE
     ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     curl
     pthread
+    stdc++fs
 )
 
 target_compile_options(miner PRIVATE

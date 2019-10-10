@@ -9,6 +9,7 @@ link_libraries(
     gtest
     gtest_main
     pthread
+    stdc++fs
 )
 
 add_executable(block_tests
