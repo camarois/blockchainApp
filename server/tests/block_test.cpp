@@ -3,19 +3,19 @@
 
 TEST(BlockTest, simple_hash) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
-  Miner::Block block(previous);
+  Miner::Block block(420, previous);
   block.append("Cédrik Deschênes");
   block.append("Anne-Sophie Provencher");
   block.append("Ellie Marier");
 
   std::string received = block.getHash();
-  std::string expected = "c918e346a971a1f6ab12a2e90c5e3516890a2c6388df017eff629719e27f4db1";
+  std::string expected = "3dcd913ba603db2a559226e28289c8931849fea5bdf8cf18ec0acca2a10fdfff";
   ASSERT_EQ(expected, received);
 }
 
 TEST(BlockTest, mine_block) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
-  Miner::Block block(previous);
+  Miner::Block block(420, previous);
   block.append("Chloë Berger");
   block.append("Sébastien Valcourt");
   block.append("Dave Potvin");
@@ -23,6 +23,6 @@ TEST(BlockTest, mine_block) {
   block.mine(3);
 
   std::string received = block.getHash();
-  std::string expected = "000202656242b495c07ab8261a3a0a5a1ac65ac5c971f84220b6eba67eb1b414";
+  std::string expected = "000d33faeb3abcd6cb9900613d17869a6c91ca2bf49cf5ed2621cc2b78963a31";
   ASSERT_EQ(expected, received);
 }

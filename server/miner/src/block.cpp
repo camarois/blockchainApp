@@ -7,15 +7,15 @@
 
 namespace Miner {
 
-Block::Block(std::string previous) {
+Block::Block(unsigned int id, std::string previous) {
   dirty_ = true;
+  id_ = id;
   nonce_ = 0;
   previous_hash_ = previous;
 }
 
-Block::Block(std::string previous, int nonce, std::vector<std::string> data) : Block(previous) {
-  nonce_ = nonce;
-  data_ = data;
+Block::Block(std::filesystem::path blockPath) {
+
 }
 
 void Block::append(const std::string& data) {
@@ -45,13 +45,17 @@ void Block::mine(int difficulty) {
   }
 }
 
+void Block::save(std::filesystem::path blockDir) const {
+
+}
+
 std::string Block::getHash() {
   if (!dirty_) {
     return hash_;
   }
 
   std::stringstream stream;
-  stream << nonce_ << previous_hash_;
+  stream << id_ << nonce_ << previous_hash_;
   for (std::string& str : data_) {
     stream << str;
   }
