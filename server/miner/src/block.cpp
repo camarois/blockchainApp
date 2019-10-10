@@ -17,7 +17,7 @@ Block::Block() {
 
 Block::Block(unsigned int id, std::string previous) : Block() {
   id_ = id;
-  previous_hash_ = previous;
+  previousHash_ = previous;
 }
 
 Block::Block(std::filesystem::path blockPath) : Block() {
@@ -29,7 +29,7 @@ Block::Block(std::filesystem::path blockPath) : Block() {
   auto parsed = json.get<Block>();
   id_ = parsed.getID();
   nonce_ = parsed.getNonce();
-  previous_hash_ = parsed.getPreviousHash();
+  previousHash_ = parsed.getPreviousHash();
   data_ = parsed.getData();
 }
 
@@ -86,7 +86,7 @@ std::string Block::getHash() {
   return hash_;
 }
 
-std::string Block::getPreviousHash() const { return previous_hash_; }
+std::string Block::getPreviousHash() const { return previousHash_; }
 
 const std::vector<std::string>& Block::getData() const { return data_; }
 

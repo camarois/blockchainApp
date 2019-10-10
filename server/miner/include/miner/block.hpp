@@ -35,7 +35,7 @@ class Block {
   unsigned int id_;
   unsigned int nonce_;
   std::string hash_;
-  std::string previous_hash_;
+  std::string previousHash_;
   std::vector<std::string> data_;
 
   const std::string kId_ = "id";
@@ -59,7 +59,7 @@ inline void from_json(const nlohmann::json& j, Block& obj) {
   obj.dirty_ = true;
   j[obj.kId_].get_to(obj.id_);
   j[obj.kNonce_].get_to(obj.nonce_);
-  j[obj.kPreviousHash_].get_to(obj.previous_hash_);
+  j[obj.kPreviousHash_].get_to(obj.previousHash_);
   j[obj.kData_].get_to(obj.data_);
 }
 
