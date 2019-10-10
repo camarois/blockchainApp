@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <miner/block.hpp>
 #include <nlohmann/json.hpp>
@@ -7,15 +9,28 @@
 
 namespace Miner {
 
-Block::Block(unsigned int id, std::string previous) {
+Block::Block() {
+  id_ = 0;
   dirty_ = true;
-  id_ = id;
   nonce_ = 0;
+}
+
+Block::Block(unsigned int id, std::string previous) : Block() {
+  id_ = id;
   previous_hash_ = previous;
 }
 
-Block::Block(std::filesystem::path blockPath) {
+Block::Block(std::filesystem::path blockPath) : Block() {
+  std::ifstream file(blockPath, std::ifstream::in);
+  nlohmann::json json;
+  file >> json;
+  file.close();
 
+  auto parsed = json.get<Block>();
+  id_ = parsed.getID();
+  nonce_ = parsed.getNonce();
+  previous_hash_ = parsed.getPreviousHash();
+  data_ = parsed.getData();
 }
 
 void Block::append(const std::string& data) {
@@ -46,23 +61,25 @@ void Block::mine(int difficulty) {
 }
 
 void Block::save(std::filesystem::path blockDir) const {
-
+  blockDir.append(std::to_string(id_));
+  std::ofstream file(blockDir, std::ofstream::out);
+  std::string json = static_cast<nlohmann::json>(*this).dump();
+  file << json;
+  file.close();
 }
+
+unsigned int Block::getID() const { return id_; }
+
+unsigned int Block::getNonce() const { return nonce_; }
 
 std::string Block::getHash() {
   if (!dirty_) {
     return hash_;
   }
 
-  std::stringstream stream;
-  stream << id_ << nonce_ << previous_hash_;
-  for (std::string& str : data_) {
-    stream << str;
-  }
-  std::string str = stream.str();
-
+  std::string json = static_cast<nlohmann::json>(*this).dump();
   std::vector<unsigned char> hash(picosha2::k_digest_size);
-  picosha2::hash256(str.begin(), str.end(), hash.begin(), hash.end());
+  picosha2::hash256(json.begin(), json.end(), hash.begin(), hash.end());
   hash_ = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
   dirty_ = false;
 
@@ -71,4 +88,6 @@ std::string Block::getHash() {
 
 std::string Block::getPreviousHash() const { return previous_hash_; }
 
-} // namespace Miner
+const std::vector<std::string>& Block::getData() const { return data_; }
+
+}  // namespace Miner

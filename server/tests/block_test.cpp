@@ -1,28 +1,53 @@
+#include <cstdlib>
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <miner/block.hpp>
 
 TEST(BlockTest, simple_hash) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
+
   Miner::Block block(420, previous);
   block.append("Cédrik Deschênes");
   block.append("Anne-Sophie Provencher");
   block.append("Ellie Marier");
 
   std::string received = block.getHash();
-  std::string expected = "3dcd913ba603db2a559226e28289c8931849fea5bdf8cf18ec0acca2a10fdfff";
+  std::string expected = "e65e6f90beba9a03c10270da7aae49e78c115d3116772d0c1abee6616f75cf34";
   ASSERT_EQ(expected, received);
 }
 
 TEST(BlockTest, mine_block) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
+
   Miner::Block block(420, previous);
   block.append("Chloë Berger");
   block.append("Sébastien Valcourt");
   block.append("Dave Potvin");
-
   block.mine(3);
 
   std::string received = block.getHash();
-  std::string expected = "000d33faeb3abcd6cb9900613d17869a6c91ca2bf49cf5ed2621cc2b78963a31";
+  std::string expected = "000685913a46eff7c6be31415fa81935e499029b342b28ee48980a518dfa8429";
+  ASSERT_EQ(expected, received);
+}
+
+TEST(BlockTest, save_load_block) {
+  std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
+  std::filesystem::path path = std::filesystem::temp_directory_path();
+  path.append("test-save-load-block");
+  std::filesystem::remove_all(path);
+  std::filesystem::create_directory(path);
+
+  Miner::Block original(420, previous);
+  original.append("Cédrik Deschênes");
+  original.append("Anne-Sophie Provencher");
+  original.append("Ellie Marier");
+  original.save(path);
+
+  path.append(std::to_string(original.getID()));
+  ASSERT_TRUE(std::filesystem::exists(path));
+
+  Miner::Block loaded(path);
+  std::string received = loaded.getHash();
+  std::string expected = "e65e6f90beba9a03c10270da7aae49e78c115d3116772d0c1abee6616f75cf34";
   ASSERT_EQ(expected, received);
 }
