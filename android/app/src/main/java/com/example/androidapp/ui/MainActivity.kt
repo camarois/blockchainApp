@@ -26,13 +26,13 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.connectionBtn).setOnClickListener { submitLogin() }
-        findViewById<TextView>(R.id.registerBtn).setOnClickListener { submitRegister() }
+        findViewById<Button>(R.id.connection_btn).setOnClickListener { submitLogin() }
+        findViewById<TextView>(R.id.register_btn).setOnClickListener { submitRegister() }
     }
 
     private fun submitLogin() {
-        val username = findViewById<EditText>(R.id.usernameVal).text.toString()
-        val password = findViewById<EditText>(R.id.passwordVal).text.toString()
+        val username = findViewById<EditText>(R.id.username_val).text.toString()
+        val password = findViewById<EditText>(R.id.password_val).text.toString()
         // TODO: Actually call the database
         if (username != "" && password == "1234") {
             val user = "$username;rooose;1234;$username@email.com;10" // information passed to the next activity
