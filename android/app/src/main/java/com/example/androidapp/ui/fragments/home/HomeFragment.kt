@@ -42,7 +42,7 @@ class HomeFragment : Fragment(), CoroutineScope {
             try {
                 textView.text = controller.onRefreshLolAsync()
             } catch (e: Exception) {
-                textView.text = "${getString(R.string.errorMessageUnknown)}: ${e.message}"
+                textView.text = "${getString(R.string.error_message_unknown)}: ${e.message}"
             }
         } }
 

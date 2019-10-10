@@ -7,7 +7,7 @@
             android:name=".App"
             android:allowBackup="true"
             android:icon="@mipmap/classbook"
-            android:label="@string/appName"
+            android:label="@string/app_name"
             android:roundIcon="@mipmap/classbook_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
