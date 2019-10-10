@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace Miner {
+
 class Block {
  public:
   explicit Block(std::string previous);
@@ -22,5 +24,7 @@ class Block {
   std::string previous_hash_;
   std::vector<std::string> data_;
 };
+
+} // namespace Miner
 
 #endif // MINER_BLOCK_HPP

@@ -7,7 +7,7 @@ TEST(BlockTest, simple_hash) {
   data.push_back("Cédrik Deschênes");
   data.push_back("Anne-Sophie Provencher");
   data.push_back("Ellie Marier");
-  Block block(previous, 15, data);
+  Miner::Block block(previous, 15, data);
 
   std::string received = block.getHash();
   std::string expected = "7969e3efd42eeb6249f211f131667b6996d644db63c9ccea49c9b8812e524cd2";
@@ -20,7 +20,7 @@ TEST(BlockTest, mine_block) {
   data.push_back("Chloë Berger");
   data.push_back("Sébastien Valcourt");
   data.push_back("Dave Potvin");
-  Block block(previous, 15, data);
+  Miner::Block block(previous, 15, data);
 
   block.mine(3);
 

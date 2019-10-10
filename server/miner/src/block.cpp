@@ -5,6 +5,8 @@
 #include <picosha2.h>
 #include <sstream>
 
+namespace Miner {
+
 Block::Block(std::string previous) {
   dirty_ = true;
   nonce_ = 0;
@@ -64,3 +66,5 @@ std::string Block::getHash() {
 }
 
 std::string Block::getPreviousHash() const { return previous_hash_; }
+
+} // namespace Miner
