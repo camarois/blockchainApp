@@ -11,8 +11,7 @@ ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Route
 }
 
 void ExampleController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Get(*router, "/start",
-                              Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
+  Pistache::Rest::Routes::Get(*router, "/start", Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
 }
 
 void ExampleController::handleStart(const Pistache::Rest::Request& /*unused*/,

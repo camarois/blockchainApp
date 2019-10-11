@@ -15,8 +15,7 @@ int main(int argc, char* argv[]) {
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {
-    addr =
-        "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" + std::to_string(FLAGS_port);
+    addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user) + ":" + std::to_string(FLAGS_port);
   }
   std::cout << "Server ip address: " << addr << std::endl;
 
