@@ -19,9 +19,8 @@ MainController::MainController(Pistache::Address addr, size_t thr)
 
 void MainController::start() {
   httpEndpoint_.setHandler(router_->handler());
-  httpEndpoint_.useSSL("./cert/server.crt", "./cert/server.key");
+  httpEndpoint_.useSSL("./cert/localhost.crt", "./cert/localhost.key");
   // Enabling this forces to have client/server cert
-  // Doc to create a cert: https://gist.github.com/fntlnz/cf14feb5a46b2eda428e000157447309
   // httpEndpoint_.useSSLAuth("./cert/rootCA.crt");
   httpEndpoint_.serve();
 }
