@@ -55,7 +55,7 @@ class HTTPRestClient(private val context: Context) {
             }
         }
     }
-    
+
     private val requestQueue: RequestQueue by lazy {
         Volley.newRequestQueue(context, hurlStack)
     }
