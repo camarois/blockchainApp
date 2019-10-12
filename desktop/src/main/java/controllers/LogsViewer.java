@@ -3,12 +3,7 @@ package controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
-import javafx.util.Callback;
+import javafx.scene.control.TableView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,82 +16,60 @@ import java.util.Date;
 public class LogsViewer {
 
   //Nested classes
-  class Log {
+  public static class Log {
 
-    public void setNumber(int number) {
-      this.number = number;
-      this.logNum.setText(Integer.toString(number));
+    void setNumber(int number) {
+      this.number = Integer.toString(number);
     }
 
-    public void setSeverity(String severity) {
+    void setSeverity(String severity) {
       this.severity = severity;
-      this.logSev.setText(severity);
     }
 
-    public void setDate(Date date) {
-      this.date = date;
-      SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
-      this.logDat.setText(formatter.format(date));
+    void setDate(Date date) {
+      this.date = new SimpleDateFormat("hh:mm:ss").format(date);
     }
 
     void setProvenance(String provenance) {
       this.provenance = provenance;
-      this.logPro.setText(provenance);
     }
 
-    public void setMessage(String message) {
+    void setMessage(String message) {
       this.message = message;
-      this.logMes.setText(message);
     }
 
-    int number;
+    public String getNumber() {
+      return number;
+    }
+
+    public String getSeverity() {
+      return severity;
+    }
+
+    public String getDate() {
+      return date;
+    }
+
+    public String getProvenance() {
+      return provenance;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    String number;
     String severity;
-    Date date;
+    String date;
     String provenance;
     String message;
 
-    @FXML
-    HBox haBox;
-    @FXML
-    Label logNum;
-    @FXML
-    Label logSev;
-    @FXML
-    Label logDat;
-    @FXML
-    Label logPro;
-    @FXML
-    Label logMes;
-
-    public Log() {
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/LogEntry.fxml"));
-      fxmlLoader.setController(this);
-      try {
-        fxmlLoader.load();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    public HBox getBox() {
-      return haBox;
-    }
-  }
-
-  public class ListViewCell extends ListCell<Log> {
-    @Override
-    public void updateItem(Log log, boolean empty) {
-      super.updateItem(log, empty);
-      if (log != null) {
-        setGraphic(log.getBox());
-      }
-    }
   }
 
   //Attributes
   private ObservableList<Log> logs;
   @FXML
-  ListView<Log> logListView;
+  TableView<Log> logTableView;
 
   /**
    * Initializer.
@@ -105,14 +78,7 @@ public class LogsViewer {
   public void initialize() {
     logs = FXCollections.observableArrayList();
     loadLogsFromTxt();
-    logListView.setItems(logs);
-    logListView.setCellFactory(new Callback<ListView<Log>, ListCell<Log>>() {
-          @Override
-          public ListCell<Log> call(ListView<Log> param) {
-            return new ListViewCell();
-          }
-        }
-    );
+    logTableView.setItems(logs);
   }
 
   private void loadLogsFromTxt() {
