@@ -7,16 +7,16 @@
 namespace Common {
 
 class SqliteErr : public std::runtime_error {
-public:
-    explicit SqliteErr(int code = SQLITE_OK);
-    SqliteErr(int code, const std::string& msg);
+ public:
+  explicit SqliteErr(int code = SQLITE_OK);
+  SqliteErr(int code, const std::string& msg);
 
-    int code();
+  int code();
 
-private:
-    int code_;
+ private:
+  int code_;
 };
 
-} // namespace Common
+}  // namespace Common
 
-#endif // COMMON_SQLITE_ERR_HPP
+#endif  // COMMON_SQLITE_ERR_HPP
