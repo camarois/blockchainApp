@@ -29,9 +29,9 @@ public class Login {
     Parent logsViewer = FXMLLoader.load(
             Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
     );
-
     children.add(topMenu);
     children.add(logsViewer);
     scene.setRoot(rootNode);
+
   }
 }
