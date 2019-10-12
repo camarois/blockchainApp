@@ -35,7 +35,13 @@ public class LogsViewer {
 
     public void setDate(Date date) {
       this.date = date;
-      this.logDat.setText(date.toString());
+      SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+      this.logDat.setText(formatter.format(date));
+    }
+
+    void setProvenance(String provenance) {
+      this.provenance = provenance;
+      this.logPro.setText(provenance);
     }
 
     public void setMessage(String message) {
@@ -46,6 +52,7 @@ public class LogsViewer {
     int number;
     String severity;
     Date date;
+    String provenance;
     String message;
 
     @FXML
@@ -56,6 +63,8 @@ public class LogsViewer {
     Label logSev;
     @FXML
     Label logDat;
+    @FXML
+    Label logPro;
     @FXML
     Label logMes;
 
@@ -117,7 +126,8 @@ public class LogsViewer {
         log.setNumber(Integer.parseInt(items[0].split(" ")[0]));
         log.setSeverity(items[1].split(" ")[1]);
         log.setDate(new SimpleDateFormat(" yyyy-MM-dd hh-mm-ss ").parse(items[2]));
-        log.setMessage(items[3].substring(1));
+        log.setProvenance(items[3].split(" ")[1]);
+        log.setMessage(items[4].substring(1));
         logs.add(log);
       }
     } catch (IOException | ParseException e) {

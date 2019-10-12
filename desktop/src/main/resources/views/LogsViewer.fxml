@@ -5,6 +5,6 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
    <children>
-      <ListView fx:id="logListView" layoutX="200.0" layoutY="29.0" prefHeight="320.0" prefWidth="200.0" />
+      <ListView fx:id="logListView" layoutX="14.0" layoutY="42.0" prefHeight="342.0" prefWidth="569.0" />
    </children>
 </AnchorPane>

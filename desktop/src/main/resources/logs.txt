@@ -1,4 +1,4 @@
-0001 : INFO : 2019-10-10 14-56-58 : Ceci est le premier log ever
-0002 : INFO : 2019-10-10 14-57-34 : Ceci est le deuxieme log ever
-0003 : ATTENTION : 2019-10-10 14-56-58 : Ce document est pour un test
-0004 : ERREUR : 2019-10-10 14-56-58 : Fin du document
+0001 : INFO : 2019-10-10 14-56-58 : Serveur : Ceci est le premier log ever
+0002 : INFO : 2019-10-10 14-57-34 : Mineur1 : Ceci est le deuxieme log ever
+0003 : ATTENTION : 2019-10-10 14-56-58 : Mineur2 : Ce document est pour un test
+0004 : ERREUR : 2019-10-10 14-56-58 : Area51 : Fin du document
