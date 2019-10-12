@@ -21,6 +21,8 @@ cache:
 
 build-server:
     stage: build
+    before_script:
+        - chmod +x server/build.sh
     script:
         - cd server && ./build.sh
     only:
