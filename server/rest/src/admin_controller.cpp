@@ -41,14 +41,14 @@ void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pi
   // auto miner = request.param(kId_).as<int>();
   // Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
   Common::Models::ChainResponse chainResponse = {"test", std::make_unique<Common::Models::ChainResponse>()};
-  response.send(Pistache::Http::Code::I_m_a_teapot, static_cast<nlohmann::json>(chainResponse).dump(4));
+  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(chainResponse));
 }
 
 void AdminController::handleLogs(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<std::string>();
   // Common::Models::LogsRequest logsRequest = nlohmann::json::parse(request.body());
   Common::Models::LogsResponse logsResponse = {{{}}};
-  response.send(Pistache::Http::Code::I_m_a_teapot, static_cast<nlohmann::json>(logsResponse).dump(4));
+  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(logsResponse));
 }
 
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,

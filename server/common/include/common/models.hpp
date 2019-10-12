@@ -8,6 +8,7 @@
 namespace Common {
 namespace Models {
 
+const int kDumpTab = 4;
 const std::string kUsername = "usager";
 const std::string kPassword = "mot_de_passe";
 const std::string kEdition = "edition";
@@ -37,7 +38,7 @@ inline T fromStr(const std::string& str) {
 
 template <typename T>
 inline std::string toStr(const T& obj) {
-  return static_cast<nlohmann::json>(obj).dump(4);
+  return static_cast<nlohmann::json>(obj).dump(kDumpTab);
 }
 
 struct LoginRequest {
