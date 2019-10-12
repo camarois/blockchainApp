@@ -6,4 +6,4 @@ class Example {
   int example();
 };
 
-#endif // COMMON_EXAMPLE_HPP
+#endif  // COMMON_EXAMPLE_HPP
