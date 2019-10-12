@@ -15,7 +15,6 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 
-
 class HTTPRestClient(private val context: Context) {
 
     private lateinit var hurlStack: HurlStack
@@ -56,8 +55,7 @@ class HTTPRestClient(private val context: Context) {
             }
         }
     }
-
-
+    
     private val requestQueue: RequestQueue by lazy {
         Volley.newRequestQueue(context, hurlStack)
     }
