@@ -10,8 +10,7 @@ void FileController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& 
                                Pistache::Rest::Routes::bind(&FileController::handleGrades, this));
 }
 
-void FileController::handleGrades(const Pistache::Rest::Request& request,
-                                  Pistache::Http::ResponseWriter response) {
+void FileController::handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::GradesRequest gradesRequest = nlohmann::json::parse(request.body());
   Pistache::Http::serveFile(response, "build.sh");  // TODO(frgraf) change with a PDF
 }

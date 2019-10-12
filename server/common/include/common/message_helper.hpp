@@ -16,7 +16,7 @@ inline zmq::message_t fromString(const std::string& str) {
   return mnessage;
 }
 
-} // namespace MessageHelper
-} // namespace Common
+}  // namespace MessageHelper
+}  // namespace Common
 
-#endif // COMMON_MESSAGE_HELPER_HPP
+#endif  // COMMON_MESSAGE_HELPER_HPP

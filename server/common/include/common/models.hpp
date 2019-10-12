@@ -8,6 +8,7 @@
 namespace Common {
 namespace Models {
 
+const int kDumpTab = 4;
 const std::string kUsername = "usager";
 const std::string kPassword = "mot_de_passe";
 const std::string kEdition = "edition";
@@ -37,7 +38,7 @@ inline T fromStr(const std::string& str) {
 
 template <typename T>
 inline std::string toStr(const T& obj) {
-  return static_cast<nlohmann::json>(obj).dump(4);
+  return static_cast<nlohmann::json>(obj).dump(kDumpTab);
 }
 
 struct LoginRequest {
@@ -64,9 +65,7 @@ struct LoginResponse {
 inline void to_json(nlohmann::json& j, const LoginResponse& obj) { j = {{kEdition, obj.edition}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, LoginResponse& obj) {
-  j[kEdition].get_to(obj.edition);
-}
+inline void from_json(const nlohmann::json& j, LoginResponse& obj) { j[kEdition].get_to(obj.edition); }
 
 struct PasswordRequest {
   std::string oldPwd;
@@ -74,9 +73,7 @@ struct PasswordRequest {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const PasswordRequest& obj) {
-  j = {{kOld, obj.oldPwd}, {kNew, obj.newPwd}};
-}
+inline void to_json(nlohmann::json& j, const PasswordRequest& obj) { j = {{kOld, obj.oldPwd}, {kNew, obj.newPwd}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, PasswordRequest& obj) {
@@ -113,10 +110,7 @@ struct TransactionRequest {
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const TransactionRequest& obj) {
-  j = {{kAcronym, obj.acronym},
-       {kName, obj.name},
-       {kTrimester, obj.trimester},
-       {kResults, obj.results}};
+  j = {{kAcronym, obj.acronym}, {kName, obj.name}, {kTrimester, obj.trimester}, {kResults, obj.results}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -192,17 +186,13 @@ struct ChainRequest {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ChainRequest& obj) {
-  j = {{kLastBlocks, obj.lastBlocks}};
-}
+inline void to_json(nlohmann::json& j, const ChainRequest& obj) { j = {{kLastBlocks, obj.lastBlocks}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, ChainRequest& obj) {
-  j[kLastBlocks].get_to(obj.lastBlocks);
-}
+inline void from_json(const nlohmann::json& j, ChainRequest& obj) { j[kLastBlocks].get_to(obj.lastBlocks); }
 
 struct ChainResponse {
-  std::string bloc;  // TODO(frgraf) verify if string is better than generic object
+  std::string bloc;
   std::unique_ptr<ChainResponse> next;
 };
 
@@ -255,14 +245,10 @@ struct LogsResponse {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const LogsResponse& obj) {
-  j = {{kInformation, obj.information}};
-}
+inline void to_json(nlohmann::json& j, const LogsResponse& obj) { j = {{kInformation, obj.information}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, LogsResponse& obj) {
-  j[kInformation].get_to(obj.information);
-}
+inline void from_json(const nlohmann::json& j, LogsResponse& obj) { j[kInformation].get_to(obj.information); }
 
 struct CreateAccountRequest {
   std::string username;
@@ -287,14 +273,10 @@ struct DeleteAccountRequest {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const DeleteAccountRequest& obj) {
-  j = {{kUsername, obj.username}};
-}
+inline void to_json(nlohmann::json& j, const DeleteAccountRequest& obj) { j = {{kUsername, obj.username}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, DeleteAccountRequest& obj) {
-  j[kUsername].get_to(obj.username);
-}
+inline void from_json(const nlohmann::json& j, DeleteAccountRequest& obj) { j[kUsername].get_to(obj.username); }
 
 }  // namespace Models
 }  // namespace Common

@@ -51,8 +51,7 @@ inline void setIpAddress(const std::string& ipAddress, const std::string& user =
   }
 }
 
-inline std::future<void> setIpAddressAsync(const std::string& ipAddress,
-                                           const std::string& user = kDefaultUser) {
+inline std::future<void> setIpAddressAsync(const std::string& ipAddress, const std::string& user = kDefaultUser) {
   return std::async(std::launch::async, setIpAddress, ipAddress, user);
 }
 
