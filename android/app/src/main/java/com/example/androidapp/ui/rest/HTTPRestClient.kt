@@ -3,22 +3,17 @@ package com.example.androidapp.ui.rest
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
 import java.io.BufferedInputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import io.fabric.sdk.android.services.network.NetworkUtils.getSSLSocketFactory
-import com.android.volley.toolbox.HurlStack
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import javax.net.ssl.*
-import io.fabric.sdk.android.services.network.NetworkUtils.getSSLSocketFactory
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import java.net.URL
-import io.fabric.sdk.android.services.network.NetworkUtils.getSSLSocketFactory
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import java.net.HttpURLConnection
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 
 class HTTPRestClient(private val context: Context) {
