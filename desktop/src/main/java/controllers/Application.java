@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
+
 import javafx.event.ActionEvent;
 
 public class Application {
@@ -17,7 +19,9 @@ public class Application {
    */
   public void onClickHelloWorld(ActionEvent event) throws Exception {
     InputStreamReader reader = new InputStreamReader(
-        getClass().getClassLoader().getResourceAsStream("values/strings.json")
+            Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(
+                    "values/strings.json"
+            ))
     );
     ServerUrls urls = new Gson().fromJson(reader, ServerUrls.class);
 
