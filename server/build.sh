@@ -10,7 +10,7 @@ cd "$BUILD_DIRECTORY" || exit
 
 cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
 if [[ -z ${1+x} ]]; then
-	ninja
+	ninja -j 4
 else
-	ninja -j "$1"
+	ninja -j $1
 fi

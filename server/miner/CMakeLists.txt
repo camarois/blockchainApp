@@ -16,7 +16,3 @@ target_link_libraries(miner PRIVATE
     curl
     pthread
 )
-
-target_compile_options(miner PRIVATE
-    -Wno-write-strings
-)
