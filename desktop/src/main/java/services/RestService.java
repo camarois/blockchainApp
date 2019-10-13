@@ -38,7 +38,7 @@ public class RestService {
             baseUrl = "https://" + resp + ":10000/";
             System.out.println("Connected to: " + baseUrl);
         });
-        initSSLContext();
+        initSslContext();
     }
 
     public static void requestAsync(String url, Consumer<String> onResponse) {
@@ -66,7 +66,7 @@ public class RestService {
         }
     }
 
-    private static void initSSLContext() {
+    private static void initSslContext() {
         try {
             InputStream caInput = RestService.class.getClassLoader().getResourceAsStream("cert/rootCA.crt");
             CertificateFactory cf = CertificateFactory.getInstance("X.509");

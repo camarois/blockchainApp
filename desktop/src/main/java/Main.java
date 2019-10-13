@@ -6,19 +6,19 @@ import javafx.stage.Stage;
 import services.RestService;
 
 public class Main extends Application {
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    RestService.init();
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-    Parent root = FXMLLoader.load(
-        getClass().getClassLoader().getResource("views/application.fxml")
-    );
-    primaryStage.setTitle("Hello World");
-    primaryStage.setScene(new Scene(root, 300, 275));
-    primaryStage.show();
-  }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        RestService.init();
 
-  public static void main(String[] args) {
-    launch(args);
-  }
+        Parent root = FXMLLoader.load(
+                getClass().getClassLoader().getResource("views/application.fxml")
+        );
+        primaryStage.setTitle("Hello World");
+        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.show();
+    }
 }
