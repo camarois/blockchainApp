@@ -3,7 +3,7 @@
 namespace Tests {
 
 std::filesystem::path getDir(std::filesystem::path suffix) {
-  return std::filesystem::current_path()/"data"/suffix;
+  return std::filesystem::current_path() / "data" / suffix;
 }
 
 std::filesystem::path createEmptyDir(std::filesystem::path suffix) {
@@ -14,4 +14,4 @@ std::filesystem::path createEmptyDir(std::filesystem::path suffix) {
   return path;
 }
 
-} // namespace Tests
+}  // namespace Tests

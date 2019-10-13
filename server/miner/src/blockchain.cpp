@@ -16,7 +16,7 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
     return;
   }
 
-  std::filesystem::path metadataPath(blockDir/kMetadata_);
+  std::filesystem::path metadataPath(blockDir / kMetadata_);
   if (!std::filesystem::exists(metadataPath)) {
     difficulty_ = 3;
     newBlock();
@@ -27,12 +27,12 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
   difficulty_ = metadata->difficulty_;
   unsigned int lastBlockID = metadata->blocks_.rbegin()->first;
 
-  std::filesystem::path blockPath(blockDir/std::to_string(lastBlockID));
+  std::filesystem::path blockPath(blockDir / std::to_string(lastBlockID));
 
   BlockPtr lastBlock;
   try {
     lastBlock = std::make_shared<Block>(blockPath);
-  } catch(const std::invalid_argument &e) {
+  } catch (const std::invalid_argument& e) {
     throw std::runtime_error("block #" + std::to_string(lastBlockID) + " doesn't exist");
   }
 
@@ -77,7 +77,7 @@ BlockChainUPtr BlockChain::loadFromJSON(std::filesystem::path metadataPath) {
   if (metadataFile.fail()) {
     return nullptr;
   }
-  
+
   nlohmann::json json;
   metadataFile >> json;
   metadataFile.close();
