@@ -65,7 +65,7 @@ BlockPtr BlockChain::newBlock() {
 }
 
 BlockPtr BlockChain::lastBlock() const {
-  if (blocks_.size() == 0) {
+  if (blocks_.empty()) {
     return nullptr;
   }
 
