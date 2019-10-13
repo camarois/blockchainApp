@@ -17,15 +17,10 @@ public class Login {
    */
   public void onClickLogin(ActionEvent event) throws Exception {
     BorderPane rootNode = new BorderPane();
-    Parent topMenu = FXMLLoader.load(
-        Objects.requireNonNull(getClass().getClassLoader().getResource("views/TopMenuBar.fxml"))
-    );
     Parent logsViewer = FXMLLoader.load(
             Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
     );
     rootNode.setCenter(logsViewer);
-    rootNode.setTop(topMenu);
-
     Button btn = (Button) event.getSource();
     Scene scene = btn.getScene();
     scene.setRoot(rootNode);
