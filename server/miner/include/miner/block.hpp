@@ -18,11 +18,11 @@ class Block {
   void mine(int difficulty);
   void save(std::filesystem::path blockDir) const;
 
-  unsigned int getID() const;
-  unsigned int getNonce() const;
-  std::string getHash();
-  std::string getPreviousHash() const;
-  const std::vector<std::string>& getData() const;
+  unsigned int id() const;
+  unsigned int nonce() const;
+  std::string hash();
+  std::string previousHash() const;
+  const std::vector<std::string>& data() const;
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const Block& obj);
@@ -47,10 +47,10 @@ class Block {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const Block& obj) {
   j = {
-    {obj.kId_, obj.getID()},
-    {obj.kNonce_, obj.getNonce()},
-    {obj.kPreviousHash_, obj.getPreviousHash()},
-    {obj.kData_, obj.getData()},
+    {obj.kId_, obj.id()},
+    {obj.kNonce_, obj.nonce()},
+    {obj.kPreviousHash_, obj.previousHash()},
+    {obj.kData_, obj.data()},
   };
 }
 

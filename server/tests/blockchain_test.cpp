@@ -11,7 +11,7 @@ TEST(BlockChainTest, loadFromEmptyDir) {
   Miner::BlockChain loaded(blockDir);
 
   ASSERT_EQ(loaded.difficulty(), 3);
-  ASSERT_EQ(loaded.lastBlock()->getID(), 0);
+  ASSERT_EQ(loaded.lastBlock()->id(), 0);
 }
 
 TEST(BlockChainTest, loadWithoutMetadata) {
@@ -19,7 +19,7 @@ TEST(BlockChainTest, loadWithoutMetadata) {
   Miner::BlockChain loaded(blockDir);
 
   ASSERT_EQ(loaded.difficulty(), 3);
-  ASSERT_EQ(loaded.lastBlock()->getID(), 0);
+  ASSERT_EQ(loaded.lastBlock()->id(), 0);
 }
 
 TEST(BlockChainTest, loadWithMissingBlock) {
@@ -40,10 +40,10 @@ TEST(BlockChainTest, loadFromDir) {
 
   std::string previous("eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f");
   ASSERT_EQ(loaded.difficulty(), 10);
-  ASSERT_EQ(loaded.lastBlock()->getID(), 420);
-  ASSERT_EQ(loaded.lastBlock()->getNonce(), 0);
-  ASSERT_EQ(loaded.lastBlock()->getPreviousHash(), previous);
-  ASSERT_EQ(loaded.lastBlock()->getData()[0], "Kathy Brousseau");
-  ASSERT_EQ(loaded.lastBlock()->getData()[1], "Aya Bordeleau");
-  ASSERT_EQ(loaded.lastBlock()->getData()[2], "Jeffrey Brisebois");
+  ASSERT_EQ(loaded.lastBlock()->id(), 420);
+  ASSERT_EQ(loaded.lastBlock()->nonce(), 0);
+  ASSERT_EQ(loaded.lastBlock()->previousHash(), previous);
+  ASSERT_EQ(loaded.lastBlock()->data()[0], "Kathy Brousseau");
+  ASSERT_EQ(loaded.lastBlock()->data()[1], "Aya Bordeleau");
+  ASSERT_EQ(loaded.lastBlock()->data()[2], "Jeffrey Brisebois");
 }

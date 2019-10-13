@@ -36,11 +36,11 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
     throw std::runtime_error("block #" + std::to_string(lastBlockID) + " doesn't exist");
   }
 
-  if (lastBlock->getID() != lastBlockID) {
+  if (lastBlock->id() != lastBlockID) {
     throw std::runtime_error("mismatch ID in block #" + std::to_string(lastBlockID));
   }
 
-  blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock->getID(), lastBlock));
+  blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock->id(), lastBlock));
 }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
@@ -54,12 +54,12 @@ BlockPtr BlockChain::newBlock() {
     nextID = 0;
     previousHash = "";
   } else {
-    nextID = last->getID() + 1;
-    previousHash = last->getHash();
+    nextID = last->id() + 1;
+    previousHash = last->hash();
   }
 
   BlockPtr block = std::make_shared<Block>(nextID, previousHash);
-  blocks_.insert(std::pair<unsigned int, BlockPtr>(block->getID(), block));
+  blocks_.insert(std::pair<unsigned int, BlockPtr>(block->id(), block));
 
   return block;
 }

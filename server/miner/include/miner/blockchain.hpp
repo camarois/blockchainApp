@@ -44,7 +44,7 @@ class BlockChain {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const BlockChain& obj) {
   j = {
-    {obj.kLastBlock_, obj.lastBlock()->getID()},
+    {obj.kLastBlock_, obj.lastBlock()->id()},
     {obj.kDifficulty_, obj.difficulty()},
   };
 }

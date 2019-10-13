@@ -32,10 +32,10 @@ Block::Block(std::filesystem::path blockPath) : Block() {
   blockFile.close();
 
   auto parsed = json.get<Block>();
-  id_ = parsed.getID();
-  nonce_ = parsed.getNonce();
-  previousHash_ = parsed.getPreviousHash();
-  data_ = parsed.getData();
+  id_ = parsed.id();
+  nonce_ = parsed.nonce();
+  previousHash_ = parsed.previousHash();
+  data_ = parsed.data();
 }
 
 void Block::append(const std::string& data) {
@@ -46,11 +46,11 @@ void Block::append(const std::string& data) {
 void Block::mine(int difficulty) {
   nonce_ = 0;
   while (true) {
-    std::string hash = getHash();
+    std::string blockHash = hash();
 
     bool invalid = false;
     for (int i = 0; i < difficulty; i++) {
-      if (hash[i] != '0') {
+      if (blockHash[i] != '0') {
 	nonce_++;
 	dirty_ = true;
 	invalid = true;
@@ -73,11 +73,11 @@ void Block::save(std::filesystem::path blockDir) const {
   file.close();
 }
 
-unsigned int Block::getID() const { return id_; }
+unsigned int Block::id() const { return id_; }
 
-unsigned int Block::getNonce() const { return nonce_; }
+unsigned int Block::nonce() const { return nonce_; }
 
-std::string Block::getHash() {
+std::string Block::hash() {
   if (!dirty_) {
     return hash_;
   }
@@ -91,8 +91,8 @@ std::string Block::getHash() {
   return hash_;
 }
 
-std::string Block::getPreviousHash() const { return previousHash_; }
+std::string Block::previousHash() const { return previousHash_; }
 
-const std::vector<std::string>& Block::getData() const { return data_; }
+const std::vector<std::string>& Block::data() const { return data_; }
 
 }  // namespace Miner
