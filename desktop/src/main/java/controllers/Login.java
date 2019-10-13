@@ -10,8 +10,6 @@ import javafx.scene.control.Button;
 
 import java.util.Objects;
 
-
-
 public class Login {
   /**
    * Login btn event handler.
@@ -32,6 +30,5 @@ public class Login {
     children.add(topMenu);
     children.add(logsViewer);
     scene.setRoot(rootNode);
-
   }
 }

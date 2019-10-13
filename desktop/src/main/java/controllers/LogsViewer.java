@@ -15,8 +15,13 @@ import java.util.Date;
 
 public class LogsViewer {
 
-  //Nested classes
   public static class Log {
+
+    private String number;
+    private String severity;
+    private String date;
+    private String provenance;
+    private String message;
 
     void setNumber(int number) {
       this.number = Integer.toString(number);
@@ -57,19 +62,11 @@ public class LogsViewer {
     public String getMessage() {
       return message;
     }
-
-    String number;
-    String severity;
-    String date;
-    String provenance;
-    String message;
-
   }
 
-  //Attributes
   private ObservableList<Log> logs;
   @FXML
-  TableView<Log> logTableView;
+  private TableView<Log> logTableView;
 
   /**
    * Initializer.
@@ -99,7 +96,5 @@ public class LogsViewer {
     } catch (IOException | ParseException e) {
       e.printStackTrace();
     }
-
   }
-
 }

@@ -13,8 +13,8 @@
             <Font size="23.0" />
          </font>
       </Label>
-      <TextField layoutX="215.0" layoutY="143.0" promptText="Username" />
-      <TextField layoutX="215.0" layoutY="187.0" promptText="Password" />
+      <TextField layoutX="215.0" layoutY="143.0" promptText="Nom d'utilisateur" />
+      <TextField layoutX="215.0" layoutY="187.0" promptText="Mot de passe" />
       <Button layoutX="282.0" layoutY="253.0" mnemonicParsing="false" onAction="#onClickLogin" text="Go" />
    </children>
 </AnchorPane>
