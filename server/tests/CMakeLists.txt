@@ -15,5 +15,6 @@ link_libraries(
 add_executable(block_tests
     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
     block_test.cpp
+    utils.cpp
 )
 add_test(block_tests block_tests)

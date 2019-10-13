@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <miner/block.hpp>
 
+#include "utils.hpp"
+
 TEST(BlockTest, simple_hash) {
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
 
@@ -31,11 +33,8 @@ TEST(BlockTest, mine_block) {
 }
 
 TEST(BlockTest, save_load_block) {
+  std::filesystem::path path = Tests::createEmptyDir("block/test-save-load-block");
   std::string previous = "eed82d9682fb1a4a37ecceba76052738f687f3c5e5fd317c940471e8413d140f";
-  std::filesystem::path path = std::filesystem::temp_directory_path();
-  path.append("test-save-load-block");
-  std::filesystem::remove_all(path);
-  std::filesystem::create_directory(path);
 
   Miner::Block original(420, previous);
   original.append("Cédrik Deschênes");
