@@ -1,10 +1,10 @@
-UseTab: true
+UseTab: false
 IndentWidth: 2
 Language: Cpp
 BasedOnStyle: Google
 DerivePointerAlignment: false
 PointerAlignment: Left
-ColumnLimit: 100
+ColumnLimit: 120
 IncludeCategories:
   - Regex: ".*"
     Priority: 1
