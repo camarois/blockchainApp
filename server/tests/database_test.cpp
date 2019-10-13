@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]) {
-  sqlite3* db;
+  std::unique_ptr<sqlite3> db;
   char* zErrMsg = 0;
   int rc;
 
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
     return (0);
   } else {
-    fprintf(stderr, "Opened database successfully\n");
+    std::cerr << "Opened database successfully\n";
   }
   sqlite3_close(db);
 }

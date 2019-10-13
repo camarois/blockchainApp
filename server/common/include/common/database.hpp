@@ -15,9 +15,9 @@ class Database {
 
  private:
   void close();
-  static void assertSqlite(int errcode, const std::string& message = "");
+  static void assertSqlite(int errCode, const std::string& message = "");
 
-  sqlite3* db_ = nullptr;
+  std::unique_ptr<sqlite3> db_ = nullptr;
   const std::string kDatabaseName_ = "blockchain.db";
 };
 
