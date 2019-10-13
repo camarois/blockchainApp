@@ -3,10 +3,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import services.RestService;
 
 public class Main extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
+    RestService.init();
+
     Parent root = FXMLLoader.load(
         getClass().getClassLoader().getResource("views/application.fxml")
     );
