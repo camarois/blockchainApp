@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <exception>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -21,10 +22,14 @@ Block::Block(unsigned int id, std::string previous) : Block() {
 }
 
 Block::Block(std::filesystem::path blockPath) : Block() {
-  std::ifstream file(blockPath, std::ifstream::in);
+  std::ifstream blockFile(blockPath, std::ifstream::in);
+  if (blockFile.fail()) {
+    throw std::invalid_argument("couldn't open `" + blockPath.string() + "`");
+  }
+
   nlohmann::json json;
-  file >> json;
-  file.close();
+  blockFile >> json;
+  blockFile.close();
 
   auto parsed = json.get<Block>();
   id_ = parsed.getID();
