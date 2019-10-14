@@ -78,7 +78,7 @@ public class LogsViewer {
     logTableView.setItems(logs);
   }
 
-  private void loadLogsFromTxt() {
+  private void loadLogsFromTxt() { //TODO: Retiner le fichier texte quand on va avoir setup la BD
     try {
       InputStream is = this.getClass().getClassLoader().getResourceAsStream("logs.txt");
       BufferedReader br = new BufferedReader(new InputStreamReader(is));
