@@ -4,8 +4,8 @@ RUN apt-get update -y \
  && apt-get upgrade -y \
  && apt-get install -y ninja-build cmake \
                        clang clang-format clang-tidy g++ \
-                       git wget unzip shellcheck libfl-dev \
-                       curl libcurl4-openssl-dev libssl-dev \
+                       git wget unzip shellcheck libfl-dev libssl-dev \
+                       curl libcurl4-openssl-dev sqlite3 libsqlite3-dev \
                        openjdk-8-jdk-headless openjdk-12-jdk-headless \
  && update-java-alternatives --set java-1.8.0-openjdk-amd64
 
