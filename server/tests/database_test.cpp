@@ -1,18 +1,19 @@
+#include <cstdio.h>
+#include <iostream>
 #include <sqlite3.h>
-#include <stdio.h>
 
 int main(int argc, char* argv[]) {
-  std::unique_ptr<sqlite3> db;
-  char* zErrMsg = 0;
+  sqlite3* db;
+  char* zErrMsg = nullptr;
   int rc;
 
   rc = sqlite3_open("test.db", &db);
 
   if (rc) {
-    fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+    std::cerr << "Can't open database:" << sqlite3_errmsg(db) << std::endl;
     return (0);
   } else {
-    std::cerr << "Opened database successfully\n";
+    std::cout << "Opened database successfully\n";
   }
   sqlite3_close(db);
 }

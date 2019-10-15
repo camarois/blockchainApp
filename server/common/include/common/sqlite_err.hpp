@@ -8,13 +8,12 @@ namespace Common {
 
 class SqliteErr : public std::runtime_error {
  public:
-  explicit SqliteErr(int code = SQLITE_OK);
-  SqliteErr(int code, const std::string& msg);
+  explicit SqliteErr(const std::string& msg = "Default");
 
-  int code();
+  std::string message();
 
  private:
-  int code_;
+  std::string msg_;
 };
 
 }  // namespace Common

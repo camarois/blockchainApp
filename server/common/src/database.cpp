@@ -12,7 +12,7 @@ Database::Database() {
 				 nullptr),
 		 "Cannot connect to database");
   } catch (...) {
-    sqlite3_close_v2(db_);
+    close();
     throw;
   }
 }
@@ -24,29 +24,22 @@ void Database::close() {
 
 void Database::assertSqlite(int errCode, const std::string& message) {
   if (errCode != SQLITE_DONE && errCode != SQLITE_OK && errCode != SQLITE_ROW) {
-    if (message.length() > 0) {
-      std::ostringstream err;
-      err << message << "; Sqlite error message: " << sqlite3_errstr(errCode);
-      throw SqliteErr(errCode, err.str());
-    }
-    throw SqliteErr(errCode);
+    throw SqliteErr(message + "; Sqlite error message: " + sqlite3_errstr(errCode));
   }
 }
 
-// User_t Database::getUserById(uint32_t id) const {
+// Common::Models::LoginRequest Database::getUser(std::string username) const {
 //     return getUserByQuery_(Query(
-//         "SELECT user_id, ip, name, mac, is_blacklisted FROM user WHERE (user_id = %u);",
-//         id));
+//         "SELECT username, password FROM users WHERE (username = %q);",
+//         username.c_str()));
 // }
 
-// void Database::createUser(const User_t* user) {
+// void Database::createUser(const Common::Models::LoginRequest user) {
 //     executeQuery_(Query(
-//         "INSERT OR REPLACE INTO user (user_id, ip, mac, name) "
-//         "VALUES (%u, '%q', '%q', '%q');",
-//         user->userId,
-//         user->ip,
-//         user->mac,
-//         user->name));
+//         "INSERT OR REPLACE INTO users (username, password) "
+//         "VALUES ('%q', '%q');",
+//         user.username,
+//         user.password));
 // }
 
 }  // namespace Common

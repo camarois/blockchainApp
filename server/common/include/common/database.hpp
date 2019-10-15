@@ -3,6 +3,7 @@
 #define COMMON_DATABASE_HPP
 
 #include "sqlite_err.hpp"
+#include "common/models.hpp"
 #include <cstddef>
 #include <sqlite3.h>
 #include <string>
@@ -15,9 +16,11 @@ class Database {
 
  private:
   void close();
+  // void createUser(const Common::Models::LoginRequest user);
+  // Common::Models::LoginRequest getUser(std::string username) const;
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  std::unique_ptr<sqlite3> db_ = nullptr;
+  sqlite3* db_ = nullptr;
   const std::string kDatabaseName_ = "blockchain.db";
 };
 
