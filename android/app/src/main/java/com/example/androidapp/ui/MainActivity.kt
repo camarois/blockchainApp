@@ -11,10 +11,13 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import com.example.androidapp.R
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.*
+import io.fabric.sdk.android.Fabric
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
@@ -66,13 +69,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
 
         findViewById<TextView>(R.id.lolVar).text = "lol!"
-        findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch {
-            try {
-                textView.text = controller.onRefreshLolAsync()
-            } catch (e: Exception) {
-                textView.text = "${getString(R.string.errorMessageUnknown)}: ${e.message}"
+        findViewById<Button>(R.id.refreshBtn).setOnClickListener {
+            launch {
+                try {
+                    textView.text = controller.onRefreshLolAsync()
+                } catch (e: Exception) {
+                    textView.text = "${getString(R.string.errorMessageUnknown)}: ${e.message}"
+                }
             }
-        } }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

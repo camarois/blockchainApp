@@ -8,7 +8,7 @@
 
 DEFINE_string(addr, "", "REST service address");                // NOLINT
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
-DEFINE_int32(port, 5555, "REST service port");
+DEFINE_int32(port, 5555, "REST service port");                  // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Blockchain miner service", argc, argv);

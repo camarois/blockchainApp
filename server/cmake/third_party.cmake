@@ -41,11 +41,12 @@ ExternalProject_Add(libgtest
     UPDATE_DISCONNECTED ON
 )
 
+find_package(OpenSSL REQUIRED)
 ExternalProject_Add(libpistache
     GIT_REPOSITORY https://github.com/oktal/pistache.git
     BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libpistache.a
     CMAKE_ARGS -DPISTACHE_INSTALL=on
-    CMAKE_ARGS -DPISTACHE_USE_SSL=off
+    CMAKE_ARGS -DPISTACHE_USE_SSL=on
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libpistache
     UPDATE_DISCONNECTED ON
