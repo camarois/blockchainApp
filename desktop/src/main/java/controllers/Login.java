@@ -10,19 +10,15 @@ import javafx.scene.layout.BorderPane;
 import java.util.Objects;
 
 public class Login {
-  /**
-   * Login btn event handler.
-   * @param event event
-   * @throws Exception Exception
-   */
-  public void onClickLogin(ActionEvent event) throws Exception {
-    BorderPane rootNode = new BorderPane();
-    Parent logsViewer = FXMLLoader.load(
-            Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
-    );
-    rootNode.setCenter(logsViewer);
-    Button btn = (Button) event.getSource();
-    Scene scene = btn.getScene();
-    scene.setRoot(rootNode);
-  }
+
+    public void onClickLogin(ActionEvent event) throws Exception {
+        BorderPane rootNode = new BorderPane();
+        Parent logsViewer = FXMLLoader.load(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
+        );
+        rootNode.setCenter(logsViewer);
+        Button btn = (Button) event.getSource();
+        Scene scene = btn.getScene();
+        scene.setRoot(rootNode);
+    }
 }
