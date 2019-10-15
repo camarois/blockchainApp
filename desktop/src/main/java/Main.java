@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
+        RestService.init();
         BorderPane borderPane = new BorderPane();
         Parent login = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
