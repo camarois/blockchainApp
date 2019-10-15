@@ -22,9 +22,9 @@ cache:
 build-server:
     stage: build
     before_script:
-        - mkdir -p server/build
+        - chmod +x server/build.sh
     script:
-        - cd server/build && cmake .. && make
+        - cd server && ./build.sh
     only:
         changes:
             - server/**/*
