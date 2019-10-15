@@ -2,23 +2,27 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import services.RestService;
 
-public class Main extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+import java.util.Objects;
 
+public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         RestService.init();
-
-        Parent root = FXMLLoader.load(
-                getClass().getClassLoader().getResource("views/application.fxml")
+        BorderPane borderPane = new BorderPane();
+        Parent login = FXMLLoader.load(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
         );
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        borderPane.setCenter(login);
+        primaryStage.setTitle("Admin manager");
+        primaryStage.setScene(new Scene(borderPane, 600, 400));
         primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

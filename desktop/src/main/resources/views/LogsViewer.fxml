@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<TableView fx:id="logTableView" prefHeight="342.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
+   <columns>
+      <TableColumn text="Numéro">
+         <cellValueFactory>
+            <PropertyValueFactory property="number" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn text="Sévérité">
+         <cellValueFactory>
+            <PropertyValueFactory property="severity" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn text="Date">
+         <cellValueFactory>
+            <PropertyValueFactory property="date" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn text="Provenance">
+         <cellValueFactory>
+            <PropertyValueFactory property="provenance" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn sortable="false" text="Message">
+         <cellValueFactory>
+            <PropertyValueFactory property="message" />
+         </cellValueFactory>
+      </TableColumn>
+   </columns>
+</TableView>
