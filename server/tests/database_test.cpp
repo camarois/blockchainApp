@@ -1,19 +1,25 @@
-#include <cstdio.h>
 #include <iostream>
+#include <memory>
 #include <sqlite3.h>
+#include <stdio.h>
+
+struct Sqlite3Deleter {
+    void operator () (sqlite3* db) const { sqlite3_close(db); }
+};
+
+using sqlite3_ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
 
 int main(int argc, char* argv[]) {
-  sqlite3* db;
-  char* zErrMsg = nullptr;
+  sqlite3_ptr db;
   int rc;
 
-  rc = sqlite3_open("test.db", &db);
+  rc = sqlite3_open("test.db", (sqlite3**)&db);
 
   if (rc) {
-    std::cerr << "Can't open database:" << sqlite3_errmsg(db) << std::endl;
+    std::cout << "Error" << std::endl;
+    std::cerr << "Can't open database:" << sqlite3_errmsg((sqlite3*)&db) << std::endl;
     return (0);
   } else {
     std::cout << "Opened database successfully\n";
   }
-  sqlite3_close(db);
 }
