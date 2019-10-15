@@ -1,5 +1,9 @@
 #include <common/message_helper.hpp>
+#include <gflags/gflags.h>
 #include <rest/main_controller.hpp>
+
+DEFINE_string(cert, "./cert/server.crt", "Path to server cert");  // NOLINT
+DEFINE_string(key, "./cert/server.key", "Path to server key");    // NOLINT
 
 namespace Rest {
 
@@ -19,7 +23,7 @@ MainController::MainController(Pistache::Address addr, size_t thr)
 
 void MainController::start() {
   httpEndpoint_.setHandler(router_->handler());
-  httpEndpoint_.useSSL("./cert/server.crt", "./cert/server.key");
+  httpEndpoint_.useSSL(FLAGS_cert, FLAGS_key);
   httpEndpoint_.serve();
 }
 
