@@ -5,6 +5,8 @@ Checks: >
   -fuchsia-statically-constructed-objects,
   -cert-err58-cpp,
   -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -modernize-use-nodiscard,
   -hicpp-avoid-c-arrays,
   -fuchsia-overloaded-operator,
 

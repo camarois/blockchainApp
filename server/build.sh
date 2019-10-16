@@ -4,6 +4,9 @@
 
 set -o xtrace
 
+DATABASE_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bash ${DATABASE_DIRECTORY}/database.sh
+
 BUILD_DIRECTORY=$(dirname "$0")/build
 mkdir -p "$BUILD_DIRECTORY"
 cd "$BUILD_DIRECTORY" || exit

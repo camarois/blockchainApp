@@ -3,6 +3,7 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 SCRIPTS_DIR="${THIS_SCRIPT_DIR}"
 
 DB_NAME="blockchain.db"
+DB_NAME_TEST="test-blockchain.db"
 EXISTING_DB="$DB_NAME"
 STRUCT_FILE="sql/database.sql"
 
@@ -20,6 +21,7 @@ write_db() {
     else
             pushd $SCRIPTS_DIR > /dev/null 2>&1
             cat $STRUCT_FILE | sqlite3 $DB_NAME
+            cat $STRUCT_FILE | sqlite3 $DB_NAME_TEST
             popd > /dev/null 2>&1
     fi
 }

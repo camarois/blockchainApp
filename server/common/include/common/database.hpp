@@ -7,6 +7,7 @@
 #include "common/statement.hpp"
 #include "sqlite_err.hpp"
 #include <cstddef>
+#include <filesystem>
 #include <memory>
 #include <sqlite3.h>
 #include <string>
@@ -21,11 +22,12 @@ using sqlite3_ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
 
 class Database {
  public:
-  explicit Database();
+  Database();
+  explicit Database(std::filesystem::path);
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  Common::Models::LoginRequest getUser(std::string username) const;
+  Common::Models::LoginRequest getUser(std::string& username) const;
   void createUser(const Common::Models::LoginRequest* user);
 
  private:

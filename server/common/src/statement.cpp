@@ -13,7 +13,7 @@ Statement::Statement(sqlite3* db, const Query& query) {
   Database::assertSqlite(errCode);
 }
 
-std::string Statement::getColumnText(size_t col) const { return (const char*)sqlite3_column_text(&(*state_), col); }
+std::string Statement::getColumnText(size_t col) const { return reinterpret_cast<const char*>(sqlite3_column_text(&(*state_), col)); }
 
 bool Statement::step() {
   int errCode = sqlite3_step(&(*state_));

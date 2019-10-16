@@ -1,25 +1,19 @@
-#include <iostream>
-#include <memory>
-#include <sqlite3.h>
-#include <stdio.h>
+#include <common/database.hpp>
+#include <common/models.hpp>
+#include <filesystem>
+#include <gtest/gtest.h>
 
-struct Sqlite3Deleter {
-    void operator () (sqlite3* db) const { sqlite3_close(db); }
-};
+TEST(Sqlite3Tests, create_user) {
+  Common::Database db(std::filesystem::current_path() / "../../test-blockchain.db");
+  Common::Models::LoginRequest expected_user = {
+    "Anne-Sophie Provencher",
+    "LOL1234!"
+  };
 
-using sqlite3_ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
+  db.createUser(&expected_user);
 
-int main(int argc, char* argv[]) {
-  sqlite3_ptr db;
-  int rc;
+  Common::Models::LoginRequest received_user = db.getUser(expected_user.username);
 
-  rc = sqlite3_open("blockchain.db", reinterpret_cast<sqlite3**> (&db));
-
-  if (rc) {
-    std::cout << "Error" << std::endl;
-    std::cerr << "Can't open database:" << sqlite3_errmsg(&(*db)) << std::endl;
-    return (0);
-  } else {
-    std::cout << "Opened database successfully\n";
-  }
+  ASSERT_EQ(expected_user.username, received_user.username);
+  ASSERT_EQ(expected_user.password, received_user.password);
 }
