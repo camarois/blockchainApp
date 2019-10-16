@@ -6,4 +6,4 @@ class Example {
   int example();
 };
 
-#endif // MINER_EXAMPLE_HPP
+#endif  // MINER_EXAMPLE_HPP

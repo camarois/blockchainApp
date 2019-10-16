@@ -2,46 +2,45 @@
 #define COMMON_FIREBASE_HELPER_HPP
 
 #include <arpa/inet.h>
+#include <cstring>
 #include <curlpp/Options.hpp>
 #include <future>
 #include <ifaddrs.h>
+#include <sstream>
 #include <string>
 
+namespace Common {
 namespace FirebaseHelper {
 const std::string kBasePath = "https://us-central1-projet3-46f1b.cloudfunctions.net/";
 const std::string kDefaultUser = "server";
 
 // Inspired by https://gist.github.com/quietcricket/2521037
-std::string getSelfIpAddress() {
+inline std::string getSelfIpAddress() {
   std::string ipAddress = "Unable to get IP Address";
-  struct ifaddrs* interfaces = NULL;
+  struct ifaddrs* interfaces = nullptr;
   if (getifaddrs(&interfaces) == 0) {
-    struct ifaddrs* temp_addr = interfaces;
-    while (temp_addr != NULL) {
-      if (temp_addr->ifa_addr->sa_family == AF_INET && strcmp(temp_addr->ifa_name, "wifi0") == 0) {
-	ipAddress = inet_ntoa(((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr);
+    struct ifaddrs* teamAddr = interfaces;
+    while (teamAddr != nullptr) {
+      if (teamAddr->ifa_addr->sa_family == AF_INET && strcmp(teamAddr->ifa_name, "wifi0") == 0) {
+        ipAddress = inet_ntoa(((struct sockaddr_in*)teamAddr->ifa_addr)->sin_addr);  // NOLINT
       }
-      temp_addr = temp_addr->ifa_next;
+      teamAddr = teamAddr->ifa_next;
     }
   }
   freeifaddrs(interfaces);
   return ipAddress;
 }
 
-std::string getServerIpAddress(const std::string& user = kDefaultUser) {
+inline std::string getServerIpAddress(const std::string& user = kDefaultUser) {
+  auto resp = curlpp::options::Url(kBasePath + "getServerURL?user=" + user);
   std::ostringstream oss;
-  oss << kBasePath << "getServerURL?user=" << user;
-  auto resp = curlpp::options::Url(oss.str());
-  oss.str("");
   oss << resp;
   return oss.str();
 }
 
-void setIpAddress(const std::string& ipAddress, const std::string& user = kDefaultUser) {
+inline void setIpAddress(const std::string& ipAddress, const std::string& user = kDefaultUser) {
+  auto resp = curlpp::options::Url(kBasePath + "setServerURL?user=" + user + "&url=" + ipAddress);
   std::ostringstream oss;
-  oss << kBasePath << "setServerURL?user=" << user << "&url=" << ipAddress;
-  auto resp = curlpp::options::Url(oss.str());
-  oss.str("");
   oss << resp;
   if (oss.str() != "OK") {
     std::cout << oss.str() << std::endl;
@@ -52,11 +51,11 @@ void setIpAddress(const std::string& ipAddress, const std::string& user = kDefau
   }
 }
 
-std::future<void> setIpAddressAsync(const std::string& ipAddress,
-				    const std::string& user = kDefaultUser) {
+inline std::future<void> setIpAddressAsync(const std::string& ipAddress, const std::string& user = kDefaultUser) {
   return std::async(std::launch::async, setIpAddress, ipAddress, user);
 }
 
 }  // namespace FirebaseHelper
+}  // namespace Common
 
 #endif  // COMMON_FIREBASE_HELPER_HPP
