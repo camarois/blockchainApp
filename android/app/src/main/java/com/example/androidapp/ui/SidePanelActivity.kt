@@ -64,4 +64,3 @@ class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInte
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
-
