@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+#include <iostream>
 #include <sstream>
 
 namespace Common {
@@ -7,10 +8,11 @@ Database::Database() {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
-    assertSqlite(sqlite3_open_v2(kDatabaseName_.c_str(), (sqlite3**)&db_,
-				 static_cast<unsigned>(SQLITE_OPEN_READWRITE | SQLITE_OPEN_SHAREDCACHE),
-				 nullptr),
-		 "Cannot connect to database");
+    assertSqlite(
+        sqlite3_open_v2(kDatabaseName_.c_str(), reinterpret_cast<sqlite3**>(&db_),
+                        static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
+                        nullptr),
+        "Cannot connect to database");
   } catch (...) {
     close();
     throw;
@@ -18,7 +20,7 @@ Database::Database() {
 }
 
 void Database::close() {
-  sqlite3_close_v2((sqlite3*)&db_);
+  sqlite3_close_v2(&(*db_));
   sqlite3_shutdown();
 }
 
@@ -28,18 +30,28 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-// Common::Models::LoginRequest Database::getUser(std::string username) const {
-//     return getUserByQuery_(Query(
-//         "SELECT username, password FROM users WHERE (username = %q);",
-//         username.c_str()));
-// }
+Common::Models::LoginRequest Database::getUserFromStatement(const Statement& state) const {
+  Common::Models::LoginRequest user = {state.getColumnText(0), state.getColumnText(1)};
+  return user;
+}
 
-// void Database::createUser(const Common::Models::LoginRequest user) {
-//     executeQuery_(Query(
-//         "INSERT OR REPLACE INTO users (username, password) "
-//         "VALUES ('%q', '%q');",
-//         user.username,
-//         user.password));
-// }
+Common::Models::LoginRequest Database::getUser(std::string username) const {
+  Common::Models::LoginRequest user = {};
+  std::cout << "getuser" << std::endl;
+  Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
+  std::cout << "getuser" << std::endl;
+  Statement state = Statement(&(*db_), query);
+
+  return state.step() ? getUserFromStatement(state) : user;
+}
+
+void Database::createUser(const Common::Models::LoginRequest* user) {
+  Query query = Query(
+      "INSERT INTO users (username, password) "
+      "VALUES ('%q', '%q');",
+      (user->username).c_str(), (user->password).c_str());
+  Statement state = Statement(&(*db_), query);
+  state.step();
+}
 
 }  // namespace Common

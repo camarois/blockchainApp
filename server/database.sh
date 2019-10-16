@@ -11,11 +11,11 @@ backup_db() {
     while [ -f "$EXISTING_DB.auto_backup$i" ]; do
             ((i++))
     done
-    mv "$EXISTING_DB" "$EXISTING_DB.auto_backup$i"
+    mv "$EXISTING_DB" "sql/backups/$EXISTING_DB.auto_backup$i"
 }
 
 write_db() {
-    if [ ! -f "$SCRIPTS_DIR/$STRUCT_FILE" ]; then
+    if [ ! -f $STRUCT_FILE ]; then
             echo "no $STRUCT_FILE found at $SCRIPTS_DIR"
     else
             pushd $SCRIPTS_DIR > /dev/null 2>&1
