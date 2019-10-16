@@ -6,8 +6,10 @@ Checks: >
   -cert-err58-cpp,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-vararg,
   -modernize-use-nodiscard,
   -hicpp-avoid-c-arrays,
+  -hicpp-vararg,
   -fuchsia-overloaded-operator,
 
 WarningsAsErrors: "*"

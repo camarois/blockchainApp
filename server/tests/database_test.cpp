@@ -5,15 +5,12 @@
 
 TEST(Sqlite3Tests, create_user) {
   Common::Database db(std::filesystem::current_path() / "../../test-blockchain.db");
-  Common::Models::LoginRequest expected_user = {
-    "Anne-Sophie Provencher",
-    "LOL1234!"
-  };
+  Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
 
-  db.createUser(&expected_user);
+  db.createUser(&expectedUser);
 
-  Common::Models::LoginRequest received_user = db.getUser(expected_user.username);
+  Common::Models::LoginRequest receivedUser = db.getUser(expectedUser.username);
 
-  ASSERT_EQ(expected_user.username, received_user.username);
-  ASSERT_EQ(expected_user.password, received_user.password);
+  ASSERT_EQ(expectedUser.username, receivedUser.username);
+  ASSERT_EQ(expectedUser.password, receivedUser.password);
 }

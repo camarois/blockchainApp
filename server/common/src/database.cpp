@@ -19,7 +19,7 @@ Database::Database() {
   }
 }
 
-Database::Database(std::filesystem::path filePath) {
+Database::Database(const std::filesystem::path& filePath) {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
@@ -50,7 +50,7 @@ Common::Models::LoginRequest Database::getUserFromStatement(const Statement& sta
   return user;
 }
 
-Common::Models::LoginRequest Database::getUser(std::string& username) const {
+Common::Models::LoginRequest Database::getUser(const std::string& username) {
   Common::Models::LoginRequest user = {};
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
   Statement state = Statement(&(*db_), query);

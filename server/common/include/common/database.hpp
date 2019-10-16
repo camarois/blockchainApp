@@ -23,11 +23,11 @@ using sqlite3_ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
 class Database {
  public:
   Database();
-  explicit Database(std::filesystem::path);
+  explicit Database(const std::filesystem::path& filePath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  Common::Models::LoginRequest getUser(std::string& username) const;
+  Common::Models::LoginRequest getUser(const std::string& username);
   void createUser(const Common::Models::LoginRequest* user);
 
  private:
