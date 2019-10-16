@@ -1,4 +1,4 @@
 {
-    "host":"http://localhost:10000",
-    "lol": "/lol"
+    "firebase":"https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=",
+    "ping": "/ping"
 }

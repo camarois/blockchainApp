@@ -15,5 +15,6 @@ target_link_libraries(rest PRIVATE
     ${EXTERNAL_LIBS_DIR}/libzmq.a
     ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     curl
+    ${OPENSSL_LIBRARIES}
     pthread
 )
