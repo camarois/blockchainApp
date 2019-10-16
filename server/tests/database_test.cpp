@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <gtest/gtest.h>
 
-TEST(Sqlite3Tests, create_user) {
+TEST(Sqlite3Tests, get_user) {
   Common::Database db(std::filesystem::current_path() / "../../test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
 

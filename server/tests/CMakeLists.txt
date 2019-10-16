@@ -1,10 +1,9 @@
 include_directories(tests PRIVATE
     ${COMMON_SRCS_DIR}/include
-    ${SQLite3_INCLUDE_DIRS}
 )
 
 link_libraries(
-    ${SQLite3_LIBRARIES}
+    sqlite3
     common
     gmock
     gtest

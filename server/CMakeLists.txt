@@ -22,7 +22,6 @@ include(ExternalProject)
 include(cmake/third_party.cmake)
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-find_package(SQLite3 REQUIRED)
 
 add_subdirectory(common)
 

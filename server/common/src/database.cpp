@@ -60,7 +60,7 @@ Common::Models::LoginRequest Database::getUser(const std::string& username) {
 
 void Database::createUser(const Common::Models::LoginRequest* user) {
   Query query = Query(
-      "INSERT INTO users (username, password) "
+      "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
       (user->username).c_str(), (user->password).c_str());
   Statement state = Statement(&(*db_), query);
