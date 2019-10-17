@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
+#
+# Usage: ./createDB.sh
+# [O]verwrite project and test database
+# [B]ackup project database and recreate new project and test database
+# [C]ancel
+
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 SCRIPTS_DIR="${THIS_SCRIPT_DIR}"
 
 DB_NAME="blockchain.db"
 DB_NAME_TEST="test-blockchain.db"
 EXISTING_DB="$DB_NAME"
-STRUCT_FILE="sql/database.sql"
+STRUCT_FILE="sql/createDb.sql"
 
 backup_db() {
     i=1

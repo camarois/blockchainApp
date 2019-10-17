@@ -10,10 +10,10 @@
 namespace Common {
 
 struct Sqlite3StmtDeleter {
-  void operator()(sqlite3_stmt* state) const { sqlite3_finalize(state); }
+  void operator()(sqlite3_stmt* statement) const { sqlite3_finalize(statement); }
 };
 
-using sqlite3_state_ptr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
+using sqlite3_statement_ptr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
 
 class Statement {
  public:
@@ -24,7 +24,7 @@ class Statement {
   bool step();
 
  private:
-  sqlite3_state_ptr state_;
+  sqlite3_statement_ptr statement_;
 };
 
 }  // namespace Common
