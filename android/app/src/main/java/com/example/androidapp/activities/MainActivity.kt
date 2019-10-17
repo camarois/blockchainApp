@@ -1,7 +1,6 @@
 package com.example.androidapp.activities
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,14 +31,14 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        connection_btn.setOnClickListener { launch { submitLogin() } }
-        register_btn.setOnClickListener { submitRegister() }
+        connectionButton.setOnClickListener { launch { submitLogin() } }
+        registerTextView.setOnClickListener { submitRegister() }
     }
 
     private suspend fun submitLogin() {
         try {
-            val username = username_val.text.toString()
-            val password = password_val.text.toString()
+            val username = usernameEditText.text.toString()
+            val password = passwordEditText.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val user = "$username;rooose;1234;$username@email.com;10"
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
@@ -48,8 +47,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             startActivity(intent)
         }
         catch (e: AuthFailureError) {
-            password_val.setText("")
-            Toast.makeText(this, "Le nom d'usager ou le mot de passe est invalide",
+            passwordEditText.setText("")
+            Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
                 Toast.LENGTH_LONG).show()
         }
     }
