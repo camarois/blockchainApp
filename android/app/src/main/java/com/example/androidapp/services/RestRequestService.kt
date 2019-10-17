@@ -13,16 +13,15 @@ import kotlin.coroutines.suspendCoroutine
 import com.google.gson.Gson
 import kotlin.coroutines.resumeWithException
 
-
 class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context) {
     private lateinit var serverUrl: String
     private var gson = Gson()
 
     init {
-        initServerUrl("server") // TODO change with dev user with service.
+        initServerUrl("server")
     }
 
-    private fun initServerUrl(user: String) {
+    fun initServerUrl(user: String) {
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
@@ -45,7 +44,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
-            val request = StringRequest( "$serverUrl/$url",
+            val request = StringRequest("$serverUrl/$url",
                 { response ->
                     continuation.resume(response)
                 },
@@ -58,7 +57,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
         return suspendCoroutine { continuation ->
-            val request = StringRequest( "$serverUrl/$url",
+            val request = StringRequest("$serverUrl/$url",
                 { response ->
                     continuation.resume(gson.fromJson(response, classOfT))
                 },

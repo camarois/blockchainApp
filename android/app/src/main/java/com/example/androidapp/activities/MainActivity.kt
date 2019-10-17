@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private suspend fun submitLogin() {
         try {
             val username = usernameEditText.text.toString()
+//            restService.initServerUrl(username) // Activate this while developping
             val password = passwordEditText.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val user = "$username;rooose;1234;$username@email.com;10"
@@ -45,8 +46,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 putExtra("user", user)
             }
             startActivity(intent)
-        }
-        catch (e: AuthFailureError) {
+        } catch (e: AuthFailureError) {
             passwordEditText.setText("")
             Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
                 Toast.LENGTH_LONG).show()

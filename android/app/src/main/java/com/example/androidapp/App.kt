@@ -1,25 +1,14 @@
 package com.example.androidapp
 
 import android.app.Application
-import android.content.Intent
 import com.example.androidapp.services.appModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import android.os.Looper
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import com.example.androidapp.activities.MainActivity
-import com.example.androidapp.activities.SidePanelActivity
-import com.example.androidapp.fragments.home.HomeFragment
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.util.Log
-import java.io.PrintWriter
-import java.io.StringWriter
 import kotlin.system.exitProcess
-
 
 class App : Application() {
     override fun onCreate() {
