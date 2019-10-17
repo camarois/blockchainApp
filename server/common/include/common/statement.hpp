@@ -1,11 +1,10 @@
 #ifndef COMMON_STATEMENT_HPP
 #define COMMON_STATEMENT_HPP
 
+#include "query.hpp"
 #include <memory>
 #include <sqlite3.h>
 #include <string>
-
-#include "query.hpp"
 
 namespace Common {
 

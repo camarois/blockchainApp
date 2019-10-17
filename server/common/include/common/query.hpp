@@ -15,14 +15,14 @@ namespace Common {
 class Query {
  public:
   template <typename... Args>
-  explicit Query(const std::string zFormat, Args... args) {
-    query_ = std::shared_ptr<char>(sqlite3_mprintf(zFormat.c_str(), args...));
+  explicit Query(const std::string& zFormat, Args... args) {
+    query_ = std::make_unique<std::string>(sqlite3_mprintf(zFormat.c_str(), args...));
   }
 
   std::string val() const;
 
  private:
-  std::shared_ptr<char> query_;
+  std::unique_ptr<std::string> query_;
 };
 
 }  // namespace Common

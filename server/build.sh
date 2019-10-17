@@ -4,8 +4,10 @@
 
 set -o xtrace
 
-DATABASE_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-${DATABASE_DIRECTORY}/createDb.sh
+pushd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+./createDb.sh
+popd
+
 
 BUILD_DIRECTORY=$(dirname "$0")/build
 mkdir -p "$BUILD_DIRECTORY"

@@ -1,30 +1,16 @@
 #include "common/database.hpp"
+
 #include <iostream>
 #include <sstream>
 
 namespace Common {
 
-Database::Database() {
+Database::Database(const std::string& dbPath) {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
     assertSqlite(
-        sqlite3_open_v2(kDatabasePath_.c_str(), reinterpret_cast<sqlite3**>(&db_), // NOLINT
-                        static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
-                        nullptr),
-        "Cannot connect to database");
-  } catch (...) {
-    close();
-    throw;
-  }
-}
-
-Database::Database(const std::filesystem::path& filePath) {
-  assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
-  assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
-  try {
-    assertSqlite(
-        sqlite3_open_v2(filePath.c_str(), reinterpret_cast<sqlite3**>(&db_), // NOLINT
+        sqlite3_open_v2(dbPath.c_str(), reinterpret_cast<sqlite3**>(&db_),  // NOLINT
                         static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
                         nullptr),
         "Cannot connect to database");
@@ -45,12 +31,12 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-Common::Models::LoginRequest Database::getUserFromStatement(const Statement& statement) const {
+auto Database::getUserFromStatement(const Statement& statement) const {
   Common::Models::LoginRequest user = {statement.getColumnText(0), statement.getColumnText(1)};
   return user;
 }
 
-Common::Models::LoginRequest Database::getUser(const std::string& username) const {
+Common::Models::LoginRequest Database::getUser(const std::string& username) {
   Common::Models::LoginRequest user = {};
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
   Statement statement = Statement(*db_, query);
