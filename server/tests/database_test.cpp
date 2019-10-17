@@ -7,7 +7,7 @@ TEST(Sqlite3Tests, get_user) {
   Common::Database db(std::filesystem::current_path() / "../../test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
 
-  db.createUser(&expectedUser);
+  db.createUser(expectedUser);
 
   Common::Models::LoginRequest receivedUser = db.getUser(expectedUser.username);
 

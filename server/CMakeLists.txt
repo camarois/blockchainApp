@@ -21,8 +21,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-write-strings")
 include(ExternalProject)
 include(cmake/third_party.cmake)
 
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
 add_subdirectory(common)
 
 set(COMMON_LIBS_DIR ${CMAKE_BINARY_DIR}/common)

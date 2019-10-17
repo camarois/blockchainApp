@@ -9,7 +9,7 @@ Database::Database() {
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
     assertSqlite(
-        sqlite3_open_v2(kDatabaseName_.c_str(), reinterpret_cast<sqlite3**>(&db_),
+        sqlite3_open_v2(kDatabasePath_.c_str(), reinterpret_cast<sqlite3**>(&db_), // NOLINT
                         static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
                         nullptr),
         "Cannot connect to database");
@@ -24,7 +24,7 @@ Database::Database(const std::filesystem::path& filePath) {
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
     assertSqlite(
-        sqlite3_open_v2(filePath.c_str(), reinterpret_cast<sqlite3**>(&db_),
+        sqlite3_open_v2(filePath.c_str(), reinterpret_cast<sqlite3**>(&db_), // NOLINT
                         static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
                         nullptr),
         "Cannot connect to database");
@@ -53,17 +53,17 @@ Common::Models::LoginRequest Database::getUserFromStatement(const Statement& sta
 Common::Models::LoginRequest Database::getUser(const std::string& username) const {
   Common::Models::LoginRequest user = {};
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
-  Statement statement = Statement(&(*db_), query);
+  Statement statement = Statement(*db_, query);
 
   return statement.step() ? getUserFromStatement(statement) : user;
 }
 
-void Database::createUser(const Common::Models::LoginRequest* user) {
+void Database::createUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      (user->username).c_str(), (user->password).c_str());
-  Statement statement = Statement(&(*db_), query);
+      (user.username).c_str(), (user.password).c_str());
+  Statement statement = Statement(*db_, query);
   statement.step();
 }
 

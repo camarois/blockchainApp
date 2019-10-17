@@ -28,13 +28,13 @@ class Database {
   static void assertSqlite(int errCode, const std::string& message = "");
 
   Common::Models::LoginRequest getUser(const std::string& username) const;
-  void createUser(const Common::Models::LoginRequest* user);
+  void createUser(const Common::Models::LoginRequest& user);
 
  private:
   void close();
   Common::Models::LoginRequest getUserFromStatement(const Statement& statement) const;
 
-  const std::string kDatabaseName_ = "../blockchain.db";
+  const std::string kDatabasePath_ = "../blockchain.db";
   sqlite3_ptr db_;
 };
 

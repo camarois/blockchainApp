@@ -15,8 +15,8 @@ namespace Common {
 class Query {
  public:
   template <typename... Args>
-  explicit Query(const char* zFormat, Args... args) {
-    query_ = std::shared_ptr<char>(sqlite3_mprintf(zFormat, args...));
+  explicit Query(const std::string zFormat, Args... args) {
+    query_ = std::shared_ptr<char>(sqlite3_mprintf(zFormat.c_str(), args...));
   }
 
   std::string val() const;
