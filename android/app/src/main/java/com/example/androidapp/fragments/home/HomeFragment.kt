@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.home
+package com.example.androidapp.fragments.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.androidapp.R
-import com.example.androidapp.ui.MainController
+import com.example.androidapp.services.RestRequestService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.*
@@ -18,7 +18,7 @@ import kotlin.coroutines.CoroutineContext
 
 class HomeFragment : Fragment(), CoroutineScope {
 
-    private var controller: MainController = get()
+    private var restService: RestRequestService = get()
     private lateinit var textView: TextView
     private lateinit var job: Job
 
@@ -40,7 +40,7 @@ class HomeFragment : Fragment(), CoroutineScope {
         textView.text = "lol!"
         root.findViewById<Button>(R.id.refreshBtn).setOnClickListener { launch {
             try {
-                textView.text = controller.onRefreshLolAsync()
+                textView.text = restService.getPingAsync()
             } catch (e: Exception) {
                 textView.text = "${getString(R.string.error_message_unknown)}: ${e.message}"
             }

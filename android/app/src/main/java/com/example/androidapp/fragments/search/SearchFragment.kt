@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.search
+package com.example.androidapp.fragments.search
 
 import android.os.Bundle
 import android.view.LayoutInflater

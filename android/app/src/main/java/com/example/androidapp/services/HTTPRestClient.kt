@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.rest
+package com.example.androidapp.services
 
 import android.content.Context
 import com.android.volley.Request
@@ -19,17 +19,12 @@ class HTTPRestClient(private val context: Context) {
 
     private lateinit var hurlStack: HurlStack
 
-    init {
-        initHttps()
-    }
-
-    private fun initHttps() {
+    fun initHttps() {
         val cf = CertificateFactory.getInstance("X.509")
         val caInput = BufferedInputStream(context.assets.open("rootCA.crt"))
         val ca = caInput.use {
             cf.generateCertificate(it) as X509Certificate
         }
-        println("ca=" + ca.subjectDN)
 
         val keyStoreType = KeyStore.getDefaultType()
         val keyStore = KeyStore.getInstance(keyStoreType).apply {
