@@ -13,11 +13,11 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
-                android:name=".ui.SidePanelActivity"
+                android:name="com.example.androidapp.activities.SidePanelActivity"
                 android:label="@string/title_activity_side_panel"
                 android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-                android:name=".ui.MainActivity"
+                android:name="com.example.androidapp.activities.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

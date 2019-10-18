@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Usage: ./createCert.sh [prefix] [ip]
+# Usage: ./createCert.sh [prefix]
 
 set -o xtrace
 
@@ -22,7 +22,7 @@ L=Montreal
 O=Polymtl
 OU=Projet 3 info
 emailAddress=francis.granger@polymtl.ca
-CN = $2
+CN = Ip addresses running on FPGA
 "
 
 ext=\
@@ -33,12 +33,13 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-IP.1 = $2
 DNS.1 = localhost
+IP.1 = 192.168.0.160
+IP.2 = 192.168.1.19
 "
+# If you get a bad handshake problem, you are probably missing your IP in the list
 
 openssl req -new -sha256 -nodes -out $1.csr -newkey rsa:2048 -keyout $1.key \
     -config <(printf "$conf")
 openssl x509 -req -in $1.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial \
     -out $1.crt -days 500 -sha256 -extfile <(printf "$ext")
-
