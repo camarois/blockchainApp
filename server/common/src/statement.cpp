@@ -2,15 +2,14 @@
 
 #include "common/database.hpp"
 #include "common/sqlite_err.hpp"
-#include <iostream>
-#include <sstream>
 
 namespace Common {
 
-Statement::Statement(std::shared_ptr<sqlite3> db, const Query& query) {
+Statement::Statement(const std::shared_ptr<sqlite3>& db, const Query& query) {
   const auto& q = query.val();
-  int errCode = sqlite3_prepare_v2(db.get(), q.c_str(), q.length(), reinterpret_cast<sqlite3_stmt**>(&statement_),
-                                   nullptr);  // NOLINT
+  int errCode =
+      sqlite3_prepare_v2(db.get(), q.c_str(), q.length(), reinterpret_cast<sqlite3_stmt**>(&statement_),  // NOLINT
+                         nullptr);
   Database::assertSqlite(errCode);
 }
 

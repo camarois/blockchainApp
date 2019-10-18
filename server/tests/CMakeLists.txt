@@ -3,12 +3,13 @@ include_directories(tests PRIVATE
 )
 
 link_libraries(
-    sqlite3
     common
+    sqlite3
     gmock
     gtest
     gtest_main
     pthread
+    dl
 )
 
 add_executable(sqlite3_tests

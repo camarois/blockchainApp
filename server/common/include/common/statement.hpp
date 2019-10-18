@@ -2,6 +2,7 @@
 #define COMMON_STATEMENT_HPP
 
 #include "query.hpp"
+#include "sqlite_err.hpp"
 #include <memory>
 #include <sqlite3.h>
 #include <string>
@@ -16,7 +17,7 @@ using sqlite3_statement_ptr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
 
 class Statement {
  public:
-  Statement(std::shared_ptr<sqlite3> db, const Query& query);
+  Statement(const std::shared_ptr<sqlite3>& db, const Query& query);
 
   std::string getColumnText(size_t col) const;
 

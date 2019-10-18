@@ -1,8 +1,5 @@
 #include "common/database.hpp"
 
-#include <iostream>
-#include <sstream>
-
 namespace Common {
 
 Database::Database(const std::string& dbPath) {
