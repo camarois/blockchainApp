@@ -16,12 +16,6 @@ namespace Common {
 
 const std::string kDatabasePath = "blockchain.db";
 
-struct Sqlite3Deleter {
-  void operator()(sqlite3* db) const { sqlite3_close(db); }
-};
-
-using sqlite3_ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
-
 class Database {
  public:
   explicit Database(const std::string& dbPath = kDatabasePath);
@@ -35,7 +29,7 @@ class Database {
   void close();
   auto getUserFromStatement(const Statement& statement) const;
 
-  sqlite3_ptr db_;
+  std::shared_ptr<sqlite3> db_;
 };
 
 }  // namespace Common

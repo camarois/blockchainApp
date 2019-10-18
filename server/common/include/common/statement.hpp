@@ -16,7 +16,7 @@ using sqlite3_statement_ptr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
 
 class Statement {
  public:
-  Statement(sqlite3& db, const Query& query);
+  Statement(std::shared_ptr<sqlite3> db, const Query& query);
 
   std::string getColumnText(size_t col) const;
 

@@ -39,7 +39,7 @@ auto Database::getUserFromStatement(const Statement& statement) const {
 Common::Models::LoginRequest Database::getUser(const std::string& username) {
   Common::Models::LoginRequest user = {};
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
-  Statement statement = Statement(*db_, query);
+  Statement statement = Statement(db_, query);
 
   return statement.step() ? getUserFromStatement(statement) : user;
 }
@@ -49,7 +49,7 @@ void Database::createUser(const Common::Models::LoginRequest& user) {
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
       (user.username).c_str(), (user.password).c_str());
-  Statement statement = Statement(*db_, query);
+  Statement statement = Statement(db_, query);
   statement.step();
 }
 
