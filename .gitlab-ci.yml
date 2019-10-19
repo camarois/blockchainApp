@@ -5,6 +5,16 @@ stages:
     - test
     - lint
 
+cache:
+    paths:
+        - server/build/libcppzmq/**/*
+        - server/build/libcurlpp/**/*
+        - server/build/libgflags/**/*
+        - server/build/libgtest/**/*
+        - server/build/libjson/**/*
+        - server/build/libpistache/**/*
+        - server/build/libzmq/**/*
+
 ################
 # Build Stages #
 ################
@@ -12,9 +22,9 @@ stages:
 build-server:
     stage: build
     before_script:
-        - mkdir -p server/build
+        - chmod +x server/build.sh
     script:
-        - cd server/build && cmake .. && make
+        - cd server && ./build.sh
     only:
         changes:
             - server/**/*
@@ -23,19 +33,21 @@ build-server:
         paths:
             - server/build
 
-build-server:armv7:
-    stage: build
-    before_script:
-        - mkdir -p server/build
-    script:
-        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
-    only:
-        changes:
-            - server/**/*
-            - .gitlab-ci.yml
-    artifacts:
-        paths:
-            - server/build
+#build-server:armv7:
+#    stage: build
+#    before_script:
+#        - mkdir -p server/build
+#    script:
+#        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
+#    only:
+#        changes:
+#            - server/**/*
+#            - .gitlab-ci.yml
+#    artifacts:
+#        paths:
+#            - server/build/miner/miner
+#            - server/build/rest/rest
+#    allow_failure: true
 
 build-desktop:
     stage: build
@@ -118,5 +130,3 @@ lint-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
-    dependencies:
-        - build-server
