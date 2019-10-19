@@ -2,8 +2,8 @@
 #include <gflags/gflags.h>
 #include <rest/main_controller.hpp>
 
-DEFINE_string(cert, "./cert/server.crt", "Path to server cert");  // NOLINT
-DEFINE_string(key, "./cert/server.key", "Path to server key");    // NOLINT
+DECLARE_string(cert);
+DECLARE_string(key);
 
 namespace Rest {
 

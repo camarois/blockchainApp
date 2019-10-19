@@ -1,3 +1,8 @@
+function(create_test test_name)
+    add_executable(${test_name} ${ARGN})
+    add_test(${test_name} ${test_name})
+endfunction()
+
 include_directories(tests PRIVATE
     ${CMAKE_SOURCE_DIR}/miner/include
     ${COMMON_SRCS_DIR}/include
@@ -5,26 +10,28 @@ include_directories(tests PRIVATE
 
 link_libraries(
     common
+    sqlite3
     gmock
     gtest
     gtest_main
     pthread
+    dl
     stdc++fs
 )
 
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(block_tests
+create_test(sqlite3_tests database_test.cpp)
+
+create_test(block_tests 
     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
     block_test.cpp
     utils.cpp
 )
-add_test(block_tests block_tests)
 
-add_executable(blockchain_tests
+create_test(blockchain_tests 
     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
     ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
     blockchain_test.cpp
     utils.cpp
 )
-add_test(blockchain_tests blockchain_tests)
