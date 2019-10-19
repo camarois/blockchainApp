@@ -16,6 +16,7 @@ class Block {
  public:
   Block();
   explicit Block(unsigned int id, const std::string& previous);
+  explicit Block(const std::filesystem::path& blockPath);
   static BlockPtr fromBlockFile(const std::filesystem::path& blockPath);
 
   void append(const std::string& data);

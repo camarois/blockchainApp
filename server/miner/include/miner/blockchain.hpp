@@ -17,13 +17,16 @@ using BlockChainUPtr = std::unique_ptr<BlockChain>;
 class BlockChain {
  public:
   BlockChain();
-  explicit BlockChain(std::filesystem::path blockDir);
+  explicit BlockChain(const std::filesystem::path& blockDir);
+  static BlockChainUPtr fromDirectory(const std::filesystem::path& blockDir);
 
   void appendTransaction(const std::string& transaction);
   void saveAll() const;
   BlockPtr nextBlock();
   BlockPtr lastBlock() const;
+  BlockPtr getBlock(unsigned int id);
   unsigned int difficulty() const;
+  const std::map<unsigned int, BlockPtr>& blocks();
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const BlockChain& obj);
@@ -33,8 +36,9 @@ class BlockChain {
 
  private:
   BlockPtr createBlock();
-  bool saveToJSON(const std::filesystem::path& metadataPath) const;
-  static BlockChainUPtr loadFromJSON(const std::filesystem::path& metadataPath);
+  BlockPtr loadBlock(unsigned int id);
+  bool saveMetadata() const;
+  static BlockChainUPtr loadMetadata(const std::filesystem::path& blockDir);
 
   unsigned int difficulty_;
   std::filesystem::path blockDir_;
@@ -42,7 +46,6 @@ class BlockChain {
 
   const std::string kDifficulty_ = "difficulty";
   const std::string kLastBlock_ = "last_block";
-  const std::string kMetadata_ = "metadata";
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

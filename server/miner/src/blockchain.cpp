@@ -1,7 +1,10 @@
+#include <exception>
 #include <fstream>
 #include <iostream>
 
 #include "miner/blockchain.hpp"
+
+static std::string kMetadata = "metadata";
 
 namespace Miner {
 
@@ -10,45 +13,35 @@ BlockChain::BlockChain() {
   createBlock();
 }
 
-BlockChain::BlockChain(std::filesystem::path blockDir) {
-  blockDir_ = blockDir;
+BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
 
-  if (blockDir_.empty()) {
-    difficulty_ = 3;
-    createBlock();
-    return;
+BlockChainUPtr BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
+  if (blockDir.empty()) {
+    return std::make_unique<BlockChain>(blockDir);
   }
 
-  std::filesystem::path metadataPath(blockDir_ / kMetadata_);
-  if (!std::filesystem::exists(metadataPath)) {
-    difficulty_ = 3;
-    createBlock();
-    return;
+  if (!std::filesystem::exists(blockDir / kMetadata)) {
+    return std::make_unique<BlockChain>(blockDir);
   }
 
-  BlockChainUPtr metadata = loadFromJSON(metadataPath);
-  difficulty_ = metadata->difficulty_;
-  unsigned int lastBlockID = metadata->blocks_.rbegin()->first;
-
-  std::filesystem::path blockPath(blockDir_ / std::to_string(lastBlockID));
-
-  BlockPtr lastBlock = Block::fromBlockFile(blockPath);
-  if (lastBlock == nullptr) {
-    throw std::runtime_error("block #" + std::to_string(lastBlockID) + " doesn't exist");
+  BlockChainUPtr blockchain = loadMetadata(blockDir);
+  if (blockchain == nullptr) {
+    return nullptr;
   }
 
-  if (lastBlock->id() != lastBlockID) {
-    throw std::runtime_error("mismatch ID in block #" + std::to_string(lastBlockID));
+  unsigned int lastBlockID = blockchain->blocks().rbegin()->first;
+  if (blockchain->getBlock(lastBlockID) == nullptr) {
+    return nullptr;
   }
 
-  blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock->id(), lastBlock));
+  return blockchain;
 }
 
 void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->append(transaction); }
 
 void BlockChain::saveAll() const {
   lastBlock()->save(blockDir_);
-  saveToJSON(blockDir_ / kMetadata_);
+  saveMetadata();
 }
 
 BlockPtr BlockChain::nextBlock() {
@@ -65,6 +58,20 @@ BlockPtr BlockChain::lastBlock() const {
 
   return blocks_.rbegin()->second;
 }
+
+BlockPtr BlockChain::getBlock(unsigned int id) {
+  try {
+    BlockPtr block = blocks_.at(id);
+    if (block != nullptr) {
+      return block;
+    }
+  } catch (const std::out_of_range& e) {
+  }
+
+  return loadBlock(id);
+}
+
+const std::map<unsigned int, BlockPtr>& BlockChain::blocks() { return blocks_; }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
@@ -87,10 +94,29 @@ BlockPtr BlockChain::createBlock() {
   return block;
 }
 
-bool BlockChain::saveToJSON(const std::filesystem::path& metadataPath) const {
-  std::ofstream metadataFile(metadataPath, std::ofstream::out);
+BlockPtr BlockChain::loadBlock(unsigned int id) {
+  std::filesystem::path blockPath(blockDir_ / std::to_string(id));
+
+  BlockPtr block = Block::fromBlockFile(blockPath);
+  if (block == nullptr) {
+    std::cerr << "block #" << std::to_string(id) << " doesn't exist" << std::endl;
+    return nullptr;
+  }
+
+  if (block->id() != id) {
+    std::cerr << "mismatch ID in block #" << std::to_string(id) << std::endl;
+    return nullptr;
+  }
+
+  blocks_.erase(block->id());
+  blocks_.insert(std::pair<unsigned int, BlockPtr>(block->id(), block));
+  return block;
+}
+
+bool BlockChain::saveMetadata() const {
+  std::ofstream metadataFile(blockDir_ / kMetadata, std::ofstream::out);
   if (metadataFile.fail()) {
-    std::cerr << "blockchain: failed to open `" << metadataPath << "`" << std::endl;
+    std::cerr << "blockchain: failed to open metadata in `" << blockDir_ << "`" << std::endl;
     return false;
   }
 
@@ -101,10 +127,10 @@ bool BlockChain::saveToJSON(const std::filesystem::path& metadataPath) const {
   return true;
 }
 
-BlockChainUPtr BlockChain::loadFromJSON(const std::filesystem::path& metadataPath) {
-  std::ifstream metadataFile(metadataPath, std::ifstream::in);
+BlockChainUPtr BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
+  std::ifstream metadataFile(blockDir / kMetadata, std::ifstream::in);
   if (metadataFile.fail()) {
-    std::cerr << "blockchain: failed to open `" << metadataPath << "`" << std::endl;
+    std::cerr << "blockchain: failed to open metadata in `" << blockDir << "`" << std::endl;
     return nullptr;
   }
 
@@ -112,7 +138,10 @@ BlockChainUPtr BlockChain::loadFromJSON(const std::filesystem::path& metadataPat
   metadataFile >> json;
   metadataFile.close();
 
-  return std::make_unique<BlockChain>(json.get<BlockChain>());
+  BlockChainUPtr metadata = std::make_unique<BlockChain>(json.get<BlockChain>());
+  metadata->blockDir_ = blockDir;
+
+  return metadata;
 }
 
 }  // namespace Miner
