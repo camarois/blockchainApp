@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "miner/blockchain.hpp"
 
@@ -49,7 +50,7 @@ void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()
 
 void BlockChain::saveAll() const {
   lastBlock()->save(blockDir_);
-  // TODO(gabriel): save JSON
+  saveToJSON(blockDir_ / kMetadata_);
 }
 
 BlockPtr BlockChain::nextBlock() {
@@ -88,9 +89,24 @@ BlockPtr BlockChain::createBlock() {
   return block;
 }
 
-BlockChainUPtr BlockChain::loadFromJSON(std::filesystem::path metadataPath) {
+bool BlockChain::saveToJSON(const std::filesystem::path& metadataPath) const {
+  std::ofstream metadataFile(metadataPath, std::ofstream::out);
+  if (metadataFile.fail()) {
+    std::cerr << "blockchain: failed to open `" << metadataPath << "`" << std::endl;
+    return false;
+  }
+
+  std::string json = static_cast<nlohmann::json>(*this).dump();
+  metadataFile << json;
+  metadataFile.close();
+
+  return true;
+}
+
+BlockChainUPtr BlockChain::loadFromJSON(const std::filesystem::path& metadataPath) {
   std::ifstream metadataFile(metadataPath, std::ifstream::in);
   if (metadataFile.fail()) {
+    std::cerr << "blockchain: failed to open `" << metadataPath << "`" << std::endl;
     return nullptr;
   }
 

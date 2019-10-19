@@ -58,28 +58,29 @@ TEST(BlockChainTest, createBlocksAndSave) {
   blockchain.appendTransaction("Natacha Forest");
   blockchain.appendTransaction("Xavier Lalancette");
   blockchain.nextBlock();
-
   std::string block0Hash("000034f32b0855161a1c2b5db42bff42ef6e7c704b600dcb4e439b83caae0196");
+
   ASSERT_EQ(last->id(), 0U);
   ASSERT_EQ(last->nonce(), 3091U);
   ASSERT_EQ(last->hash(), block0Hash);
-
   last = blockchain.lastBlock();
+
   blockchain.appendTransaction("Marc-Olivier Arsenault");
   blockchain.appendTransaction("Stéphanie Lacerte");
   blockchain.appendTransaction("Zachary Rousseau");
   blockchain.nextBlock();
-
   std::string block1Hash("0008756f8bfbf6166d3b8030e7a98c0ec7c58cff02c9458c4bed6dc46611a3b6");
+
   ASSERT_EQ(last->id(), 1U);
   ASSERT_EQ(last->nonce(), 6681U);
   ASSERT_EQ(last->hash(), block1Hash);
 
   blockchain.saveAll();
-
   std::string block2Hash("a615db4568289dfb5686f40618e333fd867c009a7997bc97ecafd53b01e42e13");
+  std::string metadataHash("f318bef5341fd7cd0baeee4739e0f7dccaf70e8f3b0581e321c11e7c639f576b");
+
   ASSERT_TRUE(Tests::checkFileSHA256Hash(blockDir / "0", block0Hash));
   ASSERT_TRUE(Tests::checkFileSHA256Hash(blockDir / "1", block1Hash));
   ASSERT_TRUE(Tests::checkFileSHA256Hash(blockDir / "2", block2Hash));
-  // TODO(gabriel): add metadata check
+  ASSERT_TRUE(Tests::checkFileSHA256Hash(blockDir / "metadata", metadataHash));
 }

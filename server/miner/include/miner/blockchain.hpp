@@ -34,6 +34,8 @@ class BlockChain {
 
  private:
   BlockPtr createBlock();
+  bool saveToJSON(const std::filesystem::path& metadataPath) const;
+  static BlockChainUPtr loadFromJSON(const std::filesystem::path& metadataPath);
 
   unsigned int difficulty_;
   std::filesystem::path blockDir_;
@@ -42,8 +44,6 @@ class BlockChain {
   const std::string kDifficulty_ = "difficulty";
   const std::string kLastBlock_ = "last_block";
   const std::string kMetadata_ = "metadata";
-
-  static BlockChainUPtr loadFromJSON(std::filesystem::path path);
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

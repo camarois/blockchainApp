@@ -6,7 +6,9 @@
 
 namespace Tests {
 
-std::filesystem::path getDir(const std::filesystem::path& suffix) { return std::filesystem::current_path() / "data" / suffix; }
+std::filesystem::path getDir(const std::filesystem::path& suffix) {
+  return std::filesystem::current_path() / "data" / suffix;
+}
 
 std::filesystem::path createEmptyDir(const std::filesystem::path& suffix) {
   std::filesystem::path path = getDir(suffix);
