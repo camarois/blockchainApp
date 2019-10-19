@@ -84,7 +84,7 @@ build-android:
 test-server:
     stage: test
     script:
-        - cd server/build/test && echo ctest -V
+        - cd server/build/tests && ctest -V
     only:
         changes:
             - server/**/*
