@@ -1,3 +1,8 @@
+function(create_test test_name test_file)
+    add_executable(${test_name} ${CMAKE_CURRENT_SOURCE_DIR}/${test_file})
+    add_test(${test_name} ${test_name})
+endfunction()
+
 include_directories(tests PRIVATE
     ${COMMON_SRCS_DIR}/include
 )
@@ -10,10 +15,8 @@ link_libraries(
     gtest_main
     pthread
     dl
+    stdc++fs
 )
 
-add_executable(sqlite3_tests
-    ${CMAKE_CURRENT_SOURCE_DIR}/database_test.cpp
-)
-
-add_test(sqlite3_tests sqlite3_tests)
+create_test(sqlite3_tests database_test.cpp)
+create_test(example_tests example_test.cpp)

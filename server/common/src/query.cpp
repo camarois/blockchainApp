@@ -2,6 +2,6 @@
 
 namespace Common {
 
-std::string Query::val() const { return *query_; }
+std::string Query::val() const { return query_; }
 
 }  // namespace Common

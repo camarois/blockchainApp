@@ -7,7 +7,6 @@ RUN apt-get update -y \
                        git wget unzip shellcheck libfl-dev \
                        curl libcurl4-openssl-dev sqlite3 libsqlite3-dev \
                        openjdk-8-jdk-headless openjdk-12-jdk-headless \
-                       sqlite3 libsqlite3-dev
  && update-java-alternatives --set java-1.8.0-openjdk-amd64
 
 ARG GRADLE_VERSION=5.6.2

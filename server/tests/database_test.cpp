@@ -4,13 +4,14 @@
 #include <gtest/gtest.h>
 
 TEST(Sqlite3Tests, get_user) {
-  Common::Database db(std::filesystem::current_path() / "../../test-blockchain.db");
+  Common::Database db(std::filesystem::current_path() / "../../sql/test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
 
   db.createUser(expectedUser);
 
-  Common::Models::LoginRequest receivedUser = db.getUser(expectedUser.username);
+  auto receivedUser = db.getUser(expectedUser.username);
 
-  ASSERT_EQ(expectedUser.username, receivedUser.username);
-  ASSERT_EQ(expectedUser.password, receivedUser.password);
+  ASSERT_TRUE(receivedUser.has_value());
+  ASSERT_EQ(expectedUser.username, receivedUser->username);
+  ASSERT_EQ(expectedUser.password, receivedUser->password);
 }

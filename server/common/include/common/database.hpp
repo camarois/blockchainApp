@@ -7,27 +7,23 @@
 #include "common/statement.hpp"
 #include "sqlite_err.hpp"
 #include <cstddef>
-#include <filesystem>
 #include <memory>
 #include <sqlite3.h>
 #include <string>
 
 namespace Common {
 
-const std::string kDatabasePath = "blockchain.db";
-
 class Database {
  public:
-  explicit Database(const std::string& dbPath = kDatabasePath);
+  explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  Common::Models::LoginRequest getUser(const std::string& username);
-  void createUser(const Common::Models::LoginRequest& user);
+  std::optional<Common::Models::LoginRequest> getUser(const std::string& username);
+  bool createUser(const Common::Models::LoginRequest& user);
 
  private:
   void close();
-  auto getUserFromStatement(const Statement& statement) const;
 
   std::shared_ptr<sqlite3> db_;
 };

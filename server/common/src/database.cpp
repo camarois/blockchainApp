@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+#include <gflags/gflags.h>
 
 namespace Common {
 
@@ -6,11 +7,13 @@ Database::Database(const std::string& dbPath) {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
+    sqlite3* dbPtr;
     assertSqlite(
-        sqlite3_open_v2(dbPath.c_str(), reinterpret_cast<sqlite3**>(&db_),  // NOLINT
+        sqlite3_open_v2(dbPath.c_str(), &dbPtr,
                         static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
                         nullptr),
         "Cannot connect to database");
+    db_.reset(dbPtr, sqlite3_close_v2);
   } catch (...) {
     close();
     throw;
@@ -18,7 +21,7 @@ Database::Database(const std::string& dbPath) {
 }
 
 void Database::close() {
-  sqlite3_close_v2(&(*db_));
+  sqlite3_close_v2(db_.get());
   sqlite3_shutdown();
 }
 
@@ -28,26 +31,23 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-auto Database::getUserFromStatement(const Statement& statement) const {
-  Common::Models::LoginRequest user = {statement.getColumnText(0), statement.getColumnText(1)};
-  return user;
-}
-
-Common::Models::LoginRequest Database::getUser(const std::string& username) {
-  Common::Models::LoginRequest user = {};
+// TODO(frank): change all return types to auto!!
+std::optional<Common::Models::LoginRequest> Database::getUser(const std::string& username) {
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
   Statement statement = Statement(db_, query);
-
-  return statement.step() ? getUserFromStatement(statement) : user;
+  if (statement.step()) {
+    return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
+  }
+  return {};
 }
 
-void Database::createUser(const Common::Models::LoginRequest& user) {
+bool Database::createUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
       (user.username).c_str(), (user.password).c_str());
   Statement statement = Statement(db_, query);
-  statement.step();
+  return statement.step();
 }
 
 }  // namespace Common

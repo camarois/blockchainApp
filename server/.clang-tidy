@@ -5,10 +5,8 @@ Checks: >
   -fuchsia-statically-constructed-objects,
   -cert-err58-cpp,
   -cppcoreguidelines-avoid-c-arrays,
-  -cppcoreguidelines-pro-type-vararg,
-  -modernize-use-nodiscard,
   -hicpp-avoid-c-arrays,
-  -hicpp-vararg,
+  -modernize-use-nodiscard,
   -fuchsia-overloaded-operator,
 
 WarningsAsErrors: "*"
