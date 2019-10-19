@@ -11,8 +11,10 @@ target_include_directories(rest PRIVATE
 target_link_libraries(rest PRIVATE
     ${COMMON_LIBS_DIR}/libcommon.a
     ${EXTERNAL_LIBS_DIR}/libpistache.a
+    ${EXTERNAL_LIBS_DIR}/libgflags.a
     ${EXTERNAL_LIBS_DIR}/libzmq.a
     ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     curl
+    ${OPENSSL_LIBRARIES}
     pthread
 )

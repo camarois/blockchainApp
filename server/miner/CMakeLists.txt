@@ -17,7 +17,3 @@ target_link_libraries(miner PRIVATE
     pthread
     stdc++fs
 )
-
-target_compile_options(miner PRIVATE
-    -Wno-write-strings
-)

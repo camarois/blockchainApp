@@ -6,6 +6,8 @@ Checks: >
   -performance-unnecessary-value-param,
   -fuchsia-statically-constructed-objects,
   -cert-err58-cpp,
+  -cppcoreguidelines-avoid-c-arrays,
+  -hicpp-avoid-c-arrays,
 
 WarningsAsErrors: "*"
 
