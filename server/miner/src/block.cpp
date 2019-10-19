@@ -51,9 +51,9 @@ void Block::mine(unsigned int difficulty) {
     bool invalid = false;
     for (unsigned int i = 0; i < difficulty; i++) {
       if (blockHash[i] != '0') {
-	nonce_++;
-	dirty_ = true;
-	invalid = true;
+        nonce_++;
+        dirty_ = true;
+        invalid = true;
       }
     }
 
