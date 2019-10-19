@@ -31,16 +31,6 @@ class MyStudentRecyclerViewAdapter(
         }
     }
 
-    private fun toggleFavorite(button: ImageButton, studentItem: StudentItem) {
-        // TODO: Actually save favorites
-        if (studentItem.isFav) {
-            button.setImageResource(R.drawable.ic_star_border_black_24dp)
-        } else {
-            button.setImageResource(R.drawable.ic_star_black_24dp)
-        }
-        studentItem.isFav = !studentItem.isFav
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_student, parent, false)
@@ -52,8 +42,6 @@ class MyStudentRecyclerViewAdapter(
         holder.mNameView.text = item.name
         holder.mDegreeView.text = item.degree
         holder.mGPAView.text = item.gpa.toString()
-
-        holder.mFavButton.setOnClickListener { toggleFavorite(holder.mFavButton, item) }
 
         with(holder.mView) {
             tag = item
@@ -67,6 +55,5 @@ class MyStudentRecyclerViewAdapter(
         val mNameView: TextView = mView.name
         val mDegreeView: TextView = mView.degree
         val mGPAView: TextView = mView.gpa
-        val mFavButton: ImageButton = mView.fav_button
     }
 }
