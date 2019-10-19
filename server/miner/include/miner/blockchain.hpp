@@ -12,7 +12,6 @@ namespace Miner {
 
 class BlockChain;
 
-using BlockPtr = std::shared_ptr<Block>;
 using BlockChainUPtr = std::unique_ptr<BlockChain>;
 
 class BlockChain {

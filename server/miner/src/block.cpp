@@ -16,26 +16,23 @@ Block::Block() {
   nonce_ = 0;
 }
 
-Block::Block(unsigned int id, std::string previous) : Block() {
+Block::Block(unsigned int id, const std::string& previous) : Block() {
   id_ = id;
   previousHash_ = previous;
 }
 
-Block::Block(std::filesystem::path blockPath) : Block() {
+BlockPtr Block::fromBlockFile(const std::filesystem::path& blockPath) {
   std::ifstream blockFile(blockPath, std::ifstream::in);
   if (blockFile.fail()) {
-    throw std::invalid_argument("couldn't open `" + blockPath.string() + "`");
+    std::cerr << "couldn't open `" << blockPath.string() << "`" << std::endl;
+    return nullptr;
   }
 
   nlohmann::json json;
   blockFile >> json;
   blockFile.close();
 
-  auto parsed = json.get<Block>();
-  id_ = parsed.id();
-  nonce_ = parsed.nonce();
-  previousHash_ = parsed.previousHash();
-  data_ = parsed.data();
+  return std::make_shared<Block>(json.get<Block>());
 }
 
 void Block::append(const std::string& data) {

@@ -32,10 +32,8 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
 
   std::filesystem::path blockPath(blockDir_ / std::to_string(lastBlockID));
 
-  BlockPtr lastBlock;
-  try {
-    lastBlock = std::make_shared<Block>(blockPath);
-  } catch (const std::invalid_argument& e) {
+  BlockPtr lastBlock = Block::fromBlockFile(blockPath);
+  if (lastBlock == nullptr) {
     throw std::runtime_error("block #" + std::to_string(lastBlockID) + " doesn't exist");
   }
 

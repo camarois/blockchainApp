@@ -2,17 +2,21 @@
 #define MINER_BLOCK_HPP
 
 #include <filesystem>
+#include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
 namespace Miner {
 
+class Block;
+using BlockPtr = std::shared_ptr<Block>;
+
 class Block {
  public:
   Block();
-  explicit Block(unsigned int id, std::string previous);
-  explicit Block(std::filesystem::path blockPath);
+  explicit Block(unsigned int id, const std::string& previous);
+  static BlockPtr fromBlockFile(const std::filesystem::path& blockPath);
 
   void append(const std::string& data);
   void mine(unsigned int difficulty);
