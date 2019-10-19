@@ -7,5 +7,5 @@ import org.koin.dsl.module
 val appModules = module {
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
     single { RestRequestService(get(), get()) }
-    factory { HTTPRestClient(get()) }
+    single { HTTPRestClient(get()) }
 }
