@@ -43,13 +43,13 @@ void Block::append(const std::string& data) {
   data_.push_back(data);
 }
 
-void Block::mine(int difficulty) {
+void Block::mine(unsigned int difficulty) {
   nonce_ = 0;
   while (true) {
     std::string blockHash = hash();
 
     bool invalid = false;
-    for (int i = 0; i < difficulty; i++) {
+    for (unsigned int i = 0; i < difficulty; i++) {
       if (blockHash[i] != '0') {
 	nonce_++;
 	dirty_ = true;

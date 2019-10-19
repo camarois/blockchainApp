@@ -20,9 +20,11 @@ class BlockChain {
   BlockChain();
   explicit BlockChain(std::filesystem::path blockDir);
 
-  unsigned int difficulty() const;
-  BlockPtr newBlock();
+  void appendTransaction(std::string transaction);
+  void saveAll() const;
+  BlockPtr nextBlock();
   BlockPtr lastBlock() const;
+  unsigned int difficulty() const;
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const BlockChain& obj);
@@ -31,7 +33,10 @@ class BlockChain {
   friend void from_json(const nlohmann::json& j, BlockChain& obj);
 
  private:
+  BlockPtr createBlock();
+
   unsigned int difficulty_;
+  std::filesystem::path blockDir_;
   std::map<unsigned int, BlockPtr> blocks_;
 
   const std::string kDifficulty_ = "difficulty";

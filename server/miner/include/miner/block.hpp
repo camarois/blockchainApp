@@ -15,7 +15,7 @@ class Block {
   explicit Block(std::filesystem::path blockPath);
 
   void append(const std::string& data);
-  void mine(int difficulty);
+  void mine(unsigned int difficulty);
   void save(std::filesystem::path blockDir) const;
 
   unsigned int id() const;

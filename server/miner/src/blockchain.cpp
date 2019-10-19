@@ -6,20 +6,22 @@ namespace Miner {
 
 BlockChain::BlockChain() {
   difficulty_ = 3;
-  newBlock();
+  createBlock();
 }
 
 BlockChain::BlockChain(std::filesystem::path blockDir) {
-  if (blockDir.empty()) {
+  blockDir_ = blockDir;
+
+  if (blockDir_.empty()) {
     difficulty_ = 3;
-    newBlock();
+    createBlock();
     return;
   }
 
-  std::filesystem::path metadataPath(blockDir / kMetadata_);
+  std::filesystem::path metadataPath(blockDir_ / kMetadata_);
   if (!std::filesystem::exists(metadataPath)) {
     difficulty_ = 3;
-    newBlock();
+    createBlock();
     return;
   }
 
@@ -27,7 +29,7 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
   difficulty_ = metadata->difficulty_;
   unsigned int lastBlockID = metadata->blocks_.rbegin()->first;
 
-  std::filesystem::path blockPath(blockDir / std::to_string(lastBlockID));
+  std::filesystem::path blockPath(blockDir_ / std::to_string(lastBlockID));
 
   BlockPtr lastBlock;
   try {
@@ -43,9 +45,30 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
   blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock->id(), lastBlock));
 }
 
+void BlockChain::appendTransaction(std::string transaction) { lastBlock()->append(transaction); }
+
+void BlockChain::saveAll() const {
+  lastBlock()->save(blockDir_);
+  // TODO(gabriel): save JSON
+}
+
+BlockPtr BlockChain::nextBlock() {
+  lastBlock()->mine(difficulty_);
+
+  return createBlock();
+}
+
+BlockPtr BlockChain::lastBlock() const {
+  if (blocks_.empty()) {
+    return nullptr;
+  }
+
+  return blocks_.rbegin()->second;
+}
+
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
-BlockPtr BlockChain::newBlock() {
+BlockPtr BlockChain::createBlock() {
   unsigned int nextID;
   std::string previousHash;
 
@@ -62,14 +85,6 @@ BlockPtr BlockChain::newBlock() {
   blocks_.insert(std::pair<unsigned int, BlockPtr>(block->id(), block));
 
   return block;
-}
-
-BlockPtr BlockChain::lastBlock() const {
-  if (blocks_.empty()) {
-    return nullptr;
-  }
-
-  return blocks_.rbegin()->second;
 }
 
 BlockChainUPtr BlockChain::loadFromJSON(std::filesystem::path metadataPath) {
