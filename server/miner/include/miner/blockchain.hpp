@@ -20,7 +20,7 @@ class BlockChain {
   BlockChain();
   explicit BlockChain(std::filesystem::path blockDir);
 
-  void appendTransaction(std::string transaction);
+  void appendTransaction(const std::string& transaction);
   void saveAll() const;
   BlockPtr nextBlock();
   BlockPtr lastBlock() const;

@@ -45,7 +45,7 @@ BlockChain::BlockChain(std::filesystem::path blockDir) {
   blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock->id(), lastBlock));
 }
 
-void BlockChain::appendTransaction(std::string transaction) { lastBlock()->append(transaction); }
+void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->append(transaction); }
 
 void BlockChain::saveAll() const {
   lastBlock()->save(blockDir_);
@@ -54,6 +54,7 @@ void BlockChain::saveAll() const {
 
 BlockPtr BlockChain::nextBlock() {
   lastBlock()->mine(difficulty_);
+  lastBlock()->save(blockDir_);
 
   return createBlock();
 }
