@@ -23,7 +23,7 @@ class SearchFragment : Fragment() {
             ViewModelProviders.of(this).get(SearchViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_search, container, false)
         searchViewModel.text.observe(this, Observer {
-            galleryTextView.text = it
+            gallery_text_view.text = it
         })
         return root
     }

@@ -31,15 +31,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        connectionButton.setOnClickListener { launch { submitLogin() } }
-        registerTextView.setOnClickListener { submitRegister() }
+        connection_button.setOnClickListener { launch { submitLogin() } }
+        register_text_view.setOnClickListener { submitRegister() }
     }
 
     private suspend fun submitLogin() {
         try {
-            val username = usernameEditText.text.toString()
+            val username = username_edit_text.text.toString()
 //            restService.initServerUrl(username) // Activate this while developping
-            val password = passwordEditText.text.toString()
+            val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val user = "$username;rooose;1234;$username@email.com;10"
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {
-            passwordEditText.setText("")
+            password_edit_text.setText("")
             Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
                 Toast.LENGTH_LONG).show()
         }

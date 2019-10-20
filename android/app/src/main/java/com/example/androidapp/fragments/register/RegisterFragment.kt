@@ -23,7 +23,7 @@ class RegisterFragment : Fragment() {
             ViewModelProviders.of(this).get(RegisterViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_register, container, false)
         registerViewModel.text.observe(this, Observer {
-            root.sendTextView.text = it
+            root.send_text_view.text = it
         })
         return root
     }

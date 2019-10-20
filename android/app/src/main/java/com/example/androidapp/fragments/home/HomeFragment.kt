@@ -34,11 +34,11 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        root.refreshButton.setOnClickListener { launch {
+        root.refresh_button.setOnClickListener { launch {
             try {
-                root.pingTextView.text = restService.getPingAsync()
+                root.ping_text_view.text = restService.getPingAsync()
             } catch (e: Exception) {
-                root.pingTextView.text = "${getString(R.string.error_message_unknown)}: ${e.message}"
+                root.ping_text_view.text = "${getString(R.string.error_message_unknown)}: ${e.message}"
             }
         } }
 
