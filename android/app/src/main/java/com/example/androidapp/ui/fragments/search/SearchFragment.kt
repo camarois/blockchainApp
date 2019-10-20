@@ -13,6 +13,7 @@ import com.example.androidapp.R
 
 import com.example.androidapp.ui.fragments.search.student.StudentContent
 import com.example.androidapp.ui.fragments.search.student.StudentItem
+import kotlinx.android.synthetic.main.fragment_student_list.view.*
 
 /**
  * A fragment representing a list of Items.
@@ -35,8 +36,8 @@ class SearchFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val viewCreated = view.findViewById<RecyclerView>(R.id.list)
-        viewCreated.adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
+        val viewCreated = view.list
+        viewCreated.adapter = MyStudentRecyclerViewAdapter(StudentContent.items, listener)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -54,7 +55,7 @@ class SearchFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyStudentRecyclerViewAdapter(StudentContent.ITEMS, listener)
+                adapter = MyStudentRecyclerViewAdapter(StudentContent.items, listener)
             }
         }
         return view

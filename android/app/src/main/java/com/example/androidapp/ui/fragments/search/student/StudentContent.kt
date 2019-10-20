@@ -13,7 +13,7 @@ object StudentContent {
     /**
      * An array of student items.
      */
-    val ITEMS: MutableList<StudentItem> = ArrayList()
+    val items: MutableList<StudentItem> = ArrayList()
 
     /**
      * A map of student items, by ID.
@@ -30,7 +30,7 @@ object StudentContent {
     }
 
     private fun addItem(item: StudentItem) {
-        ITEMS.add(item)
+        items.add(item)
         ITEM_MAP[item.id] = item
     }
 
