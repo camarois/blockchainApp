@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 #
-# Usage: ./createDB.sh
-# [O]verwrite project and test database
-# [B]ackup project database and recreate new project and test database
-# [C]ancel
+# Usage: ./createDB.sh FILENAME
+#
+# The file already exists, then one of the following choices will be asked:
+#   [O]verwrite project and test database
+#   [B]ackup project database and recreate new project and test database
+#   [C]ancel
 
 set -o xtrace
 
