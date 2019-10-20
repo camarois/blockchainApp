@@ -126,8 +126,8 @@ lint-scripts:
     stage: lint
     script:
         - echo "Running shellcheck on the following files:"
-        - find . -maxdepth 2 -type f -iname "*.sh"
-        - bash -c 'shellcheck --color=always $(find . -maxdepth 2 -type f -iname "*.sh")'
+        - find . -maxdepth 3 -type f -iname "*.sh"
+        - bash -c 'shellcheck --color=always $(find . -maxdepth 3 -type f -iname "*.sh")'
     only:
         changes:
             - ./**/*.sh
