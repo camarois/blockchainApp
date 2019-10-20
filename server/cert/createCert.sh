@@ -37,8 +37,8 @@ IP.1 = $2
 DNS.1 = localhost
 "
 
-openssl req -new -sha256 -nodes -out $1.csr -newkey rsa:2048 -keyout $1.key \
-    -config <(printf "$conf")
-openssl x509 -req -in $1.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial \
-    -out $1.crt -days 500 -sha256 -extfile <(printf "$ext")
+openssl req -new -sha256 -nodes -out "$1.csr" -newkey rsa:2048 -keyout "$1.key" \
+    -config <(printf "%s" "$conf")
+openssl x509 -req -in "$1.csr" -CA rootCA.crt -CAkey rootCA.key -CAcreateserial \
+    -out "$1.crt" -days 500 -sha256 -extfile <(printf "%s" "$ext")
 
