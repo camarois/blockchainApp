@@ -17,8 +17,12 @@ void UserController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& 
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Models::LoginResponse loginResponse = {};
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(loginResponse));
+  // TODO(frank): change with real auth.
+  if (loginRequest.password == "1234") {
+    Common::Models::LoginResponse loginResponse = {};
+    response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
+  }
+  response.send(Pistache::Http::Code::Forbidden);
 }
 
 void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {

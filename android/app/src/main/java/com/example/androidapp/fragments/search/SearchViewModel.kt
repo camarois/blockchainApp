@@ -1,12 +1,12 @@
-package com.example.androidapp.ui.fragments.register
+package com.example.androidapp.fragments.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class RegisterViewModel : ViewModel() {
+class SearchViewModel : ViewModel() {
 
     val text: LiveData<String> = MutableLiveData<String>().apply {
-        value = "This is send Fragment"
+        value = "This is search Fragment"
     }
 }
