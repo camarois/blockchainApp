@@ -6,6 +6,8 @@ Checks: >
   -cert-err58-cpp,
   -cppcoreguidelines-avoid-c-arrays,
   -hicpp-avoid-c-arrays,
+  -modernize-use-nodiscard,
+  -fuchsia-overloaded-operator,
 
 WarningsAsErrors: "*"
 

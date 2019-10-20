@@ -1,17 +1,22 @@
-file(GLOB_RECURSE TEST_SRC *.cpp)
+function(create_test test_name test_file)
+    add_executable(${test_name} ${CMAKE_CURRENT_SOURCE_DIR}/${test_file})
+    add_test(${test_name} ${test_name})
+endfunction()
 
-add_executable(tests ${TEST_SRC})
-
-target_include_directories(tests PRIVATE
+include_directories(tests PRIVATE
     ${COMMON_SRCS_DIR}/include
 )
 
-target_link_libraries(tests PRIVATE
+link_libraries(
     common
+    sqlite3
     gmock
     gtest
     gtest_main
     pthread
+    dl
+    stdc++fs
 )
 
-add_test(tests COMMAND tests)
+create_test(sqlite3_tests database_test.cpp)
+create_test(example_tests example_test.cpp)

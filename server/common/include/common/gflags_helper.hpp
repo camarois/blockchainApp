@@ -10,7 +10,7 @@ namespace GflagsHelper {
 // NOLINTNEXTLINE(modernize-avoid-c-arrays)
 inline void init(const std::string& name, int argc, char* argv[]) {
   for (int i = 0; i < argc; i++) {
-    if (strcmp("--help", argv[i]) == 0) {
+    if (strcmp("--help", argv[i]) == 0 || strcmp("-help", argv[i]) == 0) {
       argv[i] = "--helpshort";
     }
   }
