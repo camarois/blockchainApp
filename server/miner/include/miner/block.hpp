@@ -16,12 +16,12 @@ class Block {
  public:
   Block();
   explicit Block(unsigned int id, const std::string& previous);
-  explicit Block(const std::filesystem::path& blockPath);
-  static BlockPtr fromBlockFile(const std::filesystem::path& blockPath);
+  explicit Block(const std::filesystem::path& blockDir);
+  static BlockPtr fromBlockFile(const std::filesystem::path& blockDir);
 
   void append(const std::string& data);
   void mine(unsigned int difficulty);
-  void save(std::filesystem::path blockDir) const;
+  void save(const std::filesystem::path& blockDir) const;
 
   unsigned int id() const;
   unsigned int nonce() const;

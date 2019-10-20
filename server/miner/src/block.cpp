@@ -21,10 +21,10 @@ Block::Block(unsigned int id, const std::string& previous) : Block() {
   previousHash_ = previous;
 }
 
-BlockPtr Block::fromBlockFile(const std::filesystem::path& blockPath) {
-  std::ifstream blockFile(blockPath, std::ifstream::in);
+BlockPtr Block::fromBlockFile(const std::filesystem::path& blockDir) {
+  std::ifstream blockFile(blockDir, std::ifstream::in);
   if (blockFile.fail()) {
-    std::cerr << "couldn't open `" << blockPath.string() << "`" << std::endl;
+    std::cerr << "couldn't open `" << blockDir.string() << "`" << std::endl;
     return nullptr;
   }
 
@@ -62,9 +62,9 @@ void Block::mine(unsigned int difficulty) {
   }
 }
 
-void Block::save(std::filesystem::path blockDir) const {
-  blockDir.append(std::to_string(id_));
-  std::ofstream file(blockDir, std::ofstream::out);
+void Block::save(const std::filesystem::path& blockDir) const {
+  std::filesystem::path path(blockDir / std::to_string(id_));
+  std::ofstream file(path, std::ofstream::out);
   std::string json = static_cast<nlohmann::json>(*this).dump();
   file << json;
   file.close();
