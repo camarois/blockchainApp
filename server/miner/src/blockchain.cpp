@@ -15,7 +15,7 @@ BlockChain::BlockChain() {
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
 
-BlockChainUPtr BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
+std::shared_ptr<BlockChain> BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
   if (blockDir.empty()) {
     return std::make_unique<BlockChain>(blockDir);
   }
@@ -24,7 +24,7 @@ BlockChainUPtr BlockChain::fromDirectory(const std::filesystem::path& blockDir) 
     return std::make_unique<BlockChain>(blockDir);
   }
 
-  BlockChainUPtr blockchain = loadMetadata(blockDir);
+  std::shared_ptr<BlockChain> blockchain = loadMetadata(blockDir);
   if (blockchain == nullptr) {
     return nullptr;
   }
@@ -44,14 +44,14 @@ void BlockChain::saveAll() const {
   saveMetadata();
 }
 
-BlockPtr BlockChain::nextBlock() {
+std::shared_ptr<Block> BlockChain::nextBlock() {
   lastBlock()->mine(difficulty_);
   lastBlock()->save(blockDir_);
 
   return createBlock();
 }
 
-BlockPtr BlockChain::lastBlock() const {
+std::shared_ptr<Block> BlockChain::lastBlock() const {
   if (blocks_.empty()) {
     return nullptr;
   }
@@ -59,9 +59,9 @@ BlockPtr BlockChain::lastBlock() const {
   return blocks_.rbegin()->second;
 }
 
-BlockPtr BlockChain::getBlock(unsigned int id) {
+std::shared_ptr<Block> BlockChain::getBlock(unsigned int id) {
   try {
-    BlockPtr block = blocks_.at(id);
+    std::shared_ptr<Block> block = blocks_.at(id);
     if (block != nullptr) {
       return block;
     }
@@ -71,15 +71,15 @@ BlockPtr BlockChain::getBlock(unsigned int id) {
   return loadBlock(id);
 }
 
-const std::map<unsigned int, BlockPtr>& BlockChain::blocks() { return blocks_; }
+const std::map<unsigned int, std::shared_ptr<Block>>& BlockChain::blocks() { return blocks_; }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
-BlockPtr BlockChain::createBlock() {
+std::shared_ptr<Block> BlockChain::createBlock() {
   unsigned int nextID;
   std::string previousHash;
 
-  BlockPtr last = lastBlock();
+  std::shared_ptr<Block> last = lastBlock();
   if (last == nullptr) {
     nextID = 0;
     previousHash = "";
@@ -88,16 +88,16 @@ BlockPtr BlockChain::createBlock() {
     previousHash = last->hash();
   }
 
-  BlockPtr block = std::make_shared<Block>(nextID, previousHash);
-  blocks_.insert(std::pair<unsigned int, BlockPtr>(block->id(), block));
+  std::shared_ptr<Block> block = std::make_shared<Block>(nextID, previousHash);
+  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(block->id(), block));
 
   return block;
 }
 
-BlockPtr BlockChain::loadBlock(unsigned int id) {
+std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
-  BlockPtr block = Block::fromBlockFile(blockPath);
+  std::shared_ptr<Block> block = Block::fromBlockFile(blockPath);
   if (block == nullptr) {
     std::cerr << "block #" << std::to_string(id) << " doesn't exist" << std::endl;
     return nullptr;
@@ -109,7 +109,7 @@ BlockPtr BlockChain::loadBlock(unsigned int id) {
   }
 
   blocks_.erase(block->id());
-  blocks_.insert(std::pair<unsigned int, BlockPtr>(block->id(), block));
+  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(block->id(), block));
   return block;
 }
 
@@ -127,7 +127,7 @@ bool BlockChain::saveMetadata() const {
   return true;
 }
 
-BlockChainUPtr BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
+std::shared_ptr<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
   std::ifstream metadataFile(blockDir / kMetadata, std::ifstream::in);
   if (metadataFile.fail()) {
     std::cerr << "blockchain: failed to open metadata in `" << blockDir << "`" << std::endl;
@@ -138,7 +138,7 @@ BlockChainUPtr BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
   metadataFile >> json;
   metadataFile.close();
 
-  BlockChainUPtr metadata = std::make_unique<BlockChain>(json.get<BlockChain>());
+  std::shared_ptr<BlockChain> metadata = std::make_unique<BlockChain>(json.get<BlockChain>());
   metadata->blockDir_ = blockDir;
 
   return metadata;
@@ -147,8 +147,8 @@ BlockChainUPtr BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const BlockChain& obj) {
   j = {
-    {obj.kLastBlock_, obj.lastBlock()->id()},
-    {obj.kDifficulty_, obj.difficulty()},
+      {obj.kLastBlock_, obj.lastBlock()->id()},
+      {obj.kDifficulty_, obj.difficulty()},
   };
 }
 
@@ -157,7 +157,7 @@ inline void from_json(const nlohmann::json& j, BlockChain& obj) {
   unsigned int lastBlock;
   j[obj.kLastBlock_].get_to(lastBlock);
   j[obj.kDifficulty_].get_to(obj.difficulty_);
-  obj.blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock, nullptr));
+  obj.blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(lastBlock, nullptr));
 }
 
 }  // namespace Miner

@@ -8,7 +8,7 @@
 
 TEST(BlockChainTest, loadFromEmptyDir) {
   std::filesystem::path blockDir = Tests::createEmptyDir("blockchain/load-from-empty-dir");
-  Miner::BlockChainUPtr blockchain = Miner::BlockChain::fromDirectory(blockDir);
+  std::shared_ptr<Miner::BlockChain> blockchain = Miner::BlockChain::fromDirectory(blockDir);
 
   ASSERT_NE(blockchain, nullptr);
   ASSERT_NE(blockchain->lastBlock(), nullptr);
@@ -18,7 +18,7 @@ TEST(BlockChainTest, loadFromEmptyDir) {
 
 TEST(BlockChainTest, loadWithoutMetadata) {
   std::filesystem::path blockDir = Tests::getDir("blockchain/load-without-metadata");
-  Miner::BlockChainUPtr blockchain = Miner::BlockChain::fromDirectory(blockDir);
+  std::shared_ptr<Miner::BlockChain> blockchain = Miner::BlockChain::fromDirectory(blockDir);
 
   ASSERT_NE(blockchain, nullptr);
   ASSERT_NE(blockchain->lastBlock(), nullptr);
@@ -40,7 +40,7 @@ TEST(BlockChainTest, loadWithMismatchID) {
 
 TEST(BlockChainTest, loadFromDir) {
   std::filesystem::path blockDir = Tests::getDir("blockchain/load-from-dir");
-  Miner::BlockChainUPtr blockchain = Miner::BlockChain::fromDirectory(blockDir);
+  std::shared_ptr<Miner::BlockChain> blockchain = Miner::BlockChain::fromDirectory(blockDir);
   ASSERT_NE(blockchain, nullptr);
   ASSERT_NE(blockchain->lastBlock(), nullptr);
 
@@ -56,8 +56,8 @@ TEST(BlockChainTest, loadFromDir) {
 
 TEST(BlockChainTest, createBlocksAndSave) {
   std::filesystem::path blockDir = Tests::createEmptyDir("blockchain/create-blocks-and-save");
-  Miner::BlockChainUPtr blockchain = Miner::BlockChain::fromDirectory(blockDir);
-  Miner::BlockPtr last;
+  std::shared_ptr<Miner::BlockChain> blockchain = Miner::BlockChain::fromDirectory(blockDir);
+  std::shared_ptr<Miner::Block> last;
   ASSERT_NE(blockchain, nullptr);
   ASSERT_NE(blockchain->lastBlock(), nullptr);
 

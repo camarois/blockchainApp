@@ -21,7 +21,7 @@ Block::Block(unsigned int id, const std::string& previous) : Block() {
   previousHash_ = previous;
 }
 
-BlockPtr Block::fromBlockFile(const std::filesystem::path& blockDir) {
+std::shared_ptr<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
   std::ifstream blockFile(blockDir, std::ifstream::in);
   if (blockFile.fail()) {
     std::cerr << "couldn't open `" << blockDir.string() << "`" << std::endl;
@@ -95,10 +95,10 @@ const std::vector<std::string>& Block::data() const { return data_; }
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const Block& obj) {
   j = {
-    {obj.kId_, obj.id()},
-    {obj.kNonce_, obj.nonce()},
-    {obj.kPreviousHash_, obj.previousHash()},
-    {obj.kData_, obj.data()},
+      {obj.kId_, obj.id()},
+      {obj.kNonce_, obj.nonce()},
+      {obj.kPreviousHash_, obj.previousHash()},
+      {obj.kData_, obj.data()},
   };
 }
 

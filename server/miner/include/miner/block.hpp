@@ -9,15 +9,12 @@
 
 namespace Miner {
 
-class Block;
-using BlockPtr = std::shared_ptr<Block>;
-
 class Block {
  public:
   Block();
   explicit Block(unsigned int id, const std::string& previous);
   explicit Block(const std::filesystem::path& blockDir);
-  static BlockPtr fromBlockFile(const std::filesystem::path& blockDir);
+  static std::shared_ptr<Block> fromBlockFile(const std::filesystem::path& blockDir);
 
   void append(const std::string& data);
   void mine(unsigned int difficulty);
