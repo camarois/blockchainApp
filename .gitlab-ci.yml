@@ -130,7 +130,7 @@ lint-scripts:
         - bash -c 'shellcheck --color=always $(find . -maxdepth 3 -type f -iname "*.sh")'
     only:
         changes:
-            - ./**/*.sh
+            - "**/*.sh"
             - .gitlab-ci.yml
 
 lint-server:
