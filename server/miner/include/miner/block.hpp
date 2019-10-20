@@ -49,25 +49,6 @@ class Block {
   const std::string kData_ = "data";
 };
 
-// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const Block& obj) {
-  j = {
-    {obj.kId_, obj.id()},
-    {obj.kNonce_, obj.nonce()},
-    {obj.kPreviousHash_, obj.previousHash()},
-    {obj.kData_, obj.data()},
-  };
-}
-
-// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, Block& obj) {
-  obj.dirty_ = true;
-  j[obj.kId_].get_to(obj.id_);
-  j[obj.kNonce_].get_to(obj.nonce_);
-  j[obj.kPreviousHash_].get_to(obj.previousHash_);
-  j[obj.kData_].get_to(obj.data_);
-}
-
 } // namespace Miner
 
 #endif // MINER_BLOCK_HPP

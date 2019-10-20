@@ -144,4 +144,20 @@ BlockChainUPtr BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
   return metadata;
 }
 
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const BlockChain& obj) {
+  j = {
+    {obj.kLastBlock_, obj.lastBlock()->id()},
+    {obj.kDifficulty_, obj.difficulty()},
+  };
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, BlockChain& obj) {
+  unsigned int lastBlock;
+  j[obj.kLastBlock_].get_to(lastBlock);
+  j[obj.kDifficulty_].get_to(obj.difficulty_);
+  obj.blocks_.insert(std::pair<unsigned int, BlockPtr>(lastBlock, nullptr));
+}
+
 }  // namespace Miner
