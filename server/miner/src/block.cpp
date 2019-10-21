@@ -21,18 +21,18 @@ Block::Block(unsigned int id, const std::string& previous) : Block() {
   previousHash_ = previous;
 }
 
-std::shared_ptr<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
+std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
   std::ifstream blockFile(blockDir, std::ifstream::in);
   if (blockFile.fail()) {
     std::cerr << "couldn't open `" << blockDir.string() << "`" << std::endl;
-    return nullptr;
+    return {};
   }
 
   nlohmann::json json;
   blockFile >> json;
   blockFile.close();
 
-  return std::make_shared<Block>(json.get<Block>());
+  return std::make_optional<Block>(json.get<Block>());
 }
 
 void Block::append(const std::string& data) {

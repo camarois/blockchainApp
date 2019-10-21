@@ -45,9 +45,9 @@ TEST(BlockTest, save_load_block) {
   path.append(std::to_string(original.id()));
   ASSERT_TRUE(std::filesystem::exists(path));
 
-  std::shared_ptr<Miner::Block> loaded = Miner::Block::fromBlockFile(path);
+  std::optional<Miner::Block> loaded = Miner::Block::fromBlockFile(path);
   std::string received = loaded->hash();
   std::string expected = "e65e6f90beba9a03c10270da7aae49e78c115d3116772d0c1abee6616f75cf34";
-  ASSERT_NE(loaded, nullptr);
+  ASSERT_TRUE(loaded.has_value());
   ASSERT_EQ(expected, received);
 }

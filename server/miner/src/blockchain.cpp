@@ -97,8 +97,8 @@ std::shared_ptr<Block> BlockChain::createBlock() {
 std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
-  std::shared_ptr<Block> block = Block::fromBlockFile(blockPath);
-  if (block == nullptr) {
+  std::optional<Block> block = Block::fromBlockFile(blockPath);
+  if (!block.has_value()) {
     std::cerr << "block #" << std::to_string(id) << " doesn't exist" << std::endl;
     return nullptr;
   }
@@ -108,9 +108,10 @@ std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
     return nullptr;
   }
 
-  blocks_.erase(block->id());
-  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(block->id(), block));
-  return block;
+  std::shared_ptr<Block> blockPtr = std::make_shared<Block>(block.value());
+  blocks_.erase(blockPtr->id());
+  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(blockPtr->id(), blockPtr));
+  return blockPtr;
 }
 
 bool BlockChain::saveMetadata() const {
