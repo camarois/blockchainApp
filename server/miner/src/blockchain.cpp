@@ -4,9 +4,9 @@
 
 #include "miner/blockchain.hpp"
 
-static std::string kMetadata = "metadata";
-
 namespace Miner {
+
+const std::string BlockChain::kMetadata = "metadata";
 
 BlockChain::BlockChain() {
   difficulty_ = 3;
@@ -15,23 +15,23 @@ BlockChain::BlockChain() {
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
 
-std::shared_ptr<BlockChain> BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
+std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
   if (blockDir.empty()) {
-    return std::make_unique<BlockChain>(blockDir);
+    return BlockChain(blockDir);
   }
 
-  if (!std::filesystem::exists(blockDir / kMetadata)) {
-    return std::make_unique<BlockChain>(blockDir);
+  if (!std::filesystem::exists(blockDir / BlockChain::kMetadata)) {
+    return BlockChain(blockDir);
   }
 
-  std::shared_ptr<BlockChain> blockchain = loadMetadata(blockDir);
-  if (blockchain == nullptr) {
-    return nullptr;
+  std::optional<BlockChain> blockchain = loadMetadata(blockDir);
+  if (!blockchain.has_value()) {
+    return {};
   }
 
   unsigned int lastBlockID = blockchain->blocks().rbegin()->first;
   if (blockchain->getBlock(lastBlockID) == nullptr) {
-    return nullptr;
+    return {};
   }
 
   return blockchain;
@@ -114,7 +114,7 @@ std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
 }
 
 bool BlockChain::saveMetadata() const {
-  std::ofstream metadataFile(blockDir_ / kMetadata, std::ofstream::out);
+  std::ofstream metadataFile(blockDir_ / BlockChain::kMetadata, std::ofstream::out);
   if (metadataFile.fail()) {
     std::cerr << "blockchain: failed to open metadata in `" << blockDir_ << "`" << std::endl;
     return false;
@@ -127,18 +127,18 @@ bool BlockChain::saveMetadata() const {
   return true;
 }
 
-std::shared_ptr<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
-  std::ifstream metadataFile(blockDir / kMetadata, std::ifstream::in);
+std::optional<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
+  std::ifstream metadataFile(blockDir / BlockChain::kMetadata, std::ifstream::in);
   if (metadataFile.fail()) {
     std::cerr << "blockchain: failed to open metadata in `" << blockDir << "`" << std::endl;
-    return nullptr;
+    return {};
   }
 
   nlohmann::json json;
   metadataFile >> json;
   metadataFile.close();
 
-  std::shared_ptr<BlockChain> metadata = std::make_unique<BlockChain>(json.get<BlockChain>());
+  std::optional<BlockChain> metadata = std::make_optional<BlockChain>(json.get<BlockChain>());
   metadata->blockDir_ = blockDir;
 
   return metadata;

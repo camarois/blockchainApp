@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <list>
 #include <memory>
+#include <optional>
 
 #include "miner/block.hpp"
 
@@ -14,7 +15,7 @@ class BlockChain {
  public:
   BlockChain();
   explicit BlockChain(const std::filesystem::path& blockDir);
-  static std::shared_ptr<BlockChain> fromDirectory(const std::filesystem::path& blockDir);
+  static std::optional<BlockChain> fromDirectory(const std::filesystem::path& blockDir);
 
   void appendTransaction(const std::string& transaction);
   void saveAll() const;
@@ -30,11 +31,13 @@ class BlockChain {
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void from_json(const nlohmann::json& j, BlockChain& obj);
 
+  static const std::string kMetadata;
+
  private:
   std::shared_ptr<Block> createBlock();
   std::shared_ptr<Block> loadBlock(unsigned int id);
   bool saveMetadata() const;
-  static std::shared_ptr<BlockChain> loadMetadata(const std::filesystem::path& blockDir);
+  static std::optional<BlockChain> loadMetadata(const std::filesystem::path& blockDir);
 
   unsigned int difficulty_;
   std::filesystem::path blockDir_;
