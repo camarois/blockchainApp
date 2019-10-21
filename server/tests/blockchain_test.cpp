@@ -59,7 +59,7 @@ TEST(BlockChainTest, loadFromDir) {
 TEST(BlockChainTest, createBlocksAndSave) {
   std::filesystem::path blockDir = Tests::createEmptyDir("blockchain/create-blocks-and-save");
   std::optional<Miner::BlockChain> blockchain = Miner::BlockChain::fromDirectory(blockDir);
-  std::shared_ptr<Miner::Block> last;
+  Miner::Block* last;
   ASSERT_TRUE(blockchain.has_value());
   ASSERT_NE(blockchain->lastBlock(), nullptr);
 

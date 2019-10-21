@@ -4,7 +4,6 @@
 #include <exception>
 #include <filesystem>
 #include <list>
-#include <memory>
 #include <optional>
 
 #include "miner/block.hpp"
@@ -18,12 +17,14 @@ class BlockChain {
   static std::optional<BlockChain> fromDirectory(const std::filesystem::path& blockDir);
 
   void appendTransaction(const std::string& transaction);
-  void saveAll() const;
-  std::shared_ptr<Block> nextBlock();
-  std::shared_ptr<Block> lastBlock() const;
-  std::shared_ptr<Block> getBlock(unsigned int id);
+  void saveAll();
+  void clearAll();
+  Block& nextBlock();
+  Block* lastBlock();
+  Block* getBlock(unsigned int id);
+  unsigned int lastBlockID() const;
   unsigned int difficulty() const;
-  const std::map<unsigned int, std::shared_ptr<Block>>& blocks();
+  const std::map<unsigned int, Block>& blocks();
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const BlockChain& obj);
@@ -34,14 +35,14 @@ class BlockChain {
   static const std::string kMetadata;
 
  private:
-  std::shared_ptr<Block> createBlock();
-  std::shared_ptr<Block> loadBlock(unsigned int id);
+  Block& createBlock();
+  Block* loadBlock(unsigned int id);
   bool saveMetadata() const;
   static std::optional<BlockChain> loadMetadata(const std::filesystem::path& blockDir);
 
   unsigned int difficulty_;
   std::filesystem::path blockDir_;
-  std::map<unsigned int, std::shared_ptr<Block>> blocks_;
+  std::map<unsigned int, Block> blocks_;
 
   const std::string kDifficulty_ = "difficulty";
   const std::string kLastBlock_ = "last_block";

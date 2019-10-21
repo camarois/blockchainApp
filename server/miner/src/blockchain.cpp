@@ -30,6 +30,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
   }
 
   unsigned int lastBlockID = blockchain->blocks().rbegin()->first;
+  blockchain->clearAll();
   if (blockchain->getBlock(lastBlockID) == nullptr) {
     return {};
   }
@@ -39,47 +40,51 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
 
 void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->append(transaction); }
 
-void BlockChain::saveAll() const {
-  lastBlock()->save(blockDir_);
+void BlockChain::saveAll() {
+  Block* last = lastBlock();
+  if (last != nullptr) {
+    lastBlock()->save(blockDir_);
+  }
   saveMetadata();
 }
 
-std::shared_ptr<Block> BlockChain::nextBlock() {
+void BlockChain::clearAll() { blocks_.clear(); }
+
+Block& BlockChain::nextBlock() {
   lastBlock()->mine(difficulty_);
   lastBlock()->save(blockDir_);
 
   return createBlock();
 }
 
-std::shared_ptr<Block> BlockChain::lastBlock() const {
+Block* BlockChain::lastBlock() {
   if (blocks_.empty()) {
     return nullptr;
   }
 
-  return blocks_.rbegin()->second;
+  return &blocks_.rbegin()->second;
 }
 
-std::shared_ptr<Block> BlockChain::getBlock(unsigned int id) {
+Block* BlockChain::getBlock(unsigned int id) {
   try {
-    std::shared_ptr<Block> block = blocks_.at(id);
-    if (block != nullptr) {
-      return block;
-    }
+    return &blocks_.at(id);
   } catch (const std::out_of_range& e) {
   }
 
   return loadBlock(id);
 }
 
-const std::map<unsigned int, std::shared_ptr<Block>>& BlockChain::blocks() { return blocks_; }
+unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
+
+const std::map<unsigned int, Block>& BlockChain::blocks() { return blocks_; }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
-std::shared_ptr<Block> BlockChain::createBlock() {
+Block& BlockChain::createBlock() {
   unsigned int nextID;
   std::string previousHash;
 
-  std::shared_ptr<Block> last = lastBlock();
+  Block* last = lastBlock();
   if (last == nullptr) {
     nextID = 0;
     previousHash = "";
@@ -88,13 +93,11 @@ std::shared_ptr<Block> BlockChain::createBlock() {
     previousHash = last->hash();
   }
 
-  std::shared_ptr<Block> block = std::make_shared<Block>(nextID, previousHash);
-  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(block->id(), block));
-
-  return block;
+  blocks_.insert(std::pair<unsigned int, Block>(nextID, Block(nextID, previousHash)));
+  return blocks_.at(nextID);
 }
 
-std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
+Block* BlockChain::loadBlock(unsigned int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
   std::optional<Block> block = Block::fromBlockFile(blockPath);
@@ -108,10 +111,10 @@ std::shared_ptr<Block> BlockChain::loadBlock(unsigned int id) {
     return nullptr;
   }
 
-  std::shared_ptr<Block> blockPtr = std::make_shared<Block>(block.value());
-  blocks_.erase(blockPtr->id());
-  blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(blockPtr->id(), blockPtr));
-  return blockPtr;
+  blocks_.erase(block->id());
+  blocks_.insert(std::pair<unsigned int, Block>(block->id(), block.value()));
+
+  return &blocks_.at(block->id());
 }
 
 bool BlockChain::saveMetadata() const {
@@ -148,7 +151,7 @@ std::optional<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const BlockChain& obj) {
   j = {
-      {obj.kLastBlock_, obj.lastBlock()->id()},
+      {obj.kLastBlock_, obj.lastBlockID()},
       {obj.kDifficulty_, obj.difficulty()},
   };
 }
@@ -158,7 +161,7 @@ inline void from_json(const nlohmann::json& j, BlockChain& obj) {
   unsigned int lastBlock;
   j[obj.kLastBlock_].get_to(lastBlock);
   j[obj.kDifficulty_].get_to(obj.difficulty_);
-  obj.blocks_.insert(std::pair<unsigned int, std::shared_ptr<Block>>(lastBlock, nullptr));
+  obj.blocks_.insert(std::pair<unsigned int, Block>(lastBlock, Block()));
 }
 
 }  // namespace Miner
