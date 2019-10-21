@@ -42,10 +42,11 @@ void Block::append(const std::string& data) {
 
 void Block::mine(unsigned int difficulty) {
   nonce_ = 0;
-  while (true) {
-    std::string blockHash = hash();
 
-    bool invalid = false;
+  bool invalid = true;
+  while (invalid) {
+    std::string blockHash = hash();
+    invalid = false;
     for (unsigned int i = 0; i < difficulty; i++) {
       if (blockHash[i] != '0') {
         nonce_++;
@@ -53,12 +54,6 @@ void Block::mine(unsigned int difficulty) {
         invalid = true;
       }
     }
-
-    if (invalid) {
-      continue;
-    }
-
-    break;
   }
 }
 
