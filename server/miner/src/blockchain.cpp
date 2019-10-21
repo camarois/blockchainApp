@@ -29,7 +29,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
     return {};
   }
 
-  unsigned int lastBlockID = blockchain->blocks().rbegin()->first;
+  unsigned int lastBlockID = blockchain->lastBlockID();
   blockchain->clearAll();
   if (blockchain->getBlock(lastBlockID) == nullptr) {
     return {};
@@ -66,12 +66,11 @@ Block* BlockChain::lastBlock() {
 }
 
 Block* BlockChain::getBlock(unsigned int id) {
-  try {
-    return &blocks_.at(id);
-  } catch (const std::out_of_range& e) {
+  if (blocks_.find(id) == blocks_.end()) {
+    return loadBlock(id);
   }
 
-  return loadBlock(id);
+  return &blocks_.at(id);
 }
 
 unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
