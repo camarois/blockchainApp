@@ -1,12 +1,12 @@
-package com.example.androidapp.ui.fragments.search
+package com.example.androidapp.fragments.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SearchViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
     val text: LiveData<String> = MutableLiveData<String>().apply {
-        value = "This is search Fragment"
+        value = "This is home Fragment"
     }
 }
