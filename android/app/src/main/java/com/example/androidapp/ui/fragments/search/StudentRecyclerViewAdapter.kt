@@ -14,10 +14,10 @@ import kotlinx.android.synthetic.main.fragment_student.view.*
  * [RecyclerView.Adapter] that can display a [StudentItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class MyStudentRecyclerViewAdapter(
+class StudentRecyclerViewAdapter(
     private val mValues: List<StudentItem>,
     private val mListener: OnListFragmentInteractionListener?
-) : RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<StudentRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
 

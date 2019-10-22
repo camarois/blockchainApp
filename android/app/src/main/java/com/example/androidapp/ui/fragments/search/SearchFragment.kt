@@ -37,7 +37,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = MyStudentRecyclerViewAdapter(StudentContent.items, listener)
+        viewCreated.adapter = StudentRecyclerViewAdapter(StudentContent.items, listener)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -55,7 +55,7 @@ class SearchFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyStudentRecyclerViewAdapter(StudentContent.items, listener)
+                adapter = StudentRecyclerViewAdapter(StudentContent.items, listener)
             }
         }
         return view

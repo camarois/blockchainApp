@@ -23,7 +23,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Accueil</string>
-    <string name="menu_search">Consultation</string>
+    <string name="menu_search">Consultation d\'étudiants</string>
     <string name="menu_logout">Déconnexion</string>
     <string name="menu_register">Ajout</string>
     <string name="edition">Édition</string>

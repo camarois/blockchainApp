@@ -18,9 +18,11 @@ object StudentContent {
     /**
      * A map of student items, by ID.
      */
-    val ITEM_MAP: MutableMap<String, StudentItem> = HashMap()
+    val item_map: MutableMap<String, StudentItem> = HashMap()
 
     private val COUNT = 25
+    private val MAX_GPA = 4.0
+    private val MIN_GRAD_YEAR = 2000
 
     init {
         // Add some sample items.
@@ -31,11 +33,11 @@ object StudentContent {
 
     private fun addItem(item: StudentItem) {
         items.add(item)
-        ITEM_MAP[item.id] = item
+        item_map[item.id] = item
     }
 
     private fun createStudentItem(position: Int): StudentItem {
         return StudentItem(position.toString(),
-            "Prenom Nom $position", "GENIE INFO", (position * 4 / 25).toFloat(), 2000 + position, "notes.pdf")
+            "Prenom Nom $position", "GENIE INFO", (position * MAX_GPA / COUNT).toFloat(), MIN_GRAD_YEAR + position, "notes.pdf")
     }
 }
