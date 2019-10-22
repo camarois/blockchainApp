@@ -1,21 +1,26 @@
-package com.example.androidapp.ui
+package com.example.androidapp.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.AuthFailureError
 import com.crashlytics.android.Crashlytics
+import com.example.androidapp.LoginRequest
 import com.example.androidapp.R
+import com.example.androidapp.services.RestRequestService
 import io.fabric.sdk.android.Fabric
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
+    private var restService: RestRequestService = get()
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -26,20 +31,25 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.connection_btn).setOnClickListener { submitLogin() }
-        findViewById<TextView>(R.id.register_btn).setOnClickListener { submitRegister() }
+        connection_button.setOnClickListener { launch { submitLogin() } }
+        register_text_view.setOnClickListener { submitRegister() }
     }
 
-    private fun submitLogin() {
-        val username = findViewById<EditText>(R.id.username_val).text.toString()
-        val password = findViewById<EditText>(R.id.password_val).text.toString()
-        // TODO: Actually call the database
-        if (username != "" && password == "1234") {
-            val user = "$username;rooose;1234;$username@email.com;10" // information passed to the next activity
+    private suspend fun submitLogin() {
+        try {
+            val username = username_edit_text.text.toString()
+//            restService.initServerUrl(username) // Activate this while developping
+            val password = password_edit_text.text.toString()
+            //val response = restService.postLoginAsync(LoginRequest(username, password))
+            val user = "$username;rooose;1234;$username@email.com;10"
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
                 putExtra("user", user)
             }
             startActivity(intent)
+        } catch (e: AuthFailureError) {
+            password_edit_text.setText("")
+            Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
+                Toast.LENGTH_LONG).show()
         }
     }
 

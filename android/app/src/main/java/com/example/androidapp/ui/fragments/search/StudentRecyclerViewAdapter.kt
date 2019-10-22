@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.androidapp.R
-import com.example.androidapp.ui.fragments.search.SearchFragment.OnListFragmentInteractionListener
+import com.example.androidapp.fragments.search.SearchFragment.OnListFragmentInteractionListener
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_student.view.*
 

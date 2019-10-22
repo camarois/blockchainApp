@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.search
+package com.example.androidapp.fragments.search
 
 import android.content.Context
 import android.os.Bundle
@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
+import com.example.androidapp.ui.fragments.search.StudentRecyclerViewAdapter
 
 import com.example.androidapp.ui.fragments.search.student.StudentContent
 import com.example.androidapp.ui.fragments.search.student.StudentItem
