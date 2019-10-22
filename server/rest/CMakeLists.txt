@@ -1,4 +1,5 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
 add_executable(rest ${SOURCE_FILES})
 add_dependencies(rest common libpistache)
