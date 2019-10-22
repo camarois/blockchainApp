@@ -6,7 +6,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-DEFINE_string(user, "server", "Developper using the service");  // NOLINT
+DEFINE_string(user, "server", "Developper using the service");    // NOLINT
+DEFINE_string(cert, "./cert/server.crt", "Path to server cert");  // NOLINT
+DEFINE_string(key, "./cert/server.key", "Path to server key");    // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);

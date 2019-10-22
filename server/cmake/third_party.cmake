@@ -11,6 +11,18 @@ link_directories(${CMAKE_BINARY_DIR}/externals/lib)
 
 set(EXTERNAL_LIBS_DIR ${CMAKE_BINARY_DIR}/externals/lib)
 
+ExternalProject_Add(libsqlite3
+    URL https://www.sqlite.org/2019/sqlite-src-3300100.zip
+    URL_MD5 a090a543b1d17178627f280f0fe07324
+    CONFIGURE_COMMAND ../libsqlite3/configure
+                        --prefix=${CMAKE_BINARY_DIR}/externals
+                        --disable-tcl
+    BUILD_COMMAND make
+    INSTALL_COMMAND make install
+    PREFIX libsqlite3
+    UPDATE_DISCONNECTED ON
+)
+
 ExternalProject_Add(libgflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libgflags.a
