@@ -18,11 +18,11 @@ object StudentContent {
     /**
      * A map of student items, by ID.
      */
-    val item_map: MutableMap<String, StudentItem> = HashMap()
+    private val item_map: MutableMap<String, StudentItem> = HashMap()
 
-    private val COUNT = 25
-    private val MAX_GPA = 4.0
-    private val MIN_GRAD_YEAR = 2000
+    private const val COUNT = 25
+    private const val MAX_GPA = 4.0
+    private const val MIN_GRAD_YEAR = 2000
 
     init {
         // Add some sample items.
