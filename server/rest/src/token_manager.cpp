@@ -17,13 +17,13 @@ std::string TokenManager::getSignature() const { return signature_; }
 void TokenManager::encode(const std::string& username, const std::string& password) {
   token_.add_claim("username", username)
       .add_claim("password", password)
-      .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeZ_});
+      .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMin_});
   signature_ = token_.signature(errCode_);
 }
 
 void TokenManager::refresh() {
   token_.remove_claim("exp");
-  token_.add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax2_});
+  token_.add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax_});
   signature_ = token_.signature(errCode_);
 }
 

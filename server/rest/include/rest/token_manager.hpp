@@ -13,7 +13,7 @@ namespace Rest {
 class TokenManager {
  public:
   explicit TokenManager(const std::string& username, const std::string& password);
-  TokenManager(const std::string& signature);
+  explicit TokenManager(const std::string& signature);
 
   jwt::jwt_object getToken() const;
   std::string getSignature() const;
@@ -29,10 +29,8 @@ class TokenManager {
   std::string signature_;
   std::error_code errCode_;
 
-  const long unsigned int kExpirationTimeMax_ = 3600;
-  const long unsigned int kExpirationTimeMax2_ = 3600;
-  const long unsigned int kExpirationTimeMin_ = 60;
-  const long unsigned int kExpirationTimeZ_ = 0;
+  const uint64_t kExpirationTimeMax_ = 3600;
+  const uint64_t kExpirationTimeMin_ = 60;
   const jwt::string_view kUsername_ = "username";
   const jwt::string_view kPassword_ = "password";
   const jwt::string_view kExpiration_ = "expiration";
