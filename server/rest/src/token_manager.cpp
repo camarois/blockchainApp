@@ -8,7 +8,7 @@ DECLARE_string(database);
 namespace Rest {
 
 TokenManager::TokenManager(const std::string& username, const std::string& password) { encode(username, password); }
-TokenManager::TokenManager(const std::string& signature) : signature_(signature){};
+TokenManager::TokenManager(const std::string& signature) { signature_ = signature; }
 
 jwt::jwt_object TokenManager::getToken() const { return token_; }
 
@@ -17,7 +17,7 @@ std::string TokenManager::getSignature() const { return signature_; }
 void TokenManager::encode(const std::string& username, const std::string& password) {
   token_.add_claim("username", username)
       .add_claim("password", password)
-      .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMin_});
+      .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax_});
   signature_ = token_.signature(errCode_);
 }
 

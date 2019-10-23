@@ -30,7 +30,6 @@ class TokenManager {
   std::error_code errCode_;
 
   const uint64_t kExpirationTimeMax_ = 3600;
-  const uint64_t kExpirationTimeMin_ = 60;
   const jwt::string_view kUsername_ = "username";
   const jwt::string_view kPassword_ = "password";
   const jwt::string_view kExpiration_ = "expiration";

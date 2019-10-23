@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+
 #include <gflags/gflags.h>
 
 namespace Common {
@@ -34,7 +35,7 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 // TODO(frank): change all return types to auto!!
 std::optional<Common::Models::LoginRequest> Database::getUser(const std::string& username) {
   Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
-  Statement statement = Statement(db_, query);
+  Statement statement(db_, query);
   if (statement.step()) {
     return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
   }
@@ -46,7 +47,7 @@ bool Database::createUser(const Common::Models::LoginRequest& user) {
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
       (user.username).c_str(), (user.password).c_str());
-  Statement statement = Statement(db_, query);
+  Statement statement(db_, query);
   return statement.step();
 }
 

@@ -1,13 +1,12 @@
 #ifndef REST_USER_CONTROLLER_HPP
 #define REST_USER_CONTROLLER_HPP
 
+#include <common/example.hpp>
 #include <nlohmann/json.hpp>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
 #include <rest/token_manager.hpp>
-
-#include <common/example.hpp>
 
 namespace Rest {
 
@@ -20,6 +19,7 @@ class UserController {
   void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/usager/";
 };

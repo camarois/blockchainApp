@@ -17,15 +17,17 @@ void UserController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& 
                                Pistache::Rest::Routes::bind(&UserController::handleLogout, this));
   Pistache::Rest::Routes::Post(*router, kBasePath_ + "password",
                                Pistache::Rest::Routes::bind(&UserController::handlePassword, this));
+  Pistache::Rest::Routes::Post(*router, kBasePath_ + "register",
+                               Pistache::Rest::Routes::bind(&UserController::handleRegister, this));
 }
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db = Common::Database(FLAGS_database);
+  Common::Database db(FLAGS_database);
   auto user = db.getUser(loginRequest.username);
 
   if (loginRequest.username == user->username && loginRequest.password == user->password) {
-    Rest::TokenManager tokenManager = Rest::TokenManager(loginRequest.username, loginRequest.password);
+    Rest::TokenManager tokenManager(loginRequest.username, loginRequest.password);
     tokenManager.decode(tokenManager.getSignature());
 
     Common::Models::LoginResponse loginResponse = {};
@@ -42,6 +44,21 @@ void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pi
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::PasswordRequest loginRequest = nlohmann::json::parse(request.body());
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+}
+
+void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+  Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
+  Common::Database db(FLAGS_database);
+
+  if (db.createUser(registerRequest)) {
+    Rest::TokenManager tokenManager(registerRequest.username, registerRequest.password);
+    tokenManager.decode(tokenManager.getSignature());
+
+    Common::Models::LoginResponse registerResponse = {};
+    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
+    response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
+  }
+  response.send(Pistache::Http::Code::Forbidden);
 }
 
 }  // namespace Rest
