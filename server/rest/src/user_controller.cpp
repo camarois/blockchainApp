@@ -38,7 +38,7 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
 }
 
 void UserController::handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Rest::TokenManager tokenManager(request.headers().getRaw("Authorization").value());
+  Rest::TokenManager tokenManager(request);
   if (!tokenManager.decode()) {
     response.send(Pistache::Http::Code::Ok);
   }
@@ -46,8 +46,13 @@ void UserController::handleLogout(const Pistache::Rest::Request& request, Pistac
 }
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::PasswordRequest loginRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
+  Rest::TokenManager tokenManager(request);
+  if (!tokenManager.decode()) {
+    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
+    response.send(Pistache::Http::Code::Ok);
+  }
+  response.send(Pistache::Http::Code::Unauthorized);
 }
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

@@ -13,7 +13,7 @@ namespace Rest {
 class TokenManager {
  public:
   explicit TokenManager(const std::string& username, const std::string& password);
-  explicit TokenManager(const std::string& signature);
+  explicit TokenManager(const Pistache::Rest::Request& request);
 
   jwt::jwt_object getToken() const;
   std::string getSignature() const;
@@ -33,6 +33,7 @@ class TokenManager {
   const jwt::string_view kUsername_ = "username";
   const jwt::string_view kPassword_ = "password";
   const jwt::string_view kExpiration_ = "expiration";
+  const std::string kAuthorization_ = "Authorization";
 };
 
 }  // namespace Rest

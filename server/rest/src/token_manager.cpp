@@ -8,7 +8,9 @@ DECLARE_string(database);
 namespace Rest {
 
 TokenManager::TokenManager(const std::string& username, const std::string& password) { encode(username, password); }
-TokenManager::TokenManager(const std::string& signature) { signature_ = signature; }
+TokenManager::TokenManager(const Pistache::Rest::Request& request) {
+  signature_ = request.headers().getRaw("Authorization").value();
+}
 
 jwt::jwt_object TokenManager::getToken() const { return token_; }
 
