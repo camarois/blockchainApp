@@ -4,17 +4,17 @@
 
 set -o xtrace
 
-pushd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-printf "O" | ./createDb.sh
-popd
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-BUILD_DIRECTORY=$(dirname "$0")/build
+printf "O" | "$SCRIPT_DIR/sql/createDb.sh" "$SCRIPT_DIR/sql/blockchain.db"
+
+BUILD_DIRECTORY="$SCRIPT_DIR/build"
 mkdir -p "$BUILD_DIRECTORY"
-cd "$BUILD_DIRECTORY" || exit
-
+pushd "$BUILD_DIRECTORY" || exit 1
 cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
 if [[ -z ${1+x} ]]; then
 	ninja -j 4
 else
-	ninja -j $1
+	ninja -j "$1"
 fi
+popd || exit 1
