@@ -11,6 +11,14 @@ link_directories(${CMAKE_BINARY_DIR}/externals/lib)
 
 set(EXTERNAL_LIBS_DIR ${CMAKE_BINARY_DIR}/externals/lib)
 
+ExternalProject_Add(cppjwt
+    GIT_REPOSITORY https://github.com/arun11299/cpp-jwt.git
+    CMAKE_ARGS ${COMMON_DEFINES}
+    PREFIX cppjwt
+    INSTALL_COMMAND cmake -E copy_directory ${CMAKE_BINARY_DIR}/cppjwt/src/cppjwt/include/ ${CMAKE_BINARY_DIR}/externals/include/
+)
+add_dependencies(cppjwt libgtest)
+
 ExternalProject_Add(libsqlite3
     URL https://www.sqlite.org/2019/sqlite-src-3300100.zip
     URL_MD5 a090a543b1d17178627f280f0fe07324
@@ -47,7 +55,7 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgmock_build_tests=off
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
-    CMAKE_ARGS -Dgtest_disable_pthreads=off
+    CMAKE_ARGS -Dgtest_disable_pthreads=on
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
     UPDATE_DISCONNECTED ON

@@ -5,6 +5,7 @@
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
+#include <rest/token_manager.hpp>
 
 #include <common/example.hpp>
 
