@@ -28,7 +28,7 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
 
   if (loginRequest.username == user->username && loginRequest.password == user->password) {
     Rest::TokenManager tokenManager(loginRequest.username, loginRequest.password);
-    tokenManager.decode(tokenManager.getSignature());
+    tokenManager.decode();
 
     Common::Models::LoginResponse loginResponse = {};
     response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
@@ -37,8 +37,12 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
   response.send(Pistache::Http::Code::Forbidden);
 }
 
-void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+void UserController::handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+  Rest::TokenManager tokenManager(request.headers().getRaw("Authorization").value());
+  if (!tokenManager.decode()) {
+    response.send(Pistache::Http::Code::Ok);
+  }
+  response.send(Pistache::Http::Code::Unauthorized);
 }
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -52,7 +56,7 @@ void UserController::handleRegister(const Pistache::Rest::Request& request, Pist
 
   if (db.createUser(registerRequest)) {
     Rest::TokenManager tokenManager(registerRequest.username, registerRequest.password);
-    tokenManager.decode(tokenManager.getSignature());
+    tokenManager.decode();
 
     Common::Models::LoginResponse registerResponse = {};
     response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());

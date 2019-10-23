@@ -27,10 +27,10 @@ void TokenManager::refresh() {
   signature_ = token_.signature(errCode_);
 }
 
-void TokenManager::decode(const std::string& signature) {
+bool TokenManager::decode() {
   try {
     jwt::jwt_object decodedObj =
-        jwt::decode(signature, jwt::params::algorithms({"hs256"}), errCode_, jwt::params::secret("inf3995"));
+        jwt::decode(getSignature(), jwt::params::algorithms({"hs256"}), errCode_, jwt::params::secret("inf3995"));
 
     if (errCode_.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired)) {
       std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername_);
@@ -46,6 +46,7 @@ void TokenManager::decode(const std::string& signature) {
   } catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
+  return bool(errCode_);
 }
 
 }  // namespace Rest

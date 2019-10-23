@@ -18,7 +18,7 @@ class TokenManager {
   jwt::jwt_object getToken() const;
   std::string getSignature() const;
 
-  void decode(const std::string& signature);
+  bool decode();
   void refresh();
 
  private:
