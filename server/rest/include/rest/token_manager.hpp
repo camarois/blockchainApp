@@ -1,10 +1,9 @@
 #ifndef REST_TOKEN_MANAGER_HPP
 #define REST_TOKEN_MANAGER_HPP
 
-#include <common/database.hpp>
-#include <common/example.hpp>
-#include <chrono>
 #include <cassert>
+#include <chrono>
+#include <common/example.hpp>
 #include <iostream>
 #include <jwt/jwt.hpp>
 #include <pistache/router.h>
@@ -12,20 +11,31 @@
 namespace Rest {
 
 class TokenManager {
-    public:
-    explicit TokenManager(const Pistache::Rest::Request& request);
-    TokenManager(const std::string signature);
+ public:
+  explicit TokenManager(const std::string& username, const std::string& password);
+  TokenManager(const std::string& signature);
 
-    jwt::jwt_object token() const;
-    std::string signature() const;
-    void decode(std::string signature) const;
+  jwt::jwt_object getToken() const;
+  std::string getSignature() const;
 
-    private:
-    void encode(const Pistache::Rest::Request& request);
+  void decode(const std::string& signature);
+  void refresh();
 
-    jwt::jwt_object token_{jwt::params::algorithm("hs256"), jwt::params::secret("inf3995"), jwt::params::payload({{"role", "student"}})};
-    std::string signature_;
-    const int kExpiration_ = 3600;
+ private:
+  void encode(const std::string& username, const std::string& passwordt);
+
+  jwt::jwt_object token_{jwt::params::algorithm("hs256"), jwt::params::secret("inf3995"),
+                         jwt::params::payload({{"role", "student"}})};
+  std::string signature_;
+  std::error_code errCode_;
+
+  const long unsigned int kExpirationTimeMax_ = 3600;
+  const long unsigned int kExpirationTimeMax2_ = 3600;
+  const long unsigned int kExpirationTimeMin_ = 60;
+  const long unsigned int kExpirationTimeZ_ = 0;
+  const jwt::string_view kUsername_ = "username";
+  const jwt::string_view kPassword_ = "password";
+  const jwt::string_view kExpiration_ = "expiration";
 };
 
 }  // namespace Rest

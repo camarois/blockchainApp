@@ -1,8 +1,10 @@
 #include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
-#include <filesystem>
+#include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
+
+DECLARE_string(database);
 
 namespace Rest {
 
@@ -19,14 +21,15 @@ void UserController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& 
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db = Common::Database(std::filesystem::current_path() / "sql/blockchain.db");
+  Common::Database db = Common::Database(FLAGS_database);
   auto user = db.getUser(loginRequest.username);
 
   if (loginRequest.username == user->username && loginRequest.password == user->password) {
-    Rest::TokenManager tokenManager = Rest::TokenManager(request);
+    Rest::TokenManager tokenManager = Rest::TokenManager(loginRequest.username, loginRequest.password);
+    tokenManager.decode(tokenManager.getSignature());
 
     Common::Models::LoginResponse loginResponse = {};
-    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.signature());
+    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   }
   response.send(Pistache::Http::Code::Forbidden);

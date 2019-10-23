@@ -1,6 +1,5 @@
 #include <common/database.hpp>
 #include <common/models.hpp>
-#include <filesystem>
 #include <gtest/gtest.h>
 
 TEST(Sqlite3Tests, get_user) {
