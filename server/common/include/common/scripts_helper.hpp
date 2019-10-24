@@ -10,8 +10,8 @@
 namespace Common {
 namespace ScriptsHelper {
 
-inline void createCert(const std::string& ip) {
-  Common::Database db("blockchain.db");
+inline void createCert(const std::string& ip, const std::string& dbPath) {
+  Common::Database db(dbPath);
   if (!db.containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
     db.addIp(ip.c_str());
@@ -23,7 +23,6 @@ inline void createCert(const std::string& ip) {
       ss << "IP." << i + 1 << " = " << ips[i] << std::endl;
     }
     ss << "'";
-    std::cout << ss.str() << std::endl;
     system(ss.str().c_str());
   } else {
     std::cout << "Ip already in the database" << std::endl;

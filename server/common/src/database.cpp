@@ -74,7 +74,7 @@ void Database::addIp(const std::string& ip) {
 bool Database::containsIp(const std::string& ip) {
   Query query = Query(
       "SELECT ip FROM ips "
-      "WHERE (ip = '%q');",
+      "WHERE ip = '%q';",
       ip.c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
