@@ -6,10 +6,8 @@ namespace Rest {
 InfoController::InfoController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
 
 void InfoController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "cours",
-                               Pistache::Rest::Routes::bind(&InfoController::handleClasses, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "etudiant",
-                               Pistache::Rest::Routes::bind(&InfoController::handleStudents, this));
+  router->post(kBasePath_ + "cours", Pistache::Rest::Routes::bind(&InfoController::handleClasses, this));
+  router->post(kBasePath_ + "etudiant", Pistache::Rest::Routes::bind(&InfoController::handleStudents, this));
 }
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

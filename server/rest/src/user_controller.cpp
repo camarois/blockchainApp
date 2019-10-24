@@ -7,12 +7,9 @@ namespace Rest {
 UserController::UserController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
 
 void UserController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "login",
-                               Pistache::Rest::Routes::bind(&UserController::handleLogin, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "logout",
-                               Pistache::Rest::Routes::bind(&UserController::handleLogout, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "password",
-                               Pistache::Rest::Routes::bind(&UserController::handlePassword, this));
+  router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&UserController::handleLogin, this));
+  router->post(kBasePath_ + "logout", Pistache::Rest::Routes::bind(&UserController::handleLogout, this));
+  router->post(kBasePath_ + "password", Pistache::Rest::Routes::bind(&UserController::handlePassword, this));
 }
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
