@@ -1,7 +1,20 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
+add_custom_target(deps_file
+    # This will create db if it doesn't exist
+    COMMAND printf "C" | ${SQL_DIR}/createDb.sh blockchain.db
+    BYPRODUCTS blockchain.db
+
+    COMMAND cp
+        ${CERT_DIR}/createCert.sh
+        ${CERT_DIR}/rootCA.crt
+        ${CERT_DIR}/rootCA.key
+        ${CERT_DIR}/rootCA.srl
+        ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 add_executable(rest ${SOURCE_FILES})
-add_dependencies(rest common libpistache)
+add_dependencies(rest common libpistache deps_file)
 
 target_include_directories(rest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -17,4 +30,5 @@ target_link_libraries(rest PRIVATE
     curl
     ${OPENSSL_LIBRARIES}
     pthread
+    sqlite3
 )

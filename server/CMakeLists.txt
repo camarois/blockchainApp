@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-write-strings")
 set(SQL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sql)
+set(CERT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cert)
 
 include(ExternalProject)
 include(cmake/third_party.cmake)

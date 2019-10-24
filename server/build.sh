@@ -6,8 +6,6 @@ set -o xtrace
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-# printf "C" | "$SCRIPT_DIR/sql/createDb.sh" "$SCRIPT_DIR/sql/blockchain.db"
-
 BUILD_DIRECTORY="$SCRIPT_DIR/build"
 mkdir -p "$BUILD_DIRECTORY"
 pushd "$BUILD_DIRECTORY" || exit 1

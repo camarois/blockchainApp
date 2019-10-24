@@ -12,6 +12,7 @@
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
 #include <rest/custom_router.hpp>
+#include <common/database.hpp>
 
 namespace Rest {
 
@@ -24,6 +25,7 @@ class MainController {
  private:
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
+  std::shared_ptr<Common::Database> db_;
   Rest::UserController userController_;
   Rest::ExampleController exampleController_;
   Rest::TransactionController transactionController_;

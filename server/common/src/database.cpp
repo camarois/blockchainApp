@@ -27,13 +27,15 @@ void Database::close() {
 
 void Database::assertSqlite(int errCode, const std::string& message) {
   if (errCode != SQLITE_DONE && errCode != SQLITE_OK && errCode != SQLITE_ROW) {
-    throw SqliteErr(message + "; Sqlite error message: " + sqlite3_errstr(errCode));
+    throw SqliteErr(message + " -> Sqlite error message: " + sqlite3_errstr(errCode));
   }
 }
 
-// TODO(frank): change all return types to auto!!
 std::optional<Common::Models::LoginRequest> Database::getUser(const std::string& username) {
-  Query query = Query("SELECT username, password FROM users WHERE (username = '%q');", username.c_str());
+  Query query = Query(
+      "SELECT username, password FROM users "
+      "WHERE username = '%q';",
+      username.c_str());
   Statement statement = Statement(db_, query);
   if (statement.step()) {
     return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
@@ -41,11 +43,39 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
   return {};
 }
 
-bool Database::createUser(const Common::Models::LoginRequest& user) {
+void Database::createUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
       user.username.c_str(), user.password.c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+std::vector<std::string> Database::getIps() {
+  Query query = Query("SELECT ip FROM ips;");
+  Statement statement = Statement(db_, query);
+  std::vector<std::string> ips;
+  while (statement.step()) {
+    ips.push_back(statement.getColumnText(0));
+  }
+  return ips;
+}
+
+void Database::addIp(const std::string& ip) {
+  Query query = Query(
+      "INSERT INTO ips (ip) "
+      "VALUES ('%q');",
+      ip.c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+bool Database::containsIp(const std::string& ip) {
+  Query query = Query(
+      "SELECT ip FROM ips "
+      "WHERE (ip = '%q');",
+      ip.c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
