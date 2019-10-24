@@ -33,13 +33,13 @@ class BlockChain {
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void from_json(const nlohmann::json& j, BlockChain& obj);
 
-  static const std::string kMetadata;
+  static const std::string kMetadataFilename;
 
  private:
   Block& createBlock();
   std::optional_ref<Block> loadBlock(unsigned int id);
   bool saveMetadata() const;
-  static std::optional<BlockChain> loadMetadata(const std::filesystem::path& blockDir);
+  static std::optional<BlockChain> loadMetadataBlockChain(const std::filesystem::path& blockDir);
 
   unsigned int difficulty_;
   std::filesystem::path blockDir_;

@@ -6,7 +6,7 @@
 
 namespace Miner {
 
-const std::string BlockChain::kMetadata = "metadata";
+const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
   difficulty_ = 3;
@@ -20,11 +20,11 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
     return BlockChain(blockDir);
   }
 
-  if (!std::filesystem::exists(blockDir / BlockChain::kMetadata)) {
+  if (!std::filesystem::exists(blockDir / BlockChain::kMetadataFilename)) {
     return BlockChain(blockDir);
   }
 
-  std::optional<BlockChain> blockchain = loadMetadata(blockDir);
+  std::optional<BlockChain> blockchain = loadMetadataBlockChain(blockDir);
   if (!blockchain) {
     return {};
   }
@@ -117,7 +117,7 @@ std::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
 }
 
 bool BlockChain::saveMetadata() const {
-  std::ofstream metadataFile(blockDir_ / BlockChain::kMetadata, std::ofstream::out);
+  std::ofstream metadataFile(blockDir_ / BlockChain::kMetadataFilename, std::ofstream::out);
   if (metadataFile.fail()) {
     std::cerr << "blockchain: failed to open metadata in `" << blockDir_ << "`" << std::endl;
     return false;
@@ -130,8 +130,8 @@ bool BlockChain::saveMetadata() const {
   return true;
 }
 
-std::optional<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& blockDir) {
-  std::ifstream metadataFile(blockDir / BlockChain::kMetadata, std::ifstream::in);
+std::optional<BlockChain> BlockChain::loadMetadataBlockChain(const std::filesystem::path& blockDir) {
+  std::ifstream metadataFile(blockDir / BlockChain::kMetadataFilename, std::ifstream::in);
   if (metadataFile.fail()) {
     std::cerr << "blockchain: failed to open metadata in `" << blockDir << "`" << std::endl;
     return {};
