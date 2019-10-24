@@ -33,7 +33,7 @@ function lint_files() {
         fix_lint=()
     fi
 
-    xargs run-clang-tidy-8 -quiet "${build_flags[@]}" "${only_headers[@]}" "${fix_lint[@]}"
+    xargs -P "$THREAD_COUNT" run-clang-tidy-8 -quiet "${build_flags[@]}" "${only_headers[@]}" "${fix_lint[@]}"
 }
 
 function format_files() {
@@ -48,13 +48,28 @@ function format_files() {
         cmd=('grep' '<replacement ')
     fi
 
-    ! xargs clang-format-8 -style=file "${fix_format[@]}" | "${cmd[@]}"
+    ! xargs -P "$THREAD_COUNT" clang-format-8 -style=file "${fix_format[@]}" | "${cmd[@]}"
+}
+
+function is_positive_number() {
+    local value="$1"
+
+    if [[ "$(echo "$value" | bc)" != "$value" ]]; then
+        return 1
+    fi
+
+    if ((value < 1)); then
+        return 1
+    fi
+
+    return 0
 }
 
 DO_TIDY=0
 DO_FORMAT=0
 DO_FIX=0
 DO_EXCLUDE_TESTS=1
+THREAD_COUNT=$(grep -c ^processor /proc/cpuinfo)
 FILES=()
 
 while [[ $# -gt 0 ]]; do
@@ -73,6 +88,13 @@ while [[ $# -gt 0 ]]; do
             ;;
         --include-tests)
             DO_EXCLUDE_TESTS=0
+            shift
+            ;;
+        --threads)
+            shift
+            if is_positive_number "$1"; then
+                THREAD_COUNT=$1
+            fi
             shift
             ;;
         *)
