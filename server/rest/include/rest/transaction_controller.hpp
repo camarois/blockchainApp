@@ -5,6 +5,7 @@
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
+#include <rest/custom_router.hpp>
 
 #include <common/example.hpp>
 
@@ -12,10 +13,10 @@ namespace Rest {
 
 class TransactionController {
  public:
-  explicit TransactionController(const std::shared_ptr<Pistache::Rest::Router>& router);
+  explicit TransactionController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
-  void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
+  void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
   void handleTransaction(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/transaction/";

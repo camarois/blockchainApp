@@ -3,9 +3,9 @@
 
 namespace Rest {
 
-FileController::FileController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
+FileController::FileController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
-void FileController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
+void FileController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "notes", Pistache::Rest::Routes::bind(&FileController::handleGrades, this));
 }
 

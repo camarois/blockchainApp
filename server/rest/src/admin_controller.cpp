@@ -3,9 +3,9 @@
 
 namespace Rest {
 
-AdminController::AdminController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
+AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
-void AdminController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
+void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this));
   router->post(kBasePath_ + "logout", Pistache::Rest::Routes::bind(&AdminController::handleLogout, this));
   router->post(kBasePath_ + "motdepasse", Pistache::Rest::Routes::bind(&AdminController::handlePassword, this));
