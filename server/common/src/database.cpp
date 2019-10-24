@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+#include <common/format_helper.hpp>
 #include <gflags/gflags.h>
 
 namespace Common {
@@ -78,6 +79,26 @@ bool Database::containsIp(const std::string& ip) {
       ip.c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
+}
+
+int Database::createLogSession() {
+  Query query = Query(
+      "INSERT INTO logSessions (startTime) "
+      "VALUES ('%q'); "
+      "SELECT LAST_INSERT_ROWID();",
+      Common::FormatHelper::nowStr().c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+  return std::stoi(statement.getColumnText(0));
+}
+
+void Database::addLog(int logSessionId, const std::string& log) {
+  Query query = Query(
+      "INSERT INTO logs (log, logTime, logSessionId) "
+      "VALUES ('%q', '%q', '%q');",
+      log.c_str(), Common::FormatHelper::nowStr().c_str(), logSessionId);
+  Statement statement = Statement(db_, query);
+  statement.step();
 }
 
 }  // namespace Common

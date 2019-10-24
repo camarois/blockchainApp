@@ -1,8 +1,8 @@
-#include <chrono>
 #include <common/database.hpp>
+#include <common/format_helper.hpp>
 #include <ctime>
-#include <rest/custom_router.hpp>
 #include <gflags/gflags.h>
+#include <rest/custom_router.hpp>
 
 DECLARE_string(db);
 
@@ -35,10 +35,8 @@ void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler h
 }
 
 void CustomRouter::log(const std::string& url, const Pistache::Rest::Request& request) {
-  auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  std::string nowStr = std::ctime(&now);
   auto body = request.body() == "" ? "NULL" : request.body();
-  std::cout << std::endl << nowStr.substr(0, nowStr.length() - 1) << ": " << url << std::endl << body << std::endl;
+  std::cout << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body << std::endl;
 }
 
 }  // namespace Rest

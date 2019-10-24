@@ -6,8 +6,6 @@
 #include <pistache/http.h>
 #include <pistache/router.h>
 #include <zmq.hpp>
-
-#include <common/example.hpp>
 #include <rest/custom_router.hpp>
 
 namespace Rest {

@@ -1,7 +1,6 @@
 #ifndef REST_MAIN_CONTROLLER_HPP
 #define REST_MAIN_CONTROLLER_HPP
 
-#include <common/example.hpp>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>

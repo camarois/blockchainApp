@@ -7,8 +7,6 @@
 #include <pistache/router.h>
 #include <rest/custom_router.hpp>
 
-#include <common/example.hpp>
-
 namespace Rest {
 
 class FileController {

@@ -23,5 +23,3 @@ add_custom_target(sqlite3_tests_database
     BYPRODUCTS test-blockchain.db
 )
 add_dependencies(sqlite3_tests sqlite3_tests_database)
-
-create_test(example_tests example_test.cpp)
