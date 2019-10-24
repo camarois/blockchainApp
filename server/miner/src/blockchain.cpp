@@ -25,25 +25,25 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
   }
 
   std::optional<BlockChain> blockchain = loadMetadata(blockDir);
-  if (!blockchain.has_value()) {
+  if (!blockchain) {
     return {};
   }
 
   unsigned int lastBlockID = blockchain->lastBlockID();
   blockchain->clearAll();
-  if (blockchain->getBlock(lastBlockID) == nullptr) {
+  if (!blockchain->getBlock(lastBlockID)) {
     return {};
   }
 
   return blockchain;
 }
 
-void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->append(transaction); }
+void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->get().append(transaction); }
 
 void BlockChain::saveAll() {
-  Block* last = lastBlock();
-  if (last != nullptr) {
-    lastBlock()->save(blockDir_);
+  std::optional_ref<Block> last = lastBlock();
+  if (last) {
+    lastBlock()->get().save(blockDir_);
   }
   saveMetadata();
 }
@@ -51,26 +51,26 @@ void BlockChain::saveAll() {
 void BlockChain::clearAll() { blocks_.clear(); }
 
 Block& BlockChain::nextBlock() {
-  lastBlock()->mine(difficulty_);
-  lastBlock()->save(blockDir_);
+  lastBlock()->get().mine(difficulty_);
+  lastBlock()->get().save(blockDir_);
 
   return createBlock();
 }
 
-Block* BlockChain::lastBlock() {
+std::optional_ref<Block> BlockChain::lastBlock() {
   if (blocks_.empty()) {
-    return nullptr;
+    return {};
   }
 
-  return &blocks_.rbegin()->second;
+  return blocks_.rbegin()->second;
 }
 
-Block* BlockChain::getBlock(unsigned int id) {
+std::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
   if (blocks_.find(id) == blocks_.end()) {
     return loadBlock(id);
   }
 
-  return &blocks_.at(id);
+  return blocks_.at(id);
 }
 
 unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
@@ -83,37 +83,37 @@ Block& BlockChain::createBlock() {
   unsigned int nextID;
   std::string previousHash;
 
-  Block* last = lastBlock();
-  if (last == nullptr) {
+  std::optional_ref<Block> last = lastBlock();
+  if (!last) {
     nextID = 0;
     previousHash = "";
   } else {
-    nextID = last->id() + 1;
-    previousHash = last->hash();
+    nextID = last->get().id() + 1;
+    previousHash = last->get().hash();
   }
 
   blocks_.insert(std::pair<unsigned int, Block>(nextID, Block(nextID, previousHash)));
   return blocks_.at(nextID);
 }
 
-Block* BlockChain::loadBlock(unsigned int id) {
+std::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
   std::optional<Block> block = Block::fromBlockFile(blockPath);
-  if (!block.has_value()) {
+  if (!block) {
     std::cerr << "block #" << std::to_string(id) << " doesn't exist" << std::endl;
-    return nullptr;
+    return {};
   }
 
   if (block->id() != id) {
     std::cerr << "mismatch ID in block #" << std::to_string(id) << std::endl;
-    return nullptr;
+    return {};
   }
 
   blocks_.erase(block->id());
   blocks_.insert(std::pair<unsigned int, Block>(block->id(), block.value()));
 
-  return &blocks_.at(block->id());
+  return blocks_.at(block->id());
 }
 
 bool BlockChain::saveMetadata() const {
@@ -141,7 +141,7 @@ std::optional<BlockChain> BlockChain::loadMetadata(const std::filesystem::path& 
   metadataFile >> json;
   metadataFile.close();
 
-  std::optional<BlockChain> metadata = std::make_optional<BlockChain>(json.get<BlockChain>());
+  std::optional<BlockChain> metadata = json.get<BlockChain>();
   metadata->blockDir_ = blockDir;
 
   return metadata;

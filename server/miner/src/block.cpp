@@ -32,7 +32,7 @@ std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir)
   blockFile >> json;
   blockFile.close();
 
-  return std::make_optional<Block>(json.get<Block>());
+  return json.get<Block>();
 }
 
 void Block::append(const std::string& data) {
