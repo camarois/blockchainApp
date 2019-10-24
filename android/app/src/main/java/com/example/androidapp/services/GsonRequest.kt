@@ -17,16 +17,16 @@ class GsonRequest <T> (
     url: String,
     private val body: String,
     private val classOfT: Class<T>,
-    private val headers: MutableMap<String, String?>?,
+    private val headers: MutableMap<String, String>?,
     private val listener: Response.Listener<T>,
     errorListener: Response.ErrorListener?
 ) : Request<T>(method, url, errorListener
 ) {
     private val gson = Gson()
 
-    override fun getHeaders(): MutableMap<String, String?> {
+    override fun getHeaders(): MutableMap<String, String> {
         val params = headers ?: super.getHeaders()
-        params[CredentialsManager.HTTP_header_authorization] = CredentialsManager.getAuthToken(context)
+        params[CredentialsManager.HTTP_header_authorization] ?: CredentialsManager.getAuthToken(context)
         return params
     }
 
@@ -39,7 +39,7 @@ class GsonRequest <T> (
                 response?.data ?: ByteArray(0),
                 Charset.forName(HttpHeaderParser.parseCharset(response?.headers)))
 
-            val token = response?.headers?.get("Authorization")
+            val token = response?.headers?.get(CredentialsManager.HTTP_header_authorization)
             CredentialsManager.saveCredentials(context, token)
 
             Response.success(
