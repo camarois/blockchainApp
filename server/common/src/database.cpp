@@ -45,7 +45,7 @@ bool Database::createUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      (user.username).c_str(), (user.password).c_str());
+      user.username.c_str(), user.password.c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }

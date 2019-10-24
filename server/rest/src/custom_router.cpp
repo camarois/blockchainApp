@@ -1,6 +1,7 @@
 #include <chrono>
 #include <ctime>
 #include <rest/custom_router.hpp>
+#include <common/database.hpp>
 
 namespace Rest {
 
@@ -9,10 +10,15 @@ CustomRouter::CustomRouter() : Pistache::Rest::Router() {}
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             Pistache::Rest::Route::Handler handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+    Common::Database db("blockchain.db");
+    Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
+
+    db.createUser(expectedUser);
+
+    auto receivedUser = db.getUser(expectedUser.username);
     log(url, request);
     handler(request, std::move(response));
     return Pistache::Rest::Route::Result::Ok;
-    ;
   };
   Pistache::Rest::Router::addRoute(method, url, callback);
 }

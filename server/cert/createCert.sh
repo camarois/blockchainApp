@@ -36,6 +36,7 @@ subjectAltName = @alt_names
 DNS.1 = localhost
 IP.1 = 192.168.0.160
 IP.2 = 192.168.1.19
+IP.3 = 10.200.33.162
 "
 # If you get a bad handshake problem, you are probably missing your IP in the list
 
