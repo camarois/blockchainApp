@@ -10,14 +10,15 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import com.example.androidapp.R
+import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.search.SearchFragment
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
 
-class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInteractionListener {
+class SidePanelActivity : AppCompatActivity(), SearchFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
 
-    override fun onListFragmentInteraction(item: StudentItem) {
+    override fun onListFragmentInteraction(student: StudentItem) {
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

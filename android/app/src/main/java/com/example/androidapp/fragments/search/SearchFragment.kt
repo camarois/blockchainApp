@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
  */
 class SearchFragment : Fragment() {
 
-    // TODO: Customize parameters
     private var columnCount = 1
 
     private var listener: OnListFragmentInteractionListener? = null
@@ -56,7 +55,11 @@ class SearchFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = StudentRecyclerViewAdapter(StudentContent.items, listener)
+                adapter =
+                    StudentRecyclerViewAdapter(
+                        StudentContent.items,
+                        listener
+                    )
             }
         }
         return view
@@ -88,8 +91,7 @@ class SearchFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: StudentItem)
+        fun onListFragmentInteraction(student: StudentItem)
     }
 
     companion object {

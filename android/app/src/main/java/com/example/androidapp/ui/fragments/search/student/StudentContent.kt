@@ -25,6 +25,7 @@ object StudentContent {
 
     init {
         // Add some sample items.
+        // TODO: Fill with information from database
         for (i in 1..COUNT) {
             addItem(createStudentItem(i))
         }
@@ -37,6 +38,6 @@ object StudentContent {
 
     private fun createStudentItem(position: Int): StudentItem {
         return StudentItem(position.toString(),
-            "Prenom Nom $position", BASE_STUDENT_CODE + position, "notes.pdf")
+            "Prenom Nom $position", BASE_STUDENT_CODE + position)
     }
 }
