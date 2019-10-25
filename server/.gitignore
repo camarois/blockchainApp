@@ -54,6 +54,7 @@ _deps
 
 # Removing cert except rootCA
 *.crt
+*.csr
 *.key
 *.srl
 !rootCA.crt
