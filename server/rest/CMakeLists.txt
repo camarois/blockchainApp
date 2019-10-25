@@ -10,7 +10,6 @@ add_custom_target(deps_file
         ${CERT_DIR}/createCert.sh
         ${CERT_DIR}/rootCA.crt
         ${CERT_DIR}/rootCA.key
-        ${CERT_DIR}/rootCA.srl
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
