@@ -2,25 +2,31 @@
 #ifndef COMMON_LOGGER_HPP
 #define COMMON_LOGGER_HPP
 
-#include <atomic>
+#include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 namespace Common {
 
+enum Severity { ERREUR, ATTENTION, INFO };
+
 class Logger {
  public:
-  static int init(const std::string& dbPath);
-  static void log(int severity, int provenance, const std::string& log, int logSessionId);
+  explicit Logger(int logSessionId, std::string dbPath);
+  static std::shared_ptr<Logger> get();
+  static void init(const std::string& dbPath);
+  void log(int severity, int provenance, const std::string& log);
 
  private:
-  Logger() {}  // really?
-
-  static std::mutex mutex_;
+  static std::shared_ptr<Logger> instance_;
   static bool isInitialized_;
-  static bool logSessionId_;
-  static std::string dbPath_;
-  static int logCount_;
+  static std::vector<std::string> severities_;
+
+  std::mutex mutex_;
+  const int logSessionId_;
+  const std::string dbPath_;
+  int logCount_;
 };
 
 }  // namespace Common

@@ -12,15 +12,14 @@ DECLARE_string(db);
 namespace Rest {
 
 CustomRouter::CustomRouter() : Pistache::Rest::Router() {
-  logSessionId_ = Common::Logger::init(FLAGS_db);
-  std::cout << "Currently in session id: " << logSessionId_ << std::endl;
+  Common::Logger::init(FLAGS_db);
 }
 
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             Pistache::Rest::Route::Handler handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
     try {
-      log(url, request, logSessionId_);
+      log(url, request);
       handler(request, std::move(response));
       return Pistache::Rest::Route::Result::Ok;
     } catch (const std::exception& e) {
@@ -40,12 +39,12 @@ void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler h
   CustomRouter::addRoute(Pistache::Http::Method::Post, url, std::move(handler));
 }
 
-void CustomRouter::log(const std::string& url, const Pistache::Rest::Request& request, int logSessionId) {
+void CustomRouter::log(const std::string& url, const Pistache::Rest::Request& request) {
   // Common::Database db(FLAGS_db);
   auto body = request.body().empty() ? "NULL" : request.body();
   // std::cout << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body << std::endl;
   // db.addLog(0, 0, 0, url + "\n" + body, logSessionId);
-  Common::Logger::log(0, 0, url + "\n" + body, logSessionId);
+  Common::Logger::get()->log(0, 0, url + "\n" + body);
 }
 
 }  // namespace Rest
