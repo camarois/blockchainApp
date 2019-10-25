@@ -66,11 +66,12 @@ Common::optional_ref<Block> BlockChain::lastBlock() {
 }
 
 Common::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
-  if (blocks_.find(id) == blocks_.end()) {
+  auto it = blocks_.find(id);
+  if (it == blocks_.end()) {
     return loadBlock(id);
   }
 
-  return blocks_.at(id);
+  return it->second;
 }
 
 unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
@@ -80,19 +81,16 @@ const std::map<unsigned int, Block>& BlockChain::blocks() { return blocks_; }
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
 Block& BlockChain::createBlock() {
-  unsigned int nextID;
+  unsigned int nextID = 0;
   std::string previousHash;
 
   Common::optional_ref<Block> last = lastBlock();
-  if (!last) {
-    nextID = 0;
-    previousHash = "";
-  } else {
+  if (last) {
     nextID = last->get().id() + 1;
     previousHash = last->get().hash();
   }
 
-  blocks_.insert(std::pair<unsigned int, Block>(nextID, Block(nextID, previousHash)));
+  blocks_.emplace(std::piecewise_construct, std::forward_as_tuple(nextID), std::forward_as_tuple(nextID, previousHash));
   return blocks_.at(nextID);
 }
 
@@ -111,9 +109,8 @@ Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
   }
 
   blocks_.erase(block->id());
-  blocks_.insert(std::pair<unsigned int, Block>(block->id(), block.value()));
-
-  return blocks_.at(block->id());
+  blocks_.emplace(block->id(), block.value());
+  return block.value();
 }
 
 bool BlockChain::saveMetadata() const {
