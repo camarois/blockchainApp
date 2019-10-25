@@ -6,6 +6,7 @@
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include <common/logger.hpp>
 
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 DEFINE_string(cert, "server.crt", "Path to server cert");       // NOLINT
@@ -31,7 +32,7 @@ int main(int argc, char* argv[]) {
 
     return 0;
   } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+    Common::Logger::get()->error(0, e.what());
 
     return 1;
   }

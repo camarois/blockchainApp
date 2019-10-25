@@ -21,12 +21,25 @@ void Logger::init(const std::string& dbPath) {
   }
 }
 
-void Logger::log(int severity, int provenance, const std::string& log) {
+void Logger::error(int provenance, const std::string& message) {
+  log(static_cast<int>(Severity::ERROR), provenance, message, std::cerr);
+}
+
+void Logger::attention(int provenance, const std::string& message) {
+  log(static_cast<int>(Severity::ATTENTION), provenance, message, std::cout);
+}
+
+void Logger::info(int provenance, const std::string& message) {
+  log(static_cast<int>(Severity::INFO), provenance, message, std::cout);
+}
+
+void Logger::log(int severity, int provenance, const std::string& log, std::ostream& stream) {
   std::lock_guard<std::mutex> lock(mutex_);
   Common::Database db(dbPath_);
   auto nowStr = Common::FormatHelper::nowStr();
-  std::cout << logCount_ << ": " << severities_[severity] << ": " << nowStr << ": " << provenance << ": " << log
-            << std::endl;
+  stream << std::endl
+         << logCount_ << ": " << severities_[severity] << ": " << nowStr << ": " << provenance << ": " << log
+         << std::endl;
   db.addLog(logCount_, severity, provenance, nowStr, log, logSessionId_);
   ++logCount_;
 }
