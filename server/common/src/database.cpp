@@ -44,7 +44,7 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
   return {};
 }
 
-void Database::createUser(const Common::Models::LoginRequest& user) {
+void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
@@ -81,15 +81,14 @@ bool Database::containsIp(const std::string& ip) {
   return statement.step();
 }
 
-int Database::createLogSession() {
+int Database::addLogSession() {
   Query query = Query(
       "INSERT INTO logSessions (startTime) "
-      "VALUES ('%q'); "
-      "SELECT LAST_INSERT_ROWID();",
+      "VALUES ('%q');",
       Common::FormatHelper::nowStr().c_str());
   Statement statement = Statement(db_, query);
   statement.step();
-  return std::stoi(statement.getColumnText(0));
+  return sqlite3_last_insert_rowid(db_.get());
 }
 
 void Database::addLog(int logSessionId, const std::string& log) {

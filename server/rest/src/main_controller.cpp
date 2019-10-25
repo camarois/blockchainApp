@@ -11,7 +11,6 @@ namespace Rest {
 MainController::MainController(Pistache::Address addr, size_t thr)
     : httpEndpoint_(addr),
       router_(std::make_shared<Rest::CustomRouter>()),
-      db_(std::make_shared<Common::Database>(FLAGS_db)),
       // List of controllers:
       userController_(router_),
       exampleController_(router_),

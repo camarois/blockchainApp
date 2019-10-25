@@ -24,6 +24,7 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
     }
     ss << "'";
     system(ss.str().c_str());
+    std::cout << "Ip succesfully added" << std::endl;
   } else {
     std::cout << "Ip already in the database" << std::endl;
   }

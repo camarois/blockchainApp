@@ -20,13 +20,13 @@ class Database {
   static void assertSqlite(int errCode, const std::string& message = "");
 
   std::optional<Common::Models::LoginRequest> getUser(const std::string& username);
-  void createUser(const Common::Models::LoginRequest& user);
+  void addUser(const Common::Models::LoginRequest& user);
 
   std::vector<std::string> getIps();
   void addIp(const std::string& ip);
   bool containsIp(const std::string& ip);
 
-  int createLogSession();
+  int addLogSession();
   void addLog(int logSessionId, const std::string& log);
 
  private:

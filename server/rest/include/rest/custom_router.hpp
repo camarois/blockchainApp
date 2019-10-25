@@ -18,7 +18,10 @@ class CustomRouter : public Pistache::Rest::Router {
   void post(const std::string& url, Pistache::Rest::Route::Handler handler);
 
  private:
-  void log(const std::string& url, const Pistache::Rest::Request& request);
+  static void log(const std::string& url, const Pistache::Rest::Request& request, int logSessionId);
+  static void logAsync(const std::string& url, const Pistache::Rest::Request& request, int logSessionId);
+  
+  int logSessionId_;
 };
 
 }  // namespace Rest

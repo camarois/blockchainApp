@@ -24,7 +24,6 @@ class MainController {
  private:
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
-  std::shared_ptr<Common::Database> db_;
   Rest::UserController userController_;
   Rest::ExampleController exampleController_;
   Rest::TransactionController transactionController_;

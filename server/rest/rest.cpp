@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
     Rest::MainController mainController(addr, FLAGS_threads);
-    std::future<void> future = Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
+    Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
     mainController.start();
 
     return 0;
