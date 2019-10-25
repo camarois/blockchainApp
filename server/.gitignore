@@ -51,3 +51,11 @@ _deps
 
 # Those a great tools for people developping with vscode
 !.vscode/
+
+# Removing cert except rootCA
+*.crt
+*.key
+*.srl
+!rootCA.crt
+!rootCA.key
+!rootCA.srl
