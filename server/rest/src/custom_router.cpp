@@ -18,10 +18,9 @@ CustomRouter::CustomRouter() : Pistache::Rest::Router() {
 
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             Pistache::Rest::Route::Handler handler) {
-  auto callback = [&](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+  auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
     try {
       logAsync(url, request, logSessionId_);
-      std::cout << "af" << std::endl;
       handler(request, std::move(response));
       return Pistache::Rest::Route::Result::Ok;
     } catch (const std::exception& e) {
@@ -42,37 +41,14 @@ void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler h
 }
 
 void CustomRouter::log(const std::string& url, const Pistache::Rest::Request& request, int logSessionId) {
-  std::cout << "salut" << std::endl;
   Common::Database db(FLAGS_db);
-  std::stringstream ss;
-  std::cout << "allo" << std::endl;
-  auto body = request.body() == "" ? "NULL" : request.body();
-  std::cout << "yio" << std::endl;
-  ss << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body;
-  std::cout << "lol" << std::endl;
-  auto logStr = ss.str();
-  std::cout << logStr << std::endl;
-  db.addLog(logSessionId, logStr);
+  auto body = request.body().empty() ? "NULL" : request.body();
+  std::cout << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body << std::endl;
+  db.addLog(logSessionId, url + "\n" + body);
 }
 
 void CustomRouter::logAsync(const std::string& url, const Pistache::Rest::Request& request, int logSessionId) {
-  std::cout << "bef" << std::endl;
-  // std::thread(log, url, request, logSessionId).detach();
-  std::thread([=]() {
-    std::cout << "salut" << std::endl;
-    Common::Database db(FLAGS_db);
-    std::stringstream ss;
-    std::cout << "allo" << std::endl;
-    auto body = request.body() == "" ? "NULL" : request.body();
-    std::cout << "yio" << std::endl;
-    ss << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body;
-    std::cout << "lol" << std::endl;
-    auto logStr = ss.str();
-    std::cout << logStr << std::endl;
-    db.addLog(logSessionId, logStr);
-  });
-
-  std::cout << "af" << std::endl;
+  std::thread(log, url, request, logSessionId).detach();
 }
 
 }  // namespace Rest

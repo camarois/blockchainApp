@@ -95,7 +95,7 @@ void Database::addLog(int logSessionId, const std::string& log) {
   Query query = Query(
       "INSERT INTO logs (log, logTime, logSessionId) "
       "VALUES ('%q', '%q', '%q');",
-      log.c_str(), Common::FormatHelper::nowStr().c_str(), logSessionId);
+      log.c_str(), Common::FormatHelper::nowStr().c_str(), std::to_string(logSessionId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
