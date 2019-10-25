@@ -27,7 +27,7 @@ class Database {
   bool containsIp(const std::string& ip);
 
   int addLogSession();
-  void addLog(int logSessionId, const std::string& log);
+  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
  private:
   void close();

@@ -4,6 +4,7 @@
 #include <future>
 #include <gflags/gflags.h>
 #include <rest/custom_router.hpp>
+#include <common/logger.hpp>
 #include <sstream>
 
 DECLARE_string(db);
@@ -11,8 +12,7 @@ DECLARE_string(db);
 namespace Rest {
 
 CustomRouter::CustomRouter() : Pistache::Rest::Router() {
-  Common::Database db(FLAGS_db);
-  logSessionId_ = db.addLogSession();
+  logSessionId_ = Common::Logger::init(FLAGS_db);
   std::cout << "Currently in session id: " << logSessionId_ << std::endl;
 }
 
@@ -20,7 +20,7 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
                             Pistache::Rest::Route::Handler handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
     try {
-      logAsync(url, request, logSessionId_);
+      log(url, request, logSessionId_);
       handler(request, std::move(response));
       return Pistache::Rest::Route::Result::Ok;
     } catch (const std::exception& e) {
@@ -41,14 +41,11 @@ void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler h
 }
 
 void CustomRouter::log(const std::string& url, const Pistache::Rest::Request& request, int logSessionId) {
-  Common::Database db(FLAGS_db);
+  // Common::Database db(FLAGS_db);
   auto body = request.body().empty() ? "NULL" : request.body();
-  std::cout << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body << std::endl;
-  db.addLog(logSessionId, url + "\n" + body);
-}
-
-void CustomRouter::logAsync(const std::string& url, const Pistache::Rest::Request& request, int logSessionId) {
-  std::thread(log, url, request, logSessionId).detach();
+  // std::cout << std::endl << Common::FormatHelper::nowStr() << ": " << url << std::endl << body << std::endl;
+  // db.addLog(0, 0, 0, url + "\n" + body, logSessionId);
+  Common::Logger::log(0, 0, url + "\n" + body, logSessionId);
 }
 
 }  // namespace Rest

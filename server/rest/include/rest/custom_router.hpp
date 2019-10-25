@@ -19,7 +19,6 @@ class CustomRouter : public Pistache::Rest::Router {
 
  private:
   static void log(const std::string& url, const Pistache::Rest::Request& request, int logSessionId);
-  static void logAsync(const std::string& url, const Pistache::Rest::Request& request, int logSessionId);
   
   int logSessionId_;
 };

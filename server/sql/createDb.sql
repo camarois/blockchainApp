@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 CREATE TABLE users (
     username TEXT NOT NULL PRIMARY KEY,
-    password TEXT
+    password TEXT NOT NULL
 );
 
 CREATE TABLE ips (
@@ -11,15 +11,20 @@ CREATE TABLE ips (
 
 CREATE TABLE logSessions (
     logSessionId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    startTime TEXT
+    startTime TEXT NOT NULL,
+    endTime TEXT
 );
 
 CREATE TABLE logs (
-    logId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    log TEXT,
-    logTime TEXT,
-    logSessionId INTEGER,
-    FOREIGN KEY(logSessionId) REFERENCES logSessions(logSessionId)
+    logId INTEGER NOT NULL,
+    severity INTEGER NOT NULL,
+    logTime TEXT NOT NULL,
+    provenance INTEGER NOT NULL,
+    log TEXT NOT NULL,
+    logSessionId INTEGER NOT NULL,
+
+    FOREIGN KEY (logSessionId) REFERENCES logSessions(logSessionId),
+    PRIMARY KEY (logId, logSessionId)
 );
 
 COMMIT;

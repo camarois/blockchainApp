@@ -91,11 +91,12 @@ int Database::addLogSession() {
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addLog(int logSessionId, const std::string& log) {
+void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId) {
   Query query = Query(
-      "INSERT INTO logs (log, logTime, logSessionId) "
-      "VALUES ('%q', '%q', '%q');",
-      log.c_str(), Common::FormatHelper::nowStr().c_str(), std::to_string(logSessionId).c_str());
+      "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
+      "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",
+      std::to_string(logId).c_str(), std::to_string(severity).c_str(), std::to_string(provenance).c_str(), log.c_str(),
+      time.c_str(), std::to_string(logSessionId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
