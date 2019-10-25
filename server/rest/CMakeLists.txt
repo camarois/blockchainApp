@@ -1,4 +1,5 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
 add_custom_target(deps_file
     # This will create db if it doesn't exist
