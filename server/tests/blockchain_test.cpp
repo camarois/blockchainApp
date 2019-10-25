@@ -62,7 +62,7 @@ TEST(BlockChainTest, createBlocksAndSave) {
   ASSERT_TRUE(blockchain);
   ASSERT_TRUE(blockchain->lastBlock());
 
-  std::optional_ref<Miner::Block> last1 = blockchain->lastBlock();
+  Common::optional_ref<Miner::Block> last1 = blockchain->lastBlock();
   blockchain->appendTransaction("Éva Duchesne");
   blockchain->appendTransaction("Natacha Forest");
   blockchain->appendTransaction("Xavier Lalancette");
@@ -72,7 +72,7 @@ TEST(BlockChainTest, createBlocksAndSave) {
   ASSERT_EQ(last1->get().id(), 0U);
   ASSERT_EQ(last1->get().nonce(), 3091U);
   ASSERT_EQ(last1->get().hash(), block0Hash);
-  std::optional_ref<Miner::Block> last2 = blockchain->lastBlock();
+  Common::optional_ref<Miner::Block> last2 = blockchain->lastBlock();
 
   blockchain->appendTransaction("Marc-Olivier Arsenault");
   blockchain->appendTransaction("Stéphanie Lacerte");

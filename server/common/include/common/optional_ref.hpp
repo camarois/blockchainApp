@@ -1,11 +1,10 @@
-#ifndef COMMON_OPTIONAL_HPP
-#define COMMON_OPTIONAL_HPP
+#ifndef COMMON_OPTIONAL_REF_HPP
+#define COMMON_OPTIONAL_REF_HPP
 
 #include <functional>
 #include <optional>
 
-// NOLINTNEXTLINE(readability-identifier-naming, cert-dcl58-cpp)
-namespace std {
+namespace Common {
 
 // TODO(gabriel): We should probably subclass std::optional<T> and overload at
 //                least the deferencing operator rather than alias it.
@@ -23,6 +22,6 @@ namespace std {
 template<class T>
 using optional_ref = std::optional<std::reference_wrapper<T>>;
 
-} // namespace std
+} // namespace Common
 
-#endif  // COMMON_OPTIONAL_HPP
+#endif  // COMMON_OPTIONAL_REF_HPP

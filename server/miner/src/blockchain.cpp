@@ -41,7 +41,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
 void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->get().append(transaction); }
 
 void BlockChain::saveAll() {
-  std::optional_ref<Block> last = lastBlock();
+  Common::optional_ref<Block> last = lastBlock();
   if (last) {
     lastBlock()->get().save(blockDir_);
   }
@@ -57,7 +57,7 @@ Block& BlockChain::nextBlock() {
   return createBlock();
 }
 
-std::optional_ref<Block> BlockChain::lastBlock() {
+Common::optional_ref<Block> BlockChain::lastBlock() {
   if (blocks_.empty()) {
     return {};
   }
@@ -65,7 +65,7 @@ std::optional_ref<Block> BlockChain::lastBlock() {
   return blocks_.rbegin()->second;
 }
 
-std::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
+Common::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
   if (blocks_.find(id) == blocks_.end()) {
     return loadBlock(id);
   }
@@ -83,7 +83,7 @@ Block& BlockChain::createBlock() {
   unsigned int nextID;
   std::string previousHash;
 
-  std::optional_ref<Block> last = lastBlock();
+  Common::optional_ref<Block> last = lastBlock();
   if (!last) {
     nextID = 0;
     previousHash = "";
@@ -96,7 +96,7 @@ Block& BlockChain::createBlock() {
   return blocks_.at(nextID);
 }
 
-std::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
+Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
   std::optional<Block> block = Block::fromBlockFile(blockPath);

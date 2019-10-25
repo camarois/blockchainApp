@@ -6,7 +6,7 @@
 #include <list>
 #include <optional>
 
-#include "common/optional.hpp"
+#include "common/optional_ref.hpp"
 #include "miner/block.hpp"
 
 namespace Miner {
@@ -21,8 +21,8 @@ class BlockChain {
   void saveAll();
   void clearAll();
   Block& nextBlock();
-  std::optional_ref<Block> lastBlock();
-  std::optional_ref<Block> getBlock(unsigned int id);
+  Common::optional_ref<Block> lastBlock();
+  Common::optional_ref<Block> getBlock(unsigned int id);
   unsigned int lastBlockID() const;
   unsigned int difficulty() const;
   const std::map<unsigned int, Block>& blocks();
@@ -37,7 +37,7 @@ class BlockChain {
 
  private:
   Block& createBlock();
-  std::optional_ref<Block> loadBlock(unsigned int id);
+  Common::optional_ref<Block> loadBlock(unsigned int id);
   bool saveMetadata() const;
   static std::optional<BlockChain> loadMetadataBlockChain(const std::filesystem::path& blockDir);
 
