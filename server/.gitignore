@@ -59,4 +59,3 @@ _deps
 *.srl
 !rootCA.crt
 !rootCA.key
-!rootCA.srl
