@@ -29,6 +29,8 @@ class Database {
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
+  void addClassResults(const Common::Models::transactionRequest& transactionRequest);
+
  private:
   void close();
 

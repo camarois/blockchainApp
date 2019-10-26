@@ -101,4 +101,46 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   statement.step();
 }
 
+void Database::addClassResults(const Common::Models::transactionRequest& transactionRequest) {
+  Query checkForExistingClassQuery = Query(
+      "SELECT TOP 1 classId FROM classes "
+      "WHERE symbol = '%q' AND trimester = '%q';", 
+      ClassResult.acronym.c_str(), ClassResult.trimester.c_str()
+      );
+  Statement statementCheck = Statement(db_, checkForExistingClassQuery);
+  int classId;
+  if (statementCheck.step()) {
+    classId = statementCheck.getColumnText(0);
+    Query deleteClassQuery = Query(
+        "DELETE FROM classes WHERE classId = '%q'",
+        classId
+    );
+    Statement statementDeleteClass = Statement(db_, deleteClassQuery);
+    statementDeleteClass.step();
+    Query deleteResultQuery = Query(
+        "DELETE FROM results WHERE classId = '%q'",
+        classId
+    );
+    Statement statementDeleteResults = Statement(db_, deleteResultQuery);
+    statementDeleteResults.step();
+  }
+  Query newClassQuery = Query(
+      "INSERT INTO classes (acronym, name, trimester)"
+      "VALUES ('%q', '%q', '%q');",
+      transactionRequest.acronym.c_str(), transactionRequest.name.c_str(), transactionRequest.trimester.c_str()
+  );
+  Statement statementNewClass = (db_, newClassQuery);
+  statementNewClass.step();
+  std::string resultsToAdd = "";
+  for (Result result : transactionRequest.results ) {
+    resultsToAdd += "INSERT INTO results (lastName, firstName, id, grade, classId)" \
+                    "VALUES ('%q', '%q', '%q', '%q', last_insert_rowid())",
+                    result.lastName.c_str(), result.firstName.c_str(), result.id.c_str(), result.grade.c_str();
+  }
+  Query resultsToAddQuery = resultToAdd;
+  Statement statementNewResults = (db_, resultsToAddQuery)
+  statementNewResults.step();
+}
+
+
 }  // namespace Common

@@ -29,7 +29,7 @@ CREATE TABLE logs (
 
 CREATE TABLE classes (
 	classId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	symbole NOT NULL,
+	acronym TEXT NOT NULL,
 	name TEXT NOT NULL,
 	trimester INTEGER NOT NULL,	
 	
@@ -37,11 +37,10 @@ CREATE TABLE classes (
 );
 
 CREATE TABLE results (
-	name TEXT NOT NULL,
 	firstName TEXT NOT NULL,
 	lastName TEXT NOT NULL,
-	matricule INTEGER NOT NULL,
-	grade INTERGER NOT NULL,
+	id TEXT NOT NULL,
+	grade TEXT NOT NULL,
 	classId INTERGER NOT NULL,
 	
 	FOREIGN KEY (classId) REFERENCES classes(classId)
