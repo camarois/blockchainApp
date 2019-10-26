@@ -27,4 +27,24 @@ CREATE TABLE logs (
     PRIMARY KEY (logId, logSessionId)
 );
 
+CREATE TABLE classes (
+	classId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	symbole NOT NULL,
+	name TEXT NOT NULL,
+	trimester INTEGER NOT NULL,	
+	
+	CONSTRAINT unique_symbole_trimester UNIQUE (symbole, trimester)
+);
+
+CREATE TABLE results (
+	name TEXT NOT NULL,
+	firstName TEXT NOT NULL,
+	lastName TEXT NOT NULL,
+	matricule INTEGER NOT NULL,
+	grade INTERGER NOT NULL,
+	classId INTERGER NOT NULL,
+	
+	FOREIGN KEY (classId) REFERENCES classes(classId)
+);
+
 COMMIT;
