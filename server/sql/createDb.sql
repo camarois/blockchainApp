@@ -5,10 +5,6 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
-BEGIN UPDATE
-    INSERT INTO users (username, password) VALUES ('charles', '1234');
-END UPDATE
-
 CREATE TABLE ips (
     ip TEXT NOT NULL PRIMARY KEY
 );
