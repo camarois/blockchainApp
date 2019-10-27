@@ -19,28 +19,29 @@ const jwt::string_view kExpiration = "expiration";
 const std::string kAuthorization = "Authorization";
 
 // Inspired by https://github.com/arun11299/cpp-jwt
-inline jwt::jwt_object encode(const std::string& username, const std::string& password) {
+inline auto encode(const std::string& username, const std::string& password) {
   jwt::jwt_object token{jwt::params::algorithm("hs256"), jwt::params::secret("inf3995"),
-                         jwt::params::payload({{"role", "student"}})};
+                        jwt::params::payload({{"role", "student"}})};
   token.add_claim("username", username)
       .add_claim("password", password)
       .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax});
-  //signature_ = token.signature(errCode_);
+  // signature_ = token.signature(errCode_);
   return token;
 }
 
-inline jwt::jwt_object refresh(jwt::jwt_object token) {
+inline auto refresh(jwt::jwt_object token) {
   token.remove_claim("exp");
   token.add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax});
-  //signature = token.signature(errCode);
+  // signature = token.signature(errCode);
   return token;
 }
 
-inline std::error_code decode(jwt::jwt_object token) {
+inline auto decode(jwt::jwt_object token) {
   std::error_code errCode;
+  auto enc_str = token.signature();
   try {
-    jwt::jwt_object decodedObj =
-        jwt::decode(token.signature(), jwt::params::algorithms({"hs256"}), errCode, jwt::params::secret("inf3995"));
+    auto decodedObj =
+        jwt::decode(enc_str, jwt::params::algorithms({"hs256"}), errCode, jwt::params::secret("inf3995"));
 
     if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired)) {
       std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
