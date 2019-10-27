@@ -6,7 +6,7 @@ TEST(Sqlite3Tests, get_user) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
 
-  db.createUser(expectedUser);
+  db.addUser(expectedUser);
 
   auto receivedUser = db.getUser(expectedUser.username);
 

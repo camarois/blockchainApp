@@ -6,17 +6,16 @@
 #include <pistache/http.h>
 #include <pistache/router.h>
 #include <zmq.hpp>
-
-#include <common/example.hpp>
+#include <rest/custom_router.hpp>
 
 namespace Rest {
 
 class ExampleController {
  public:
-  explicit ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router);
+  explicit ExampleController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
-  void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
+  void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
   void handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
   void handleStart(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
 

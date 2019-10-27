@@ -3,23 +3,18 @@
 
 namespace Rest {
 
-AdminController::AdminController(const std::shared_ptr<Pistache::Rest::Router>& router) { setupRoutes(router); }
+AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
-void AdminController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "login",
-                               Pistache::Rest::Routes::bind(&AdminController::handleLogin, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "logout",
-                               Pistache::Rest::Routes::bind(&AdminController::handleLogout, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "motdepasse",
-                               Pistache::Rest::Routes::bind(&AdminController::handlePassword, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "chaine/" + kId_,
-                               Pistache::Rest::Routes::bind(&AdminController::handleChain, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "logs/" + kId_,
-                               Pistache::Rest::Routes::bind(&AdminController::handleLogs, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "creationcompte",
-                               Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
-  Pistache::Rest::Routes::Post(*router, kBasePath_ + "suppressioncompte",
-                               Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
+void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
+  router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this));
+  router->post(kBasePath_ + "logout", Pistache::Rest::Routes::bind(&AdminController::handleLogout, this));
+  router->post(kBasePath_ + "motdepasse", Pistache::Rest::Routes::bind(&AdminController::handlePassword, this));
+  router->post(kBasePath_ + "chaine/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleChain, this));
+  router->post(kBasePath_ + "logs/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleLogs, this));
+  router->post(kBasePath_ + "creationcompte",
+               Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
+  router->post(kBasePath_ + "suppressioncompte",
+               Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
 }
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
