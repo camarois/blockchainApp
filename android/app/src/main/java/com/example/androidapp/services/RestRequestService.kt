@@ -19,7 +19,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
     private var gson = Gson()
 
     init {
-        credentialsManager.saveCredentials(context, "mytoken")
+        credentialsManager.saveCredentials(context, "")
         initServerUrl("server")
     }
 
