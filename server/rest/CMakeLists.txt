@@ -31,4 +31,5 @@ target_link_libraries(rest PRIVATE
     ${OPENSSL_LIBRARIES}
     pthread
     sqlite3
+    stdc++fs
 )

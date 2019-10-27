@@ -1,6 +1,12 @@
 #include <common/base64.hpp>
 #include <common/models.hpp>
+#include <filesystem>
+#include <fstream>
+#include <gflags/gflags.h>
 #include <rest/transaction_controller.hpp>
+#include <common/format_helper.hpp>
+
+DECLARE_string(transactions);
 
 namespace Rest {
 
@@ -13,9 +19,12 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
-  // std::cout << transactionRequest.base64Pdf << std::endl;
-  // std::cout << Common::Base64::decode(transactionRequest.base64Pdf) << std::endl;
-  // response.send(Pistache::Http::Code::I_m_a_teapot, Common::Base64::decode(transactionRequest.base64Pdf));
+  std::filesystem::create_directories(FLAGS_transactions);
+  // Example: transactions/3-inf3995.pdf -> Project 3 in fall
+  std::ofstream out(FLAGS_transactions + std::to_string(transactionRequest.trimester) + "-" +
+                    Common::FormatHelper::toLower(transactionRequest.acronym) + ".pdf");
+  out << Common::Base64::decode(transactionRequest.base64Pdf);
+  out.close();
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 

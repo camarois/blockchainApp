@@ -11,11 +11,14 @@ class CustomRouter : public Pistache::Rest::Router {
  public:
   CustomRouter();
 
-  void addRoute(Pistache::Http::Method method, const std::string& url,
-                Pistache::Rest::Route::Handler handler);
+  void addRoute(Pistache::Http::Method method, const std::string& url, Pistache::Rest::Route::Handler handler);
 
   void get(const std::string& url, Pistache::Rest::Route::Handler handler);
   void post(const std::string& url, Pistache::Rest::Route::Handler handler);
+
+ private:
+  const std::string kDefaultBody = "NULL";
+  const size_t kMaxPrintBody = 200;
 };
 
 }  // namespace Rest
