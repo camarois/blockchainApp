@@ -1,14 +1,19 @@
 #include "common/gflags_helper.hpp"
 #include <common/firebase_helper.hpp>
+#include <common/scripts_helper.hpp>
 #include <iostream>
 #include <rest/main_controller.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include <common/logger.hpp>
 
-DEFINE_string(user, "server", "Developper using the service");    // NOLINT
-DEFINE_string(cert, "./cert/server.crt", "Path to server cert");  // NOLINT
-DEFINE_string(key, "./cert/server.key", "Path to server key");    // NOLINT
+DEFINE_string(user, "server", "Developper using the service");  // NOLINT
+DEFINE_string(cert, "server.crt", "Path to server cert");       // NOLINT
+DEFINE_string(key, "server.key", "Path to server key");         // NOLINT
+DEFINE_string(db, "blockchain.db", "Path to sqlite db file");   // NOLINT
+DEFINE_int32(port, 10000, "REST http port");                    // NOLINT
+DEFINE_int32(threads, 4, "Number of threads");                  // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);
@@ -16,19 +21,18 @@ int main(int argc, char* argv[]) {
   try {
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
-    std::future<void> future = Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
+    Common::ScriptsHelper::createCert(selfIpAddress, FLAGS_db);
 
-    const int kPortNumber = 10000;
-    const int kNbThreads = 4;
-    Pistache::Port port(kPortNumber);
+    Pistache::Port port(FLAGS_port);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
-    Rest::MainController mainController(addr, kNbThreads);
+    Rest::MainController mainController(addr, FLAGS_threads);
+    Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
     mainController.start();
 
     return 0;
   } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+    Common::Logger::get()->error(0, e.what());
 
     return 1;
   }

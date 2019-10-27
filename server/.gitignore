@@ -48,3 +48,14 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# Those a great tools for people developping with vscode
+!.vscode/
+
+# Removing cert except rootCA
+*.crt
+*.csr
+*.key
+*.srl
+!rootCA.crt
+!rootCA.key
