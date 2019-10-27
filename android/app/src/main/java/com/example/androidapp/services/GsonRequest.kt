@@ -15,7 +15,7 @@ class GsonRequest <T> (
     private val context: Context,
     method: Int,
     url: String,
-    private val body: String,
+    private val body: String = "",
     private val classOfT: Class<T>,
     private val headers: MutableMap<String, String>?,
     private val listener: Response.Listener<T>,
@@ -26,7 +26,7 @@ class GsonRequest <T> (
 
     override fun getHeaders(): MutableMap<String, String> {
         val params = headers ?: super.getHeaders()
-        params[CredentialsManager.HTTP_header_authorization] ?: CredentialsManager.getAuthToken(context)
+        params[CredentialsManager.HTTP_HEADER_AUTHORIZATION] ?: CredentialsManager.getAuthToken(context)
         return params
     }
 
@@ -39,9 +39,8 @@ class GsonRequest <T> (
                 response?.data ?: ByteArray(0),
                 Charset.forName(HttpHeaderParser.parseCharset(response?.headers)))
 
-            val token = response?.headers?.get(CredentialsManager.HTTP_header_authorization)
+            val token = response?.headers?.get(CredentialsManager.HTTP_HEADER_AUTHORIZATION)
             CredentialsManager.saveCredentials(context, token)
-
             Response.success(
                 gson.fromJson(json, classOfT),
                 HttpHeaderParser.parseCacheHeaders(response))

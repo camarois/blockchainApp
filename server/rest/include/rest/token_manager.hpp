@@ -24,8 +24,7 @@ class TokenManager {
  private:
   void encode(const std::string& username, const std::string& passwordt);
 
-  jwt::jwt_object token_{jwt::params::algorithm("hs256"), jwt::params::secret("inf3995"),
-                         jwt::params::payload({{"role", "student"}})};
+  jwt::jwt_object token_;
   std::string signature_;
   std::error_code errCode_;
 

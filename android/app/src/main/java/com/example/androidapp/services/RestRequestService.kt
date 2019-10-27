@@ -44,6 +44,11 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
+    suspend fun postLogoutAsync(): String {
+        println("logout rest service")
+        return postAsync("usager/logout", "", String::class.java)
+    }
+
     suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",
@@ -61,7 +66,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return suspendCoroutine { continuation ->
             val request = GsonRequest(context, Request.Method.GET, "$serverUrl/$url", "", classOfT,
                 mutableMapOf(
-                    CredentialsManager.HTTP_header_authorization to CredentialsManager.getAuthToken(context)
+                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to CredentialsManager.getAuthToken(context)
                 ),
                 Response.Listener { response ->
                     continuation.resume(response)
@@ -87,10 +92,11 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
+        println("logout post async")
         return suspendCoroutine { continuation ->
             val request = GsonRequest(context, Request.Method.POST, "$serverUrl/$url", gson.toJson(data), classOfT,
                 mutableMapOf(
-                    CredentialsManager.HTTP_header_authorization to CredentialsManager.getAuthToken(context)
+                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to CredentialsManager.getAuthToken(context)
                 ),
                 Response.Listener { response ->
                 continuation.resume(response)
