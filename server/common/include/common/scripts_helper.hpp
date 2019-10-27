@@ -14,7 +14,7 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
   Common::Database db(dbPath);
   if (!db.containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
-    db.addIp(ip.c_str());
+    db.addIp(ip);
     auto ips = db.getIps();
 
     std::stringstream ss;
@@ -23,8 +23,12 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
       ss << "IP." << i + 1 << " = " << ips[i] << std::endl;
     }
     ss << "'";
-    system(ss.str().c_str());
-    std::cout << "Ip succesfully added" << std::endl;
+    int exitCode = std::system(ss.str().c_str()); // NOLINT(cert-env33-c)
+    if (exitCode == 0) {
+      std::cout << "Ip succesfully added" << std::endl;
+    } else {
+      std::cout << "CreateCert.sh exited with exit code: " << exitCode << std::endl;
+    }
   } else {
     std::cout << "Ip already in the database" << std::endl;
   }

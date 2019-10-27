@@ -1,114 +1,90 @@
-/*
-   base64.cpp and base64.h
-
-   base64 encoding and decoding with C++.
-
-   Version: 1.01.00
-
-   Copyright (C) 2004-2017 René Nyffenegger
-
-   This source code is provided 'as-is', without any express or implied
-   warranty. In no event will the author be held liable for any damages
-   arising from the use of this software.
-
-   Permission is granted to anyone to use this software for any purpose,
-   including commercial applications, and to alter it and redistribute it
-   freely, subject to the following restrictions:
-
-   1. The origin of this source code must not be misrepresented; you must not
-      claim that you wrote the original source code. If you use this source code
-      in a product, an acknowledgment in the product documentation would be
-      appreciated but is not required.
-
-   2. Altered source versions must be plainly marked as such, and must not be
-      misrepresented as being the original source code.
-
-   3. This notice may not be removed or altered from any source distribution.
-
-   René Nyffenegger rene.nyffenegger@adp-gmbh.ch
-
-*/
+// Inspired by: https://renenyffenegger.ch/notes/development/Base64/Encoding-and-decoding-base-64-with-cpp
+// Inpired by: http://www.herongyang.com/Encoding/Base64-Encoding-Algorithm.html
 
 #ifndef COMMON_BASE64_HPP
 #define COMMON_BASE64_HPP
 
+#include <array>
 #include <iostream>
+#include <stdexcept>
 
 namespace Common {
 namespace Base64 {
 
-const std::string base64Chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789+/";
+inline bool isBase64(unsigned char c) { return isalnum(c) != 0 || c == '+' || c == '/'; }
 
-inline bool isBase64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
+inline unsigned char byteToBase64(unsigned char c) {
+  const unsigned char startOfA = 0;
+  const unsigned char startOfa = 26;
+  const unsigned char startOf0 = 26 * 2;
+  const unsigned char plus = 62;
+  const unsigned char slash = 63;
 
-std::string encode(const unsigned char* bytesToEncode, unsigned int inLen) {
-  std::string ret;
-  int i = 0;
-  int j = 0;
-  unsigned char charArray3[3];
-  unsigned char charArray4[4];
-
-  while (inLen--) {
-    charArray3[i++] = *(bytesToEncode++);
-    if (i == 3) {
-      charArray4[0] = (charArray3[0] & 0xfc) >> 2;
-      charArray4[1] = ((charArray3[0] & 0x03) << 4) + ((charArray3[1] & 0xf0) >> 4);
-      charArray4[2] = ((charArray3[1] & 0x0f) << 2) + ((charArray3[2] & 0xc0) >> 6);
-      charArray4[3] = charArray3[2] & 0x3f;
-
-      for (i = 0; (i < 4); i++) ret += base64Chars[charArray4[i]];
-      i = 0;
-    }
+  if (c >= 'A' && c <= 'Z') {
+    return c - 'A' + startOfA;
   }
-
-  if (i) {
-    for (j = i; j < 3; j++) charArray3[j] = '\0';
-
-    charArray4[0] = (charArray3[0] & 0xfc) >> 2;
-    charArray4[1] = ((charArray3[0] & 0x03) << 4) + ((charArray3[1] & 0xf0) >> 4);
-    charArray4[2] = ((charArray3[1] & 0x0f) << 2) + ((charArray3[2] & 0xc0) >> 6);
-
-    for (j = 0; (j < i + 1); j++) ret += base64Chars[charArray4[j]];
-
-    while ((i++ < 3)) ret += '=';
+  if (c >= 'a' && c <= 'z') {
+    return c - 'a' + startOfa;
   }
-
-  return ret;
+  if (c >= '0' && c <= '9') {
+    return c - '0' + startOf0;
+  }
+  if (c == '+') {
+    return plus;
+  }
+  if (c == '/') {
+    return slash;
+  }
+  throw std::runtime_error("Byte value not in base64");
 }
 
-std::string decode(const std::string& encodedString) {
+inline std::string decode(const std::string& encodedString) {
+  const int firstBlockSize = 3;
+  const int secondBlockSize = 4;
+
   size_t inLen = encodedString.size();
   int i = 0;
   int j = 0;
-  int in_ = 0;
-  unsigned char charArray4[4], charArray3[3];
+  int in = 0;
+  std::array<unsigned char, firstBlockSize> firstBlock = {};
+  std::array<unsigned char, secondBlockSize> secondBlock = {};
   std::string ret;
 
-  while (inLen-- && (encodedString[in_] != '=') && isBase64(encodedString[in_])) {
-    charArray4[i++] = encodedString[in_];
-    in_++;
-    if (i == 4) {
-      for (i = 0; i < 4; i++) charArray4[i] = base64Chars.find(charArray4[i]) & 0xff;
+  while ((inLen--) != 0U && encodedString.at(in) != '=' && isBase64(encodedString.at(in))) {
+    secondBlock.at(i++) = encodedString.at(in);
+    in++;
+    if (i == secondBlockSize) {
+      for (i = 0; i < secondBlockSize; i++) {
+        secondBlock.at(i) = byteToBase64(secondBlock.at(i));
+      }
 
-      charArray3[0] = (charArray4[0] << 2) + ((charArray4[1] & 0x30) >> 4);
-      charArray3[1] = ((charArray4[1] & 0xf) << 4) + ((charArray4[2] & 0x3c) >> 2);
-      charArray3[2] = ((charArray4[2] & 0x3) << 6) + charArray4[3];
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      firstBlock.at(0) = (secondBlock.at(0) << 2) + ((secondBlock.at(1) & 0x30) >> 4);
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      firstBlock.at(1) = ((secondBlock.at(1) & 0xf) << 4) + ((secondBlock.at(2) & 0x3c) >> 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      firstBlock.at(2) = ((secondBlock.at(2) & 0x3) << 6) + secondBlock.at(3);
 
-      for (i = 0; (i < 3); i++) ret += charArray3[i];
+      for (i = 0; i < firstBlockSize; i++) {
+        ret += firstBlock.at(i);
+      }
       i = 0;
     }
   }
 
-  if (i) {
-    for (j = 0; j < i; j++) charArray4[j] = base64Chars.find(charArray4[j]) & 0xff;
+  if (i != 0) {
+    for (j = 0; j < i; j++) {
+      secondBlock.at(j) = byteToBase64(secondBlock.at(i));
+    }
 
-    charArray3[0] = (charArray4[0] << 2) + ((charArray4[1] & 0x30) >> 4);
-    charArray3[1] = ((charArray4[1] & 0xf) << 4) + ((charArray4[2] & 0x3c) >> 2);
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+    firstBlock.at(0) = (secondBlock.at(0) << 2) + ((secondBlock.at(1) & 0x30) >> 4);
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+    firstBlock.at(1) = ((secondBlock.at(1) & 0xf) << 4) + ((secondBlock.at(2) & 0x3c) >> 2);
 
-    for (j = 0; (j < i - 1); j++) ret += charArray3[j];
+    for (j = 0; j < i - 1; j++) {
+      ret += firstBlock.at(j);
+    }
   }
 
   return ret;

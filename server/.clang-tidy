@@ -8,6 +8,7 @@ Checks: >
   -hicpp-avoid-c-arrays,
   -modernize-use-nodiscard,
   -fuchsia-overloaded-operator,
+  -hicpp-vararg,
 
 WarningsAsErrors: "*"
 
@@ -32,8 +33,6 @@ CheckOptions:
     value: UPPER_CASE
   - key: readability-identifier-naming.EnumConstantCase
     value: CamelCase
-  - key: readability-identifier-naming.EnumConstantPrefix
-    value: k
   - key: readability-identifier-naming.ConstexprVariableCase
     value: CamelCase
   - key: readability-identifier-naming.ConstexprVariablePrefix

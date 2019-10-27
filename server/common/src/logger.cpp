@@ -4,20 +4,22 @@
 
 namespace Common {
 
-bool Logger::isInitialized_ = false;
-std::shared_ptr<Logger> Logger::instance_;
-std::vector<std::string> Logger::severities_ = {"ERREUR", "ATTENTION", "INFO"};
+std::vector<std::string> Logger::severities = {"ERREUR", "ATTENTION", "INFO"};
+bool Logger::isInitialized = false;
+std::shared_ptr<Logger> Logger::instance;
 
-Logger::Logger(int logSessionId, std::string dbPath) : logSessionId_(logSessionId), dbPath_(dbPath) { logCount_ = 1; }
+Logger::Logger(int logSessionId, const std::string& dbPath) : logSessionId_(logSessionId), dbPath_(dbPath) {
+  logCount_ = 1;
+}
 
-std::shared_ptr<Logger> Logger::get() { return instance_; }
+std::shared_ptr<Logger> Logger::get() { return instance; }
 
 void Logger::init(const std::string& dbPath) {
-  if (!isInitialized_) {
+  if (!isInitialized) {
     Common::Database db(dbPath);
     auto logSessionId = db.addLogSession();
-    instance_ = std::make_shared<Logger>(logSessionId, dbPath);
-    isInitialized_ = true;
+    instance = std::make_shared<Logger>(logSessionId, dbPath);
+    isInitialized = true;
   }
 }
 
@@ -33,14 +35,14 @@ void Logger::info(int provenance, const std::string& message) {
   log(static_cast<int>(Severity::INFO), provenance, message, std::cout);
 }
 
-void Logger::log(int severity, int provenance, const std::string& log, std::ostream& stream) {
+void Logger::log(int severity, int provenance, const std::string& message, std::ostream& stream) {
   std::lock_guard<std::mutex> lock(mutex_);
   Common::Database db(dbPath_);
   auto nowStr = Common::FormatHelper::nowStr();
   stream << std::endl
-         << logCount_ << ": " << severities_[severity] << ": " << nowStr << ": " << provenance << ": " << log
+         << logCount_ << ": " << severities[severity] << ": " << nowStr << ": " << provenance << ": " << message
          << std::endl;
-  db.addLog(logCount_, severity, provenance, nowStr, log, logSessionId_);
+  db.addLog(logCount_, severity, provenance, nowStr, message, logSessionId_);
   ++logCount_;
 }
 

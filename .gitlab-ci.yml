@@ -136,7 +136,7 @@ lint-scripts:
 lint-server:
     stage: lint
     script:
-        - cd server && ./lint.sh tidy && ./lint.sh format
+        - cd server && ./lint.sh --tidy && ./lint.sh --format
     only:
         changes:
             - server/**/*

@@ -91,7 +91,8 @@ int Database::addLogSession() {
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId) {
+void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
+                      int logSessionId) {
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",

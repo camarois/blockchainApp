@@ -1,17 +1,17 @@
 #ifndef REST_MAIN_CONTROLLER_HPP
 #define REST_MAIN_CONTROLLER_HPP
 
+#include <common/database.hpp>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
 #include <rest/admin_controller.hpp>
+#include <rest/custom_router.hpp>
 #include <rest/example_controller.hpp>
 #include <rest/file_controller.hpp>
 #include <rest/info_controller.hpp>
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
-#include <rest/custom_router.hpp>
-#include <common/database.hpp>
 
 namespace Rest {
 

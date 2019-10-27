@@ -16,7 +16,7 @@ class Query {
  public:
   template <typename... Args>
   explicit Query(const std::string& zFormat, Args... args) {
-    query_ = sqlite3_mprintf(zFormat.c_str(), args...); // NOLINT
+    query_ = sqlite3_mprintf(zFormat.c_str(), args...);  // NOLINT(cppcoreguidelines-pro-type-vararg)
   }
 
   std::string val() const;
