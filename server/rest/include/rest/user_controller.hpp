@@ -1,7 +1,6 @@
 #ifndef REST_USER_CONTROLLER_HPP
 #define REST_USER_CONTROLLER_HPP
 
-#include <common/example.hpp>
 #include <nlohmann/json.hpp>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>

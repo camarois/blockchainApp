@@ -14,12 +14,12 @@ import kotlin.coroutines.suspendCoroutine
 import com.google.gson.Gson
 import kotlin.coroutines.resumeWithException
 
-class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context) {
+class RestRequestService(private val httpClient: HTTPRestClient, private val credentialsManager: CredentialsManager, private val context: Context) {
     private lateinit var serverUrl: String
     private var gson = Gson()
 
     init {
-        CredentialsManager.saveCredentials(context, "mytoken")
+        credentialsManager.saveCredentials(context, "mytoken")
         initServerUrl("server")
     }
 
@@ -45,7 +45,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun postLogoutAsync(): String {
-        println("logout rest service")
         return postAsync("usager/logout", "", String::class.java)
     }
 
@@ -64,9 +63,9 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, Request.Method.GET, "$serverUrl/$url", "", classOfT,
+            val request = GsonRequest(context, credentialsManager, Request.Method.GET, "$serverUrl/$url", "", classOfT,
                 mutableMapOf(
-                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to CredentialsManager.getAuthToken(context)
+                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
                 ),
                 Response.Listener { response ->
                     continuation.resume(response)
@@ -94,9 +93,9 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
         println("logout post async")
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, Request.Method.POST, "$serverUrl/$url", gson.toJson(data), classOfT,
+            val request = GsonRequest(context, credentialsManager, Request.Method.POST, "$serverUrl/$url", gson.toJson(data), classOfT,
                 mutableMapOf(
-                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to CredentialsManager.getAuthToken(context)
+                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
                 ),
                 Response.Listener { response ->
                 continuation.resume(response)

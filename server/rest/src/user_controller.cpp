@@ -1,10 +1,11 @@
 #include <common/database.hpp>
 #include <common/message_helper.hpp>
+#include <common/token_helper.hpp>
 #include <common/models.hpp>
 #include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
 
-DECLARE_string(database);
+DECLARE_string(db);
 
 namespace Rest {
 
@@ -18,13 +19,15 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_database);
+  Common::Database db(FLAGS_db);
   auto user = db.getUser(loginRequest.username);
+  auto hashPwd = db.hashPassword(loginRequest.password);
+  std::cout << hashPwd << std::endl;
 
   if (user) {
-    jwt::jwt_token token = Rest::TokenHelper::encode(loginRequest.username, loginRequest.password);
+    jwt::jwt_object token = Common::TokenHelper::encode(loginRequest.username, hashPwd);
     Common::Models::LoginResponse loginResponse = {};
-    response.headers().add<Pistache::Http::Header::Authorization>(token.getSignature());
+    response.headers().add<Pistache::Http::Header::Authorization>(token.signature());
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   }
   response.send(Pistache::Http::Code::Forbidden);

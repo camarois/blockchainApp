@@ -2,9 +2,11 @@ package com.example.androidapp.services
 
 import android.content.Context
 
-object CredentialsManager {
-    const val HTTP_HEADER_AUTHORIZATION = "Authorization"
-    private const val AUTH_TOKEN = "authorization_token"
+class CredentialsManager {
+    companion object {
+        const val HTTP_HEADER_AUTHORIZATION = "Authorization"
+        private const val AUTH_TOKEN = "authorization_token"
+    }
 
     fun saveCredentials(context: Context, token: String?) {
         val sp = context.getSharedPreferences(

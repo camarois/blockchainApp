@@ -13,6 +13,7 @@ import java.nio.charset.Charset
 
 class GsonRequest <T> (
     private val context: Context,
+    private val credentialsManager: CredentialsManager,
     method: Int,
     url: String,
     private val body: String = "",
@@ -26,7 +27,7 @@ class GsonRequest <T> (
 
     override fun getHeaders(): MutableMap<String, String> {
         val params = headers ?: super.getHeaders()
-        params[CredentialsManager.HTTP_HEADER_AUTHORIZATION] ?: CredentialsManager.getAuthToken(context)
+        params[CredentialsManager.HTTP_HEADER_AUTHORIZATION] ?: credentialsManager.getAuthToken(context)
         return params
     }
 
@@ -40,7 +41,7 @@ class GsonRequest <T> (
                 Charset.forName(HttpHeaderParser.parseCharset(response?.headers)))
 
             val token = response?.headers?.get(CredentialsManager.HTTP_HEADER_AUTHORIZATION)
-            CredentialsManager.saveCredentials(context, token)
+            credentialsManager.saveCredentials(context, token)
             Response.success(
                 gson.fromJson(json, classOfT),
                 HttpHeaderParser.parseCacheHeaders(response))
