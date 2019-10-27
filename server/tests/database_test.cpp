@@ -5,6 +5,7 @@
 TEST(Sqlite3Tests, get_user) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
+  std::string expectedHash = "da6a850377faa387cea7c58a6ebd5935d5502a95aa0993848f8ae4ab8efc68ad";
 
   db.addUser(expectedUser);
 
@@ -12,5 +13,5 @@ TEST(Sqlite3Tests, get_user) {
 
   ASSERT_TRUE(receivedUser.has_value());
   ASSERT_EQ(expectedUser.username, receivedUser->username);
-  ASSERT_EQ(expectedUser.password, receivedUser->password);
+  ASSERT_EQ(expectedHash, receivedUser->password);
 }
