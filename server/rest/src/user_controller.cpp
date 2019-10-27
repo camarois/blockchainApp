@@ -21,48 +21,22 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
   Common::Database db(FLAGS_database);
   auto user = db.getUser(loginRequest.username);
 
-  if (loginRequest.username == user->username && loginRequest.password == user->password) {
-    Rest::TokenManager tokenManager(loginRequest.username, loginRequest.password);
-    tokenManager.decode();
-
+  if (user) {
+    jwt::jwt_token token = Rest::TokenHelper::encode(loginRequest.username, loginRequest.password);
     Common::Models::LoginResponse loginResponse = {};
-    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
+    response.headers().add<Pistache::Http::Header::Authorization>(token.getSignature());
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   }
   response.send(Pistache::Http::Code::Forbidden);
 }
 
-void UserController::handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Rest::TokenManager tokenManager(request);
-  if (!tokenManager.decode()) {
-    response.send(Pistache::Http::Code::Ok);
-  }
-  response.send(Pistache::Http::Code::Unauthorized);
+void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
+  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
-  Rest::TokenManager tokenManager(request);
-  if (!tokenManager.decode()) {
-    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
-    response.send(Pistache::Http::Code::Ok);
-  }
-  response.send(Pistache::Http::Code::Unauthorized);
-}
-
-void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_database);
-
-  if (db.createUser(registerRequest)) {
-    Rest::TokenManager tokenManager(registerRequest.username, registerRequest.password);
-    tokenManager.decode();
-
-    Common::Models::LoginResponse registerResponse = {};
-    response.headers().add<Pistache::Http::Header::Authorization>(tokenManager.getSignature());
-    response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
-  }
-  response.send(Pistache::Http::Code::Forbidden);
+  Common::Models::PasswordRequest loginRequest = nlohmann::json::parse(request.body());
+  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 
 }  // namespace Rest

@@ -1,16 +1,17 @@
 #ifndef COMMON_TOKEN_HELPER_HPP
 #define COMMON_TOKEN_HELPER_HPP
 
-#include <arpa/inet.h>
-#include <cstring>
-#include <curlpp/Options.hpp>
-#include <future>
-#include <ifaddrs.h>
-#include <sstream>
-#include <string>
+#include <cassert>
+#include <chrono>
+#include <gflags/gflags.h>
+#include <iostream>
+#include <jwt/jwt.hpp>
+
+DECLARE_string(database);
 
 namespace Common {
 namespace TokenHelper {
+
 const uint64_t kExpirationTimeMax = 3600;
 const jwt::string_view kUsername = "username";
 const jwt::string_view kPassword = "password";
@@ -25,19 +26,21 @@ inline jwt::jwt_object encode(const std::string& username, const std::string& pa
       .add_claim("password", password)
       .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax});
   //signature_ = token.signature(errCode_);
-  return token
+  return token;
 }
 
-inline jwt_object refresh(jwt::jwt_object token) {
+inline jwt::jwt_object refresh(jwt::jwt_object token) {
   token.remove_claim("exp");
   token.add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationTimeMax});
-  signature_ = token.signature(errCode);
+  //signature = token.signature(errCode);
+  return token;
 }
 
 inline std::error_code decode(jwt::jwt_object token) {
+  std::error_code errCode;
   try {
     jwt::jwt_object decodedObj =
-        jwt::decode(getSignature(), jwt::params::algorithms({"hs256"}), errCode, jwt::params::secret("inf3995"));
+        jwt::decode(token.signature(), jwt::params::algorithms({"hs256"}), errCode, jwt::params::secret("inf3995"));
 
     if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired)) {
       std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
@@ -47,7 +50,7 @@ inline std::error_code decode(jwt::jwt_object token) {
       auto user = db.getUser(username);
 
       if (user) {
-        this->refresh();
+        refresh(token);
       }
     }
   } catch (const std::exception& e) {
