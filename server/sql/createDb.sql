@@ -33,7 +33,7 @@ CREATE TABLE classes (
 	name TEXT NOT NULL,
 	trimester INTEGER NOT NULL,	
 	
-	CONSTRAINT unique_symbole_trimester UNIQUE (symbole, trimester)
+	CONSTRAINT unique_acronym_trimester UNIQUE (acronym, trimester)
 );
 
 CREATE TABLE results (

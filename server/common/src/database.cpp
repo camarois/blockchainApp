@@ -125,7 +125,7 @@ void Database::addClassResults(const Common::Models::transactionRequest& transac
     statementDeleteResults.step();
   }
   Query newClassQuery = Query(
-      "INSERT INTO classes (acronym, name, trimester)"
+      "INSERT INTO classes (acronym, name, trimester) "
       "VALUES ('%q', '%q', '%q');",
       transactionRequest.acronym.c_str(), transactionRequest.name.c_str(), transactionRequest.trimester.c_str()
   );
@@ -133,7 +133,7 @@ void Database::addClassResults(const Common::Models::transactionRequest& transac
   statementNewClass.step();
   std::string resultsToAdd = "";
   for (Result result : transactionRequest.results ) {
-    resultsToAdd += "INSERT INTO results (lastName, firstName, id, grade, classId)" \
+    resultsToAdd += "INSERT INTO results (lastName, firstName, id, grade, classId) "
                     "VALUES ('%q', '%q', '%q', '%q', last_insert_rowid())",
                     result.lastName.c_str(), result.firstName.c_str(), result.id.c_str(), result.grade.c_str();
   }
@@ -141,6 +141,4 @@ void Database::addClassResults(const Common::Models::transactionRequest& transac
   Statement statementNewResults = (db_, resultsToAddQuery)
   statementNewResults.step();
 }
-
-
 }  // namespace Common
