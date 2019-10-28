@@ -19,8 +19,6 @@ class Database {
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  std::string hashPassword(const std::string& password);
-
   std::optional<Common::Models::LoginRequest> getUser(const std::string& username);
   void addUser(const Common::Models::LoginRequest& user);
 

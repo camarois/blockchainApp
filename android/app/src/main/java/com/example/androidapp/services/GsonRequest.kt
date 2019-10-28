@@ -11,6 +11,7 @@ import com.google.gson.JsonSyntaxException
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
+// Inspired by : https://developer.android.com/training/volley/request-custom#example:-gsonrequest
 class GsonRequest <T> (
     private val context: Context,
     private val credentialsManager: CredentialsManager,

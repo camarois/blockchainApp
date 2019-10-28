@@ -22,7 +22,7 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
         std::make_unique<std::string>(request.headers().getRaw("Authorization").value());
 
     try {
-      if (Common::TokenHelper::decode(token)) {
+      if (!Common::TokenHelper::decode(token)) {
         response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
       } else {
         response.headers().add<Pistache::Http::Header::Authorization>(*token);

@@ -1,7 +1,8 @@
 #include "common/database.hpp"
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
-#include <picosha2.h>
+
+DECLARE_string(db);
 
 namespace Common {
 
@@ -33,12 +34,6 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-std::string Database::hashPassword(const std::string& password){
-  std::vector<unsigned char> hash(picosha2::k_digest_size);
-  picosha2::hash256(password.begin(), password.end(), hash.begin(), hash.end());
-  return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
-}
-
 std::optional<Common::Models::LoginRequest> Database::getUser(const std::string& username) {
   Query query = Query(
       "SELECT username, password FROM users "
@@ -55,7 +50,7 @@ void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      user.username.c_str(), hashPassword(user.password).c_str());
+      user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
