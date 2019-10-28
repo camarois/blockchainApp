@@ -141,4 +141,59 @@ Query resultsToAddQuery = Query(resultsToAdd);
   Statement statementNewResults = Statement(db_, resultsToAddQuery);
   statementNewResults.step();
 }
+
+std::vector<Common::Models::Result> Database::addClassesRequest(const Common::Models::ClassesRequest& classesRequest) {
+  Query getClassIdQuery = Query(
+    "SELECT classId FROM classes "
+    "WHERE acronym = '%q' AND trimester = '%q';",
+    classesRequest.acronym.c_str(), std::to_string(classesRequest.trimester)
+  );
+  Statement getClassIdStatement = Statement(db_, getClassIdQuery);
+  getClassIdStatement.step();
+  std::string classId = getClassIdStatement.getColumnText(0);
+
+  Query getClassResultsQuery = Query(
+    "SELECT firstName, lastname, id, grade FROM results "
+    "WHERE classId = '%q';",
+    classId.c_str()
+  );
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
+  getResultsStatement.step();
+  std::vector<Common::Models::Result> results;
+  while (getResultsStatement.step()) {
+    Common::Models::Result result;
+    result.firstName = getResultsStatement.getColumnText(0);
+    result.lastName = getResultsStatement.getColumnText(1);
+    result.id = getResultsStatement.getColumnText(2);
+    result.grade = getResultsStatement.getColumnText(3);
+    results.push_back(result);
+  }
+  return results;
+}
+
+Common::Models::Result Database::addStudentRequest(const Common::Models::StudentRequest& studentRequest) {
+  Query getClassIdQuery = Query(
+    "SELECT classId FROM classes "
+    "WHERE acronym = '%q' AND trimester = '%q';",
+    studentRequest.acronym.c_str(), std::to_string(studentRequest.trimester)
+  );
+  Statement getClassIdStatement = Statement(db_, getClassIdQuery);
+  getClassIdStatement.step();
+  std::string classId = getClassIdStatement.getColumnText(0);
+
+  Query getClassResultsQuery = Query(
+    "SELECT firstName, lastname, id, grade FROM results "
+    "WHERE classId = '%q';",
+    classId.c_str()
+  );
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
+  getResultsStatement.step();
+  Common::Models::Result result;
+  result.firstName = getResultsStatement.getColumnText(0);
+  result.lastName = getResultsStatement.getColumnText(1);
+  result.id = getResultsStatement.getColumnText(2);
+  result.grade = getResultsStatement.getColumnText(3);  
+
+  return result;
+}
 }  // namespace Common
