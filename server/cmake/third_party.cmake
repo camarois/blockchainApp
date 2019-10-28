@@ -11,6 +11,17 @@ link_directories(${CMAKE_BINARY_DIR}/externals/lib)
 
 set(EXTERNAL_LIBS_DIR ${CMAKE_BINARY_DIR}/externals/lib)
 
+ExternalProject_Add(libcppjwt
+    GIT_REPOSITORY https://github.com/arun11299/cpp-jwt.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
+                 && cp -v -R ${CMAKE_BINARY_DIR}/libcppjwt/src/libcppjwt/include/jwt/
+                          ${CMAKE_BINARY_DIR}/externals/include
+    PREFIX libcppjwt
+)
+add_dependencies(libcppjwt libgtest)
+
 ExternalProject_Add(libsqlite3
     URL https://www.sqlite.org/2019/sqlite-src-3300100.zip
     URL_MD5 a090a543b1d17178627f280f0fe07324
@@ -47,7 +58,7 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgmock_build_tests=off
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
-    CMAKE_ARGS -Dgtest_disable_pthreads=off
+    CMAKE_ARGS -Dgtest_disable_pthreads=on
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
     UPDATE_DISCONNECTED ON
@@ -92,4 +103,14 @@ ExternalProject_Add(libcurlpp
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libcurlpp
     UPDATE_DISCONNECTED ON
+)
+
+ExternalProject_Add(libpicosha2
+    GIT_REPOSITORY https://github.com/okdshin/picosha2.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
+                 && cp -v ${CMAKE_BINARY_DIR}/libpicosha2/src/libpicosha2/picosha2.h
+                          ${CMAKE_BINARY_DIR}/externals/include
+    PREFIX libpicosha2
 )
