@@ -16,7 +16,7 @@ namespace Common {
 class Query {
  public:
   template <class... Args, class = std::enable_if_t<std::conjunction<std::is_same<const char*, Args>...>::value, void>>
-  explicit Query(const std::string& zFormat, Args&&... args) {
+  explicit Query(const std::string& zFormat, Args... args) {
     query_ = sqlite3_mprintf(zFormat.c_str(), args...);  // NOLINT(cppcoreguidelines-pro-type-vararg)
   }
 
