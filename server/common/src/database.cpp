@@ -2,8 +2,6 @@
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
 
-DECLARE_string(db);
-
 namespace Common {
 
 Database::Database(const std::string& dbPath) {
@@ -50,7 +48,7 @@ void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
+      user.username.c_str(), user.password.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

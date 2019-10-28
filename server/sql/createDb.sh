@@ -10,8 +10,7 @@
 set -o xtrace
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-STRUCT_FILE_TABLES="$SCRIPT_DIR/createDb.sql"
-STRUCT_FILE_USERS="$SCRIPT_DIR/addUsers.sql"
+STRUCT_FILE="$SCRIPT_DIR/createDb.sql"
 
 function backup_db() {
     local file=$1
@@ -40,9 +39,8 @@ function ask_overwrite() {
 }
 
 function write_db() {
-    local struct_file1=$1
-    local struct_file2=$2
-    local output_file=$3
+    local struct_file=$1
+    local output_file=$2
 
     if [[ -f "$output_file" ]]; then
         if ask_overwrite "$output_file"; then
@@ -50,14 +48,11 @@ function write_db() {
         fi
     fi
 
-    if [[ ! -f "$struct_file1" ]]; then
-        echo "file $struct_file1 couldn't be found"
-    elif [[ ! -f "$struct_file2" ]]; then
-        echo "file $struct_file2 couldn't be found"
+    if [[ ! -f "$struct_file" ]]; then
+        echo "file $struct_file couldn't be found"
     else
-        sqlite3 "$output_file" < "$struct_file1"
-        sqlite3 "$output_file" < "$struct_file2"
+        sqlite3 "$output_file" < "$struct_file"
     fi
 }
 
-write_db "$STRUCT_FILE_TABLES" "$STRUCT_FILE_USERS" "$1"
+write_db "$STRUCT_FILE" "$1"

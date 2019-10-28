@@ -2,7 +2,6 @@ package com.example.androidapp.services
 
 import android.content.Context
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -14,12 +13,11 @@ import kotlin.coroutines.suspendCoroutine
 import com.google.gson.Gson
 import kotlin.coroutines.resumeWithException
 
-class RestRequestService(private val httpClient: HTTPRestClient, private val credentialsManager: CredentialsManager, private val context: Context) {
+class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context) {
     private lateinit var serverUrl: String
     private var gson = Gson()
 
     init {
-        credentialsManager.saveCredentials(context, "")
         initServerUrl("server")
     }
 
@@ -44,10 +42,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
-    suspend fun postLogoutAsync(): String {
-        return postAsync("usager/logout", "", String::class.java)
-    }
-
     suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",
@@ -63,15 +57,13 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
 
     suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, Request.Method.GET, "$serverUrl/$url", "", classOfT,
-                mutableMapOf(
-                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
-                ),
-                Response.Listener { response ->
-                    continuation.resume(response)
+            val request = StringRequest("$serverUrl/$url",
+                { response ->
+                    continuation.resume(gson.fromJson(response, classOfT))
                 },
-                Response.ErrorListener { continuation.resumeWithException(it) }
-            )
+                {
+                    continuation.resumeWithException(it)
+                })
             httpClient.addToRequestQueue(request)
         }
     }
@@ -91,17 +83,15 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
     }
 
     suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
-        println("logout post async")
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, Request.Method.POST, "$serverUrl/$url", gson.toJson(data), classOfT,
-                mutableMapOf(
-                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
-                ),
-                Response.Listener { response ->
-                continuation.resume(response)
+            val request = JsonObjectRequest(
+                Request.Method.POST, "$serverUrl/$url", JSONObject(gson.toJson(data)),
+                { response ->
+                    continuation.resume(gson.fromJson(response.toString(), classOfT))
                 },
-                Response.ErrorListener { continuation.resumeWithException(it) }
-                )
+                {
+                    continuation.resumeWithException(it)
+                })
             httpClient.addToRequestQueue(request)
         }
     }
