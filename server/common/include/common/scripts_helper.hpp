@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace Common {
 namespace ScriptsHelper {
@@ -27,10 +28,21 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
     if (exitCode == 0) {
       std::cout << "Ip succesfully added" << std::endl;
     } else {
-      std::cout << "CreateCert.sh exited with exit code: " << exitCode << std::endl;
+      std::cout << "createCert.sh exited with exit code: " << exitCode << std::endl;
     }
-  } else {
-    std::cout << "Ip already in the database" << std::endl;
+  }
+}
+
+inline void createDb(const std::string& dbPath) {
+  if (!std::filesystem::exists(dbPath)) {
+    std::cout << "Creating the database at " << dbPath << std::endl;
+    
+    int exitCode = std::system(("./createDb.sh " + dbPath).c_str()); // NOLINT(cert-env33-c)
+    if (exitCode == 0) {
+      std::cout << "Database created succesfully" << std::endl;
+    } else {
+      std::cout << "createDb.sh exited with exit code: " << exitCode << std::endl;
+    }
   }
 }
 

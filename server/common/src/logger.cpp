@@ -20,6 +20,7 @@ void Logger::init(const std::string& dbPath) {
     auto logSessionId = db.addLogSession();
     instance = std::make_shared<Logger>(logSessionId, dbPath);
     isInitialized = true;
+    std::cout << "Logger created" << std::endl;
   }
 }
 

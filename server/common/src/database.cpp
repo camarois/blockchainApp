@@ -1,10 +1,12 @@
 #include "common/database.hpp"
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
+#include <common/scripts_helper.hpp>
 
 namespace Common {
 
 Database::Database(const std::string& dbPath) {
+  Common::ScriptsHelper::createDb(dbPath);
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
