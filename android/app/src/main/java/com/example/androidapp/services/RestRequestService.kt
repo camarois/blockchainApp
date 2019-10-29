@@ -16,10 +16,10 @@ import kotlin.coroutines.resumeWithException
 
 class RestRequestService(private val httpClient: HTTPRestClient, private val credentialsManager: CredentialsManager, private val context: Context) {
     private lateinit var serverUrl: String
-    private var gson = Gson()
+    private val testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzIzMjIxMzcsInBhc3N3b3JkIjoiMTIzNDUiLCJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiYm91dGNob3UifQ.ld_skbUnXFUkC9aMHEpVq9PsYM3-d-y0YpBOAGz2efQ"
 
     init {
-        credentialsManager.saveCredentials(context, "")
+        credentialsManager.saveCredentials(context, testToken)
         initServerUrl("server")
     }
 
@@ -63,20 +63,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
 
     private suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
         return baseRequestAsync(Request.Method.GET, url, "", classOfT)
-    }
-
-    private suspend fun postAsync(url: String, data: Any): String {
-        return suspendCoroutine { continuation ->
-            val request = JsonObjectRequest(
-                Request.Method.POST, "$serverUrl/$url", JSONObject(gson.toJson(data)),
-                { response ->
-                    continuation.resume(response.toString())
-                },
-                {
-                    continuation.resumeWithException(it)
-                })
-            httpClient.addToRequestQueue(request)
-        }
     }
 
     private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {

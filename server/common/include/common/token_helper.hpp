@@ -2,8 +2,8 @@
 #define COMMON_TOKEN_HELPER_HPP
 
 #include <cassert>
-#include <common/database.hpp>
 #include <chrono>
+#include <common/database.hpp>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <jwt/jwt.hpp>
@@ -24,18 +24,16 @@ const std::string kSecret = "inf3995";
 inline auto encode(const std::string& username, const std::string& password) {
   jwt::jwt_object token{jwt::params::algorithm(kAlgorithm), jwt::params::secret(kSecret),
                         jwt::params::payload({{"role", "student"}})};
-  token.add_claim(std::string(username), username)
-      .add_claim(std::string(password), password)
+  token.add_claim(std::string(kUsername), username)
+      .add_claim(std::string(kPassword), password)
       .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationDelaySeconds});
   return token;
 }
 
 inline auto decode(const std::unique_ptr<std::string>& token) {
   std::error_code errCode;
-
   try {
     auto decodedObj = jwt::decode(*token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
-
     std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
     std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
 
@@ -43,8 +41,8 @@ inline auto decode(const std::unique_ptr<std::string>& token) {
     auto user = db.getUser(username);
 
     if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && user) {
-        jwt::jwt_object refreshToken = encode(user->username, user->password);
-        *token = std::string(refreshToken.signature());
+      jwt::jwt_object refreshToken = encode(user->username, user->password);
+      *token = std::string(refreshToken.signature());
     }
   } catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
