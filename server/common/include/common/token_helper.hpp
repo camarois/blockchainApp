@@ -2,13 +2,12 @@
 #define COMMON_TOKEN_HELPER_HPP
 
 #include <cassert>
+#include <common/database.hpp>
 #include <chrono>
 #include <gflags/gflags.h>
 #include <iostream>
 #include <jwt/jwt.hpp>
 #include <memory>
-
-DECLARE_string(db);
 
 namespace Common {
 namespace TokenHelper {
@@ -40,7 +39,7 @@ inline auto decode(const std::unique_ptr<std::string>& token) {
     std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
     std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
 
-    Common::Database db = Common::Database(FLAGS_db);
+    Common::Database db;
     auto user = db.getUser(username);
 
     if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && user) {

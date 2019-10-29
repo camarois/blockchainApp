@@ -2,9 +2,26 @@
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
 
-DECLARE_string(db);
+DEFINE_string(db2, "blockchain.db", "Path to sqlite db file");   // NOLINT
 
 namespace Common {
+
+Database::Database() {
+  assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
+  assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
+  try {
+    sqlite3* dbPtr;
+    assertSqlite(
+        sqlite3_open_v2(FLAGS_db2.c_str(), &dbPtr,
+                        static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
+                        nullptr),
+        "Cannot connect to database");
+    db_.reset(dbPtr, sqlite3_close_v2);
+  } catch (...) {
+    close();
+    throw;
+  }
+}
 
 Database::Database(const std::string& dbPath) {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");

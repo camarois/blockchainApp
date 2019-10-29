@@ -5,8 +5,6 @@
 #include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
 
-DECLARE_string(db);
-
 namespace Rest {
 
 UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
@@ -19,7 +17,7 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
+  Common::Database db;
   auto user = db.getUser(loginRequest.username);
   Common::Models::LoginResponse loginResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));

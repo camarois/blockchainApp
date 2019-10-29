@@ -8,11 +8,9 @@
 #include <rest/custom_router.hpp>
 #include <sstream>
 
-DECLARE_string(db);
-
 namespace Rest {
 
-CustomRouter::CustomRouter() : Pistache::Rest::Router() { Common::Logger::init(FLAGS_db); }
+CustomRouter::CustomRouter() : Pistache::Rest::Router() { Common::Logger::init(); }
 
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             Pistache::Rest::Route::Handler handler) {
