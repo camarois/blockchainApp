@@ -1,8 +1,5 @@
-#include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
-#include <common/token_helper.hpp>
-#include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
 
 namespace Rest {

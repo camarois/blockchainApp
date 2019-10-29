@@ -10,7 +10,6 @@ include_directories(${CMAKE_BINARY_DIR}/externals/include)
 link_directories(${CMAKE_BINARY_DIR}/externals/lib)
 
 set(EXTERNAL_LIBS_DIR ${CMAKE_BINARY_DIR}/externals/lib)
-
 ExternalProject_Add(libcppjwt
     GIT_REPOSITORY https://github.com/arun11299/cpp-jwt.git
     CONFIGURE_COMMAND ""
@@ -58,7 +57,7 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgmock_build_tests=off
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
-    CMAKE_ARGS -Dgtest_disable_pthreads=on
+    CMAKE_ARGS -Dgtest_disable_pthreads=off
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
     UPDATE_DISCONNECTED ON

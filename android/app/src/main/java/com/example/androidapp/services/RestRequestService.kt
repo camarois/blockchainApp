@@ -11,7 +11,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
 
-class RestRequestService(private val httpClient: HTTPRestClient, private val credentialsManager: CredentialsManager, private val context: Context) {
+class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context) {
     private lateinit var serverUrl: String
     private val testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzIzMjIxMzcsInBhc3N3b3JkIjoiMTIzNDUiLCJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiYm91dGNob3UifQ.ld_skbUnXFUkC9aMHEpVq9PsYM3-d-y0YpBOAGz2efQ"
 
@@ -41,11 +41,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
-    suspend fun postLogoutAsync(): String {
-        return postAsync("usager/logout", "", String::class.java)
-    }
-
-    private suspend fun getAsync(url: String): String {
+    suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",
                 { response ->
