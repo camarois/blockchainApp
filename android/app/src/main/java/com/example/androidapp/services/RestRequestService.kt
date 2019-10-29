@@ -27,7 +27,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://$it:10000"
+                serverUrl = "https://192.168.1.18:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
@@ -48,7 +48,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         return postAsync("usager/logout", "", String::class.java)
     }
 
-    suspend fun getAsync(url: String): String {
+    private suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",
                 { response ->
@@ -61,22 +61,11 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         }
     }
 
-    suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
-        return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, Request.Method.GET, "$serverUrl/$url", "", classOfT,
-                mutableMapOf(
-                    CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
-                ),
-                Response.Listener { response ->
-                    continuation.resume(response)
-                },
-                Response.ErrorListener { continuation.resumeWithException(it) }
-            )
-            httpClient.addToRequestQueue(request)
-        }
+    private suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
+        return baseRequestAsync(Request.Method.GET, url, "", classOfT)
     }
 
-    suspend fun postAsync(url: String, data: Any): String {
+    private suspend fun postAsync(url: String, data: Any): String {
         return suspendCoroutine { continuation ->
             val request = JsonObjectRequest(
                 Request.Method.POST, "$serverUrl/$url", JSONObject(gson.toJson(data)),
@@ -90,18 +79,21 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val cre
         }
     }
 
-    suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
-        println("logout post async")
+    private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
+        return baseRequestAsync(Request.Method.POST, url, data, classOfT)
+    }
+
+    private suspend fun <T> baseRequestAsync(method: Int, url: String, data: Any, classOfT: Class<T>): T {
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, Request.Method.POST, "$serverUrl/$url", gson.toJson(data), classOfT,
+            val request = GsonRequest(context, credentialsManager, method, "$serverUrl/$url", data, classOfT,
                 mutableMapOf(
                     CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
                 ),
                 Response.Listener { response ->
-                continuation.resume(response)
+                    continuation.resume(response)
                 },
                 Response.ErrorListener { continuation.resumeWithException(it) }
-                )
+            )
             httpClient.addToRequestQueue(request)
         }
     }

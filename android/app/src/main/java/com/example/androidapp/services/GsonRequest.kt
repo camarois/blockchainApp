@@ -17,7 +17,7 @@ class GsonRequest <T> (
     private val credentialsManager: CredentialsManager,
     method: Int,
     url: String,
-    private val body: String = "",
+    private val body: Any = "",
     private val classOfT: Class<T>,
     private val headers: MutableMap<String, String>?,
     private val listener: Response.Listener<T>,
@@ -32,7 +32,7 @@ class GsonRequest <T> (
         return params
     }
 
-    override fun getBody(): ByteArray = body.toByteArray()
+    override fun getBody(): ByteArray = gson.toJson(body).toByteArray()
     override fun deliverResponse(response: T) = listener.onResponse(response)
 
     override fun parseNetworkResponse(response: NetworkResponse?): Response<T> {
