@@ -4,12 +4,13 @@
 
 DECLARE_string(cert);
 DECLARE_string(key);
+DECLARE_string(db);
 
 namespace Rest {
 
 MainController::MainController(Pistache::Address addr, size_t thr)
     : httpEndpoint_(addr),
-      router_(std::make_shared<Pistache::Rest::Router>()),
+      router_(std::make_shared<Rest::CustomRouter>()),
       // List of controllers:
       userController_(router_),
       exampleController_(router_),

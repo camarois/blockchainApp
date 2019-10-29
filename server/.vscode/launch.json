@@ -1,0 +1,61 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Rest",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/rest/rest",
+        "args": [""],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/build/rest",
+        "environment": [],
+        "externalConsole": true,
+        "windows": {
+          "MIMode": "gdb",
+          "miDebuggerPath": "/usr/bin/gdb",
+          "setupCommands": [
+            {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+            }
+          ]
+        },
+        "pipeTransport": {
+          "pipeCwd": "",
+          "pipeProgram": "bash.exe",
+          "pipeArgs": ["-c"],
+          "debuggerPath": "/usr/bin/gdb"
+        }
+      },
+      {
+        "name": "Debug Miner",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/miner/miner",
+        "args": [""],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/build/miner",
+        "environment": [],
+        "externalConsole": true,
+        "windows": {
+          "MIMode": "gdb",
+          "miDebuggerPath": "/usr/bin/gdb",
+          "setupCommands": [
+            {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+            }
+          ]
+        },
+        "pipeTransport": {
+          "pipeCwd": "",
+          "pipeProgram": "bash.exe",
+          "pipeArgs": ["-c"],
+          "debuggerPath": "/usr/bin/gdb"
+        }
+      }
+    ]
+  }

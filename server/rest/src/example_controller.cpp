@@ -3,16 +3,16 @@
 
 namespace Rest {
 
-ExampleController::ExampleController(const std::shared_ptr<Pistache::Rest::Router>& router)
+ExampleController::ExampleController(const std::shared_ptr<Rest::CustomRouter>& router)
     : context_(1), socket_(context_, ZMQ_REP) {
   socket_.bind("tcp://*:5555");
   std::cout << "zmq socket created" << std::endl;
   setupRoutes(router);
 }
 
-void ExampleController::setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router) {
-  Pistache::Rest::Routes::Get(*router, "/ping", Pistache::Rest::Routes::bind(&ExampleController::handlePing, this));
-  Pistache::Rest::Routes::Get(*router, "/start", Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
+void ExampleController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
+  router->get("/ping", Pistache::Rest::Routes::bind(&ExampleController::handlePing, this));
+  router->post("/start", Pistache::Rest::Routes::bind(&ExampleController::handleStart, this));
 }
 
 void ExampleController::handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response) {

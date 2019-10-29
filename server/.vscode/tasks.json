@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "bash.exe",
+                "args": [
+                    "-c"
+                ]
+            }
+        }
+    },
+    "tasks": [
+        {
+            "label": "Default build on WSL",
+            "type": "shell",
+            "command": "${workspaceFolder}/build.sh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
