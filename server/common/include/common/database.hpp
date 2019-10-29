@@ -29,6 +29,7 @@ class Database {
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
+  void checkAndDeleteOldClass(const Common::Models::TransactionRequest& transactionRequest);
   void addTransactionRequest(const Common::Models::TransactionRequest& transactionRequest);
   std::optional<Common::Models::TransactionRequest> getClassesRequest(const Common::Models::ClassesRequest& classesRequest);
   std::optional<Common::Models::Result> getStudentRequest(const Common::Models::StudentRequest& studentRequest);
