@@ -23,7 +23,7 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
 }
 
 void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  response.send(Pistache::Http::Code::Ok);
 }
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
