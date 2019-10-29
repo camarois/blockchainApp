@@ -1,12 +1,12 @@
 #include "common/gflags_helper.hpp"
 #include <common/firebase_helper.hpp>
+#include <common/logger.hpp>
 #include <common/scripts_helper.hpp>
 #include <iostream>
 #include <rest/main_controller.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
-#include <common/logger.hpp>
 
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 DEFINE_string(cert, "server.crt", "Path to server cert");       // NOLINT
