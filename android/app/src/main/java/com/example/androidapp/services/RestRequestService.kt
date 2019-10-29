@@ -42,6 +42,10 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
+    suspend fun postLogoutAsync(): String {
+        return postAsync("usager/logout", "", String::class.java)
+    }
+
     suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",

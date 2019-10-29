@@ -12,10 +12,6 @@
                 android:id="@+id/nav_search"
                 android:icon="@drawable/ic_school_black_24dp"
                 android:title="@string/menu_search" />
-        <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_cancel_black_24dp"
-                android:title="@string/menu_logout" />
     </group>
 
     <item android:title="@string/edition">
