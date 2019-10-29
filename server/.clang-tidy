@@ -2,6 +2,7 @@ Checks: >
   *,
   -fuchsia-default-arguments,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -modernize-use-nodiscard,
   -fuchsia-statically-constructed-objects,
   -cert-err58-cpp,
   -cppcoreguidelines-avoid-c-arrays,

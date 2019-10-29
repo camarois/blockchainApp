@@ -93,3 +93,13 @@ ExternalProject_Add(libcurlpp
     PREFIX libcurlpp
     UPDATE_DISCONNECTED ON
 )
+
+ExternalProject_Add(libpicosha2
+    GIT_REPOSITORY https://github.com/okdshin/picosha2.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
+                 && cp -v ${CMAKE_BINARY_DIR}/libpicosha2/src/libpicosha2/picosha2.h
+                          ${CMAKE_BINARY_DIR}/externals/include
+    PREFIX libpicosha2
+)
