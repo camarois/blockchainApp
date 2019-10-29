@@ -15,6 +15,7 @@ namespace Common {
 
 class Database {
  public:
+  explicit Database();
   explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");

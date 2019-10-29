@@ -40,10 +40,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             val username = username_edit_text.text.toString()
 //            restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
-            //val response = restService.postLoginAsync(LoginRequest(username, password))
-            val user = "$username;rooose;1234;$username@email.com;10"
+            val response = restService.postLoginAsync(LoginRequest(username, password))
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                putExtra("user", user)
+                putExtra("user", response.edition)
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {

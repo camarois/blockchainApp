@@ -11,7 +11,6 @@
 DEFINE_string(user, "server", "Developper using the service");  // NOLINT
 DEFINE_string(cert, "server.crt", "Path to server cert");       // NOLINT
 DEFINE_string(key, "server.key", "Path to server key");         // NOLINT
-DEFINE_string(db, "blockchain.db", "Path to sqlite db file");   // NOLINT
 DEFINE_int32(port, 10000, "REST http port");                    // NOLINT
 DEFINE_int32(threads, 4, "Number of threads");                  // NOLINT
 
@@ -21,7 +20,7 @@ int main(int argc, char* argv[]) {
   try {
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
-    Common::ScriptsHelper::createCert(selfIpAddress, FLAGS_db);
+    Common::ScriptsHelper::createCert(selfIpAddress);
 
     Pistache::Port port(FLAGS_port);
     Pistache::Address addr(Pistache::Ipv4::any(), port);

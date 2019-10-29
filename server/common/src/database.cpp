@@ -1,8 +1,28 @@
 #include "common/database.hpp"
+
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
 
+DEFINE_string(db, "blockchain.db", "Path to sqlite db file");  // NOLINT
+
 namespace Common {
+
+Database::Database() {
+  assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
+  assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
+  try {
+    sqlite3* dbPtr;
+    assertSqlite(
+        sqlite3_open_v2(FLAGS_db.c_str(), &dbPtr,
+                        static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
+                        nullptr),
+        "Cannot connect to database");
+    db_.reset(dbPtr, sqlite3_close_v2);
+  } catch (...) {
+    close();
+    throw;
+  }
+}
 
 Database::Database(const std::string& dbPath) {
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
@@ -48,7 +68,7 @@ void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
       "INSERT OR REPLACE INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      user.username.c_str(), user.password.c_str());
+      user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -91,7 +111,8 @@ int Database::addLogSession() {
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId) {
+void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
+                      int logSessionId) {
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",
