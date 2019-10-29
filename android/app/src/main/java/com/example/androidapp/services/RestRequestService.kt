@@ -3,15 +3,12 @@ package com.example.androidapp.services
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.androidapp.LoginRequest
 import com.example.androidapp.LoginResponse
-import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import com.google.gson.Gson
 import kotlin.coroutines.resumeWithException
 
 class RestRequestService(private val httpClient: HTTPRestClient, private val credentialsManager: CredentialsManager, private val context: Context) {

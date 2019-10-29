@@ -16,7 +16,7 @@ class CredentialsManager {
             .apply()
     }
 
-    fun getAuthToken(context: Context): String {
+    fun getAuthToken(context: Context): String? {
         val sp = context.getSharedPreferences(
             HTTP_HEADER_AUTHORIZATION, Context.MODE_PRIVATE)
 
