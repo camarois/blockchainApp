@@ -15,7 +15,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     private lateinit var serverUrl: String
 
     init {
-        credentialsManager.saveCredentials(context, "")
         initServerUrl("server")
     }
 
