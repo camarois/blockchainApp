@@ -1,7 +1,6 @@
 #include "common/database.hpp"
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
-#include <iostream>
 
 namespace Common {
 
@@ -107,13 +106,11 @@ void Database::addTransactionRequest(const Common::Models::TransactionRequest& t
       "SELECT classId FROM classes "
       "WHERE acronym = '%q' AND trimester = '%q' "
       "LIMIT 1;", 
-      transactionRequest.acronym.c_str(), std::to_string(transactionRequest.trimester)
-      );
+      transactionRequest.acronym.c_str(), std::to_string(transactionRequest.trimester).c_str()
+  );
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
   std::string classId;
   if (statementCheck.step()) {
-    std::cout << "inside delete" << std::endl;
-
     classId = statementCheck.getColumnText(0);
     Query deleteClassQuery = Query(
         "DELETE FROM classes WHERE classId = '%q'",
@@ -128,39 +125,36 @@ void Database::addTransactionRequest(const Common::Models::TransactionRequest& t
     Statement statementDeleteResults = Statement(db_, deleteResultQuery);
     statementDeleteResults.step();
   }
+
   Query newClassQuery = Query(
       "INSERT INTO classes (acronym, name, trimester) "
       "VALUES ('%q', '%q', '%q');",
-      transactionRequest.acronym.c_str(), transactionRequest.name.c_str(), std::to_string(transactionRequest.trimester)
+      transactionRequest.acronym.c_str(), transactionRequest.name.c_str(), std::to_string(transactionRequest.trimester).c_str()
   );
-  Query getIdQuery = Query("SELECT last_insert_rowid();");
-  Statement getIdSatement = Statement(_db, getIdQuery);
-  std::string classId = getIdStatement.stop();
-  std::cout << clissId << std::endl;
   Statement statementNewClass = Statement(db_, newClassQuery);
   statementNewClass.step();
-  std::string resultsToAdd = "";
-  for (Common::Models::Result result : transactionRequest.results ) {
-    resultsToAdd += "INSERT INTO results (lastName, firstName, id, grade, classId) "
-                    "VALUES ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade + "', " + classId + "); ";
-  }
-  std::cout << "inserting " <<  X X << std::endl;
 
+  long long int newClassId = sqlite3_last_insert_rowid(db_.get());
+
+  std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, ClassId) VALUES";
+  for (Common::Models::Result result : transactionRequest.results ) {
+    resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade + "', " + std::to_string(newClassId).c_str() + "),";
+  }
+  resultsToAdd.pop_back();
+  resultsToAdd += ";";
   Query resultsToAddQuery = Query(resultsToAdd);
   Statement statementNewResults = Statement(db_, resultsToAddQuery);
   statementNewResults.step();
 }
 
 std::optional<Common::Models::TransactionRequest> Database::getClassesRequest(const Common::Models::ClassesRequest& classesRequest) {
-  std::cout << "inside getClassesRequest" << std::endl;
   Query getClassIdQuery = Query(
     "SELECT classId, name FROM classes "
     "WHERE acronym = '%q' AND trimester = '%q';",
-    classesRequest.acronym.c_str(), std::to_string(classesRequest.trimester)
+    classesRequest.acronym.c_str(), std::to_string(classesRequest.trimester).c_str()
   );
   Statement getClassIdStatement = Statement(db_, getClassIdQuery);
   if (getClassIdStatement.step()) {
-    std::cout << "inside if" << std::endl;
     std::string classId = getClassIdStatement.getColumnText(0);
     std::string name = getClassIdStatement.getColumnText(1);
 
@@ -171,7 +165,6 @@ std::optional<Common::Models::TransactionRequest> Database::getClassesRequest(co
     );
     Statement getResultsStatement = Statement(db_, getClassResultsQuery);
     if (getResultsStatement.step()) {
-      std::cout << "inside if#2" << std::endl;
 
       std::vector<Common::Models::Result> results;
       while (getResultsStatement.step()) {
@@ -193,7 +186,7 @@ std::optional<Common::Models::Result> Database::getStudentRequest(const Common::
   Query getClassIdQuery = Query(
     "SELECT classId FROM classes "
     "WHERE acronym = '%q' AND trimester = '%q';",
-    studentRequest.acronym.c_str(), std::to_string(studentRequest.trimester)
+    studentRequest.acronym.c_str(), std::to_string(studentRequest.trimester).c_str()
   );
   Statement getClassIdStatement = Statement(db_, getClassIdQuery);
   if (getClassIdStatement.step()) {
