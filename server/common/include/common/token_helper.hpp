@@ -18,7 +18,7 @@ const jwt::string_view kPassword = "password";
 const jwt::string_view kExpiration = "expiration";
 const std::string kAlgorithm = "hs256";
 const std::string kAuthorization = "Authorization";
-const std::string kSecret = "inf3995";
+const std::string kSecret = "Authorizationinf3995authorization_token";
 
 // Inspired by https://github.com/arun11299/cpp-jwt
 inline auto encode(const std::string& username, const std::string& password) {

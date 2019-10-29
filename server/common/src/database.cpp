@@ -1,8 +1,9 @@
 #include "common/database.hpp"
+
 #include <common/format_helper.hpp>
 #include <gflags/gflags.h>
 
-DEFINE_string(db2, "blockchain.db", "Path to sqlite db file");   // NOLINT
+DEFINE_string(db, "blockchain.db", "Path to sqlite db file");  // NOLINT
 
 namespace Common {
 
@@ -12,7 +13,7 @@ Database::Database() {
   try {
     sqlite3* dbPtr;
     assertSqlite(
-        sqlite3_open_v2(FLAGS_db2.c_str(), &dbPtr,
+        sqlite3_open_v2(FLAGS_db.c_str(), &dbPtr,
                         static_cast<unsigned>(SQLITE_OPEN_READWRITE) | static_cast<unsigned>(SQLITE_OPEN_SHAREDCACHE),
                         nullptr),
         "Cannot connect to database");
@@ -110,7 +111,8 @@ int Database::addLogSession() {
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId) {
+void Database::addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
+                      int logSessionId) {
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",

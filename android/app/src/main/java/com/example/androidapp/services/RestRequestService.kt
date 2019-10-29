@@ -13,10 +13,9 @@ import kotlin.coroutines.resumeWithException
 
 class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context, private val credentialsManager: CredentialsManager) {
     private lateinit var serverUrl: String
-    private val testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzIzMjIxMzcsInBhc3N3b3JkIjoiMTIzNDUiLCJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiYm91dGNob3UifQ.ld_skbUnXFUkC9aMHEpVq9PsYM3-d-y0YpBOAGz2efQ"
 
     init {
-        credentialsManager.saveCredentials(context, testToken)
+        credentialsManager.saveCredentials(context, "")
         initServerUrl("server")
     }
 
@@ -24,7 +23,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://192.168.1.18:10000"
+                serverUrl = "https://$it:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
@@ -38,6 +37,8 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
+        credentialsManager.saveFirstAuthToken(context, request.username, request.password)
+        println(credentialsManager.getAuthToken(context))
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
