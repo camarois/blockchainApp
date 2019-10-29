@@ -23,7 +23,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var homeViewModel: SettingsViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,9 +31,9 @@ class SettingsFragment : Fragment(), CoroutineScope {
         savedInstanceState: Bundle?
     ): View? {
         job = Job()
-        homeViewModel =
+        settingsViewModel =
             ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_settings, container, false)
         root.refresh_button.setOnClickListener { launch {
             try {
                 root.ping_text_view.text = restService.getPingAsync()
