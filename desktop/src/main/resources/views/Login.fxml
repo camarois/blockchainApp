@@ -16,8 +16,8 @@
                   <Font size="27.0" />
                </font>
             </Text>
-            <TextField layoutX="33.0" layoutY="68.0" />
-            <TextField layoutX="33.0" layoutY="104.0" />
+            <TextField promptText="Nom d'utilisateur" layoutX="33.0" layoutY="68.0" />
+            <TextField promptText="Mot de passe" layoutX="33.0" layoutY="104.0" />
             <Button layoutX="81.0" layoutY="139.0" mnemonicParsing="false" onAction="#onClickLogin" text="Button" />
          </children>
       </AnchorPane>
