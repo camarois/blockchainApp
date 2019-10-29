@@ -100,10 +100,10 @@ inline void to_json(nlohmann::json& j, const Block& obj) {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, Block& obj) {
   obj.dirty_ = true;
-  j[obj.kId_].get_to(obj.id_);
-  j[obj.kNonce_].get_to(obj.nonce_);
-  j[obj.kPreviousHash_].get_to(obj.previousHash_);
-  j[obj.kData_].get_to(obj.data_);
+  j.at(obj.kId_).get_to(obj.id_);
+  j.at(obj.kNonce_).get_to(obj.nonce_);
+  j.at(obj.kPreviousHash_).get_to(obj.previousHash_);
+  j.at(obj.kData_).get_to(obj.data_);
 }
 
 }  // namespace Miner

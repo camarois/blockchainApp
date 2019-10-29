@@ -155,8 +155,8 @@ inline void to_json(nlohmann::json& j, const BlockChain& obj) {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockChain& obj) {
   unsigned int lastBlock;
-  j[obj.kLastBlock_].get_to(lastBlock);
-  j[obj.kDifficulty_].get_to(obj.difficulty_);
+  j.at(obj.kLastBlock_).get_to(lastBlock);
+  j.at(obj.kDifficulty_).get_to(obj.difficulty_);
   obj.blocks_.insert(std::pair<unsigned int, Block>(lastBlock, Block()));
 }
 
