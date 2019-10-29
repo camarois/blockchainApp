@@ -11,7 +11,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
 
-class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context) {
+class RestRequestService(private val httpClient: HTTPRestClient, private val context: Context, private val credentialsManager: CredentialsManager) {
     private lateinit var serverUrl: String
     private val testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzIzMjIxMzcsInBhc3N3b3JkIjoiMTIzNDUiLCJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiYm91dGNob3UifQ.ld_skbUnXFUkC9aMHEpVq9PsYM3-d-y0YpBOAGz2efQ"
 

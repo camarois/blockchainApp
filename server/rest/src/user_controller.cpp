@@ -1,3 +1,4 @@
+#include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
 #include <rest/user_controller.hpp>

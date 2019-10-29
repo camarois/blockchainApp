@@ -57,7 +57,7 @@ ExternalProject_Add(libgtest
     CMAKE_ARGS -Dgmock_build_tests=off
     CMAKE_ARGS -Dgtest_build_tests=off
     CMAKE_ARGS -Dgtest_build_samples=off
-    CMAKE_ARGS -Dgtest_disable_pthreads=off
+    CMAKE_ARGS -Dgtest_disable_pthreads=on
     CMAKE_ARGS ${COMMON_DEFINES}
     PREFIX libgtest
     UPDATE_DISCONNECTED ON
