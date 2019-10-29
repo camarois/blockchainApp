@@ -11,12 +11,13 @@ DECLARE_string(db);
 
 namespace Rest {
 
-CustomRouter::CustomRouter() : Pistache::Rest::Router() { Common::Logger::init(FLAGS_db); }
+CustomRouter::CustomRouter() { Common::Logger::init(FLAGS_db); }
 
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
-                            Pistache::Rest::Route::Handler handler) {
+                            const Pistache::Rest::Route::Handler& handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-    auto body = request.body().empty() ? "NULL" : request.body();
+    auto body = request.body().empty() ? kDefaultBody_ : request.body();
+    body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
     try {
       handler(request, std::move(response));
       Common::Logger::get()->info(0, url + "\n" + body);
@@ -32,12 +33,12 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
   Pistache::Rest::Router::addRoute(method, url, callback);
 }
 
-void CustomRouter::get(const std::string& url, Pistache::Rest::Route::Handler handler) {
-  CustomRouter::addRoute(Pistache::Http::Method::Get, url, std::move(handler));
+void CustomRouter::get(const std::string& url, const Pistache::Rest::Route::Handler& handler) {
+  CustomRouter::addRoute(Pistache::Http::Method::Get, url, handler);
 }
 
-void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler handler) {
-  CustomRouter::addRoute(Pistache::Http::Method::Post, url, std::move(handler));
+void CustomRouter::post(const std::string& url, const Pistache::Rest::Route::Handler& handler) {
+  CustomRouter::addRoute(Pistache::Http::Method::Post, url, handler);
 }
 
 }  // namespace Rest
