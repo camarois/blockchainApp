@@ -14,6 +14,7 @@
     <string name="old_password">Ancien mot de passe</string>
     <string name="new_password">Nouveau mot de passe</string>
     <string name="submit">CONNEXION</string>
+    <string name="change">CHANGER</string>
     <string name="no_account">Pas encore de compte?</string>
     <string name="register">S\'ENREGISTRER</string>
     <string name="title_activity_side_panel">SidePanelActivity</string>
