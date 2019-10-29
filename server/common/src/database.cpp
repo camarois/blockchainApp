@@ -1,7 +1,7 @@
 #include "common/database.hpp"
 #include <common/format_helper.hpp>
-#include <gflags/gflags.h>
 #include <common/scripts_helper.hpp>
+#include <gflags/gflags.h>
 
 namespace Common {
 
