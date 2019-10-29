@@ -30,8 +30,8 @@ class Database {
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
   void addTransactionRequest(const Common::Models::TransactionRequest& transactionRequest);
-  std::vector<Common::Models::Result> addClassesRequest(const Common::Models::ClassesRequest& classesRequest);
-  Common::Models::Result addStudentRequest(const Common::Models::StudentRequest& studentRequest);
+  std::optional<Common::Models::TransactionRequest> getClassesRequest(const Common::Models::ClassesRequest& classesRequest);
+  std::optional<Common::Models::Result> getStudentRequest(const Common::Models::StudentRequest& studentRequest);
 
  private:
   void close();
