@@ -5,8 +5,8 @@
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
-#include <zmq.hpp>
 #include <rest/custom_router.hpp>
+#include <zmq.hpp>
 
 namespace Rest {
 
