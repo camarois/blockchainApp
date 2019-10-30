@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   try {
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
-    Common::ScriptsHelper::createCert(selfIpAddress);
+    Common::ScriptsHelper::createCert(selfIpAddress, FLAGS_db);
 
     Pistache::Port port(FLAGS_port);
     Pistache::Address addr(Pistache::Ipv4::any(), port);

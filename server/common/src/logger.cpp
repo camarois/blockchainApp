@@ -38,7 +38,7 @@ void Logger::info(int provenance, const std::string& message) {
 
 void Logger::log(int severity, int provenance, const std::string& message, std::ostream& stream) {
   std::lock_guard<std::mutex> lock(mutex_);
-  Common::Database db;
+  Common::Database db(dbPath_);
   auto nowStr = Common::FormatHelper::nowStr();
   stream << std::endl
          << logCount_ << ": " << severities[severity] << ": " << nowStr << ": " << provenance << ": " << message

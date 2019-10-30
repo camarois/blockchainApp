@@ -1,7 +1,10 @@
 #include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
+
+DECLARE_string(db);
 
 namespace Rest {
 
@@ -16,7 +19,7 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db;
+  Common::Database db(FLAGS_db);
   auto user = db.getUser(loginRequest.username);
   Common::Models::LoginResponse loginResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
@@ -33,7 +36,7 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  Common::Database db;
+  Common::Database db(FLAGS_db);
   db.addUser(registerRequest);
   Common::Models::LoginResponse registerResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
