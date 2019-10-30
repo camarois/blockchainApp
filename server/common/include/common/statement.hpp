@@ -21,7 +21,7 @@ class Statement {
 
   std::string getColumnText(size_t col) const;
 
-  bool step(bool unique = false);
+  bool step();
 
  private:
   sqlite3_statement_ptr statement_;

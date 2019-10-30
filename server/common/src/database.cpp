@@ -41,7 +41,7 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
       "WHERE username = '%q';",
       username.c_str());
   Statement statement = Statement(db_, query);
-  if (statement.step(true)) {
+  if (statement.step()) {
     return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
   }
   return {};
