@@ -4,6 +4,8 @@
 
 DECLARE_string(cert);
 DECLARE_string(key);
+DECLARE_string(db);
+DECLARE_int32(buffer_size);
 
 namespace Rest {
 
@@ -17,7 +19,7 @@ MainController::MainController(Pistache::Address addr, size_t thr)
       infoController_(router_),
       fileController_(router_),
       adminController_(router_) {
-  auto opts = Pistache::Http::Endpoint::options().threads(thr);
+  auto opts = Pistache::Http::Endpoint::options().maxRequestSize(FLAGS_buffer_size).threads(thr);
   httpEndpoint_.init(opts);
 }
 

@@ -30,24 +30,24 @@ inline auto encode(const std::string& username, const std::string& password) {
   return token;
 }
 
-inline auto decode(const std::unique_ptr<std::string>& token) {
+inline std::optional<std::string> decode(const std::string* token, const std::string& dbPath) {
   std::error_code errCode;
   try {
     auto decodedObj = jwt::decode(*token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
     std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
     std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
 
-    Common::Database db;
+    Common::Database db(dbPath);
     auto user = db.getUser(username);
-
     if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && user) {
       jwt::jwt_object refreshToken = encode(user->username, user->password);
-      *token = std::string(refreshToken.signature());
+      return std::string(refreshToken.signature());
     }
+    return *token;
   } catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
-  return !bool(errCode);
+  return {};
 }
 
 }  // namespace TokenHelper

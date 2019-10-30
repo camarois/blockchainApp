@@ -8,23 +8,25 @@
 #include <rest/custom_router.hpp>
 #include <sstream>
 
+DECLARE_string(db);
+
 namespace Rest {
 
-CustomRouter::CustomRouter() : Pistache::Rest::Router() { Common::Logger::init(); }
+CustomRouter::CustomRouter() { Common::Logger::init(FLAGS_db); }
 
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
-                            Pistache::Rest::Route::Handler handler) {
+                            const Pistache::Rest::Route::Handler& handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-    auto body = request.body().empty() ? "NULL" : request.body();
-    std::unique_ptr<std::string> token =
-        std::make_unique<std::string>(request.headers().getRaw("Authorization").value());
-
+    auto body = request.body().empty() ? kDefaultBody_ : request.body();
+    body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
+    std::string authHeader = request.headers().getRaw("Authorization").value();
+    std::optional<std::string> token = Common::TokenHelper::decode(&authHeader, FLAGS_db);
     try {
-      if (!Common::TokenHelper::decode(token)) {
-        response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
-      } else {
-        response.headers().add<Pistache::Http::Header::Authorization>(*token);
+      if (token) {
+        response.headers().add<Pistache::Http::Header::Authorization>(token.value());
         handler(request, std::move(response));
+      } else {
+        response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
       }
       Common::Logger::get()->info(0, url + "\n" + body);
 
@@ -39,12 +41,12 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
   Pistache::Rest::Router::addRoute(method, url, callback);
 }
 
-void CustomRouter::get(const std::string& url, Pistache::Rest::Route::Handler handler) {
-  CustomRouter::addRoute(Pistache::Http::Method::Get, url, std::move(handler));
+void CustomRouter::get(const std::string& url, const Pistache::Rest::Route::Handler& handler) {
+  CustomRouter::addRoute(Pistache::Http::Method::Get, url, handler);
 }
 
-void CustomRouter::post(const std::string& url, Pistache::Rest::Route::Handler handler) {
-  CustomRouter::addRoute(Pistache::Http::Method::Post, url, std::move(handler));
+void CustomRouter::post(const std::string& url, const Pistache::Rest::Route::Handler& handler) {
+  CustomRouter::addRoute(Pistache::Http::Method::Post, url, handler);
 }
 
 }  // namespace Rest

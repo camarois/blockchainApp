@@ -21,7 +21,7 @@ class CredentialsManager {
             HTTP_HEADER_AUTHORIZATION, Context.MODE_PRIVATE)
 
         sp!!.edit().putString(AUTH_TOKEN, token)
-            .apply()
+            .commit()
     }
 
     fun getAuthToken(context: Context): String {
@@ -48,6 +48,6 @@ class CredentialsManager {
             HTTP_HEADER_AUTHORIZATION, Context.MODE_PRIVATE)
 
         sp!!.edit().putString(AUTH_TOKEN, token)
-            .apply()
+            .commit()
     }
 }

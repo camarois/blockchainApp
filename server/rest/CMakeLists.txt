@@ -2,9 +2,11 @@ file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
 add_custom_target(deps_file
-    # This will create db if it doesn't exist
-    COMMAND printf "C" | ${SQL_DIR}/createDb.sh blockchain.db
-    BYPRODUCTS blockchain.db
+    COMMAND cp
+        ${SQL_DIR}/createDb.sh
+        ${SQL_DIR}/createDb.sql
+        ${SQL_DIR}/addUsers.sql
+        ${CMAKE_CURRENT_BINARY_DIR}
 
     COMMAND cp
         ${CERT_DIR}/createCert.sh
@@ -31,4 +33,5 @@ target_link_libraries(rest PRIVATE
     ${OPENSSL_LIBRARIES}
     pthread
     sqlite3
+    stdc++fs
 )

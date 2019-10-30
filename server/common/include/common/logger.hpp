@@ -4,9 +4,9 @@
 
 #include <memory>
 #include <mutex>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
 namespace Common {
 
@@ -14,21 +14,23 @@ enum Severity { ERROR, ATTENTION, INFO };
 
 class Logger {
  public:
-  explicit Logger(int logSessionId);
+  explicit Logger(int logSessionId, const std::string& dbPath);
   static std::shared_ptr<Logger> get();
-  static void init();
-  void error(int provenance, const std::string& log);
-  void attention(int provenance, const std::string& log);
-  void info(int provenance, const std::string& log);
+  static void init(const std::string& dbPath);
+  void error(int provenance, const std::string& message);
+  void attention(int provenance, const std::string& message);
+  void info(int provenance, const std::string& message);
 
  private:
-  void log(int severity, int provenance, const std::string& log, std::ostream& stream);
-  static std::shared_ptr<Logger> instance_;
-  static bool isInitialized_;
-  static std::vector<std::string> severities_;
+  void log(int severity, int provenance, const std::string& message, std::ostream& stream);
+
+  static std::shared_ptr<Logger> instance;
+  static bool isInitialized;
+  static std::vector<std::string> severities;
 
   std::mutex mutex_;
   const int logSessionId_;
+  const std::string& dbPath_;
   int logCount_;
 };
 
