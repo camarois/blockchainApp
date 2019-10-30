@@ -16,15 +16,15 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
                             Pistache::Rest::Route::Handler handler) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
     auto body = request.body().empty() ? "NULL" : request.body();
-    std::unique_ptr<std::string> token =
-        std::make_unique<std::string>(request.headers().getRaw("Authorization").value());
+    std::string authHeader = request.headers().getRaw("Authorization").value();
+    std::optional<std::string> token = Common::TokenHelper::decode(&authHeader);
 
     try {
-      if (!Common::TokenHelper::decode(token)) {
-        response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
-      } else {
-        response.headers().add<Pistache::Http::Header::Authorization>(*token);
+      if (token) {
+        response.headers().add<Pistache::Http::Header::Authorization>(token.value());
         handler(request, std::move(response));
+      } else {
+        response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
       }
       Common::Logger::get()->info(0, url + "\n" + body);
 
