@@ -41,7 +41,7 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
       "WHERE username = '%q';",
       username.c_str());
   Statement statement = Statement(db_, query);
-  if (statement.step()) {
+  if (statement.step(true)) {
     return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
   }
   return {};
@@ -49,7 +49,7 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
 
 void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
-      "INSERT OR REPLACE INTO users (username, password) "
+      "INSERT INTO users (username, password) "
       "VALUES ('%q', '%q');",
       user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
   Statement statement = Statement(db_, query);

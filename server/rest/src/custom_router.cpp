@@ -20,7 +20,7 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
     auto body = request.body().empty() ? kDefaultBody_ : request.body();
     body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
     std::string authHeader = request.headers().getRaw("Authorization").value();
-    std::optional<std::string> token = Common::TokenHelper::decode(&authHeader, FLAGS_db);
+    std::optional<std::string> token = Common::TokenHelper::decode(authHeader, FLAGS_db);
     try {
       if (token) {
         response.headers().add<Pistache::Http::Header::Authorization>(token.value());

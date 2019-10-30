@@ -18,10 +18,10 @@ std::string Statement::getColumnText(size_t col) const {
   return reinterpret_cast<const char*>(sqlite3_column_text(statement_.get(), col));
 }
 
-bool Statement::step() {
+bool Statement::step(bool unique) {
   int errCode = sqlite3_step(statement_.get());
   Database::assertSqlite(errCode);
-  return errCode == SQLITE_ROW || errCode == SQLITE_DONE;
+  return unique ? errCode == SQLITE_DONE : errCode == SQLITE_ROW;
 }
 
 }  // namespace Common

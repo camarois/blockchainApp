@@ -5,7 +5,6 @@ add_custom_target(deps_file
     COMMAND cp
         ${SQL_DIR}/createDb.sh
         ${SQL_DIR}/createDb.sql
-        ${SQL_DIR}/addUsers.sql
         ${CMAKE_CURRENT_BINARY_DIR}
 
     COMMAND cp
