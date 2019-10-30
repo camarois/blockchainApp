@@ -14,13 +14,14 @@ Statement::Statement(const std::shared_ptr<sqlite3>& db, const Query& query) {
 }
 
 std::string Statement::getColumnText(size_t col) const {
-  return reinterpret_cast<const char*>(sqlite3_column_text(statement_.get(), col));  // NOLINT
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+  return reinterpret_cast<const char*>(sqlite3_column_text(statement_.get(), col));
 }
 
 bool Statement::step() {
   int errCode = sqlite3_step(statement_.get());
   Database::assertSqlite(errCode);
-  return errCode == SQLITE_ROW;
+  return errCode == SQLITE_DONE || errCode == SQLITE_ROW;
 }
 
 }  // namespace Common

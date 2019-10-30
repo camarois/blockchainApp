@@ -18,6 +18,7 @@ class UserController {
   void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/usager/";
 };

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace Common {
 namespace ScriptsHelper {
@@ -14,7 +15,7 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
   Common::Database db(dbPath);
   if (!db.containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
-    db.addIp(ip.c_str());
+    db.addIp(ip);
     auto ips = db.getIps();
 
     std::stringstream ss;
@@ -23,10 +24,25 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
       ss << "IP." << i + 1 << " = " << ips[i] << std::endl;
     }
     ss << "'";
-    system(ss.str().c_str());
-    std::cout << "Ip succesfully added" << std::endl;
-  } else {
-    std::cout << "Ip already in the database" << std::endl;
+    int exitCode = std::system(ss.str().c_str()); // NOLINT(cert-env33-c)
+    if (exitCode == 0) {
+      std::cout << "Ip succesfully added" << std::endl;
+    } else {
+      std::cout << "createCert.sh exited with exit code: " << exitCode << std::endl;
+    }
+  }
+}
+
+inline void createDb(const std::string& dbPath) {
+  if (!std::filesystem::exists(dbPath)) {
+    std::cout << "Creating the database at " << dbPath << std::endl;
+    
+    int exitCode = std::system(("./createDb.sh " + dbPath).c_str()); // NOLINT(cert-env33-c)
+    if (exitCode == 0) {
+      std::cout << "Database created succesfully" << std::endl;
+    } else {
+      std::cout << "createDb.sh exited with exit code: " << exitCode << std::endl;
+    }
   }
 }
 
