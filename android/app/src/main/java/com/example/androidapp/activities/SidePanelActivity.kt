@@ -23,10 +23,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-
-
-
-
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.OnListFragmentInteractionListener {
 
     override fun onListFragmentInteraction(item: StudentItem) {

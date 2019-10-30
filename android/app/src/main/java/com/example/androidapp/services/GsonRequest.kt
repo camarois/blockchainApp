@@ -19,14 +19,14 @@ class GsonRequest <T> (
     url: String,
     private val body: Any = "",
     private val classOfT: Class<T>,
-    private val headers: MutableMap<String, String>?,
+    private val headers: MutableMap<String, String?>?,
     private val listener: Response.Listener<T>,
     errorListener: Response.ErrorListener?
 ) : Request<T>(method, url, errorListener
 ) {
     private val gson = Gson()
 
-    override fun getHeaders(): MutableMap<String, String> {
+    override fun getHeaders(): MutableMap<String, String?> {
         val params = headers ?: super.getHeaders()
         params[CredentialsManager.HTTP_HEADER_AUTHORIZATION] ?: credentialsManager.getAuthToken(context)
         return params

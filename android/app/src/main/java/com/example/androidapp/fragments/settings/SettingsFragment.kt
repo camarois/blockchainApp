@@ -39,7 +39,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
         settingsViewModel =
             ViewModelProviders.of(this).get(SettingsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
-        root.connection_button.setOnClickListener { launch { submitNewPassword() }  }
+        root.connection_button.setOnClickListener { launch { submitNewPassword() } }
 
         return root
     }
