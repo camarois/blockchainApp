@@ -3,7 +3,6 @@ package services;
 import controllers.LoginController;
 import com.google.gson.Gson;
 import constants.ServerUrls;
-import controllers.LogsViewer;
 import models.LoginRequest;
 import models.LoginResponse;
 
@@ -20,11 +19,12 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.lang.String;
 
 public class RestService {
     public static ServerUrls urls;
@@ -44,7 +44,7 @@ public class RestService {
         threadPool = Executors.newFixedThreadPool(2);
         httpClient = HttpClient.newHttpClient();
         requestGetAsync(urls.firebase + "server", (resp) -> {
-            baseUrl = "https://" + resp + ":10000/";
+            baseUrl = "https://" + "10.200.8.137" + ":10000/";
             System.out.println("Connected to: " + baseUrl);
         });
         initSslContext();
@@ -58,8 +58,9 @@ public class RestService {
         return instance;
     }
 
-    public LoginResponse postLoginAsync(LoginRequest request) {
+    public static LoginResponse postLoginAsync(LoginRequest request) {
         try {
+            CredentialsManager.getInstance().saveFirstAuthToken(request);
             return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class, System.out::println);
         } catch (Exception e) {
             LoginController.getInstance().showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide.");
@@ -99,11 +100,13 @@ public class RestService {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
-                    .headers("Authorization", "token")
+                    .headers("Authorization", CredentialsManager.getInstance().getAuthToken())
                     .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String authHeader =  response.headers().allValues("Authorization").get(0);
+            CredentialsManager.getInstance().saveAuthToken(authHeader);
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();

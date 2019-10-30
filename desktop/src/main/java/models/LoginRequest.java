@@ -7,7 +7,15 @@ public class LoginRequest {
     //CHECKSTYLE.ON: MemberName
 
     public LoginRequest(String username, String password) {
-        this.usager = username;
-        this.mot_de_passe = password;
+        usager = username;
+        mot_de_passe = password;
+    }
+
+    public String getUsager() {
+        return usager;
+    }
+
+    public String getMot_de_passe() {
+        return mot_de_passe;
     }
 }

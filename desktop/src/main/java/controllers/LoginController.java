@@ -1,6 +1,5 @@
 package controllers;
 
-import javafx.fxml.Initializable;
 import models.LoginRequest;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -15,7 +14,6 @@ import javafx.scene.layout.BorderPane;
 import models.LoginResponse;
 import services.RestService;
 import java.util.Objects;
-import java.util.concurrent.Future;
 
 public class LoginController {
     @FXML private TextField usernameTextField;
@@ -36,20 +34,16 @@ public class LoginController {
         String password = passwordTextField.getText();
         LoginRequest loginRequest = new LoginRequest(username, password);
 
-        try {
-            LoginResponse loginResponse = RestService.getInstance().postLoginAsync(loginRequest);
-            if(loginResponse != null) {
-                BorderPane rootNode = new BorderPane();
-                Parent logsViewer = FXMLLoader.load(
-                        Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
-                );
-                rootNode.setCenter(logsViewer);
-                Button btn = (Button) event.getSource();
-                Scene scene = btn.getScene();
-                scene.setRoot(rootNode);
-            }
-        } catch  (Exception e) {
-            showErrorDialog(e.getMessage());
+        LoginResponse loginResponse = RestService.getInstance().postLoginAsync(loginRequest);
+        if (loginResponse != null) {
+            BorderPane rootNode = new BorderPane();
+            Parent logsViewer = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
+            );
+            rootNode.setCenter(logsViewer);
+            Button btn = (Button) event.getSource();
+            Scene scene = btn.getScene();
+            scene.setRoot(rootNode);
         }
     }
 
