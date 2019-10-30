@@ -1,6 +1,7 @@
 #ifndef REST_CUSTOM_ROUTER_HPP
 #define REST_CUSTOM_ROUTER_HPP
 
+#include <memory>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>

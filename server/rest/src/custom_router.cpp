@@ -1,6 +1,7 @@
 #include <common/database.hpp>
 #include <common/format_helper.hpp>
 #include <common/logger.hpp>
+#include <common/token_helper.hpp>
 #include <ctime>
 #include <future>
 #include <gflags/gflags.h>
@@ -18,8 +19,15 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
     auto body = request.body().empty() ? kDefaultBody_ : request.body();
     body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
+    std::string authHeader = request.headers().getRaw("Authorization").value();
+    std::optional<std::string> token = Common::TokenHelper::decode(authHeader, FLAGS_db);
     try {
-      handler(request, std::move(response));
+      if (token) {
+        response.headers().add<Pistache::Http::Header::Authorization>(token.value());
+        handler(request, std::move(response));
+      } else {
+        response.send(Pistache::Http::Code::Forbidden, "Invalid token.");
+      }
       Common::Logger::get()->info(0, url + "\n" + body);
 
       return Pistache::Rest::Route::Result::Ok;

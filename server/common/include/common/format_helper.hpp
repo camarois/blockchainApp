@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <picosha2.h>
 #include <string>
 
 namespace Common {
@@ -16,6 +17,12 @@ inline std::string nowStr() {
 inline std::string toLower(std::string str) {
   std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
   return str;
+}
+
+inline std::string hash(const std::string& password) {
+  std::vector<unsigned char> hash(picosha2::k_digest_size);
+  picosha2::hash256(password.begin(), password.end(), hash.begin(), hash.end());
+  return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 }
 
 }  // namespace FormatHelper
