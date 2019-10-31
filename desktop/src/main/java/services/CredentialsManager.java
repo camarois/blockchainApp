@@ -39,8 +39,8 @@ public class CredentialsManager {
 
     public void saveFirstAuthToken(LoginRequest request) {
         Claims claims = Jwts.claims();
-        claims.put("username", request.getUsager());
-        claims.put("password", request.getMot_de_passe());
+        claims.put("username", request.getUsername());
+        claims.put("password", request.getPassword());
 
         Date expiryTime = DateUtils.addHours(new Date(), 1);
         SecretKey key = Keys.hmacShaKeyFor((HTTP_HEADER_AUTHORIZATION + "inf3995" + AUTH_TOKEN).getBytes());

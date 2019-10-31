@@ -1,21 +1,23 @@
 package models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LoginRequest {
-    String usager;
-    //CHECKSTYLE.OFF: MemberName
-    String mot_de_passe;
-    //CHECKSTYLE.ON: MemberName
+    @SerializedName("usager")
+    private String username;
+    @SerializedName("mot_de_passe")
+    private String password;
 
-    public LoginRequest(String username, String password) {
-        usager = username;
-        mot_de_passe = password;
+    public LoginRequest(String usernameInput, String passwordInput) {
+        username = usernameInput;
+        password = passwordInput;
     }
 
-    public String getUsager() {
-        return usager;
+    public String getUsername() {
+        return username;
     }
 
-    public String getMot_de_passe() {
-        return mot_de_passe;
+    public String getPassword() {
+        return password;
     }
 }

@@ -1,6 +1,5 @@
 package services;
 
-import controllers.LoginController;
 import com.google.gson.Gson;
 import constants.ServerUrls;
 import models.LoginRequest;
@@ -23,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.lang.String;
 
@@ -58,14 +58,9 @@ public class RestService {
         return instance;
     }
 
-    public LoginResponse postLoginAsync(LoginRequest request) {
-        try {
-            CredentialsManager.getInstance().saveFirstAuthToken(request);
-            return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
+        CredentialsManager.getInstance().saveFirstAuthToken(request);
+        return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
     }
 
     public String postLogoutAsync() {
@@ -94,11 +89,13 @@ public class RestService {
     }
 
     public static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException,
-            InterruptedException {
-        return threadPool.submit(() -> {
+        InterruptedException {
+        Future future = (Future) threadPool.submit(() -> {
             String resp = postRequest(url, data);
             return gson.fromJson(resp, (Type) classOfT);
         }).get();
+        System.out.println(future.get());
+        return future.get();
     }
 
     public static String getRequest(String url) {
@@ -128,7 +125,7 @@ public class RestService {
             CredentialsManager.getInstance().saveAuthToken(authHeader);
             return response.body();
         } catch (Exception e) {
-            LoginController.getInstance().showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide.");
+            e.printStackTrace();
             return null;
         }
     }
