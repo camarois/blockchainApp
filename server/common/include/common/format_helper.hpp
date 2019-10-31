@@ -3,9 +3,10 @@
 
 #include <algorithm>
 #include <chrono>
+#include <iostream>
 #include <picosha2.h>
-#include <string>
 #include <random>
+#include <string>
 
 namespace Common {
 namespace FormatHelper {
@@ -36,7 +37,7 @@ inline std::string randomStr(size_t size = kDefaultRandomSize) {
 
   std::string result;
   for (size_t i = 0; i < size; i++) {
-    result += static_cast<char>(dist(rng)); // Creates a random ASCII value
+    result += static_cast<char>(dist(rng));  // Creates a random ASCII value
   }
   return result;
 }

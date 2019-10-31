@@ -7,9 +7,9 @@
 #include <pistache/router.h>
 #include <rest/admin_controller.hpp>
 #include <rest/custom_router.hpp>
-#include <rest/ping_controller.hpp>
 #include <rest/file_controller.hpp>
 #include <rest/info_controller.hpp>
+#include <rest/ping_controller.hpp>
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
 

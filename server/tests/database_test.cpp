@@ -10,7 +10,6 @@ TEST(Sqlite3Tests, get_user) {
   db.addUser(expectedUser);
 
   auto salt = db.getSalt(expectedUser.username);
-  std::cout << salt.value() << std::endl;
   ASSERT_TRUE(salt.has_value());
   auto receivedUser = db.containsUser(expectedUser, salt.value());
   ASSERT_TRUE(receivedUser);
