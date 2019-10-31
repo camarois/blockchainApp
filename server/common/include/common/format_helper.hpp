@@ -25,6 +25,15 @@ inline std::string hash(const std::string& password) {
   return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 }
 
+inline std::string randomStr(size_t size = 32) {
+  const int kAsciiNumber = 128;
+  std::string result = "";
+  for (size_t i = 0; i < size; i++) {
+    result += static_cast<char>(std::rand() % kAsciiNumber); // Creates a random ASCII value
+  }
+  return result;
+}
+
 }  // namespace FormatHelper
 }  // namespace Common
 

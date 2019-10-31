@@ -35,20 +35,33 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest) {
+std::optional<std::string> Database::getSalt(const std::string& username) {
+  Query query = Query(
+      "SELECT salt FROM users "
+      "WHERE username = '%q';",
+      username.c_str());
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return statement.getColumnText(0);
+  }
+  return {};
+}
+
+bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt) {
   Query query = Query(
       "SELECT username FROM users "
       "WHERE username = '%q' AND password = '%q';",
-      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password).c_str());
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
 void Database::addUser(const Common::Models::LoginRequest& user) {
+  auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
-      "INSERT OR REPLACE INTO users (username, password) "
-      "VALUES ('%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
+      "INSERT OR REPLACE INTO users (username, password, salt) "
+      "VALUES ('%q', '%q', '%q');",
+      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

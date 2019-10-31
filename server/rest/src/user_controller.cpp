@@ -1,4 +1,5 @@
 #include <common/database.hpp>
+#include <common/format_helper.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
 #include <common/token_helper.hpp>
@@ -21,7 +22,8 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
-  if (db.containsUser(loginRequest)) {
+  auto salt = db.getSalt(loginRequest.username);
+  if (salt && db.containsUser(loginRequest, salt.value())) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::LoginResponse loginResponse = {};
