@@ -8,8 +8,6 @@ import java.util.*
 import kotlin.collections.HashMap
 import io.jsonwebtoken.security.Keys
 
-
-
 class CredentialsManager {
     companion object {
         const val HTTP_HEADER_AUTHORIZATION = "Authorization"
@@ -24,7 +22,7 @@ class CredentialsManager {
             .commit()
     }
 
-    fun getAuthToken(context: Context): String {
+    fun getAuthToken(context: Context): String? {
         val sp = context.getSharedPreferences(
             HTTP_HEADER_AUTHORIZATION, Context.MODE_PRIVATE)
 
@@ -32,11 +30,11 @@ class CredentialsManager {
     }
 
     fun saveFirstAuthToken(context: Context, username: String, password: String) {
-        val claims : HashMap<String, Any?> = HashMap()
+        val claims: HashMap<String, Any?> = HashMap()
         claims["username"] = username
         claims["password"] = password
 
-        val expiryTime : Date = DateUtils.addHours(Date(), 1)
+        val expiryTime: Date = DateUtils.addHours(Date(), 1)
         val key = Keys.hmacShaKeyFor((HTTP_HEADER_AUTHORIZATION + "inf3995" + AUTH_TOKEN).toByteArray())
 
         var token: String = Jwts.builder().setClaims(claims)

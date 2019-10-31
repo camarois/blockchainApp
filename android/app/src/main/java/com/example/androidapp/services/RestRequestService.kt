@@ -7,6 +7,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.androidapp.LoginRequest
 import com.example.androidapp.LoginResponse
+import com.example.androidapp.PasswordRequest
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -37,8 +38,15 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
         credentialsManager.saveFirstAuthToken(context, request.username, request.password)
-        println(credentialsManager.getAuthToken(context))
         return postAsync("usager/login", request, LoginResponse::class.java)
+    }
+
+    suspend fun postLogoutAsync(): String {
+        return postAsync("usager/logout", "", String::class.java)
+    }
+
+    suspend fun postChangePasswordAsync(request: PasswordRequest): String {
+        return postAsync("usager/motdepasse", request, String::class.java)
     }
 
     suspend fun getAsync(url: String): String {

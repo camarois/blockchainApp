@@ -10,3 +10,8 @@ data class LoginRequest(
 data class LoginResponse(
     @SerializedName("edition") val edition: Boolean
 )
+
+data class PasswordRequest(
+    @SerializedName("ancien") val oldPassword: String,
+    @SerializedName("nouveau") val newPassword: String
+)
