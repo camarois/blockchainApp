@@ -1,45 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="186.0" prefWidth="214.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
-<center>
-   <AnchorPane>
-      <children>
-         <StackPane prefHeight="186.0" prefWidth="245.0" AnchorPane.bottomAnchor="0.0">
-            <children>
-               <Group StackPane.alignment="CENTER">
-                  <children>
-                     <Text layoutX="78.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
-                        <font>
-                           <Font size="27.0" />
-                        </font>
-                     </Text>
-                     <TextField fx:id="usernameTextField" alignment="CENTER" layoutX="33.0" layoutY="68.0" promptText="Nom d'utilisateur" />
-                     <TextField fx:id="passwordTextField" alignment="CENTER" layoutX="33.0" layoutY="104.0" promptText="Mot de passe" />
-                     <Button layoutX="74.0" layoutY="139.0" mnemonicParsing="false" onAction="#onClickLogin" text="Connexion" />
-                  </children>
-               </Group>
-            </children>
-         </StackPane>
-      </children>
-<!--      <childrenn>-->
-<!--         <Text layoutX="74.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">-->
-<!--            <font>-->
-<!--               <Font size="27.0" />-->
-<!--            </font>-->
-<!--         </Text>-->
-<!--         <TextField fx:id="usernameTextField" promptText="Nom d'utilisateur" layoutX="33.0" layoutY="68.0" />-->
-<!--         <TextField fx:id="passwordTextField" promptText="Mot de passe" layoutX="33.0" layoutY="104.0" />-->
-<!--         <Button layoutX="81.0" layoutY="139.0" mnemonicParsing="false" onAction="#onClickLogin" text="Connexion" />-->
-<!--      </childrenn>-->
-   </AnchorPane>
-</center>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="325.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
+   <top>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="Defaultview" fitHeight="93" fitWidth="93" layoutX="116.0" layoutY="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/classbook.png" />
+               </image>
+            </ImageView>
+            <Text layoutX="65.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Administration">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Text>
+            <TextField fx:id="usernameTextField" alignment="CENTER" layoutX="79.0" layoutY="162.0" promptText="Nom d'utilisateur" />
+            <TextField fx:id="passwordTextField" alignment="CENTER" layoutX="79.0" layoutY="198.0" promptText="Mot de passe" />
+            <Button id="connectBtn" layoutX="124.0" layoutY="244.0" mnemonicParsing="false" onAction="#onClickLogin" stylesheets="@../styles/buttonStyle.css" text="Connexion" />
+         </children>
+      </AnchorPane>
+   </top>
 </BorderPane>

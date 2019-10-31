@@ -17,7 +17,7 @@ public class Main extends Application {
                 Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
         );
         borderPane.setCenter(login);
-        primaryStage.setTitle("Admin manager");
+        primaryStage.setTitle("Administration Classbook");
         primaryStage.setScene(new Scene(borderPane, 600, 400));
         primaryStage.show();
     }
