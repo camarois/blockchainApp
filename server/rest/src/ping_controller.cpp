@@ -2,9 +2,7 @@
 
 namespace Rest {
 
-PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router) {
-  setupRoutes(router);
-}
+PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
 void PingController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->get("/ping", Pistache::Rest::Routes::bind(&PingController::handlePing, this), false);
