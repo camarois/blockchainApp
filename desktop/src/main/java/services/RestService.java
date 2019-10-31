@@ -61,7 +61,7 @@ public class RestService {
     public static LoginResponse postLoginAsync(LoginRequest request) {
         try {
             CredentialsManager.getInstance().saveFirstAuthToken(request);
-             return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
+            return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -93,7 +93,8 @@ public class RestService {
         });
     }
 
-    public static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException, InterruptedException {
+    public static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException,
+            InterruptedException {
         return threadPool.submit(() -> {
             String resp = postRequest(url, data);
             return gson.fromJson(resp, (Type) classOfT);
