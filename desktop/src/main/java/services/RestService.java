@@ -8,6 +8,7 @@ import models.PasswordRequest;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -27,14 +28,14 @@ import java.util.function.Consumer;
 import java.lang.String;
 
 public class RestService {
-    public static ServerUrls urls;
+    private static ServerUrls urls;
     private static String baseUrl = "";
     private static Gson gson;
     private static ExecutorService threadPool;
     private static HttpClient httpClient;
     private static RestService instance;
 
-    public static void init() {
+    private static void init() {
         gson = new Gson();
         InputStreamReader reader = new InputStreamReader(
                 RestService.class.getClassLoader().getResourceAsStream("values/strings.json")
@@ -81,24 +82,27 @@ public class RestService {
         }
     }
 
-    public static void requestGetAsync(String url, Consumer<String> onResponse) {
+    private static void requestGetAsync(String url, Consumer<String> onResponse) {
         threadPool.submit(() -> {
             String resp = getRequest(url);
             onResponse.accept(resp);
         });
     }
 
-    public static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException,
+    private static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException,
         InterruptedException {
-        Future future = (Future) threadPool.submit(() -> {
-            String resp = postRequest(url, data);
-            return gson.fromJson(resp, (Type) classOfT);
+        return threadPool.submit(() -> {
+            try {
+                String resp = postRequest(url, data);
+                return gson.fromJson(resp, (Type) classOfT);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
         }).get();
-        System.out.println(future.get());
-        return future.get();
     }
 
-    public static String getRequest(String url) {
+    private static String getRequest(String url) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
@@ -112,7 +116,7 @@ public class RestService {
         }
     }
 
-    public static String postRequest(String url, Object data) {
+    private static String postRequest(String url, Object data) throws IOException, InterruptedException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
@@ -121,12 +125,12 @@ public class RestService {
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String authHeader =  response.headers().allValues("Authorization").get(0);
-            CredentialsManager.getInstance().saveAuthToken(authHeader);
+            String authToken = response.headers().allValues("Authorization").get(0);
+            CredentialsManager.getInstance().saveAuthToken(authToken);
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw e;
         }
     }
 
