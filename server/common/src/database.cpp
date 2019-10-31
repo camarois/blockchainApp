@@ -102,27 +102,32 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   statement.step();
 }
 
-void Database::checkAndDeleteOldClass(const Common::Models::TransactionRequest& transactionRequest) {
+int Database::checkForExistingClass(const std::string& acronym, int trimester) {
   Query checkForExistingClassQuery = Query(
       "SELECT classId FROM classes "
       "WHERE acronym = '%q' AND trimester = '%q' "
       "LIMIT 1;",
-      transactionRequest.acronym.c_str(), std::to_string(transactionRequest.trimester).c_str());
+      acronym.c_str(), std::to_string(trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
-  std::string classId;
-  if (statementCheck.step()) {
-    classId = statementCheck.getColumnText(0);
-    Query deleteClassQuery = Query("DELETE FROM classes WHERE classId = '%q'", classId.c_str());
-    Statement statementDeleteClass = Statement(db_, deleteClassQuery);
-    statementDeleteClass.step();
-    Query deleteResultQuery = Query("DELETE FROM results WHERE classId = '%q'", classId.c_str());
-    Statement statementDeleteResults = Statement(db_, deleteResultQuery);
-    statementDeleteResults.step();
-  }
+  if (statementCheck.step())
+    return std::stoi(statementCheck.getColumnText(0));
+  else 
+    return -1;
 }
 
-void Database::addTransactionRequest(const Common::Models::TransactionRequest& transactionRequest) {
-  checkAndDeleteOldClass(transactionRequest);
+void Database::DeleteExistingClass(int classId){
+  Query deleteClassQuery = Query("DELETE FROM classes WHERE classId = '%q'", std::to_string(classId).c_str());
+  Statement statementDeleteClass = Statement(db_, deleteClassQuery);
+  statementDeleteClass.step();
+}
+
+void Database::DeleteExistingResults(int classId) {  
+  Query deleteResultQuery = Query("DELETE FROM results WHERE classId = '%q'", std::to_string(classId).c_str());
+  Statement statementDeleteResults = Statement(db_, deleteResultQuery);
+  statementDeleteResults.step();
+}
+
+int Database::AddNewClass(const Common::Models::TransactionRequest& transactionRequest) {
   Query newClassQuery = Query(
       "INSERT INTO classes (acronym, name, trimester) "
       "VALUES ('%q', '%q', '%q');",
@@ -130,13 +135,14 @@ void Database::addTransactionRequest(const Common::Models::TransactionRequest& t
       std::to_string(transactionRequest.trimester).c_str());
   Statement statementNewClass = Statement(db_, newClassQuery);
   statementNewClass.step();
+  return sqlite3_last_insert_rowid(db_.get());
+}
 
-  long long int newClassId = sqlite3_last_insert_rowid(db_.get());
-
-  std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, ClassId) VALUES";
+void Database::AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
+  std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, classId) VALUES";
   for (Common::Models::Result result : transactionRequest.results) {
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
-                    "', " + std::to_string(newClassId).c_str() + "),";
+                    "', " + std::to_string(classId).c_str() + "),";
   }
   resultsToAdd.pop_back();
   resultsToAdd += ";";
@@ -145,64 +151,41 @@ void Database::addTransactionRequest(const Common::Models::TransactionRequest& t
   statementNewResults.step();
 }
 
-std::optional<Common::Models::TransactionRequest> Database::getClassesRequest(
-    const Common::Models::ClassesRequest& classesRequest) {
-  Query getClassIdQuery = Query(
-      "SELECT classId, name FROM classes "
-      "WHERE acronym = '%q' AND trimester = '%q';",
-      classesRequest.acronym.c_str(), std::to_string(classesRequest.trimester).c_str());
-  Statement getClassIdStatement = Statement(db_, getClassIdQuery);
-  if (getClassIdStatement.step()) {
-    std::string classId = getClassIdStatement.getColumnText(0);
-    std::string name = getClassIdStatement.getColumnText(1);
+std::vector<Common::Models::Result> Database::getClassResult(int classId) {
+  Query getClassResultsQuery = Query(
+      "SELECT firstName, lastname, id, grade FROM results "
+      "WHERE classId = '%q';",
+      std::to_string(classId).c_str());
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
 
-    Query getClassResultsQuery = Query(
-        "SELECT firstName, lastname, id, grade FROM results "
-        "WHERE classId = '%q';",
-        classId.c_str());
-    Statement getResultsStatement = Statement(db_, getClassResultsQuery);
-
-    std::vector<Common::Models::Result> results;
-    while (getResultsStatement.step()) {
-      Common::Models::Result result;
-      result.firstName = getResultsStatement.getColumnText(0);
-      result.lastName = getResultsStatement.getColumnText(1);
-      result.id = getResultsStatement.getColumnText(2);
-      result.grade = getResultsStatement.getColumnText(3);
-      results.push_back(result);
-    }
-    Common::Models::TransactionRequest requestReturn = {classesRequest.acronym.c_str(), name.c_str(),
-                                                        classesRequest.trimester, results};
-    return requestReturn;
+  std::vector<Common::Models::Result> results;
+  while (getResultsStatement.step()) {
+    Common::Models::Result result;
+    result.firstName = getResultsStatement.getColumnText(0);
+    result.lastName = getResultsStatement.getColumnText(1);
+    result.id = getResultsStatement.getColumnText(2);
+    result.grade = getResultsStatement.getColumnText(3);
+    results.push_back(result);
   }
-  return {};
+  
+  return results;
 }
 
-std::optional<Common::Models::Result> Database::getStudentRequest(
-    const Common::Models::StudentRequest& studentRequest) {
-  Query getClassIdQuery = Query(
-      "SELECT classId FROM classes "
-      "WHERE acronym = '%q' AND trimester = '%q';",
-      studentRequest.acronym.c_str(), std::to_string(studentRequest.trimester).c_str());
-  Statement getClassIdStatement = Statement(db_, getClassIdQuery);
-  if (getClassIdStatement.step()) {
-    std::string classId = getClassIdStatement.getColumnText(0);
+Common::Models::Result Database::getStudentResult(int classId, const std::string studentId) {
+  Query getClassResultsQuery = Query(
+      "SELECT firstName, lastname, id, grade FROM results "
+      "WHERE classId = '%q' AND id = '%q';",
+      std::to_string(classId).c_str(), studentId.c_str());
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
+  Common::Models::Result result;
 
-    Query getClassResultsQuery = Query(
-        "SELECT firstName, lastname, id, grade FROM results "
-        "WHERE classId = '%q' AND id = '%q';",
-        classId.c_str(), studentRequest.id.c_str());
-    Statement getResultsStatement = Statement(db_, getClassResultsQuery);
-    if (getResultsStatement.step()) {
-      Common::Models::Result result;
-      result.firstName = getResultsStatement.getColumnText(0);
-      result.lastName = getResultsStatement.getColumnText(1);
-      result.id = getResultsStatement.getColumnText(2);
-      result.grade = getResultsStatement.getColumnText(3);
-
-      return result;
-    }
+  if (getResultsStatement.step()) {
+    result.firstName = getResultsStatement.getColumnText(0);
+    result.lastName = getResultsStatement.getColumnText(1);
+    result.id = getResultsStatement.getColumnText(2);
+    result.grade = getResultsStatement.getColumnText(3);
   }
-  return {};
+  
+  return result;
 }
 }  // namespace Common

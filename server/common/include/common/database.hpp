@@ -29,10 +29,13 @@ class Database {
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
-  void checkAndDeleteOldClass(const Common::Models::TransactionRequest& transactionRequest);
-  void addTransactionRequest(const Common::Models::TransactionRequest& transactionRequest);
-  std::optional<Common::Models::TransactionRequest> getClassesRequest(const Common::Models::ClassesRequest& classesRequest);
-  std::optional<Common::Models::Result> getStudentRequest(const Common::Models::StudentRequest& studentRequest);
+  int checkForExistingClass(const std::string& acronym, int trimester);
+  void DeleteExistingClass(int classId);
+  void DeleteExistingResults(int classId);
+  int AddNewClass(const Common::Models::TransactionRequest& transactionRequest);
+  void AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
+  std::vector<Common::Models::Result> getClassResult(int classId);
+  Common::Models::Result getStudentResult(int classId, const std::string studentId);
 
  private:
   void close();

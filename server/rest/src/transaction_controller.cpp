@@ -1,4 +1,5 @@
 #include <common/models.hpp>
+#include <common/database.hpp>
 #include <rest/transaction_controller.hpp>
 
 namespace Rest {
@@ -12,6 +13,15 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
+  Common::Database db("blockchain.db");
+  int classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
+  if (classId != -1){
+    db.DeleteExistingClass(classId);
+    db.DeleteExistingResults(classId);
+  }
+  classId = db.AddNewClass(transactionRequest);
+  db.AddNewResult(transactionRequest, classId);
+
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 

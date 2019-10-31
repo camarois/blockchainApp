@@ -41,7 +41,7 @@ CREATE TABLE results (
 	lastName TEXT NOT NULL,
 	id TEXT NOT NULL,
 	grade TEXT NOT NULL,
-	classId INTERGER NOT NULL,
+	classId INTEGER NOT NULL,
 	
 	FOREIGN KEY (classId) REFERENCES classes(classId)
 );

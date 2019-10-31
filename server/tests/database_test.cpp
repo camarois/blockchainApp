@@ -20,22 +20,35 @@ TEST(Sqlite3Tests, get_transaction) {
   Common::Database db("test-blockchain.db");
   Common::Models::Result expectedResult1 = {"Tremblay", "Michel", "12345678", "69.00"};
   Common::Models::Result expectedResult2 = {"Smith", "John", "87654321", "42.00"};
-  std::vector<Common::Models::Result> results;
-  results.push_back(expectedResult1);
-  results.push_back(expectedResult2);
+  std::vector<Common::Models::Result> expectedResults;
+  expectedResults.push_back(expectedResult1);
+  expectedResults.push_back(expectedResult2);
 
-  Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193, results};
-  db.addTransactionRequest(transaction);
+  Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193, expectedResults};
+  int classId = db.checkForExistingClass(transaction.acronym, transaction.trimester);
+  if (classId != -1){
+    db.DeleteExistingClass(classId);
+    db.DeleteExistingResults(classId);
+  }
+  classId = db.AddNewClass(transaction);
+  db.AddNewResult(transaction, classId);
 
   Common::Models::ClassesRequest classesRequest = {"inf3995", 20193};
-  auto receivedClass = db.getClassesRequest(classesRequest);
-  ASSERT_TRUE(receivedClass.has_value());
-  ASSERT_EQ(transaction.name, receivedClass->name);
-  ASSERT_EQ(results.size(), receivedClass->results.size());
+  classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
+  std::vector<Common::Models::Result> receivedResults;
+  if (classId != -1){
+    receivedResults = db.getClassResult(classId);
+  }
+
+  ASSERT_TRUE(!receivedResults.empty());
+  ASSERT_EQ(expectedResults.size(), receivedResults.size());
 
   Common::Models::StudentRequest studentRequest = {"inf3995", 20193, "12345678"};
-  auto receivedStudent = db.getStudentRequest(studentRequest);
-  ASSERT_TRUE(receivedStudent.has_value());
-  ASSERT_EQ(expectedResult1.grade, receivedStudent->grade);
+  classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
+  Common::Models::Result receivedResult;
+  if (classId != -1){
+    receivedResult = db.getStudentResult(classId, studentRequest.id);
+  }
+  ASSERT_EQ(expectedResult1.grade, receivedResult.grade);
 
 }
