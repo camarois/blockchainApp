@@ -114,17 +114,17 @@ int Database::checkForExistingClass(const std::string& acronym, int trimester) {
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
   if (statementCheck.step())
     return std::stoi(statementCheck.getColumnText(0));
-  else 
+  else
     return -1;
 }
 
-void Database::DeleteExistingClass(int classId){
+void Database::DeleteExistingClass(int classId) {
   Query deleteClassQuery = Query("DELETE FROM classes WHERE classId = '%q'", std::to_string(classId).c_str());
   Statement statementDeleteClass = Statement(db_, deleteClassQuery);
   statementDeleteClass.step();
 }
 
-void Database::DeleteExistingResults(int classId) {  
+void Database::DeleteExistingResults(int classId) {
   Query deleteResultQuery = Query("DELETE FROM results WHERE classId = '%q'", std::to_string(classId).c_str());
   Statement statementDeleteResults = Statement(db_, deleteResultQuery);
   statementDeleteResults.step();
@@ -147,7 +147,7 @@ void Database::AddNewResult(const Common::Models::TransactionRequest& transactio
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
                     "', " + std::to_string(classId).c_str() + "),";
   }
-  resultsToAdd.replace(resultsToAdd.length()-1, 1, ";");
+  resultsToAdd.replace(resultsToAdd.length() - 1, 1, ";");
   Query resultsToAddQuery = Query(resultsToAdd);
   Statement statementNewResults = Statement(db_, resultsToAddQuery);
   statementNewResults.step();
@@ -169,7 +169,7 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
     result.grade = getResultsStatement.getColumnText(3);
     results.push_back(result);
   }
-  
+
   return results;
 }
 
@@ -187,7 +187,7 @@ Common::Models::Result Database::getStudentResult(int classId, const std::string
     result.id = getResultsStatement.getColumnText(2);
     result.grade = getResultsStatement.getColumnText(3);
   }
-  
+
   return result;
 }
 }  // namespace Common

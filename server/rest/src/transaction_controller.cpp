@@ -1,7 +1,7 @@
 #include <common/base64.hpp>
+#include <common/database.hpp>
 #include <common/format_helper.hpp>
 #include <common/models.hpp>
-#include <common/database.hpp>
 #include <filesystem>
 #include <fstream>
 #include <gflags/gflags.h>
@@ -22,7 +22,7 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
   Common::Database db("blockchain.db");
   int classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
-  if (classId != -1){
+  if (classId != -1) {
     db.DeleteExistingClass(classId);
     db.DeleteExistingResults(classId);
   }
