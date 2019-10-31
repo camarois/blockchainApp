@@ -12,6 +12,6 @@ data class LoginResponse(
 )
 
 data class PasswordRequest(
-    @SerializedName("ancien") val old_password: String,
-    @SerializedName("nouveau") val new_password: String
+    @SerializedName("ancien") val oldPassword: String,
+    @SerializedName("nouveau") val newPassword: String
 )
