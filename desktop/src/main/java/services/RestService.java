@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import constants.ServerUrls;
 import models.LoginRequest;
 import models.LoginResponse;
+import models.PasswordRequest;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -60,7 +61,25 @@ public class RestService {
     public static LoginResponse postLoginAsync(LoginRequest request) {
         try {
             CredentialsManager.getInstance().saveFirstAuthToken(request);
-             return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
+             return (LoginResponse) requestPostAsync("admin/login", request, LoginResponse.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String postLogoutAsync() {
+        try {
+            return (String) requestPostAsync("admin/logout", null, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String postChangePasswordAsync(PasswordRequest request) {
+        try {
+            return (String) requestPostAsync("admin/motdepasse", request, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
