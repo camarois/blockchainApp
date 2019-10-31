@@ -35,16 +35,13 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-std::optional<Common::Models::LoginRequest> Database::getUser(const std::string& username) {
+bool Database::containsUser(const Common::Models::LoginRequest& loginRequest) {
   Query query = Query(
-      "SELECT username, password FROM users "
-      "WHERE username = '%q';",
-      username.c_str());
+      "SELECT username FROM users "
+      "WHERE username = '%q' AND password = '%q';",
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password).c_str());
   Statement statement = Statement(db_, query);
-  if (statement.step()) {
-    return Common::Models::LoginRequest{statement.getColumnText(0), statement.getColumnText(1)};
-  }
-  return {};
+  return statement.step();
 }
 
 void Database::addUser(const Common::Models::LoginRequest& user) {

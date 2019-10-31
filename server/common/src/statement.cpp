@@ -21,7 +21,7 @@ std::string Statement::getColumnText(size_t col) const {
 bool Statement::step() {
   int errCode = sqlite3_step(statement_.get());
   Database::assertSqlite(errCode);
-  return errCode == SQLITE_ROW || errCode == SQLITE_DONE;
+  return errCode == SQLITE_ROW;
 }
 
 }  // namespace Common
