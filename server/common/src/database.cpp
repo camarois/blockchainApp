@@ -147,8 +147,7 @@ void Database::AddNewResult(const Common::Models::TransactionRequest& transactio
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
                     "', " + std::to_string(classId).c_str() + "),";
   }
-  resultsToAdd.pop_back();
-  resultsToAdd += ";";
+  resultsToAdd.replace(resultsToAdd.length, 1, ";");
   Query resultsToAddQuery = Query(resultsToAdd);
   Statement statementNewResults = Statement(db_, resultsToAddQuery);
   statementNewResults.step();
