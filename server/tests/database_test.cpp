@@ -16,7 +16,7 @@ TEST(Sqlite3Tests, get_user) {
   ASSERT_EQ(expectedHash, receivedUser->password);
 }
 
-TEST(Sqlite3Tests, get_transaction) {  
+TEST(Sqlite3Tests, test_transaction) {  
   Common::Database db("test-blockchain.db");
   Common::Models::Result expectedResult1 = {"Tremblay", "Michel", "12345678", "69.00"};
   Common::Models::Result expectedResult2 = {"Smith", "John", "87654321", "42.00"};
