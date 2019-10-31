@@ -58,7 +58,7 @@ public class RestService {
         return instance;
     }
 
-    public static LoginResponse postLoginAsync(LoginRequest request) {
+    public LoginResponse postLoginAsync(LoginRequest request) {
         try {
             CredentialsManager.getInstance().saveFirstAuthToken(request);
             return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
@@ -68,7 +68,7 @@ public class RestService {
         }
     }
 
-    public static String postLogoutAsync() {
+    public String postLogoutAsync() {
         try {
             return (String) requestPostAsync("admin/logout", null, String.class);
         } catch (Exception e) {
