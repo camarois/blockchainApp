@@ -19,10 +19,9 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.lang.String;
 
@@ -44,7 +43,7 @@ public class RestService {
         threadPool = Executors.newFixedThreadPool(2);
         httpClient = HttpClient.newHttpClient();
         requestGetAsync(urls.firebase + "server", (resp) -> {
-            baseUrl = "https://" + "10.200.8.137" + ":10000/";
+            baseUrl = "https://" + resp + ":10000/";
             System.out.println("Connected to: " + baseUrl);
         });
         initSslContext();
@@ -61,9 +60,9 @@ public class RestService {
     public static LoginResponse postLoginAsync(LoginRequest request) {
         try {
             CredentialsManager.getInstance().saveFirstAuthToken(request);
-            return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class, System.out::println);
+             return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
         } catch (Exception e) {
-            LoginController.getInstance().showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide.");
+            e.printStackTrace();
             return null;
         }
     }
@@ -75,11 +74,11 @@ public class RestService {
         });
     }
 
-    public static <T> Future<?> requestPostAsync(String url, Object data, T classOfT, Consumer<T> onResponse) {
+    public static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException, InterruptedException {
         return threadPool.submit(() -> {
             String resp = postRequest(url, data);
-            onResponse.accept(gson.fromJson(resp, (Type) classOfT));
-        });
+            return gson.fromJson(resp, (Type) classOfT);
+        }).get();
     }
 
     public static String getRequest(String url) {
@@ -109,7 +108,7 @@ public class RestService {
             CredentialsManager.getInstance().saveAuthToken(authHeader);
             return response.body();
         } catch (Exception e) {
-            e.printStackTrace();
+            LoginController.getInstance().showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide.");
             return null;
         }
     }

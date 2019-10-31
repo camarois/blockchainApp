@@ -1,5 +1,13 @@
 package models;
 
 public class LoginResponse {
-    String edition;
+    boolean edition;
+
+    public LoginResponse(boolean admin) {
+        edition = admin;
+    }
+
+    public Boolean getEdition() {
+        return edition;
+    }
 }
