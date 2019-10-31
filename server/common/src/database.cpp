@@ -1,10 +1,13 @@
 #include "common/database.hpp"
+
 #include <common/format_helper.hpp>
+#include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
 
 namespace Common {
 
 Database::Database(const std::string& dbPath) {
+  Common::ScriptsHelper::createDb(dbPath);
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
   assertSqlite(sqlite3_enable_shared_cache(1), "Cannot enable db shared cache mode");
   try {
@@ -46,9 +49,9 @@ std::optional<Common::Models::LoginRequest> Database::getUser(const std::string&
 
 void Database::addUser(const Common::Models::LoginRequest& user) {
   Query query = Query(
-      "INSERT OR REPLACE INTO users (username, password) "
+      "INSERT INTO users (username, password) "
       "VALUES ('%q', '%q');",
-      user.username.c_str(), user.password.c_str());
+      user.username.c_str(), Common::FormatHelper::hash(user.password).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

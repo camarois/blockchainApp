@@ -84,7 +84,7 @@ build-android:
 test-server:
     stage: test
     script:
-        - cd server/build/tests && ctest -V
+        - cd server/build/ && ninja test
     only:
         changes:
             - server/**/*
@@ -136,7 +136,7 @@ lint-scripts:
 lint-server:
     stage: lint
     script:
-        - cd server && ./lint.sh tidy && ./lint.sh format
+        - cd server && ./lint.sh --tidy && ./lint.sh --format
     only:
         changes:
             - server/**/*

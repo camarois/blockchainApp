@@ -49,7 +49,10 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-# Those a great tools for people developping with vscode
+# ccls caches
+**/.ccls-cache/**
+
+# Those are great tools for people developping with vscode
 !.vscode/
 
 # Removing cert except rootCA

@@ -1,5 +1,9 @@
+#include <common/format_helper.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <rest/file_controller.hpp>
+
+DECLARE_string(transactions);
 
 namespace Rest {
 
@@ -11,7 +15,8 @@ void FileController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void FileController::handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::GradesRequest gradesRequest = nlohmann::json::parse(request.body());
-  Pistache::Http::serveFile(response, "build.sh");  // TODO(frgraf) change with a PDF
+  Pistache::Http::serveFile(response, FLAGS_transactions + std::to_string(gradesRequest.trimester) + "-" +
+                                          Common::FormatHelper::toLower(gradesRequest.acronym) + ".pdf");
 }
 
 }  // namespace Rest

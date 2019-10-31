@@ -3,7 +3,7 @@
 
 function get_source_files() {
     local without_tests=$1
-    local without_build_files=('-not' '-path' './build/*' '-not' '-path' './third_party/*')
+    local without_build_files=('-not' '-path' './build/*')
 
     if [[ $without_tests -eq 1 ]]; then
         without_tests=('-not' '-path' './tests/*')
@@ -11,7 +11,7 @@ function get_source_files() {
         without_tests=()
     fi
 
-    find . -name '*.cpp' "${without_tests[@]}" "${without_build_files[@]}"
+    find . -name '*.cpp' "${without_tests[@]}" "${without_build_files[@]}" | grep -v ccls-cache
 }
 
 function array_as_lines() {
