@@ -26,6 +26,7 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
 }
 
 void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
+  // TODO jwt db verification
   response.send(Pistache::Http::Code::Ok);
 }
 
