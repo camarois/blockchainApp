@@ -7,9 +7,9 @@
 #include <pistache/router.h>
 #include <rest/admin_controller.hpp>
 #include <rest/custom_router.hpp>
-#include <rest/example_controller.hpp>
 #include <rest/file_controller.hpp>
 #include <rest/info_controller.hpp>
+#include <rest/ping_controller.hpp>
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
 
@@ -25,7 +25,7 @@ class MainController {
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
   Rest::UserController userController_;
-  Rest::ExampleController exampleController_;
+  Rest::PingController exampleController_;
   Rest::TransactionController transactionController_;
   Rest::InfoController infoController_;
   Rest::FileController fileController_;

@@ -3,11 +3,16 @@
 
 #include <algorithm>
 #include <chrono>
+#include <iostream>
 #include <picosha2.h>
+#include <random>
 #include <string>
 
 namespace Common {
 namespace FormatHelper {
+const size_t kDefaultRandomSize = 32;
+const int kAsciiNumber = 128;
+
 inline std::string nowStr() {
   auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
   std::string nowStr = std::ctime(&now);
@@ -23,6 +28,18 @@ inline std::string hash(const std::string& password) {
   std::vector<unsigned char> hash(picosha2::k_digest_size);
   picosha2::hash256(password.begin(), password.end(), hash.begin(), hash.end());
   return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
+}
+
+inline std::string randomStr(size_t size = kDefaultRandomSize) {
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_int_distribution<std::mt19937::result_type> dist(0, kAsciiNumber);
+
+  std::string result;
+  for (size_t i = 0; i < size; i++) {
+    result += static_cast<char>(dist(rng));  // Creates a random ASCII value
+  }
+  return result;
 }
 
 }  // namespace FormatHelper

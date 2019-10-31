@@ -18,37 +18,36 @@ const jwt::string_view kPassword = "password";
 const jwt::string_view kExpiration = "expiration";
 const std::string kAlgorithm = "hs256";
 const std::string kAuthorization = "Authorization";
+// TODO(frgraf): find a better solution
 const std::string kSecret = "Authorizationinf3995authorization_token";
 
 // Inspired by https://github.com/arun11299/cpp-jwt
-inline auto encode(const std::string& username, const std::string& password) {
+inline std::string encode(const std::string& username, const std::string& password) {
   jwt::jwt_object token{jwt::params::algorithm(kAlgorithm), jwt::params::secret(kSecret),
                         jwt::params::payload({{"role", "student"}})};
   token.add_claim(std::string(kUsername), username)
       .add_claim(std::string(kPassword), password)
-      .add_claim("exp", std::chrono::system_clock::now() + std::chrono::seconds{kExpirationDelaySeconds});
-  return token;
+      .add_claim(jwt::registered_claims::expiration,
+                 std::chrono::system_clock::now() + std::chrono::seconds{kExpirationDelaySeconds});
+  return token.signature();
 }
 
 inline std::optional<std::string> decode(const std::string& token, const std::string& dbPath) {
   std::error_code errCode;
-  try {
-    auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
-    std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
-    std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
-
-    Common::Database db(dbPath);
-    auto user = db.getUser(username);
-    std::cout << user->username << std::endl;
-    if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && user) {
-      jwt::jwt_object refreshToken = encode(user->username, user->password);
-      return std::string(refreshToken.signature());
-    }
-    return token;
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+  auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
+  if (!decodedObj.payload().has_claim(kUsername) || !decodedObj.payload().has_claim(kPassword)) {
+    return {};
   }
-  return {};
+  std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
+  std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
+
+  Common::Database db(dbPath);
+  auto salt = db.getSalt(username);
+  if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && salt &&
+      db.containsUser({username, password}, salt.value())) {
+    return encode(username, password);
+  }
+  return token;
 }
 
 }  // namespace TokenHelper

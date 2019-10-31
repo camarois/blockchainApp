@@ -9,9 +9,8 @@ TEST(Sqlite3Tests, get_user) {
 
   db.addUser(expectedUser);
 
-  auto receivedUser = db.getUser(expectedUser.username);
-
-  ASSERT_TRUE(receivedUser.has_value());
-  ASSERT_EQ(expectedUser.username, receivedUser->username);
-  ASSERT_EQ(expectedHash, receivedUser->password);
+  auto salt = db.getSalt(expectedUser.username);
+  ASSERT_TRUE(salt.has_value());
+  auto receivedUser = db.containsUser(expectedUser, salt.value());
+  ASSERT_TRUE(receivedUser);
 }
