@@ -48,7 +48,7 @@ void Block::mine(unsigned int difficulty) {
     std::string blockHash = hash();
     invalid = false;
     for (unsigned int i = 0; i < difficulty; i++) {
-      if (blockHash[i] != '0') {
+      if (blockHash.at(i) != '0') {
         nonce_++;
         dirty_ = true;
         invalid = true;

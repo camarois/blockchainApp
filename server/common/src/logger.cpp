@@ -41,7 +41,7 @@ void Logger::log(int severity, int provenance, const std::string& message, std::
   Common::Database db(dbPath_);
   auto nowStr = Common::FormatHelper::nowStr();
   stream << std::endl
-         << logCount_ << ": " << severities[severity] << ": " << nowStr << ": " << provenance << ": " << message
+         << logCount_ << ": " << severities.at(severity) << ": " << nowStr << ": " << provenance << ": " << message
          << std::endl;
   db.addLog(logCount_, severity, provenance, nowStr, message, logSessionId_);
   ++logCount_;

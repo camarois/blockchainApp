@@ -15,9 +15,10 @@ ExternalProject_Add(libcppjwt
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
-                 && cp -v -R ${CMAKE_BINARY_DIR}/libcppjwt/src/libcppjwt/include/jwt/
+                 && cp -n -v -R ${CMAKE_BINARY_DIR}/libcppjwt/src/libcppjwt/include/jwt/
                           ${CMAKE_BINARY_DIR}/externals/include
     PREFIX libcppjwt
+    UPDATE_DISCONNECTED ON
 )
 add_dependencies(libcppjwt libgtest)
 
@@ -109,7 +110,8 @@ ExternalProject_Add(libpicosha2
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
-                 && cp -v ${CMAKE_BINARY_DIR}/libpicosha2/src/libpicosha2/picosha2.h
+                 && cp -n -v ${CMAKE_BINARY_DIR}/libpicosha2/src/libpicosha2/picosha2.h
                           ${CMAKE_BINARY_DIR}/externals/include
     PREFIX libpicosha2
+    UPDATE_DISCONNECTED ON
 )
