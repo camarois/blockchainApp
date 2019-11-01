@@ -21,7 +21,7 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
     std::stringstream ss;
     ss << "./createCert.sh server '";
     for (size_t i = 0; i < ips.size(); ++i) {
-      ss << "IP." << i + 1 << " = " << ips[i] << std::endl;
+      ss << "IP." << i + 1 << " = " << ips.at(i) << std::endl;
     }
     ss << "'";
     int exitCode = std::system(ss.str().c_str()); // NOLINT(cert-env33-c)

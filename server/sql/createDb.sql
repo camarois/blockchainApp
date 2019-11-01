@@ -2,7 +2,8 @@ BEGIN TRANSACTION;
 
 CREATE TABLE users (
     username TEXT NOT NULL PRIMARY KEY,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    salt TEXT NOT NULL
 );
 
 CREATE TABLE ips (
