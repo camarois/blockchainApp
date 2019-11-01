@@ -171,12 +171,10 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
 
   std::vector<Common::Models::Result> results;
   while (getResultsStatement.step()) {
-    results.push_back({
-      .lastName = getResultsStatement.getColumnText(1),
-      .firstName = getResultsStatement.getColumnText(0),
-      .id = getResultsStatement.getColumnText(2),
-      .grade = getResultsStatement.getColumnText(3)
-    });
+    results.push_back({.lastName = getResultsStatement.getColumnText(1),
+                       .firstName = getResultsStatement.getColumnText(0),
+                       .id = getResultsStatement.getColumnText(2),
+                       .grade = getResultsStatement.getColumnText(3)});
   }
 
   return results;
