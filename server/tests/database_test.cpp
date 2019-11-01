@@ -24,19 +24,19 @@ TEST(Sqlite3Tests, test_transaction) {
   expectedResults.push_back(expectedResult2);
 
   Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193, expectedResults};
-  int classId = db.checkForExistingClass(transaction.acronym, transaction.trimester);
-  if (classId != -1){
-    db.DeleteExistingClass(classId);
-    db.DeleteExistingResults(classId);
+  std::optional<int> classId = db.checkForExistingClass(transaction.acronym, transaction.trimester);
+  if (classId){
+    db.DeleteExistingClass(classId.value());
+    db.DeleteExistingResults(classId.value());
   }
-  classId = db.AddNewClass(transaction);
-  db.AddNewResult(transaction, classId);
+  int newClassId = db.AddNewClass(transaction);
+  db.AddNewResult(transaction, newClassId);
 
   Common::Models::ClassesRequest classesRequest = {"inf3995", 20193};
   classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
   std::vector<Common::Models::Result> receivedResults;
-  if (classId != -1){
-    receivedResults = db.getClassResult(classId);
+  if (classId){
+    receivedResults = db.getClassResult(classId.value());
   }
 
   ASSERT_TRUE(!receivedResults.empty());
@@ -44,10 +44,10 @@ TEST(Sqlite3Tests, test_transaction) {
 
   Common::Models::StudentRequest studentRequest = {"inf3995", 20193, "12345678"};
   classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
-  Common::Models::Result receivedResult;
-  if (classId != -1){
-    receivedResult = db.getStudentResult(classId, studentRequest.id);
+  std::optional<Common::Models::Result> receivedResult;
+  if (classId){
+    receivedResult = db.getStudentResult(classId.value(), studentRequest.id);
   }
-  ASSERT_EQ(expectedResult1.grade, receivedResult.grade);
+  ASSERT_EQ(expectedResult1.grade, receivedResult.value().grade);
 
 }

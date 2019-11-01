@@ -1,5 +1,4 @@
 #include "common/database.hpp"
-
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
@@ -115,7 +114,7 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   statement.step();
 }
 
-int Database::checkForExistingClass(const std::string& acronym, int trimester) {
+std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
   Query checkForExistingClassQuery = Query(
       "SELECT classId FROM classes "
       "WHERE acronym = '%q' AND trimester = '%q' "
@@ -125,7 +124,7 @@ int Database::checkForExistingClass(const std::string& acronym, int trimester) {
   if (statementCheck.step())
     return std::stoi(statementCheck.getColumnText(0));
   else
-    return -1;
+    return std::nullopt;
 }
 
 void Database::DeleteExistingClass(int classId) {
@@ -172,18 +171,18 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
 
   std::vector<Common::Models::Result> results;
   while (getResultsStatement.step()) {
-    Common::Models::Result result;
-    result.firstName = getResultsStatement.getColumnText(0);
-    result.lastName = getResultsStatement.getColumnText(1);
-    result.id = getResultsStatement.getColumnText(2);
-    result.grade = getResultsStatement.getColumnText(3);
-    results.push_back(result);
+    results.push_back({
+      .lastName = getResultsStatement.getColumnText(1),
+      .firstName = getResultsStatement.getColumnText(0),
+      .id = getResultsStatement.getColumnText(2),
+      .grade = getResultsStatement.getColumnText(3)
+    });
   }
 
   return results;
 }
 
-Common::Models::Result Database::getStudentResult(int classId, const std::string studentId) {
+std::optional<Common::Models::Result> Database::getStudentResult(int classId, const std::string studentId) {
   Query getClassResultsQuery = Query(
       "SELECT firstName, lastname, id, grade FROM results "
       "WHERE classId = '%q' AND id = '%q';",

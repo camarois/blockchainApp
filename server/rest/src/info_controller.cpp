@@ -1,6 +1,9 @@
 #include <common/database.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <rest/info_controller.hpp>
+
+DECLARE_string(db);
 
 namespace Rest {
 
@@ -13,24 +16,24 @@ void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::ClassesRequest classesRequest = nlohmann::json::parse(request.body());
-  Common::Database db("blockchain.db");
-  int classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
-  std::vector<Common::Models::Result> results = {{}, {}};
-  if (classId != -1) {
-    results = db.getClassResult(classId);
+  Common::Database db(FLAGS_db);
+  std::optional<int> classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
+  std::vector<Common::Models::Result> results;
+  if (classId) {
+    results = db.getClassResult(classId.value());
   }
   response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(results));
 }
 
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
-  Common::Models::Result result;
-  Common::Database db("blockchain.db");
-  int classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
-  if (classId != -1) {
-    result = db.getStudentResult(classId, studentRequest.id);
+  std::optional<Common::Models::Result> result;
+  Common::Database db(FLAGS_db);
+  std::optional<int> classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
+  if (classId) {
+    result = db.getStudentResult(classId.value(), studentRequest.id);
   }
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(result));
+  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(result.value()));
 }
 
 }  // namespace Rest

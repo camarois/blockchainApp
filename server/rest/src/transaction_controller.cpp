@@ -7,6 +7,7 @@
 #include <gflags/gflags.h>
 #include <rest/transaction_controller.hpp>
 
+DECLARE_string(db);
 DECLARE_string(transactions);
 
 namespace Rest {
@@ -20,14 +21,14 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
-  Common::Database db("blockchain.db");
-  int classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
-  if (classId != -1) {
-    db.DeleteExistingClass(classId);
-    db.DeleteExistingResults(classId);
+  Common::Database db(FLAGS_db);
+  std::optional<int> classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
+  if (classId) {
+    db.DeleteExistingClass(classId.value());
+    db.DeleteExistingResults(classId.value());
   }
-  classId = db.AddNewClass(transactionRequest);
-  db.AddNewResult(transactionRequest, classId);
+  int newClassId = db.AddNewClass(transactionRequest);
+  db.AddNewResult(transactionRequest, newClassId);
 
   std::filesystem::create_directories(FLAGS_transactions);
   // Example: transactions/3-inf3995.pdf -> Project in fall
