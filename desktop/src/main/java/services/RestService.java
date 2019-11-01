@@ -23,7 +23,6 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.lang.String;
 
@@ -44,7 +43,7 @@ public class RestService {
 
         threadPool = Executors.newFixedThreadPool(2);
         httpClient = HttpClient.newHttpClient();
-        requestGetAsync(urls.firebase + "server", (resp) -> {
+        executeGetRequest(urls.firebase + "server", (resp) -> {
             baseUrl = "https://" + resp + ":10000/";
             System.out.println("Connected to: " + baseUrl);
         });
@@ -61,12 +60,12 @@ public class RestService {
 
     public LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
         CredentialsManager.getInstance().saveFirstAuthToken(request);
-        return (LoginResponse) requestPostAsync("usager/login", request, LoginResponse.class);
+        return (LoginResponse) executePostRequest("usager/login", request, LoginResponse.class);
     }
 
     public String postLogoutAsync() {
         try {
-            return (String) requestPostAsync("admin/logout", null, String.class);
+            return (String) executePostRequest("admin/logout", null, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -75,21 +74,22 @@ public class RestService {
 
     public static String postChangePasswordAsync(PasswordRequest request) {
         try {
-            return (String) requestPostAsync("admin/motdepasse", request, String.class);
+            return (String) executePostRequest("admin/motdepasse", request, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private static void requestGetAsync(String url, Consumer<String> onResponse) {
+    private static void executeGetRequest(String url, Consumer<String> onResponse) {
         threadPool.submit(() -> {
             String resp = getRequest(url);
             onResponse.accept(resp);
         });
     }
 
-    private static <T> Object requestPostAsync(String url, Object data, T classOfT) throws ExecutionException,
+    // TODO: Change Object to generic T
+    private static <T> Object executePostRequest(String url, Object data, T classOfT) throws ExecutionException,
         InterruptedException {
         return threadPool.submit(() -> {
             try {
