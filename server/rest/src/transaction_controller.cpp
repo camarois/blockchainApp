@@ -36,7 +36,7 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
                     Common::FormatHelper::toLower(transactionRequest.acronym) + ".pdf");
   out << Common::Base64::decode(transactionRequest.base64Pdf);
   out.close();
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  response.send(Pistache::Http::Code::OK);
 }
 
 }  // namespace Rest
