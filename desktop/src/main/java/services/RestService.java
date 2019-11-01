@@ -1,10 +1,9 @@
 package services;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import constants.ServerUrls;
-import models.LoginRequest;
-import models.LoginResponse;
-import models.PasswordRequest;
+import models.*;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -27,6 +26,8 @@ import java.util.function.Consumer;
 import java.lang.String;
 
 public class RestService {
+    private static final String HTTP_POST_METHOD = "POST";
+    private static final String HTTP_GET_METHOD = "GET";
     private static ServerUrls urls;
     private static String baseUrl = "";
     private static Gson gson;
@@ -60,12 +61,12 @@ public class RestService {
 
     public LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
         CredentialsManager.getInstance().saveFirstAuthToken(request);
-        return (LoginResponse) executePostRequest("usager/login", request, LoginResponse.class);
+        return (LoginResponse) executeRequest(HTTP_POST_METHOD, "usager/login", request, LoginResponse.class);
     }
 
     public String postLogoutAsync() {
         try {
-            return (String) executePostRequest("admin/logout", null, String.class);
+            return (String) executeRequest(HTTP_POST_METHOD, "admin/logout", null, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -74,7 +75,34 @@ public class RestService {
 
     public static String postChangePasswordAsync(PasswordRequest request) {
         try {
-            return (String) executePostRequest("admin/motdepasse", request, String.class);
+            return (String) executeRequest(HTTP_POST_METHOD, "admin/motdepasse", request, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonObject getChaineAsync(ChaineRequest request, Integer miner) {
+        try {
+            return (JsonObject) executeRequest(HTTP_GET_METHOD, "admin/chaine/" + miner, request, JsonObject.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static LogsResponse getLogsMinerAsync(LogsRequest request, Integer miner) {
+        try {
+            return (LogsResponse) executeRequest(HTTP_GET_METHOD, "admin/logs/" + miner, request, LogsResponse.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static LogsResponse getLogsServerAsync(LogsRequest request) {
+        try {
+            return (LogsResponse) executeRequest(HTTP_GET_METHOD, "admin/logs/serveurweb", request, LogsResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -89,11 +117,12 @@ public class RestService {
     }
 
     // TODO: Change Object to generic T
-    private static <T> Object executePostRequest(String url, Object data, T classOfT) throws ExecutionException,
+    private static <T> Object executeRequest(String method, String url, Object data, T classOfT)
+            throws ExecutionException,
         InterruptedException {
         return threadPool.submit(() -> {
             try {
-                String resp = postRequest(url, data);
+                String resp = baseAsyncRequest(method, url, data);
                 return gson.fromJson(resp, (Type) classOfT);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -116,12 +145,12 @@ public class RestService {
         }
     }
 
-    private static String postRequest(String url, Object data) throws IOException, InterruptedException {
+    private static String baseAsyncRequest(String method, String url, Object data) throws IOException, InterruptedException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
                     .headers("Authorization", CredentialsManager.getInstance().getAuthToken())
-                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
+                    .method(method, HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
