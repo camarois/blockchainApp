@@ -1,15 +1,6 @@
 package services;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
 import java.util.prefs.Preferences;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import models.LoginRequest;
-import org.apache.commons.lang3.time.DateUtils;
 
 public class CredentialsManager {
     private static final String HTTP_HEADER_AUTHORIZATION = "Authorization";

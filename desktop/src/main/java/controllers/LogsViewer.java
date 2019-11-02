@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import models.LogsRequest;
 import models.LogsResponse;
 import services.RestService;
 
@@ -22,15 +23,14 @@ public class LogsViewer {
         logTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         logTableView.setItems(logs);
         startTask();
-        RestService.executeScheduledRequest();
     }
 
     private void startTask() {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 try {
-                    ArrayList<LogsResponse.Log> newLogs = RestService.getLogs();
-                    newLogs.forEach((log) -> {
+                    LogsResponse logsResponse =  RestService.postLogsAsync("serveurweb", new LogsRequest(0));
+                    logsResponse.logs.forEach((log) -> {
                         if (!logs.contains(log)) {
                             logs.add(log);
                         }
@@ -40,6 +40,6 @@ public class LogsViewer {
                     e.printStackTrace();
                 }
             }
-        }, 250, 2000);
+        }, 250, 30000);
     }
 }

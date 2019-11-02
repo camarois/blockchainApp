@@ -36,8 +36,8 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 }
 
 std::optional<std::string> Database::getSalt(const std::string& username, bool isAdmin) {
-  std::string table = isAdmin ? "admin " : "users ";
-  Query query = Query("SELECT salt FROM " + table + "WHERE username = '%q';", username.c_str());
+  std::string table = isAdmin ? "admin" : "users";
+  Query query = Query("SELECT salt FROM " + table + " WHERE username = '%q';", username.c_str());
   Statement statement = Statement(db_, query);
   if (statement.step()) {
     return statement.getColumnText(0);
@@ -46,18 +46,18 @@ std::optional<std::string> Database::getSalt(const std::string& username, bool i
 }
 
 bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
-  std::string table = isAdmin ? "admin " : "users ";
-  Query query = Query("SELECT username FROM " + table + "WHERE username = '%q' AND password = '%q';",
+  std::string table = isAdmin ? "admin" : "users";
+  Query query = Query("SELECT username FROM " + table + " WHERE username = '%q' AND password = '%q';",
                       loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
 void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
-  std::string table = isAdmin ? "admin " : "users ";
+  std::string table = isAdmin ? "admin" : "users";
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query("INSERT OR REPLACE INTO " + table +
-                          "(username, password, salt) "
+                          " (username, password, salt) "
                           "VALUES ('%q', '%q', '%q');",
                       user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str());
   Statement statement = Statement(db_, query);
@@ -66,9 +66,9 @@ void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
 
 void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwords,
                                const std::string& salt, bool isAdmin) {
-  std::string table = isAdmin ? "admin " : "users ";
+  std::string table = isAdmin ? "admin" : "users";
   Query query = Query("UPDATE " + table +
-                          "SET password = '%q' "
+                          " SET password = '%q' "
                           "WHERE username = '%q' AND password = '%q';",
                       Common::FormatHelper::hash(passwords.newPwd + salt).c_str(), username.c_str(),
                       Common::FormatHelper::hash(passwords.oldPwd + salt).c_str());

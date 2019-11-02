@@ -50,10 +50,10 @@ inline std::optional<std::string> decode(const std::string& token, const std::st
   return token;
 }
 
-inline std::optional<std::string> decodeUser(const std::string& token) {
+inline std::optional<std::string> decodeUsername(const std::string& token) {
   std::error_code errCode;
   auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
-  if (!decodedObj.payload().has_claim(kUsername) || !decodedObj.payload().has_claim(kPassword)) {
+  if (!decodedObj.payload().has_claim(kUsername)) {
     return {};
   }
   return decodedObj.payload().get_claim_value<std::string>(kUsername);

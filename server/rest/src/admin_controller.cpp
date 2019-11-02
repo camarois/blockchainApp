@@ -47,7 +47,7 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
   std::string authHeader = request.headers().getRaw("Authorization").value();
-  std::optional<std::string> username = Common::TokenHelper::decodeUser(authHeader);
+  std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
   auto salt = db.getSalt(loginRequest.username, true);
