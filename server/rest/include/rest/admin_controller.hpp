@@ -22,6 +22,7 @@ class AdminController {
   void handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleCreateAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleDeleteAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/admin/";
   const std::string kId_ = ":id";

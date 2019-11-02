@@ -79,7 +79,7 @@ public class RestService {
     }
 
     public static LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
-        return (LoginResponse) executeRequest(HTTP_POST_METHOD, "usager/login", request, LoginResponse.class);
+        return (LoginResponse) executeRequest(HTTP_POST_METHOD, "admin/login", request, LoginResponse.class);
     }
 
     public String postLogoutAsync() {
@@ -115,7 +115,7 @@ public class RestService {
                     LogsResponse.class);
             response.logs.forEach((log) -> log.setProvenance(origin));
             response.logs.forEach((log) -> {
-                if(!logs.contains(log)){
+                if (!logs.contains(log)) {
                     logs.add(log);
                 }
             });
@@ -148,14 +148,14 @@ public class RestService {
 
     public static void executeScheduledRequest() {
         final Runnable logsServer = () -> postLogsAsync("serveurweb", new LogsRequest(0));
-        final Runnable logsMiner1 = () -> postLogsAsync("1", new LogsRequest(0));
-        final Runnable logsMiner2 = () -> postLogsAsync("2", new LogsRequest(0));
-        final Runnable logsMiner3 = () -> postLogsAsync("3", new LogsRequest(0));
+        //        final Runnable logsMiner1 = () -> postLogsAsync("1", new LogsRequest(0));
+        //        final Runnable logsMiner2 = () -> postLogsAsync("2", new LogsRequest(0));
+        //        final Runnable logsMiner3 = () -> postLogsAsync("3", new LogsRequest(0));
 
-        scheduledThreadPool.scheduleWithFixedDelay(logsServer,0, 20, SECONDS);
-        scheduledThreadPool.scheduleWithFixedDelay(logsMiner1,1, 20, SECONDS);
-        scheduledThreadPool.scheduleWithFixedDelay(logsMiner2,2, 20, SECONDS);
-        scheduledThreadPool.scheduleWithFixedDelay(logsMiner3,3, 20, SECONDS);
+        scheduledThreadPool.scheduleWithFixedDelay(logsServer,0, 30, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner1,1, 20, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner2,2, 20, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner3,3, 20, SECONDS);
     }
 
     private static String getRequest(String url) {

@@ -83,16 +83,12 @@ public class LogsResponse {
                 return false;
             }
             Log other = (Log)obj;
-            return number.equals(other.number) && severity.equals(other.severity) && hour.equals(other.hour) &&
-                    provenance.equals(other.provenance) && message.equals(other.message);
+            return number.equals(other.number) && severity.equals(other.severity) && hour.equals(other.hour)
+                    && provenance.equals(other.provenance) && message.equals(other.message);
         }
     }
 
     public LogsResponse(Set<Log> logInfo) {
         logs = logInfo;
-    }
-
-    public Set<Log> getLogs() {
-        return logs;
     }
 }
