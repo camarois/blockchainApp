@@ -10,18 +10,27 @@ public class LogsResponse {
     @SerializedName("information")
     public Set<Log> logs;
 
-    public class Log {
+    public static class Log {
+        enum Severity {
+            ERROR(0), ATTENTION(1), INFO(2);
+
+            private final int value;
+            Severity(int value) {
+                this.value = value;
+            }
+        }
+
         @SerializedName("no")
         private Integer number;
         @SerializedName("severite")
-        private String severity;
+        private Integer severity;
         @SerializedName("heure")
         private String hour;
         private String provenance;
         @SerializedName("message")
         private String message;
 
-        public Log(Integer number, String severity, String hour, String message) {
+        public Log(Integer number, Integer severity, String hour, String message) {
             this.number = number;
             this.severity = severity;
             this.hour = hour;
@@ -32,7 +41,7 @@ public class LogsResponse {
             this.number = number;
         }
 
-        void setSeverity(String severity) {
+        void setSeverity(int severity) {
             this.severity = severity;
         }
 
@@ -53,7 +62,7 @@ public class LogsResponse {
         }
 
         public String getSeverity() {
-            return severity;
+            return Severity.values()[severity].name();
         }
 
         public String getHour() {
@@ -68,6 +77,15 @@ public class LogsResponse {
             return message;
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Log))  {
+                return false;
+            }
+            Log other = (Log)obj;
+            return number.equals(other.number) && severity.equals(other.severity) && hour.equals(other.hour) &&
+                    provenance.equals(other.provenance) && message.equals(other.message);
+        }
     }
 
     public LogsResponse(Set<Log> logInfo) {
