@@ -6,6 +6,12 @@ CREATE TABLE users (
     salt TEXT NOT NULL
 );
 
+CREATE TABLE admin (
+    username TEXT NOT NULL PRIMARY KEY,
+    password TEXT NOT NULL,
+    salt TEXT NOT NULL
+);
+
 CREATE TABLE ips (
     ip TEXT NOT NULL PRIMARY KEY
 );

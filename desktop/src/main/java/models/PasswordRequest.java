@@ -8,8 +8,8 @@ public class PasswordRequest {
     @SerializedName("nouveau")
     private String newPassword;
 
-    public PasswordRequest(String oldPasswordInput, String newPasswordInput) {
-        oldPassword = oldPasswordInput;
-        newPassword = newPasswordInput;
+    public PasswordRequest(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 }

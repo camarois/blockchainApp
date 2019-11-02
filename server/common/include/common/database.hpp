@@ -20,16 +20,20 @@ class Database {
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  void addUser(const Common::Models::LoginRequest& user);
-  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt);
-  std::optional<std::string> getSalt(const std::string& username);
+  void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
+  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
+                       const std::string& salt, bool isAdmin = false);
+  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
+  std::optional<std::string> getSalt(const std::string& username, bool isAdmin = false);
 
   std::vector<std::string> getIps();
   void addIp(const std::string& ip);
   bool containsIp(const std::string& ip);
 
   int addLogSession();
-  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
+  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
+              int logSessionId);
+  std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
 
  private:
   void close();

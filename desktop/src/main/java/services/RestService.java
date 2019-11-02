@@ -1,10 +1,16 @@
 package services;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import constants.ServerUrls;
-import models.LoginRequest;
-import models.LoginResponse;
+import models.LogsResponse;
+import models.LogsRequest;
 import models.PasswordRequest;
+import models.LoginResponse;
+import models.LoginRequest;
+import models.ChaineRequest;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -20,22 +26,30 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
+
 import java.util.function.Consumer;
 import java.lang.String;
 
 public class RestService {
+    private static final String HTTP_POST_METHOD = "POST";
+    private static final String HTTP_GET_METHOD = "GET";
     private static ServerUrls urls;
     private static String baseUrl = "";
     private static Gson gson;
     private static ExecutorService threadPool;
+    private static ScheduledExecutorService scheduledThreadPool;
     private static HttpClient httpClient;
     private static RestService instance;
+    private static ArrayList<LogsResponse.Log> logs;
 
     private static void init() {
         gson = new Gson();
+        logs = new ArrayList<>();
         InputStreamReader reader = new InputStreamReader(
                 RestService.class.getClassLoader().getResourceAsStream("values/strings.json")
         );
@@ -46,6 +60,8 @@ public class RestService {
         executeGetRequest(urls.firebase + "server", (resp) -> {
             baseUrl = "https://" + resp + ":10000/";
             System.out.println("Connected to: " + baseUrl);
+            scheduledThreadPool = Executors.newScheduledThreadPool(2);
+            executeScheduledRequest();
         });
         initSslContext();
     }
@@ -53,19 +69,22 @@ public class RestService {
     public static RestService getInstance() {
         if (instance == null) {
             instance = new RestService();
-            instance.init();
+            init();
         }
         return instance;
     }
 
-    public LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
-        CredentialsManager.getInstance().saveFirstAuthToken(request);
-        return (LoginResponse) executePostRequest("usager/login", request, LoginResponse.class);
+    public static ArrayList<LogsResponse.Log> getLogs() {
+        return logs;
+    }
+
+    public static LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
+        return (LoginResponse) executeRequest(HTTP_POST_METHOD, "admin/login", request, LoginResponse.class);
     }
 
     public String postLogoutAsync() {
         try {
-            return (String) executePostRequest("admin/logout", null, String.class);
+            return (String) executeRequest(HTTP_POST_METHOD, "admin/logout", null, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -74,10 +93,34 @@ public class RestService {
 
     public static String postChangePasswordAsync(PasswordRequest request) {
         try {
-            return (String) executePostRequest("admin/motdepasse", request, String.class);
+            return (String) executeRequest(HTTP_POST_METHOD, "admin/motdepasse", request, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static JsonObject getChaineAsync(ChaineRequest request, Integer miner) {
+        try {
+            return (JsonObject) executeRequest(HTTP_GET_METHOD, "admin/chaine/" + miner, request, JsonObject.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static void postLogsAsync(String origin, LogsRequest request) {
+        try {
+            LogsResponse response = (LogsResponse) executeRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request,
+                    LogsResponse.class);
+            response.logs.forEach((log) -> log.setProvenance(origin));
+            response.logs.forEach((log) -> {
+                if (!logs.contains(log)) {
+                    logs.add(log);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -89,17 +132,30 @@ public class RestService {
     }
 
     // TODO: Change Object to generic T
-    private static <T> Object executePostRequest(String url, Object data, T classOfT) throws ExecutionException,
+    private static <T> Object executeRequest(String method, String url, Object data, T classOfT)
+            throws ExecutionException,
         InterruptedException {
         return threadPool.submit(() -> {
             try {
-                String resp = postRequest(url, data);
+                String resp = baseAsyncRequest(method, url, data);
                 return gson.fromJson(resp, (Type) classOfT);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
             }
         }).get();
+    }
+
+    public static void executeScheduledRequest() {
+        final Runnable logsServer = () -> postLogsAsync("serveurweb", new LogsRequest(0));
+        //        final Runnable logsMiner1 = () -> postLogsAsync("1", new LogsRequest(0));
+        //        final Runnable logsMiner2 = () -> postLogsAsync("2", new LogsRequest(0));
+        //        final Runnable logsMiner3 = () -> postLogsAsync("3", new LogsRequest(0));
+
+        scheduledThreadPool.scheduleWithFixedDelay(logsServer,0, 30, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner1,1, 20, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner2,2, 20, SECONDS);
+        //        scheduledThreadPool.scheduleWithFixedDelay(logsMiner3,3, 20, SECONDS);
     }
 
     private static String getRequest(String url) {
@@ -116,12 +172,13 @@ public class RestService {
         }
     }
 
-    private static String postRequest(String url, Object data) throws IOException, InterruptedException {
+    private static String baseAsyncRequest(String method, String url, Object data) throws IOException,
+            InterruptedException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
                     .headers("Authorization", CredentialsManager.getInstance().getAuthToken())
-                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
+                    .method(method, HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

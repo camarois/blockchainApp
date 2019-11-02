@@ -6,8 +6,8 @@ public class LoginResponse {
     @SerializedName("edition")
     private boolean edition;
 
-    public LoginResponse(boolean admin) {
-        edition = admin;
+    public LoginResponse(boolean edition) {
+        this.edition = edition;
     }
 
     public Boolean getEdition() {

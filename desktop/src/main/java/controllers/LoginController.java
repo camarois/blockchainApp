@@ -37,7 +37,7 @@ public class LoginController {
         LoginRequest loginRequest = new LoginRequest(username, password);
 
         try {
-            LoginResponse loginResponse = RestService.getInstance().postLoginAsync(loginRequest);
+            LoginResponse loginResponse = RestService.postLoginAsync(loginRequest);
             if (loginResponse != null) {
                 BorderPane rootNode = new BorderPane();
                 Parent logsViewer = FXMLLoader.load(
@@ -66,7 +66,7 @@ public class LoginController {
         changePasswordMenuItem.setOnAction(actionEvent -> {
             try {
                 Optional<PasswordRequest> request = showChangePasswordDialog();
-                //RestService.getInstance().postChangePasswordAsync(request.get());
+                RestService.getInstance().postChangePasswordAsync(request.get());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -74,7 +74,7 @@ public class LoginController {
 
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
-                //RestService.getInstance().postLogoutAsync();
+                RestService.getInstance().postLogoutAsync();
                 BorderPane rootNode = new BorderPane();
                 Parent loginViewer = FXMLLoader.load(
                         Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))

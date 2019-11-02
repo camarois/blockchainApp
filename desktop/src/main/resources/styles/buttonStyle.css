@@ -6,6 +6,7 @@
     cursor: pointer;
     -fx-opacity: 1;
 }
+
 #connectBtn:hover{
     -fx-cursor: hand;
     -fx-opacity: 0.5;

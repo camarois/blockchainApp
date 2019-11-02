@@ -248,7 +248,7 @@ inline void from_json(const nlohmann::json& j, Information& obj) {
 }
 
 struct LogsResponse {
-  Information information;
+  std::vector<Information> information;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

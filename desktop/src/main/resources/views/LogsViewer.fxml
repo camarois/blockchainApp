@@ -16,9 +16,9 @@
             <PropertyValueFactory property="severity" />
          </cellValueFactory>
       </TableColumn>
-      <TableColumn text="Date">
+      <TableColumn text="Heure">
          <cellValueFactory>
-            <PropertyValueFactory property="date" />
+            <PropertyValueFactory property="hour" />
          </cellValueFactory>
       </TableColumn>
       <TableColumn text="Provenance">
