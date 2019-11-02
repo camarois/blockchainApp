@@ -6,7 +6,7 @@ public class LogsRequest {
     @SerializedName("dernier")
     private Integer last;
 
-    public LogsRequest(Integer lastLogs) {
-        last = lastLogs;
+    public LogsRequest(Integer last) {
+        this.last = last;
     }
 }

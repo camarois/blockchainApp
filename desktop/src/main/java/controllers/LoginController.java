@@ -37,7 +37,7 @@ public class LoginController {
         LoginRequest loginRequest = new LoginRequest(username, password);
 
         try {
-            LoginResponse loginResponse = RestService.getInstance().postLoginAsync(loginRequest);
+            LoginResponse loginResponse = RestService.postLoginAsync(loginRequest);
             if (loginResponse != null) {
                 BorderPane rootNode = new BorderPane();
                 Parent logsViewer = FXMLLoader.load(

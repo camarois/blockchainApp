@@ -6,7 +6,7 @@ public class ChaineRequest {
     @SerializedName("dernier_blocs")
     private Integer lastBlocs;
 
-    public ChaineRequest(Integer lastBlocsInput) {
-        lastBlocs = lastBlocsInput;
+    public ChaineRequest(Integer lastBlocs) {
+        this.lastBlocs = lastBlocs;
     }
 }

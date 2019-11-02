@@ -36,20 +36,4 @@ public class CredentialsManager {
     public String getAuthToken() {
         return preferences.get("Authorization", "defaultToken");
     }
-
-    public void saveFirstAuthToken(LoginRequest request) {
-        Claims claims = Jwts.claims();
-        claims.put("username", request.getUsername());
-        claims.put("password", request.getPassword());
-
-        Date expiryTime = DateUtils.addHours(new Date(), 1);
-        SecretKey key = Keys.hmacShaKeyFor((HTTP_HEADER_AUTHORIZATION + "inf3995" + AUTH_TOKEN).getBytes());
-
-        String token = Jwts.builder().setClaims(claims)
-                .setExpiration(expiryTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        preferences.put("Authorization", token);
-    }
 }
