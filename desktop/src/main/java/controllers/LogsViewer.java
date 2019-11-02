@@ -40,6 +40,6 @@ public class LogsViewer {
                     e.printStackTrace();
                 }
             }
-        }, 0, 2000);
+        }, 250, 2000);
     }
 }
