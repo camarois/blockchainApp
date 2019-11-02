@@ -109,10 +109,30 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",
-      std::to_string(logId).c_str(), std::to_string(severity).c_str(), std::to_string(provenance).c_str(), log.c_str(),
-      time.c_str(), std::to_string(logSessionId).c_str());
+      std::to_string(logId).c_str(), std::to_string(severity).c_str(), time.c_str(), std::to_string(provenance).c_str(),
+      log.c_str(), std::to_string(logSessionId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
+}
+
+std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
+  Query query = lastLogId ? Query(
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE logId > '%q' AND provenance = '%q';",
+                                std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
+                          : Query(
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE provenance = '%q'"
+                                "ORDER BY logId DESC LIMIT 20;",
+                                std::to_string(provenance).c_str());
+  Statement statement = Statement(db_, query);
+
+  std::vector<Common::Models::Information> logs;
+  while (statement.step()) {
+    logs.push_back({std::stoi(statement.getColumnText(0)), statement.getColumnText(1), statement.getColumnText(2),
+                    statement.getColumnText(3)});
+  }
+  return logs;
 }
 
 }  // namespace Common

@@ -1,5 +1,9 @@
+#include <common/database.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <rest/admin_controller.hpp>
+
+DECLARE_string(db);
 
 namespace Rest {
 
@@ -39,11 +43,15 @@ void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pi
   response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(chainResponse));
 }
 
-void AdminController::handleLogs(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
-  // auto miner = request.param(kId_).as<std::string>();
-  // Common::Models::LogsRequest logsRequest = nlohmann::json::parse(request.body());
-  Common::Models::LogsResponse logsResponse = {{{}}};
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(logsResponse));
+void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+  Common::Models::LogsRequest logsRequest = nlohmann::json::parse(request.body());
+  Common::Database db(FLAGS_db);
+
+  int provenance = request.param(kId_).as<std::string>().compare("serveurweb") ? request.param(kId_).as<int>() : 0;
+  std::vector<Common::Models::Information> logs;
+  logs = db.getLogs(logsRequest.last, provenance);
+  Common::Models::LogsResponse logsResponse = {{{logs}}};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,

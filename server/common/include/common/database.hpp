@@ -30,6 +30,7 @@ class Database {
 
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
+  std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
 
  private:
   void close();
