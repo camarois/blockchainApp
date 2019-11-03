@@ -18,7 +18,7 @@ import java.util.Collections;
 
 public class LogsViewer {
     private ObservableMap<Integer, LogsResponse.Log> logs;
-    ObservableList<LogsResponse.Log> keys = FXCollections.observableArrayList();
+    private ObservableList<LogsResponse.Log> keys = FXCollections.observableArrayList();
     @FXML private TableView<LogsResponse.Log> logTableView;
 
     @FXML public void initialize() {
