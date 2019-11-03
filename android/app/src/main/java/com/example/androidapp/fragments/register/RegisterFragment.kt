@@ -99,7 +99,6 @@ class RegisterFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-
         val addStudentBtn: ImageButton = view.findViewById(R.id.createStudentButton)
         addStudentBtn.setOnClickListener { createStudent() }
         return view
