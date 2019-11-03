@@ -22,7 +22,7 @@ void InfoController::handleClasses(const Pistache::Rest::Request& request, Pista
   if (classId) {
     results = db.getClassResult(classId.value());
   }
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(results));
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(results));
 }
 
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -33,7 +33,7 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
   if (classId) {
     result = db.getStudentResult(classId.value(), studentRequest.id);
   }
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(result.value()));
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result.value()));
 }
 
 }  // namespace Rest
