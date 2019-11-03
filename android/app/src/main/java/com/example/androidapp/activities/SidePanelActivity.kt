@@ -56,7 +56,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.On
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // TODO: Add on call listener for logout btn but HOW TO ACCESS IT GRRR
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.side_panel, menu)
         return true

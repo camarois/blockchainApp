@@ -123,6 +123,7 @@ class RegisterFragment : Fragment() {
         code.setText("")
         grade.setText("")
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnListFragmentInteractionListener) {

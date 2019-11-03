@@ -50,7 +50,6 @@ class GradedStudentRecyclerViewAdapter(
             val item = mValues[position]
             val studentHolder = holder as GradedStudentViewHolder
             studentHolder.bind(item, position)
-            // TODO: Missing onclicklistener here
         }
     }
 
@@ -75,11 +74,10 @@ class GradedStudentRecyclerViewAdapter(
             val intent = Intent()
                 .setType("application/pdf")
                 .setAction(Intent.ACTION_GET_CONTENT)
-
             view.context.startActivity(Intent.createChooser(intent, "Select a file"))
             mSubmitButton.isClickable = true
             mSubmitButton.isEnabled = true
-
+            mPDFButton.text = "nomDuPDF.pdf"
             // todo - actually handle pfd uploading
         }
 
