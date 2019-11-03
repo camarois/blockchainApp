@@ -86,11 +86,6 @@ public class LogsResponse {
             return number.equals(other.number) && severity.equals(other.severity) && hour.equals(other.hour)
                     && provenance.equals(other.provenance) && message.equals(other.message);
         }
-
-        @Override
-        public int hashCode() {
-            return number;
-        }
     }
 
     public LogsResponse(Set<Log> logInfo) {

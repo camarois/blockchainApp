@@ -10,29 +10,28 @@ import models.LogsRequest;
 import models.LogsResponse;
 import services.RestService;
 
-import java.util.Map;
 import java.util.TimerTask;
 import java.util.Timer;
-import java.util.HashMap;
 import java.util.Collections;
 
 public class LogsViewer {
     private ObservableMap<Integer, LogsResponse.Log> logs;
-    private ObservableList<LogsResponse.Log> keys = FXCollections.observableArrayList();
+    private ObservableList<LogsResponse.Log> logsList;
     @FXML private TableView<LogsResponse.Log> logTableView;
 
     @FXML public void initialize() {
         logs = FXCollections.observableHashMap();
+        logsList = FXCollections.observableArrayList();
         logTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        logTableView.setItems(keys);
+        logTableView.setItems(logsList);
         startTask();
 
         logs.addListener((MapChangeListener<Integer, LogsResponse.Log>) mapChange -> {
             if (mapChange.wasAdded()) {
-                keys.add(mapChange.getValueAdded());
+                logsList.add(mapChange.getValueAdded());
             }
             if (mapChange.wasRemoved()) {
-                keys.remove(mapChange.getValueRemoved());
+                logsList.remove(mapChange.getValueRemoved());
             }
         });
     }
@@ -45,11 +44,9 @@ public class LogsViewer {
                             new LogsRequest(Collections.max(logs.keySet()));
                     LogsResponse logsResponse =  RestService.postLogsAsync("serveurweb", request);
 
-                    Map<Integer, LogsResponse.Log> map = new HashMap<>();
                     for (LogsResponse.Log log : logsResponse.logs) {
-                        map.put(log.getNumber(), log);
+                        logs.put(log.getNumber(), log);
                     }
-                    logs.putAll(map);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

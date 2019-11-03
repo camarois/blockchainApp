@@ -59,9 +59,9 @@ public class LoginController {
     public MenuBar createMenuBar() {
         Menu generalMenu = new Menu("Options");
         MenuItem changePasswordMenuItem = new MenuItem("Changer mot de passe");
-        MenuItem createSupervisorMenuItem = new MenuItem("Créer un compte superviseur");
+        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
         MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
-        MenuItem logoutMenuItem = new MenuItem("Déconnexion");
+        MenuItem logoutMenuItem = new MenuItem("Deconnexion");
 
         changePasswordMenuItem.setOnAction(actionEvent -> {
             try {
@@ -74,7 +74,7 @@ public class LoginController {
 
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
-                RestService.getInstance().postLogoutAsync();
+                //RestService.getInstance().postLogoutAsync();
                 BorderPane rootNode = new BorderPane();
                 Parent loginViewer = FXMLLoader.load(
                         Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
