@@ -68,7 +68,6 @@ class GradedStudentRecyclerViewAdapter(
 
         fun bind(mView: View) {
             mPDFButton.setOnClickListener { uploadPDF(mView) }
-
             mSubmitButton.setOnClickListener { submit() }
         }
 
@@ -99,7 +98,7 @@ class GradedStudentRecyclerViewAdapter(
             mName.text = item.name
             mCode.text = item.code.toString()
             mGrade.text = item.grade.toString()
-            mPos.text = position.toString()
+            mPos.text = (position + 1).toString()
         }
     }
 }
