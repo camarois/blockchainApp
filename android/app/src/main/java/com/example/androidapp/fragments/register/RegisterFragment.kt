@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import android.widget.ImageButton
 import android.widget.Toast
 
-
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
@@ -80,7 +79,7 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        val bottomSheet: View  = view.findViewById(R.id.student_bottom_panel)
+        val bottomSheet: View = view.findViewById(R.id.student_bottom_panel)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior!!.bottomSheetCallback = object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -102,7 +101,7 @@ class RegisterFragment : Fragment() {
         }
 
         val addStudentBtn: ImageButton = view.findViewById(R.id.createStudentButton)
-        addStudentBtn.setOnClickListener{ createStudent() }
+        addStudentBtn.setOnClickListener { createStudent() }
         return view
     }
 
@@ -110,7 +109,7 @@ class RegisterFragment : Fragment() {
         val studentName = name.text.toString()
         val studentCode = code.text.toString()
         val studentGrade = grade.text.toString()
-        if(studentName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
+        if (studentName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
             registeredStudents.add(registeredStudents.size, StudentItem(registeredStudents.size.toString(), name.text.toString(), code.text.toString().toInt(), grade.text.toString().toFloat()))
             list.adapter?.notifyItemInserted(registeredStudents.size - 1)
             list.smoothScrollToPosition(registeredStudents.size - 1)
@@ -120,7 +119,7 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun resetView(){
+    private fun resetView() {
         name.setText("")
         code.setText("")
         grade.setText("")

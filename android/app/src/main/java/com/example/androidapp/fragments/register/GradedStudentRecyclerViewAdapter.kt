@@ -1,7 +1,6 @@
 package com.example.androidapp.fragments.register
 
 import android.content.Intent
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,6 @@ import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_gradedstudent.view.*
-import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
 import kotlinx.android.synthetic.main.bottom_button.view.*
 
 /**
@@ -41,7 +38,7 @@ class GradedStudentRecyclerViewAdapter(
             val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_gradedstudent, parent, false)
             GradedStudentViewHolder(view)
         } else {
-            val view= LayoutInflater.from(parent.context).inflate(R.layout.bottom_button, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.bottom_button, parent, false)
             return ButtonsViewHolder(view)
         }
     }
@@ -63,19 +60,19 @@ class GradedStudentRecyclerViewAdapter(
 
     override fun getItemCount(): Int = mValues.size + 1
 
-    open inner class ViewHolder(mView: View): RecyclerView.ViewHolder(mView)
+    open inner class ViewHolder(mView: View) : RecyclerView.ViewHolder(mView)
 
     inner class ButtonsViewHolder(mView: View) : ViewHolder(mView) {
         private val mPDFButton: Button = mView.uploadPDFBtn
         private val mSubmitButton: Button = mView.registerClassBtn
 
-        fun bind(mView : View) {
+        fun bind(mView: View) {
             mPDFButton.setOnClickListener { uploadPDF(mView) }
 
             mSubmitButton.setOnClickListener { submit() }
         }
 
-        private fun uploadPDF(view : View) {
+        private fun uploadPDF(view: View) {
             val intent = Intent()
                 .setType("application/pdf")
                 .setAction(Intent.ACTION_GET_CONTENT)
@@ -88,10 +85,10 @@ class GradedStudentRecyclerViewAdapter(
         }
 
         private fun submit() {
-
+            // todo - send information to server
         }
-
     }
+
     inner class GradedStudentViewHolder(mView: View) : ViewHolder(mView) {
         private val mName: TextView = mView.name
         private val mCode: TextView = mView.code

@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.AuthFailureError
 import com.crashlytics.android.Crashlytics
-import com.example.androidapp.LoginRequest
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
 import io.fabric.sdk.android.Fabric
