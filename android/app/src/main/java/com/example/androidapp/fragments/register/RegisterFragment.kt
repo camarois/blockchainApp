@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import com.example.androidapp.R
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
-import android.widget.ImageButton
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
@@ -99,7 +99,7 @@ class RegisterFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-        //val createStudentButton: ImageButton = view.findViewById(R.id.createStudentButton)
+        val createStudentButton: ImageButton = view.findViewById(R.id.createStudentButton)
         createStudentButton.setOnClickListener { createStudent() }
         return view
     }
