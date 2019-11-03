@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
 import com.example.androidapp.ui.fragments.search.student.StudentItem
-import kotlinx.android.synthetic.main.fragment_gradedstudent.view.*
+import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
 
 /**
@@ -34,8 +34,8 @@ class GradedStudentRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return if (viewType == R.layout.fragment_gradedstudent) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_gradedstudent, parent, false)
+        return if (viewType == R.layout.fragment_graded_student) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_graded_student, parent, false)
             GradedStudentViewHolder(view)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.bottom_button, parent, false)
@@ -54,7 +54,7 @@ class GradedStudentRecyclerViewAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == mValues.size) R.layout.bottom_button else R.layout.fragment_gradedstudent
+        return if (position == mValues.size) R.layout.bottom_button else R.layout.fragment_graded_student
     }
 
     override fun getItemCount(): Int = mValues.size + 1
@@ -72,7 +72,7 @@ class GradedStudentRecyclerViewAdapter(
 
         private fun uploadPDF(view: View) {
             val intent = Intent()
-                .setType("application/pdf")
+                .setType("application/json")
                 .setAction(Intent.ACTION_GET_CONTENT)
             view.context.startActivity(Intent.createChooser(intent, "Select a file"))
             mSubmitButton.isClickable = true
