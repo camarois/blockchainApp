@@ -15,6 +15,11 @@ import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.add_student_bottom_panel.*
+import android.widget.ImageButton
+import android.widget.Toast
+
 
 /**
  * A fragment representing a list of Items.
@@ -25,8 +30,8 @@ class RegisterFragment : Fragment() {
 
     private var columnCount = 1
     private val registeredStudents: MutableList<StudentItem> = ArrayList()
-
     private var listener: OnListFragmentInteractionListener? = null
+    private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +40,21 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun registerStudent() {
-        registeredStudents.add(registeredStudents.size, StudentItem(registeredStudents.size.toString(), "allo allo", 1840000, 20.5f))
-        list.adapter?.notifyItemInserted(registeredStudents.size - 1)
+    private fun openBottomSheet() {
+        if (bottomSheetBehavior != null) {
+            if (bottomSheetBehavior!!.state != BottomSheetBehavior.STATE_EXPANDED) {
+                addStudentButton.visibility = View.GONE
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
         viewCreated.adapter = GradedStudentRecyclerViewAdapter(registeredStudents, listener)
-        addStudentButton.setOnClickListener { registerStudent() }
+        addStudentButton.setOnClickListener { openBottomSheet() }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -68,9 +79,52 @@ class RegisterFragment : Fragment() {
                     )
             }
         }
+
+        val bottomSheet: View  = view.findViewById(R.id.student_bottom_panel)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior!!.bottomSheetCallback = object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // this part hides the button immediately and waits bottom sheet
+                // to collapse to show
+                if (BottomSheetBehavior.STATE_EXPANDED == newState) {
+                    addStudentButton.visibility = View.GONE
+                } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
+                    addStudentButton.animate().scaleX(1F).scaleY(1F).setDuration(0).start()
+                    addStudentButton.visibility = View.VISIBLE
+                } else if (BottomSheetBehavior.STATE_HIDDEN == newState) {
+                    addStudentButton.animate().scaleX(1F).scaleY(1F).setDuration(0).start()
+                    addStudentButton.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        }
+
+        val addStudentBtn: ImageButton = view.findViewById(R.id.createStudentButton)
+        addStudentBtn.setOnClickListener{ createStudent() }
         return view
     }
 
+    private fun createStudent() {
+        val studentName = name.text.toString()
+        val studentCode = code.text.toString()
+        val studentGrade = grade.text.toString()
+        if(studentName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
+            registeredStudents.add(registeredStudents.size, StudentItem(registeredStudents.size.toString(), name.text.toString(), code.text.toString().toInt(), grade.text.toString().toFloat()))
+            list.adapter?.notifyItemInserted(registeredStudents.size - 1)
+            list.smoothScrollToPosition(registeredStudents.size - 1)
+            resetView()
+        } else {
+            Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun resetView(){
+        name.setText("")
+        code.setText("")
+        grade.setText("")
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnListFragmentInteractionListener) {
