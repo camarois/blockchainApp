@@ -1,5 +1,7 @@
 package services;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import constants.ServerUrls;
@@ -24,8 +26,10 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
 
 import java.util.function.Consumer;
@@ -104,8 +108,8 @@ public class RestService {
             return response;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     private static void executeGetRequest(String url, Consumer<String> onResponse) {
@@ -155,7 +159,7 @@ public class RestService {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String authToken = response.headers().allValues("Authorization").get(0);
-            CredentialsManager.getInstance().saveAuthToken(authToken);
+            CredentialsManager.saveAuthToken(authToken);
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
