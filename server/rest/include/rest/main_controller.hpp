@@ -1,14 +1,15 @@
 #ifndef REST_MAIN_CONTROLLER_HPP
 #define REST_MAIN_CONTROLLER_HPP
 
-#include <common/example.hpp>
+#include <common/database.hpp>
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
 #include <rest/admin_controller.hpp>
-#include <rest/example_controller.hpp>
+#include <rest/custom_router.hpp>
 #include <rest/file_controller.hpp>
 #include <rest/info_controller.hpp>
+#include <rest/ping_controller.hpp>
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
 
@@ -22,9 +23,9 @@ class MainController {
 
  private:
   Pistache::Http::Endpoint httpEndpoint_;
-  std::shared_ptr<Pistache::Rest::Router> router_;
+  std::shared_ptr<Rest::CustomRouter> router_;
   Rest::UserController userController_;
-  Rest::ExampleController exampleController_;
+  Rest::PingController exampleController_;
   Rest::TransactionController transactionController_;
   Rest::InfoController infoController_;
   Rest::FileController fileController_;

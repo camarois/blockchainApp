@@ -1,4 +1,5 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
 add_executable(miner ${SOURCE_FILES})
 add_dependencies(miner common)
@@ -15,4 +16,5 @@ target_link_libraries(miner PRIVATE
     ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     curl
     pthread
+    stdc++fs
 )

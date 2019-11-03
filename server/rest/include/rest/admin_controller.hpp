@@ -5,17 +5,16 @@
 #include <pistache/endpoint.h>
 #include <pistache/http.h>
 #include <pistache/router.h>
-
-#include <common/example.hpp>
+#include <rest/custom_router.hpp>
 
 namespace Rest {
 
 class AdminController {
  public:
-  explicit AdminController(const std::shared_ptr<Pistache::Rest::Router>& router);
+  explicit AdminController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
-  void setupRoutes(const std::shared_ptr<Pistache::Rest::Router>& router);
+  void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
   void handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleLogout(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);

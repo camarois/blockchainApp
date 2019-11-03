@@ -21,7 +21,8 @@ inline std::string getSelfIpAddress() {
   if (getifaddrs(&interfaces) == 0) {
     struct ifaddrs* teamAddr = interfaces;
     while (teamAddr != nullptr) {
-      if (teamAddr->ifa_addr->sa_family == AF_INET && strcmp(teamAddr->ifa_name, "wifi0") == 0) {
+      if ((teamAddr->ifa_addr->sa_family == AF_INET) &&
+          (strcmp(teamAddr->ifa_name, "wifi0") == 0 || strcmp(teamAddr->ifa_name, "wlp2s0") == 0)) {
         ipAddress = inet_ntoa(((struct sockaddr_in*)teamAddr->ifa_addr)->sin_addr);  // NOLINT
       }
       teamAddr = teamAddr->ifa_next;
@@ -33,17 +34,17 @@ inline std::string getSelfIpAddress() {
 
 inline std::string getServerIpAddress(const std::string& user = kDefaultUser) {
   auto resp = curlpp::options::Url(kBasePath + "getServerURL?user=" + user);
-  std::ostringstream oss;
-  oss << resp;
-  return oss.str();
+  std::stringstream ss;
+  ss << resp;
+  return ss.str();
 }
 
 inline void setIpAddress(const std::string& ipAddress, const std::string& user = kDefaultUser) {
   auto resp = curlpp::options::Url(kBasePath + "setServerURL?user=" + user + "&url=" + ipAddress);
-  std::ostringstream oss;
-  oss << resp;
-  if (oss.str() != "OK") {
-    std::cout << oss.str() << std::endl;
+  std::stringstream ss;
+  ss << resp;
+  if (ss.str() != "OK") {
+    std::cout << ss.str() << std::endl;
     std::cout << "Not able to update firebase database" << std::endl;
     exit(1);
   } else {
@@ -51,8 +52,8 @@ inline void setIpAddress(const std::string& ipAddress, const std::string& user =
   }
 }
 
-inline std::future<void> setIpAddressAsync(const std::string& ipAddress, const std::string& user = kDefaultUser) {
-  return std::async(std::launch::async, setIpAddress, ipAddress, user);
+inline void setIpAddressAsync(const std::string& ipAddress, const std::string& user = kDefaultUser) {
+  std::thread(setIpAddress, ipAddress, user).detach();
 }
 
 }  // namespace FirebaseHelper

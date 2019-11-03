@@ -10,15 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
-
 import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import android.widget.ImageButton
 import android.widget.Toast
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 /**
  * A fragment representing a list of Items.
@@ -81,8 +80,8 @@ class RegisterFragment : Fragment() {
 
         val bottomSheet: View = view.findViewById(R.id.student_bottom_panel)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior!!.bottomSheetCallback = object :
-            BottomSheetBehavior.BottomSheetCallback() {
+
+        bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // this part hides the button immediately and waits bottom sheet
                 // to collapse to show
@@ -98,7 +97,8 @@ class RegisterFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        }
+        })
+
 
         val addStudentBtn: ImageButton = view.findViewById(R.id.createStudentButton)
         addStudentBtn.setOnClickListener { createStudent() }

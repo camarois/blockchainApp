@@ -15,12 +15,21 @@ namespace Common {
 
 class Database {
  public:
+  explicit Database();
   explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  std::optional<Common::Models::LoginRequest> getUser(const std::string& username);
-  bool createUser(const Common::Models::LoginRequest& user);
+  void addUser(const Common::Models::LoginRequest& user);
+  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt);
+  std::optional<std::string> getSalt(const std::string& username);
+
+  std::vector<std::string> getIps();
+  void addIp(const std::string& ip);
+  bool containsIp(const std::string& ip);
+
+  int addLogSession();
+  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
 
  private:
   void close();
