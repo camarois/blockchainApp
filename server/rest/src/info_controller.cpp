@@ -1,5 +1,9 @@
+#include <common/database.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <rest/info_controller.hpp>
+
+DECLARE_string(db);
 
 namespace Rest {
 
@@ -12,14 +16,24 @@ void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::ClassesRequest classesRequest = nlohmann::json::parse(request.body());
-  std::vector<Common::Models::Result> results = {{}, {}};
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(results));
+  Common::Database db(FLAGS_db);
+  std::optional<int> classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
+  std::vector<Common::Models::Result> results;
+  if (classId) {
+    results = db.getClassResult(classId.value());
+  }
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(results));
 }
 
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
-  Common::Models::StudentResponse studentResponse;
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(studentResponse));
+  std::optional<Common::Models::Result> result;
+  Common::Database db(FLAGS_db);
+  std::optional<int> classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
+  if (classId) {
+    result = db.getStudentResult(classId.value(), studentRequest.id);
+  }
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result.value()));
 }
 
 }  // namespace Rest
