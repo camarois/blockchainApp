@@ -1,7 +1,12 @@
 package com.example.androidapp.fragments.register
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +22,13 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import android.widget.Toast
+import com.example.androidapp.TransactionRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.add_student_bottom_panel.code
+import kotlinx.android.synthetic.main.add_student_bottom_panel.grade
+import kotlinx.android.synthetic.main.add_student_bottom_panel.name
+import kotlinx.android.synthetic.main.fragment_graded_student.*
+import java.io.File
 
 /**
  * A fragment representing a list of Items.
@@ -26,10 +37,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
  */
 class RegisterFragment : Fragment() {
 
+    private var pdfFilePath: String = ""
     private var columnCount = 1
     private val registeredStudents: MutableList<StudentItem> = ArrayList()
     private var listener: OnListFragmentInteractionListener? = null
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
+    private val PDF_UPLOAD_CODE = 111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +64,7 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = GradedStudentRecyclerViewAdapter(registeredStudents, listener)
+        viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterFragment, registeredStudents, listener)
         addStudentButton.setOnClickListener { openBottomSheet() }
         super.onViewCreated(view, savedInstanceState)
     }
@@ -72,6 +85,7 @@ class RegisterFragment : Fragment() {
                 }
                 adapter =
                     GradedStudentRecyclerViewAdapter(
+                        this@RegisterFragment,
                         registeredStudents,
                         listener
                     )
@@ -122,6 +136,76 @@ class RegisterFragment : Fragment() {
         name.setText("")
         code.setText("")
         grade.setText("")
+    }
+
+    fun uploadPDF(){
+        val intent = Intent()
+            .setType("application/pdf")
+            .setAction(Intent.ACTION_GET_CONTENT)
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), PDF_UPLOAD_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PDF_UPLOAD_CODE) {
+                if (data == null) { return }
+                if (data.data.path == "") {
+                    Toast.makeText(activity, "Le fichier sélectionné est invalide.", Toast.LENGTH_SHORT).show()
+                } else {
+                    pdfFilePath = getFilePath(data.data!!)
+                }
+            }
+        }
+    }
+
+    private fun getFilePath(path: Uri): String {
+        val id: String = DocumentsContract.getDocumentId(path)
+        var ret = ""
+        if (id.isNotEmpty()) {
+            if (id.startsWith("raw:")) {
+                ret = id.replaceFirst("raw:", "")
+            }
+        }
+        return ret
+    }
+
+//            try {
+//                final Uri contentUri = ContentUris.withAppendedId(
+//                    Uri.parse("content://downloads/public_downloads"), Long.valueOf(id)
+//                );
+//                return getDataColumn(context, contentUri, null, null);
+//            } catch (NumberFormatException e) {
+//                Log.e(
+//                    "FileUtils",
+//                    "Downloads provider returned unexpected uri " + uri.toString(),
+//                    e
+//                );
+//                return null;
+//            }
+//        }
+//    }
+
+    private fun convertToBase64(attachment: File): String {
+        return Base64.encodeToString(attachment.readBytes(), Base64.NO_WRAP)
+    }
+
+    fun submit(values: List<StudentItem>) {
+        if (pdfFilePath == "") {
+            Toast.makeText(activity, "Veuillez choisir un fichier PDF valide!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if(class_name.text.isEmpty()) {
+            Toast.makeText(activity, "Veuillez entrer un sigle valide!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val pdf = convertToBase64(File(pdfFilePath))
+        val code = class_name.text.toString()
+        val name = "UN NOM DE CLASSE"
+        val trimester = "A2000"
+        TransactionRequest(code, name, trimester, values, pdf)
     }
 
     override fun onAttach(context: Context) {

@@ -1,12 +1,12 @@
 package com.example.androidapp.fragments.register
 
-import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
 import com.example.androidapp.ui.fragments.search.student.StudentItem
@@ -18,8 +18,10 @@ import kotlinx.android.synthetic.main.bottom_button.view.*
  * specified [OnListFragmentInteractionListener].
  */
 class GradedStudentRecyclerViewAdapter(
+    private val mFragment: RegisterFragment,
     private val mValues: List<StudentItem>,
     private val mListener: OnListFragmentInteractionListener?
+
 ) : RecyclerView.Adapter<GradedStudentRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -66,23 +68,16 @@ class GradedStudentRecyclerViewAdapter(
         private val mSubmitButton: Button = mView.registerClassBtn
 
         fun bind(mView: View) {
-            mPDFButton.setOnClickListener { uploadPDF(mView) }
-            mSubmitButton.setOnClickListener { submit() }
+            mPDFButton.setOnClickListener { mFragment.uploadPDF() }
+            mSubmitButton.setOnClickListener { submit(mView) }
         }
 
-        private fun uploadPDF(view: View) {
-            val intent = Intent()
-                .setType("application/json")
-                .setAction(Intent.ACTION_GET_CONTENT)
-            view.context.startActivity(Intent.createChooser(intent, "Select a file"))
-            mSubmitButton.isClickable = true
-            mSubmitButton.isEnabled = true
-            mPDFButton.text = "nomDuPDF.pdf"
-            // todo - actually handle pfd uploading
-        }
-
-        private fun submit() {
-            // todo - send information to server
+        private fun submit(view: View) {
+            if(mValues.isEmpty()) {
+                Toast.makeText(view.context, "Il n'y a aucun élève dans la classe!", Toast.LENGTH_SHORT).show()
+                return
+            }
+            mFragment.submit(mValues)
         }
     }
 
