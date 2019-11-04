@@ -42,8 +42,7 @@ public class LogsViewer {
                 try {
                     LogsRequest request =  logs.keySet().isEmpty() ? new LogsRequest(0) :
                             new LogsRequest(Collections.max(logs.keySet()));
-                    LogsResponse logsResponse =  RestService.postLogsAsync("serveurweb", request);
-
+                    LogsResponse logsResponse  = (LogsResponse) RestService.postLogsAsync("serveurweb", request).get();
                     for (LogsResponse.Log log : logsResponse.logs) {
                         logs.put(log.getNumber(), log);
                     }

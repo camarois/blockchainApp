@@ -10,9 +10,11 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
+
+import org.apache.http.HttpException;
+import org.apache.http.HttpStatus;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyStore;
@@ -26,7 +28,6 @@ import java.lang.String;
 
 public class RestService {
     private static final String HTTP_POST_METHOD = "POST";
-    private static final String HTTP_GET_METHOD = "GET";
     private static ServerUrls urls;
     private static String baseUrl = "";
     private static Gson gson;
@@ -58,46 +59,40 @@ public class RestService {
         return instance;
     }
 
-    public static LoginResponse postLoginAsync(LoginRequest request) throws ExecutionException, InterruptedException {
-        return (LoginResponse) callRequestAsync(
+    public static Future postLoginAsync(LoginRequest request) {
+        return callRequestAsync(
                 () -> {
                     String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/login", request);
-                    return gson.fromJson(resp, (Type) LoginResponse.class);
-                }).get();
+                    return gson.fromJson(resp, LoginResponse.class);
+                });
     }
 
-    public String postLogoutAsync() throws ExecutionException, InterruptedException {
-        return (String) callRequestAsync(
-                () -> {
-                    String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/logout", null);
-                    return gson.fromJson(resp, (Type) String.class);
-                }).get();
+    public Future postLogoutAsync() {
+        return callRequestAsync(
+                () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/logout", null));
     }
 
-    public static String postChangePasswordAsync(PasswordRequest request) throws ExecutionException, InterruptedException {
-        return (String) callRequestAsync(
-                () -> {
-                    String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/motdepasse", request);
-                    return gson.fromJson(resp, (Type) String.class);
-                }).get();
+    public static Future postChangePasswordAsync(PasswordRequest request) {
+        return callRequestAsync(
+                () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
     }
-//
-    public static JsonObject getChaineAsync(ChaineRequest request, Integer miner) throws ExecutionException, InterruptedException {
-        return (JsonObject) callRequestAsync(
+
+    public static Future getChaineAsync(ChaineRequest request, Integer miner) {
+        return callRequestAsync(
                 () -> {
                     String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
-                    return gson.fromJson(resp, (Type) JsonObject.class);
-                }).get();
+                    return gson.fromJson(resp, JsonObject.class);
+                });
     }
 
-    public static LogsResponse postLogsAsync(String origin, LogsRequest request) throws ExecutionException, InterruptedException {
-        return (LogsResponse) callRequestAsync(
+    public static Future postLogsAsync(String origin, LogsRequest request) {
+        return callRequestAsync(
                 () -> {
                     String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
-                    LogsResponse logsResponse = gson.fromJson(resp, (Type) LogsResponse.class);
+                    LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
                     logsResponse.logs.forEach((log) -> log.setProvenance(origin));
                     return logsResponse;
-                }).get();
+                });
     }
 
     private static void consumeRequestAsync(String url, Consumer<String> onResponse) {
@@ -107,9 +102,8 @@ public class RestService {
         });
     }
 
-    private static Future<?> callRequestAsync(Callable<?> onResponse) throws InterruptedException, ExecutionException {
-        Future future = threadPool.submit(onResponse);
-        return future;
+    private static Future callRequestAsync(Callable<?> onResponse) {
+        return threadPool.submit(onResponse);
     }
 
     private static String getRequest(String url) {
@@ -127,7 +121,7 @@ public class RestService {
     }
 
     private static String baseAsyncRequest(String method, String url, Object data) throws IOException,
-            InterruptedException {
+            InterruptedException, HttpException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
@@ -136,9 +130,14 @@ public class RestService {
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String authToken = response.headers().allValues("Authorization").get(0);
-            CredentialsManager.saveAuthToken(authToken);
-            return response.body();
+            if (response.statusCode() == HttpStatus.SC_OK) {
+                String authToken = response.headers().allValues("Authorization").get(0);
+                CredentialsManager.saveAuthToken(authToken);
+                return response.body();
+            }
+            else {
+                throw new HttpException("Forbiddent");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

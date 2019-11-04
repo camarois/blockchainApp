@@ -37,7 +37,7 @@ public class LoginController {
         LoginRequest loginRequest = new LoginRequest(username, password);
 
         try {
-            LoginResponse loginResponse = RestService.postLoginAsync(loginRequest);
+            LoginResponse loginResponse = (LoginResponse) RestService.postLoginAsync(loginRequest).get();
             if (loginResponse != null) {
                 BorderPane rootNode = new BorderPane();
                 Parent logsViewer = FXMLLoader.load(
@@ -56,7 +56,7 @@ public class LoginController {
         }
     }
 
-    public MenuBar createMenuBar() {
+    private MenuBar createMenuBar() {
         Menu generalMenu = new Menu("Options");
         MenuItem changePasswordMenuItem = new MenuItem("Changer mot de passe");
         MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
@@ -66,15 +66,15 @@ public class LoginController {
         changePasswordMenuItem.setOnAction(actionEvent -> {
             try {
                 Optional<PasswordRequest> request = showChangePasswordDialog();
-                RestService.getInstance().postChangePasswordAsync(request.get());
+                RestService.postChangePasswordAsync(request.get()).get();
             } catch (Exception e) {
-                e.printStackTrace();
+                showErrorDialog("L'ancien mot de passe est invalide.");
             }
         });
 
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
-                //RestService.getInstance().postLogoutAsync();
+                RestService.getInstance().postLogoutAsync();
                 BorderPane rootNode = new BorderPane();
                 Parent loginViewer = FXMLLoader.load(
                         Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
@@ -98,7 +98,7 @@ public class LoginController {
         return menuBar;
     }
 
-    public Optional<PasswordRequest> showChangePasswordDialog() {
+    private Optional<PasswordRequest> showChangePasswordDialog() {
         Dialog<PasswordRequest> dialog = new Dialog<>();
         dialog.setHeaderText("Pour changer votre mot de passe, veuillez mettre l'ancien et le nouveau.");
         dialog.setResizable(true);
@@ -127,7 +127,7 @@ public class LoginController {
         return dialog.showAndWait();
     }
 
-    public void showErrorDialog(String message) {
+    private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Attention!");
         alert.setHeaderText(message);
