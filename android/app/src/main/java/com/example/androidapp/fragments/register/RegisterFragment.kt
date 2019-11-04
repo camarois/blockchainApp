@@ -22,12 +22,18 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import android.widget.Toast
+import com.android.volley.AuthFailureError
+import com.example.androidapp.LoginRequest
 import com.example.androidapp.TransactionRequest
+import com.example.androidapp.fragments.home.HomeFragment
+import com.example.androidapp.services.RestRequestService
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_student_bottom_panel.code
 import kotlinx.android.synthetic.main.add_student_bottom_panel.grade
 import kotlinx.android.synthetic.main.add_student_bottom_panel.name
 import kotlinx.android.synthetic.main.fragment_graded_student.*
+import org.koin.android.ext.android.get
 import java.io.File
 
 /**
@@ -43,6 +49,7 @@ class RegisterFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private val PDF_UPLOAD_CODE = 111
+    private var restService: RestRequestService = get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,7 +145,7 @@ class RegisterFragment : Fragment() {
         grade.setText("")
     }
 
-    fun uploadPDF(){
+    fun uploadPDF() {
         val intent = Intent()
             .setType("application/pdf")
             .setAction(Intent.ACTION_GET_CONTENT)
@@ -161,42 +168,27 @@ class RegisterFragment : Fragment() {
 
     private fun getFilePath(path: Uri): String {
         val id: String = DocumentsContract.getDocumentId(path)
-        var ret = ""
+        var actualPath = ""
         if (id.isNotEmpty()) {
             if (id.startsWith("raw:")) {
-                ret = id.replaceFirst("raw:", "")
+                actualPath = id.replaceFirst("raw:", "")
             }
         }
-        return ret
+        return actualPath
     }
-
-//            try {
-//                final Uri contentUri = ContentUris.withAppendedId(
-//                    Uri.parse("content://downloads/public_downloads"), Long.valueOf(id)
-//                );
-//                return getDataColumn(context, contentUri, null, null);
-//            } catch (NumberFormatException e) {
-//                Log.e(
-//                    "FileUtils",
-//                    "Downloads provider returned unexpected uri " + uri.toString(),
-//                    e
-//                );
-//                return null;
-//            }
-//        }
-//    }
 
     private fun convertToBase64(attachment: File): String {
         return Base64.encodeToString(attachment.readBytes(), Base64.NO_WRAP)
     }
 
-    fun submit(values: List<StudentItem>) {
+    suspend fun submit(values: List<StudentItem>) {
         if (pdfFilePath == "") {
-            Toast.makeText(activity, "Veuillez choisir un fichier PDF valide!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Veuillez choisir un fichier PDF valide!", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
-        if(class_name.text.isEmpty()) {
+        if (class_name.text.isEmpty()) {
             Toast.makeText(activity, "Veuillez entrer un sigle valide!", Toast.LENGTH_SHORT).show()
             return
         }
@@ -205,7 +197,21 @@ class RegisterFragment : Fragment() {
         val code = class_name.text.toString()
         val name = "UN NOM DE CLASSE"
         val trimester = "A2000"
-        TransactionRequest(code, name, trimester, values, pdf)
+        try {
+            restService.postTransactionAsync(
+                TransactionRequest(code, name, trimester, values, pdf)
+            )
+            Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
+            val transaction = activity!!.supportFragmentManager.beginTransaction()
+            val frag = HomeFragment()
+            transaction.replace(R.id.register_fragment, frag)
+            transaction.commit()
+
+        } catch (e: AuthFailureError) {
+            Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
+        } catch (e: Error) {
+            Toast.makeText(activity, "Une erreur est survenue lors du traitement de la requête", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onAttach(context: Context) {

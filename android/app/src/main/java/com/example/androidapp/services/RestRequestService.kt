@@ -51,7 +51,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun postTransactionAsync(request: TransactionRequest): String {
-        return postAsync("/transaction",  request, String::class.java)
+        return postAsync("/transaction", request, String::class.java)
     }
 
     suspend fun getAsync(url: String): String {

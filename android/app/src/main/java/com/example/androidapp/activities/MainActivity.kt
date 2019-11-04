@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             val username = username_edit_text.text.toString()
             //restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
-            //val response = restService.postLoginAsync(LoginRequest(username, password))
+            val response = restService.postLoginAsync(LoginRequest(username, password))
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                //putExtra("user", response.edition)
+                putExtra("user", response.edition)
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {
@@ -72,9 +72,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         )
             return
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,READ_EXTERNAL_STORAGE))
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
             Toast.makeText(this, "L'application utilise cette permission afin de lire des fichiers PDFs.", Toast.LENGTH_LONG).show()
-
-        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
     }
+
+
 }
