@@ -23,17 +23,14 @@ import java.util.ArrayList
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import android.widget.Toast
 import com.android.volley.AuthFailureError
-import com.example.androidapp.LoginRequest
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_student_bottom_panel.code
 import kotlinx.android.synthetic.main.add_student_bottom_panel.grade
 import kotlinx.android.synthetic.main.add_student_bottom_panel.name
 import kotlinx.android.synthetic.main.bottom_button.*
-import kotlinx.android.synthetic.main.fragment_graded_student.*
 import org.koin.android.ext.android.get
 import java.io.File
 
@@ -208,7 +205,6 @@ class RegisterFragment : Fragment() {
             val frag = HomeFragment()
             transaction.replace(R.id.register_fragment, frag)
             transaction.commit()
-
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
         } catch (e: Error) {

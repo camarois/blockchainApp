@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private suspend fun submitLogin() {
         try {
             val username = username_edit_text.text.toString()
-            //restService.initServerUrl(username) // Activate this while developping
+            // restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
@@ -74,6 +74,4 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
             Toast.makeText(this, "L'application utilise cette permission afin de lire des fichiers PDFs.", Toast.LENGTH_LONG).show()
     }
-
-
 }
