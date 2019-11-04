@@ -24,7 +24,7 @@ class Database {
   void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
                        const std::string& salt, bool isAdmin = false);
   bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
-  std::optional<std::string> getSalt(const std::string& username, bool isAdmin = false);
+  std::optional<std::string> getSalt(const std::string& username);
 
   std::vector<std::string> getIps();
   void addIp(const std::string& ip);

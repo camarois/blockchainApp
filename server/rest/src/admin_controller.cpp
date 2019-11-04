@@ -26,7 +26,7 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
-  auto salt = db.getSalt(loginRequest.username, true);
+  auto salt = db.getSalt(loginRequest.username);
   if (salt && db.containsUser(loginRequest, salt.value(), true)) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
@@ -50,7 +50,7 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
-  auto salt = db.getSalt(loginRequest.username, true);
+  auto salt = db.getSalt(loginRequest.username);
   if (salt && db.containsUser(loginRequest, salt.value(), true)) {
     db.setUserPassword(loginRequest.username, passwordRequest, salt.value(), true);
     response.send(Pistache::Http::Code::Ok);
