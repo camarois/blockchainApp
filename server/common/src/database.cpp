@@ -1,5 +1,4 @@
 #include "common/database.hpp"
-
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
@@ -115,4 +114,87 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   statement.step();
 }
 
+std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
+  Query checkForExistingClassQuery = Query(
+      "SELECT classId FROM classes "
+      "WHERE acronym = '%q' AND trimester = '%q' "
+      "LIMIT 1;",
+      acronym.c_str(), std::to_string(trimester).c_str());
+  Statement statementCheck = Statement(db_, checkForExistingClassQuery);
+  if (statementCheck.step())
+    return std::stoi(statementCheck.getColumnText(0));
+  else
+    return {};
+}
+
+void Database::DeleteExistingClass(int classId) {
+  Query deleteClassQuery = Query("DELETE FROM classes WHERE classId = '%q'", std::to_string(classId).c_str());
+  Statement statementDeleteClass = Statement(db_, deleteClassQuery);
+  statementDeleteClass.step();
+}
+
+void Database::DeleteExistingResults(int classId) {
+  Query deleteResultQuery = Query("DELETE FROM results WHERE classId = '%q'", std::to_string(classId).c_str());
+  Statement statementDeleteResults = Statement(db_, deleteResultQuery);
+  statementDeleteResults.step();
+}
+
+int Database::AddNewClass(const Common::Models::TransactionRequest& transactionRequest) {
+  Query newClassQuery = Query(
+      "INSERT INTO classes (acronym, name, trimester) "
+      "VALUES ('%q', '%q', '%q');",
+      transactionRequest.acronym.c_str(), transactionRequest.name.c_str(),
+      std::to_string(transactionRequest.trimester).c_str());
+  Statement statementNewClass = Statement(db_, newClassQuery);
+  statementNewClass.step();
+  return sqlite3_last_insert_rowid(db_.get());
+}
+
+void Database::AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
+  std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, classId) VALUES";
+  for (Common::Models::Result result : transactionRequest.results) {
+    resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
+                    "', " + std::to_string(classId).c_str() + "),";
+  }
+  resultsToAdd.replace(resultsToAdd.length() - 1, 1, ";");
+  Query resultsToAddQuery = Query(resultsToAdd);
+  Statement statementNewResults = Statement(db_, resultsToAddQuery);
+  statementNewResults.step();
+}
+
+std::vector<Common::Models::Result> Database::getClassResult(int classId) {
+  Query getClassResultsQuery = Query(
+      "SELECT firstName, lastname, id, grade FROM results "
+      "WHERE classId = '%q';",
+      std::to_string(classId).c_str());
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
+
+  std::vector<Common::Models::Result> results;
+  while (getResultsStatement.step()) {
+    results.push_back({.lastName = getResultsStatement.getColumnText(1),
+                       .firstName = getResultsStatement.getColumnText(0),
+                       .id = getResultsStatement.getColumnText(2),
+                       .grade = getResultsStatement.getColumnText(3)});
+  }
+
+  return results;
+}
+
+std::optional<Common::Models::Result> Database::getStudentResult(int classId, const std::string studentId) {
+  Query getClassResultsQuery = Query(
+      "SELECT firstName, lastname, id, grade FROM results "
+      "WHERE classId = '%q' AND id = '%q';",
+      std::to_string(classId).c_str(), studentId.c_str());
+  Statement getResultsStatement = Statement(db_, getClassResultsQuery);
+  Common::Models::Result result;
+
+  if (getResultsStatement.step()) {
+    result.firstName = getResultsStatement.getColumnText(0);
+    result.lastName = getResultsStatement.getColumnText(1);
+    result.id = getResultsStatement.getColumnText(2);
+    result.grade = getResultsStatement.getColumnText(3);
+  }
+
+  return result;
+}
 }  // namespace Common
