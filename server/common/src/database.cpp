@@ -124,7 +124,7 @@ std::optional<int> Database::checkForExistingClass(const std::string& acronym, i
   if (statementCheck.step())
     return std::stoi(statementCheck.getColumnText(0));
   else
-    return std::nullopt;
+    return {};
 }
 
 void Database::DeleteExistingClass(int classId) {
