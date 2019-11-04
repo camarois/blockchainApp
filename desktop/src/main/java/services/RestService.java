@@ -3,7 +3,12 @@ package services;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import constants.ServerUrls;
-import models.*;
+import models.LogsResponse;
+import models.LogsRequest;
+import models.ChaineRequest;
+import models.PasswordRequest;
+import models.LoginRequest;
+import models.LoginResponse;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -21,7 +26,10 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Callable;
 
 import java.util.function.Consumer;
 import java.lang.String;
@@ -61,38 +69,38 @@ public class RestService {
 
     public static Future postLoginAsync(LoginRequest request) {
         return callRequestAsync(
-                () -> {
-                    String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/login", request);
-                    return gson.fromJson(resp, LoginResponse.class);
-                });
+            () -> {
+                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/login", request);
+                return gson.fromJson(resp, LoginResponse.class);
+            });
     }
 
     public Future postLogoutAsync() {
         return callRequestAsync(
-                () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/logout", null));
+            () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/logout", null));
     }
 
     public static Future postChangePasswordAsync(PasswordRequest request) {
         return callRequestAsync(
-                () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
+            () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
     }
 
     public static Future getChaineAsync(ChaineRequest request, Integer miner) {
         return callRequestAsync(
-                () -> {
-                    String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
-                    return gson.fromJson(resp, JsonObject.class);
-                });
+            () -> {
+                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
+                return gson.fromJson(resp, JsonObject.class);
+            });
     }
 
     public static Future postLogsAsync(String origin, LogsRequest request) {
         return callRequestAsync(
-                () -> {
-                    String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
-                    LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
-                    logsResponse.logs.forEach((log) -> log.setProvenance(origin));
-                    return logsResponse;
-                });
+            () -> {
+                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
+                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
+                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
+                return logsResponse;
+            });
     }
 
     private static void consumeRequestAsync(String url, Consumer<String> onResponse) {
@@ -134,8 +142,7 @@ public class RestService {
                 String authToken = response.headers().allValues("Authorization").get(0);
                 CredentialsManager.saveAuthToken(authToken);
                 return response.body();
-            }
-            else {
+            } else {
                 throw new HttpException("Forbiddent");
             }
         } catch (Exception e) {
