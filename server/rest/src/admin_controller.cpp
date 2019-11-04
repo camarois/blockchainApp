@@ -20,7 +20,6 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
                Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
   router->post(kBasePath_ + "suppressioncompte",
                Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
-  router->post(kBasePath_ + "register", Pistache::Rest::Routes::bind(&AdminController::handleRegister, this), false);
 }
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -87,15 +86,6 @@ void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request
                                           Pistache::Http::ResponseWriter response) {
   Common::Models::DeleteAccountRequest logsRequest = nlohmann::json::parse(request.body());
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
-}
-
-// TODO(camarois) enlever avant remise
-void AdminController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
-  db.addUser(registerRequest, true);
-  Common::Models::LoginResponse registerResponse = {};
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
 }  // namespace Rest
