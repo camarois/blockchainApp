@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_student_bottom_panel.code
 import kotlinx.android.synthetic.main.add_student_bottom_panel.grade
 import kotlinx.android.synthetic.main.add_student_bottom_panel.name
+import kotlinx.android.synthetic.main.bottom_button.*
 import kotlinx.android.synthetic.main.fragment_graded_student.*
 import org.koin.android.ext.android.get
 import java.io.File
@@ -161,6 +162,7 @@ class RegisterFragment : Fragment() {
                     Toast.makeText(activity, "Le fichier sélectionné est invalide.", Toast.LENGTH_SHORT).show()
                 } else {
                     pdfFilePath = getFilePath(data.data!!)
+                    uploadPDFBtn.text = pdfFilePath.split("/").last()
                 }
             }
         }

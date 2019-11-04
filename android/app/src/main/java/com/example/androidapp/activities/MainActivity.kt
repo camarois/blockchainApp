@@ -25,7 +25,6 @@ import androidx.core.content.ContextCompat
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
-    private val STORAGE_PERMISSION_CODE = 123
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
