@@ -39,8 +39,7 @@ class StudentRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
         holder.mNameView.text = item.name
-        holder.mDegreeView.text = item.degree
-        holder.mGPAView.text = item.gpa.toString()
+        holder.mCode.text = item.code.toString()
 
         with(holder.mView) {
             tag = item
@@ -52,7 +51,6 @@ class StudentRecyclerViewAdapter(
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mNameView: TextView = mView.name
-        val mDegreeView: TextView = mView.degree
-        val mGPAView: TextView = mView.gpa
+        val mCode: TextView = mView.code
     }
 }

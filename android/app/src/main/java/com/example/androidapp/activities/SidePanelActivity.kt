@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.R
+import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.search.SearchFragment
 import com.example.androidapp.services.RestRequestService
 import com.example.androidapp.ui.fragments.search.student.StudentItem
@@ -23,9 +24,8 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.OnListFragmentInteractionListener {
-
-    override fun onListFragmentInteraction(item: StudentItem) {
+class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(student: StudentItem) {
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -56,7 +56,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.On
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // TODO: Add on call listener for logout btn but HOW TO ACCESS IT GRRR
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.side_panel, menu)
         return true

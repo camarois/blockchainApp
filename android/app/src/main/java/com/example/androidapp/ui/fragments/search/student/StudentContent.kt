@@ -21,11 +21,11 @@ object StudentContent {
     private val item_map: MutableMap<String, StudentItem> = HashMap()
 
     private const val COUNT = 25
-    private const val MAX_GPA = 4.0
-    private const val MIN_GRAD_YEAR = 2000
+    private const val BASE_STUDENT_CODE = 1800000
 
     init {
         // Add some sample items.
+        // TODO: Fill with information from database
         for (i in 1..COUNT) {
             addItem(createStudentItem(i))
         }
@@ -38,6 +38,6 @@ object StudentContent {
 
     private fun createStudentItem(position: Int): StudentItem {
         return StudentItem(position.toString(),
-            "Prenom Nom $position", "GENIE INFO", (position * MAX_GPA / COUNT).toFloat(), MIN_GRAD_YEAR + position, "notes.pdf")
+            "Prenom Nom $position", BASE_STUDENT_CODE + position)
     }
 }

@@ -13,9 +13,9 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
-                android:name="com.example.androidapp.activities.SidePanelActivity"
-                android:label="@string/title_activity_side_panel"
-                android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name="com.example.androidapp.activities.SidePanelActivity"
+            android:label="@string/title_activity_side_panel"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
                 android:name="com.example.androidapp.activities.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
