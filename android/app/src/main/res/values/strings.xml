@@ -36,6 +36,7 @@
     <string name="note_hint">Note</string>
     <string name="code_hint">Matricule</string>
     <string name="name_hint">Nom</string>
+    <string name="trimester_hint">Trimester</string>
     <string name="bottomBtnTag">bottomBtn</string>
     <string name="gradedStudentTag">gradedStudent</string>
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
