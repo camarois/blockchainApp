@@ -21,10 +21,8 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
-  std::cout << "START HANDLING" << std::endl;
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
   std::cout << transactionRequest.base64Pdf << std::endl;
-  std::cout << "resquest built" << std::endl;
   Common::Database db(FLAGS_db);
   std::optional<int> classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
   if (classId) {
