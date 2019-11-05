@@ -70,25 +70,25 @@ public class RestService {
     public static Future postLoginAsync(LoginRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/login", request);
+                String resp = baseRequest(HTTP_POST_METHOD, "admin/login", request);
                 return gson.fromJson(resp, LoginResponse.class);
             });
     }
 
     public Future postLogoutAsync() {
         return callRequestAsync(
-            () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/logout", null));
+            () -> baseRequest(HTTP_POST_METHOD, "admin/logout", null));
     }
 
     public static Future postChangePasswordAsync(PasswordRequest request) {
         return callRequestAsync(
-            () -> baseAsyncRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
+            () -> baseRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
     }
 
     public static Future getChaineAsync(ChaineRequest request, Integer miner) {
         return callRequestAsync(
             () -> {
-                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
+                String resp = baseRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
                 return gson.fromJson(resp, JsonObject.class);
             });
     }
@@ -96,7 +96,7 @@ public class RestService {
     public static Future postLogsAsync(String origin, LogsRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = baseAsyncRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
+                String resp = baseRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
                 LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
                 logsResponse.logs.forEach((log) -> log.setProvenance(origin));
                 return logsResponse;
@@ -128,7 +128,7 @@ public class RestService {
         }
     }
 
-    private static String baseAsyncRequest(String method, String url, Object data) throws IOException,
+    private static String baseRequest(String method, String url, Object data) throws IOException,
             InterruptedException, HttpException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
