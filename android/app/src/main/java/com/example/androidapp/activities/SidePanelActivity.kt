@@ -14,9 +14,11 @@ import android.view.MenuItem
 import com.example.androidapp.R
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.fragments.register.RegisterFragment
+import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
+import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
 import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.activity_side_panel.*
@@ -30,14 +32,18 @@ import kotlin.coroutines.CoroutineContext
 
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        val transaction = supportFragmentManager.beginTransaction()
+        val frag = DetailedCourseFragment(course)
+        transaction.replace(R.id.course_list_fragment, frag)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     override fun onListFragmentInteraction(student: StudentItem) {
-        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         val transaction = supportFragmentManager.beginTransaction()
-        val frag = HomeFragment()
+        val frag = DetailedStudentFragment(student)
         transaction.replace(R.id.student_list_fragment, frag)
+
         transaction.addToBackStack(null)
         transaction.commit()
     }

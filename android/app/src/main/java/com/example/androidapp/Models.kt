@@ -15,3 +15,19 @@ data class PasswordRequest(
     @SerializedName("ancien") val oldPassword: String,
     @SerializedName("nouveau") val newPassword: String
 )
+
+data class CourseResponse(
+    @SerializedName("resultats") val oldPassword: List<StudentItem>
+)
+
+data class CourseItem(val code: String, val name: String, val trimester: String, val students: List<StudentItem>) {
+    override fun toString(): String = "Nom: $name, Sigle: $code, Name "
+}
+
+data class StudentItem(
+    @SerializedName("nom") val lastName: String,
+    @SerializedName("prenom")val firstName: String,
+    @SerializedName("matricule") val code: String,
+    @SerializedName("note") val grade: String) {
+    override fun toString(): String = "Nom de famille: $lastName, Prénom: $firstName, Matricule: $code"
+}

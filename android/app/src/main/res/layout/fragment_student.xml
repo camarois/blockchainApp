@@ -8,8 +8,7 @@
     android:background="@color/colorListBackground"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    android:id="@+id/student_fragment"
-    >
+    android:id="@+id/student_fragment">
 
         <TextView
             android:id="@+id/name"
