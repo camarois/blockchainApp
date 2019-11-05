@@ -10,7 +10,6 @@ import services.RestService;
 
 import java.util.TimerTask;
 import java.util.Timer;
-import java.util.Collections;
 
 public class LogsViewer {
     private ObservableList<LogsResponse.Log> logsList;
@@ -28,16 +27,8 @@ public class LogsViewer {
             public void run() {
                 try {
                     LogsRequest request =  logsList.isEmpty() ? new LogsRequest(0) :
-                            new LogsRequest(Collections.max(logsList, (log1, log2) -> {
-                                if (log1.getNumber() > log2.getNumber()) {
-                                    return 1;
-                                } else if (log1.getNumber() < log2.getNumber()) {
-                                    return -1;
-                                }
-                                return 0;
-                            }).getNumber());
-                    LogsResponse logsResponse = (LogsResponse) RestService.postLogsAsync("serveurweb", request)
-                            .get();
+                            new LogsRequest(logsList.stream().mapToInt(LogsResponse.Log::getNumber).max().getAsInt());
+                    LogsResponse logsResponse = (LogsResponse) RestService.postLogs("serveurweb", request);
                     logsList.addAll(logsResponse.logs);
                 } catch (Exception e) {
                     e.printStackTrace();

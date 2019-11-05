@@ -27,14 +27,17 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Future;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
 
 import java.util.function.Consumer;
 import java.lang.String;
 
 public class RestService {
+    private static final String HTTP_GET_METHOD = "GET";
     private static final String HTTP_POST_METHOD = "POST";
     private static ServerUrls urls;
     private static String baseUrl = "";
@@ -70,33 +73,44 @@ public class RestService {
     public static Future postLoginAsync(LoginRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = baseRequest(HTTP_POST_METHOD, "admin/login", request);
+                String resp = postRequest( "admin/login", request);
                 return gson.fromJson(resp, LoginResponse.class);
             });
     }
 
     public Future postLogoutAsync() {
         return callRequestAsync(
-            () -> baseRequest(HTTP_POST_METHOD, "admin/logout", null));
+            () -> postRequest( "admin/logout", null));
     }
 
     public static Future postChangePasswordAsync(PasswordRequest request) {
         return callRequestAsync(
-            () -> baseRequest(HTTP_POST_METHOD, "admin/motdepasse", request));
+            () -> postRequest( "admin/motdepasse", request));
     }
 
     public static Future getChaineAsync(ChaineRequest request, Integer miner) {
         return callRequestAsync(
             () -> {
-                String resp = baseRequest(HTTP_POST_METHOD, "admin/chaine/" + miner, request);
+                String resp = postRequest( "admin/chaine/" + miner, request);
                 return gson.fromJson(resp, JsonObject.class);
             });
+    }
+
+    public static LogsResponse postLogs(String origin, LogsRequest request)
+            throws ExecutionException, InterruptedException {
+        return (LogsResponse) callRequestAsync(
+            () -> {
+                String resp = postRequest( "admin/logs/" + origin, request);
+                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
+                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
+                return logsResponse;
+            }).get();
     }
 
     public static Future postLogsAsync(String origin, LogsRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = baseRequest(HTTP_POST_METHOD, "admin/logs/" + origin, request);
+                String resp = postRequest( "admin/logs/" + origin, request);
                 LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
                 logsResponse.logs.forEach((log) -> log.setProvenance(origin));
                 return logsResponse;
@@ -128,6 +142,10 @@ public class RestService {
         }
     }
 
+    private static String postRequest(String url, Object data) throws InterruptedException, IOException, HttpException {
+        return baseRequest(HTTP_POST_METHOD, url, data);
+    }
+
     private static String baseRequest(String method, String url, Object data) throws IOException,
             InterruptedException, HttpException {
         try {
@@ -143,7 +161,7 @@ public class RestService {
                 CredentialsManager.saveAuthToken(authToken);
                 return response.body();
             } else {
-                throw new HttpException("Forbiddent");
+                throw new HttpException("Forbidden");
             }
         } catch (Exception e) {
             e.printStackTrace();

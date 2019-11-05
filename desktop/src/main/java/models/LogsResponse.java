@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 public class LogsResponse {
     @SerializedName("information")
-    public Set<Log> logs;
+    public List<Log> logs;
 
     public static class Log {
         enum Severity {
@@ -76,19 +76,9 @@ public class LogsResponse {
         public String getMessage() {
             return message;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof Log))  {
-                return false;
-            }
-            Log other = (Log)obj;
-            return number.equals(other.number) && severity.equals(other.severity) && hour.equals(other.hour)
-                    && provenance.equals(other.provenance) && message.equals(other.message);
-        }
     }
 
-    public LogsResponse(Set<Log> logInfo) {
+    public LogsResponse(List<Log> logInfo) {
         logs = logInfo;
     }
 }
