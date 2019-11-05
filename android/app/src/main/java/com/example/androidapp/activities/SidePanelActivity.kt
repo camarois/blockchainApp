@@ -10,7 +10,9 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+
 import com.example.androidapp.R
+import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
@@ -33,6 +35,11 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
 
     override fun onListFragmentInteraction(student: StudentItem) {
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val transaction = supportFragmentManager.beginTransaction()
+        val frag = HomeFragment()
+        transaction.replace(R.id.student_list_fragment, frag)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     private lateinit var job: Job

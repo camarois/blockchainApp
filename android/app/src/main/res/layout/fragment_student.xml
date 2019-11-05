@@ -7,7 +7,9 @@
     android:layout_marginBottom="10dp"
     android:background="@color/colorListBackground"
     android:orientation="vertical"
-    android:paddingHorizontal="20dp">
+    android:paddingHorizontal="20dp"
+    android:id="@+id/student_fragment"
+    >
 
         <TextView
             android:id="@+id/name"
