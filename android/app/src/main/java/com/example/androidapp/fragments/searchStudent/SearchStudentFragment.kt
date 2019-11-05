@@ -1,4 +1,4 @@
-package com.example.androidapp.fragments.search
+package com.example.androidapp.fragments.searchStudent
 
 import android.content.Context
 import android.os.Bundle
@@ -10,18 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
-import com.example.androidapp.ui.fragments.search.StudentRecyclerViewAdapter
 
-import com.example.androidapp.ui.fragments.search.student.StudentContent
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.fragments.searchStudent.student.StudentContent
+import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [SearchFragment.OnListFragmentInteractionListener] interface.
+ * [SearchStudentFragment.OnListFragmentInteractionListener] interface.
  */
-class SearchFragment : Fragment() {
+class SearchStudentFragment : Fragment() {
 
     private var columnCount = 1
 
@@ -37,7 +36,11 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = StudentRecyclerViewAdapter(StudentContent.items, listener)
+        viewCreated.adapter =
+            StudentRecyclerViewAdapter(
+                StudentContent.items,
+                listener
+            )
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -99,7 +102,7 @@ class SearchFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            SearchFragment().apply {
+            SearchStudentFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

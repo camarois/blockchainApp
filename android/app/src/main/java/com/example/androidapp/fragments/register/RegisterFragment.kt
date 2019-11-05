@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import com.example.androidapp.R
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList

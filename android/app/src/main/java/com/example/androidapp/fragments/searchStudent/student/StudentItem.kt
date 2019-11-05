@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.search.student
+package com.example.androidapp.fragments.searchStudent.student
 
 /**
  * A student item representing a piece of content.

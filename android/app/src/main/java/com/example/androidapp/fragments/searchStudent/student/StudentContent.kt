@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.search.student
+package com.example.androidapp.fragments.searchStudent.student
 
 import java.util.ArrayList
 import java.util.HashMap
