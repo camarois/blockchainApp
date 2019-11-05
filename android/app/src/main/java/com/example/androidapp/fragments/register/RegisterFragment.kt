@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import com.example.androidapp.R
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
@@ -26,10 +26,7 @@ import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.add_student_bottom_panel.code
-import kotlinx.android.synthetic.main.add_student_bottom_panel.grade
-import kotlinx.android.synthetic.main.add_student_bottom_panel.lastName
-import kotlinx.android.synthetic.main.add_student_bottom_panel.name
+import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import kotlinx.android.synthetic.main.bottom_button.*
 import org.koin.android.ext.android.get
 import java.io.File
@@ -125,11 +122,11 @@ class RegisterFragment : Fragment() {
 
     private fun createStudent() {
         val studentLastName = lastName.text.toString()
-        val studentfirstName = name.text.toString()
+        val studentfirstName = firstName.text.toString()
         val studentCode = code.text.toString()
         val studentGrade = grade.text.toString()
         if (studentLastName.isNotEmpty() && studentfirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
-            registeredStudents.add(registeredStudents.size, StudentItem(registeredStudents.size.toString(), lastName.text.toString(), name.text.toString(), code.text.toString().toInt(), grade.text.toString().toFloat()))
+            registeredStudents.add(registeredStudents.size, StudentItem( lastName.text.toString(), firstName.text.toString(), code.text.toString(), grade.text.toString()))
             list.adapter?.notifyItemInserted(registeredStudents.size - 1)
             list.smoothScrollToPosition(registeredStudents.size - 1)
             resetView()
@@ -140,7 +137,7 @@ class RegisterFragment : Fragment() {
 
     private fun resetView() {
         lastName.setText("")
-        name.setText("")
+        firstName.setText("")
         code.setText("")
         grade.setText("")
     }

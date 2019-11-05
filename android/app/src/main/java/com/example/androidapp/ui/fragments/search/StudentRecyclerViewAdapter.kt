@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.androidapp.R
 import com.example.androidapp.fragments.search.SearchFragment.OnListFragmentInteractionListener
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.add_student_bottom_panel.view.*
 import kotlinx.android.synthetic.main.fragment_student.view.code
 
@@ -39,7 +39,7 @@ class StudentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mLastNameView.text = item.name
+        holder.mLastNameView.text = item.lastName
         holder.mFirstNameView.text = item.firstName
         holder.mCode.text = item.code.toString()
 
@@ -52,7 +52,7 @@ class StudentRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mLastNameView: TextView = mView.name
+        val mLastNameView: TextView = mView.lastName
         val mFirstNameView: TextView = mView.firstName
         val mCode: TextView = mView.code
     }

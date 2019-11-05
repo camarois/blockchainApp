@@ -24,7 +24,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://192.168.0.2:10000"
+                serverUrl = "https://10.200.3.110:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
@@ -51,7 +51,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun postTransactionAsync(request: TransactionRequest): String {
-        return postAsync("/transaction", request, String::class.java)
+        return postAsync("transaction", request, String::class.java)
     }
 
     suspend fun getAsync(url: String): String {

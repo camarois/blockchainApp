@@ -9,7 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -92,8 +92,8 @@ class GradedStudentRecyclerViewAdapter(
     }
 
     inner class GradedStudentViewHolder(mView: View) : ViewHolder(mView) {
-        private val mLastName: TextView = mView.name
-        private val mFirstName: TextView = mView.name
+        private val mLastName: TextView = mView.lastName
+        private val mFirstName: TextView = mView.firstName
         private val mCode: TextView = mView.code
         private val mGrade: TextView = mView.grade
         private val mPos: TextView = mView.position

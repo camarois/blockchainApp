@@ -11,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.R
+import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.search.SearchFragment
 import com.example.androidapp.services.RestRequestService
-import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
 import kotlinx.coroutines.CoroutineScope

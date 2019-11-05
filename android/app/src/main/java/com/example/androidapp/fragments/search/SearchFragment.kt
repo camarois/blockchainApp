@@ -10,10 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
+import com.example.androidapp.StudentItem
 import com.example.androidapp.ui.fragments.search.StudentRecyclerViewAdapter
 
 import com.example.androidapp.ui.fragments.search.student.StudentContent
-import com.example.androidapp.ui.fragments.search.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 
 /**
