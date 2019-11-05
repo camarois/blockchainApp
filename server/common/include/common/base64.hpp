@@ -35,7 +35,7 @@ inline unsigned char byteToBase64(unsigned char c) {
   if (c == '/') {
     return slash;
   }
-  throw std::runtime_error("Byte value not in base64");
+  return std::string::npos;
 }
 
 inline std::string decode(const std::string& encodedString) {
