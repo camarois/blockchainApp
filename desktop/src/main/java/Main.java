@@ -11,13 +11,13 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        RestService.init();
+        RestService restService = RestService.getInstance();
         BorderPane borderPane = new BorderPane();
         Parent login = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
         );
         borderPane.setCenter(login);
-        primaryStage.setTitle("Admin manager");
+        primaryStage.setTitle("Administration Classbook");
         primaryStage.setScene(new Scene(borderPane, 600, 400));
         primaryStage.show();
     }

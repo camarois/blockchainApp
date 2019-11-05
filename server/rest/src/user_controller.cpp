@@ -15,7 +15,7 @@ UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router
 void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&UserController::handleLogin, this), false);
   router->post(kBasePath_ + "logout", Pistache::Rest::Routes::bind(&UserController::handleLogout, this));
-  router->post(kBasePath_ + "password", Pistache::Rest::Routes::bind(&UserController::handlePassword, this));
+  router->post(kBasePath_ + "motdepasse", Pistache::Rest::Routes::bind(&UserController::handlePassword, this));
   router->post(kBasePath_ + "register", Pistache::Rest::Routes::bind(&UserController::handleRegister, this), false);
 }
 
@@ -39,8 +39,19 @@ void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pi
 }
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::PasswordRequest loginRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
+  Common::Database db(FLAGS_db);
+  std::string authHeader = request.headers().getRaw("Authorization").value();
+  std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
+  Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
+
+  auto salt = db.getSalt(loginRequest.username);
+  if (salt && db.containsUser(loginRequest, salt.value())) {
+    db.setUserPassword(loginRequest.username, passwordRequest, salt.value());
+    response.send(Pistache::Http::Code::Ok);
+  } else {
+    response.send(Pistache::Http::Code::Forbidden);
+  }
 }
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
