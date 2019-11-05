@@ -73,25 +73,25 @@ public class RestService {
     public static Future postLoginAsync(LoginRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = postRequest( "admin/login", request);
+                String resp = postRequest("admin/login", request);
                 return gson.fromJson(resp, LoginResponse.class);
             });
     }
 
     public Future postLogoutAsync() {
         return callRequestAsync(
-            () -> postRequest( "admin/logout", null));
+            () -> postRequest("admin/logout", null));
     }
 
     public static Future postChangePasswordAsync(PasswordRequest request) {
         return callRequestAsync(
-            () -> postRequest( "admin/motdepasse", request));
+            () -> postRequest("admin/motdepasse", request));
     }
 
     public static Future getChaineAsync(ChaineRequest request, Integer miner) {
         return callRequestAsync(
             () -> {
-                String resp = postRequest( "admin/chaine/" + miner, request);
+                String resp = postRequest("admin/chaine/" + miner, request);
                 return gson.fromJson(resp, JsonObject.class);
             });
     }
@@ -100,7 +100,7 @@ public class RestService {
             throws ExecutionException, InterruptedException {
         return (LogsResponse) callRequestAsync(
             () -> {
-                String resp = postRequest( "admin/logs/" + origin, request);
+                String resp = postRequest("admin/logs/" + origin, request);
                 LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
                 logsResponse.logs.forEach((log) -> log.setProvenance(origin));
                 return logsResponse;
@@ -110,7 +110,7 @@ public class RestService {
     public static Future postLogsAsync(String origin, LogsRequest request) {
         return callRequestAsync(
             () -> {
-                String resp = postRequest( "admin/logs/" + origin, request);
+                String resp = postRequest("admin/logs/" + origin, request);
                 LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
                 logsResponse.logs.forEach((log) -> log.setProvenance(origin));
                 return logsResponse;
