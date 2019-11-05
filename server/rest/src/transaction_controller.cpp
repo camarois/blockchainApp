@@ -6,6 +6,7 @@
 #include <fstream>
 #include <gflags/gflags.h>
 #include <rest/transaction_controller.hpp>
+#include <iostream>
 
 DECLARE_string(db);
 DECLARE_string(transactions);
@@ -20,7 +21,9 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
+  std::cout << "START HANDLING" << std::endl;
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
+  std::cout << "resquest built" << std::endl;
   Common::Database db(FLAGS_db);
   std::optional<int> classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
   if (classId) {

@@ -38,6 +38,6 @@ object StudentContent {
 
     private fun createStudentItem(position: Int): StudentItem {
         return StudentItem(position.toString(),
-            "Prenom Nom $position", BASE_STUDENT_CODE + position)
+            "Nom $position", "Prenom $position", BASE_STUDENT_CODE + position)
     }
 }

@@ -20,7 +20,7 @@ data class PasswordRequest(
 data class TransactionRequest(
     @SerializedName("sigle") val classCode: String,
     @SerializedName("nom") val className: String,
-    @SerializedName("trimestre") val trimester: String,
+    @SerializedName("trimestre") val trimester: Number,
     @SerializedName("resultats") val results: List<StudentItem>, // todo - figure it out
     @SerializedName("pdf") val pdf: String
 )
