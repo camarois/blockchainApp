@@ -12,9 +12,11 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment
-import com.example.androidapp.fragments.search.SearchFragment
+import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
+import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
+import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.RestRequestService
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +26,11 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
+class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(course: CourseItem) {
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onListFragmentInteraction(student: StudentItem) {
         // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -47,7 +53,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchFragment.On
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_search, R.id.nav_settings, R.id.nav_register
+                R.id.nav_home, R.id.nav_search, R.id.nav_course_search, R.id.nav_settings, R.id.nav_register
             ), sidePanelDrawerLayout
         )
 
