@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include <common/message_helper.hpp>
-#include <common/models.hpp>
 #include <common/miner_models.hpp>
+#include <common/models.hpp>
 #include <miner/zmq.hpp>
 
 namespace Miner {
@@ -55,8 +55,8 @@ void ZMQWorker::tryConnect(zmq::socket_t& socket, const std::string& address) {
 
 void ZMQWorker::subServer() {
   std::cout << "ZMQ/server: thread started" << std::endl;
-  tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(5555));
-  tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(5556));
+  tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port));
+  tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
 
   while (running_) {
@@ -85,8 +85,8 @@ void ZMQWorker::subServer() {
 
 void ZMQWorker::subBlockchain() {
   std::cout << "ZMQ/blockchain: thread started" << std::endl;
-  tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(5557));
-  tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(5558));
+  tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port));
+  tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port));
   std::cout << "ZMQ/blockchain: connected to sub/pub sockets" << std::endl;
 
   while (running_) {
@@ -114,7 +114,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
   zmq::message_t msg = Common::MessageHelper::fromModel(message);
   try {
     socketPushServer_.send(msg, zmq::send_flags::none);
-  } catch(const zmq::error_t& e) {
+  } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/server: failed to send message" << std::endl;
   }
 }

@@ -16,10 +16,16 @@ class ZMQWorker {
 
   bool start();
   void join();
-
   std::string getRequest(const std::string& sql);
   void updateRequest(const std::string& sql);
+  
  private:
+  void pullFromMiner();
+  void proxyBlockchain();
+  bool sendRequest(const std::string& json);
+  void receivedResponse(const std::string& token, const std::string& response);
+  std::future<std::string> createGetRequest(const std::string& sql);
+
   bool running_;
   const std::string serverHostname_;
   zmq::context_t context_;
@@ -31,11 +37,10 @@ class ZMQWorker {
   std::thread threadProxyBlockchain_;
   std::unordered_map<std::string, std::promise<std::string>> getRequests_;
 
-  void pullFromMiner();
-  void proxyBlockchain();
-  bool sendRequest(const std::string& json);
-  void receivedResponse(const std::string& token, const std::string& response);
-  std::future<std::string> createGetRequest(const std::string& sql);
+  const int kMiner1Port = 5555;
+  const int kMiner2Port = 5556;
+  const int kMiner3Port = 5557;
+  const int kMiner4Port = 5558;
 };
 
 } // namespace Rest

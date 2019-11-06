@@ -121,7 +121,7 @@ ExternalProject_Add(libstduuid
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
-                 && cp -rv ${CMAKE_BINARY_DIR}/libstduuid/src/libstduuid/include/
+                 && cp -n -rv ${CMAKE_BINARY_DIR}/libstduuid/src/libstduuid/include/
                            ${CMAKE_BINARY_DIR}/externals/
     PREFIX libstduuid
 )

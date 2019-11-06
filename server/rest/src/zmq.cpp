@@ -1,12 +1,12 @@
 #include <cerrno>
 #include <chrono>
-#include <set>
 #include <iostream>
+#include <set>
 #include <uuid.h>
 
 #include <common/message_helper.hpp>
-#include <common/models.hpp>
 #include <common/miner_models.hpp>
+#include <common/models.hpp>
 #include <rest/zmq.hpp>
 
 namespace Rest {
@@ -22,10 +22,10 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname)
 
 bool ZMQWorker::start() {
   try {
-    socketPubToMiner_.bind(serverHostname_ + ":" + std::to_string(5555));
-    socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(5556));
-    socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(5557));
-    socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(5558));
+    socketPubToMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner1Port));
+    socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port));
+    socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port));
+    socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port));
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ: failed to bind socket: " << e.what() << std::endl;
     return false;
