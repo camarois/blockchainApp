@@ -46,21 +46,36 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
   return {};
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt) {
+bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
   Query query = Query(
       "SELECT username FROM users "
-      "WHERE username = '%q' AND password = '%q';",
-      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str(),
+      std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
-void Database::addUser(const Common::Models::LoginRequest& user) {
+void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
-      "INSERT OR REPLACE INTO users (username, password, salt) "
-      "VALUES ('%q', '%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str());
+      "INSERT OR REPLACE INTO users "
+      "(username, password, salt, isAdmin) "
+      "VALUES ('%q', '%q', '%q', '%q');",
+      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str(),
+      std::to_string(int(isAdmin)).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwords,
+                               const std::string& salt, bool isAdmin) {
+  Query query = Query(
+      "UPDATE users "
+      "SET password = '%q' "
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      Common::FormatHelper::hash(passwords.newPwd + salt).c_str(), username.c_str(),
+      Common::FormatHelper::hash(passwords.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -108,10 +123,33 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",
-      std::to_string(logId).c_str(), std::to_string(severity).c_str(), std::to_string(provenance).c_str(), log.c_str(),
-      time.c_str(), std::to_string(logSessionId).c_str());
+      std::to_string(logId).c_str(), std::to_string(severity).c_str(), time.c_str(), std::to_string(provenance).c_str(),
+      log.c_str(), std::to_string(logSessionId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
+}
+
+std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
+  Query query = lastLogId ? Query(
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE logId > '%q' AND provenance = '%q'"
+                                "ORDER BY logTime ASC;",
+                                std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
+                          : Query(
+                                "SELECT * FROM ("
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE provenance = '%q'"
+                                "ORDER BY logId DESC LIMIT 20) "
+                                "ORDER BY logTime ASC;",
+                                std::to_string(provenance).c_str());
+  Statement statement = Statement(db_, query);
+
+  std::vector<Common::Models::Information> logs;
+  while (statement.step()) {
+    logs.push_back({std::stoi(statement.getColumnText(0)), statement.getColumnText(1), statement.getColumnText(2),
+                    statement.getColumnText(3)});
+  }
+  return logs;
 }
 
 std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
