@@ -8,6 +8,7 @@
 
 namespace Miner {
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
@@ -27,8 +28,8 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
-  threadServer_ = std::thread(&ZMQWorker::subServer, this);
-  threadBlockchain_ = std::thread(&ZMQWorker::subBlockchain, this);
+  threadServer_ = std::thread(&ZMQWorker::handleSubServer, this);
+  threadBlockchain_ = std::thread(&ZMQWorker::handleSubBlockchain, this);
 
   return true;
 }
@@ -53,7 +54,7 @@ void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const s
   }
 }
 
-void ZMQWorker::subServer() {
+void ZMQWorker::handleSubServer() {
   std::cout << "ZMQ/server: thread started" << std::endl;
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
@@ -83,7 +84,7 @@ void ZMQWorker::subServer() {
   }
 }
 
-void ZMQWorker::subBlockchain() {
+void ZMQWorker::handleSubBlockchain() {
   std::cout << "ZMQ/blockchain: thread started" << std::endl;
   tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port_));
   tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port_));
@@ -94,22 +95,24 @@ void ZMQWorker::subBlockchain() {
     std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
     if (!len) {
       std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
-      continue;
+    } else {
+      Common::Models::ZMQMessage zmqMsg = Common::MessageHelper::toJSON(msg);
+      // TODO(gabriel): handle blockchain message
+      std::cout << "TODO: " << Common::MessageHelper::toJSON(msg) << std::endl;
     }
-
-    Common::Models::ZMQMessage zmqMsg = Common::MessageHelper::toJSON(msg);
-    // TODO(gabriel): handle blockchain message
   }
 }
 
 void ZMQWorker::sendResponse(const std::string& token, const std::string& result) {
-  Common::Models::ServerResponse response;
-  response.token = token;
-  response.result = result;
+  Common::Models::ServerResponse response = {
+    .token = token,
+    .result = result,
+  };
 
-  Common::Models::ZMQMessage message;
-  message.type = Common::Models::kTypeServerResponse;
-  message.data = Common::Models::toStr(response);
+  Common::Models::ZMQMessage message = {
+    .type = Common::Models::kTypeServerResponse,
+    .data = Common::Models::toStr(response),
+  };
 
   zmq::message_t msg = Common::MessageHelper::fromModel(message);
   try {

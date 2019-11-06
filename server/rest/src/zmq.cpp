@@ -11,6 +11,7 @@
 
 namespace Rest {
 
+// NOLINTNEXTLINE(modernize-pass-by-value)
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
@@ -32,8 +33,8 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
-  threadPullFromMiner_ = std::thread(&ZMQWorker::pullFromMiner, this);
-  threadProxyBlockchain_ = std::thread(&ZMQWorker::proxyBlockchain, this);
+  threadPullFromMiner_ = std::thread(&ZMQWorker::handlePullFromMiner, this);
+  threadProxyBlockchain_ = std::thread(&ZMQWorker::handleProxyBlockchain, this);
 
   return true;
 }
@@ -59,7 +60,7 @@ void ZMQWorker::updateRequest(const std::string& sql) {
   sendRequest(messageJSON.dump());
 }
 
-void ZMQWorker::pullFromMiner() {
+void ZMQWorker::handlePullFromMiner() {
   std::cout << "ZMQ/miners: thread started" << std::endl;
 
   while (running_) {
@@ -79,7 +80,7 @@ void ZMQWorker::pullFromMiner() {
   }
 }
 
-void ZMQWorker::proxyBlockchain() {
+void ZMQWorker::handleProxyBlockchain() {
   std::cout << "ZMQ/proxy: thread started" << std::endl;
 
   try {

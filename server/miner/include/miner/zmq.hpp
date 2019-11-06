@@ -11,6 +11,7 @@ namespace Miner {
 
 class ZMQWorker {
  public:
+  // NOLINTNEXTLINE(google-runtime-references)
   explicit ZMQWorker(const std::string& serverHostname, BlockChain& blockchain);
 
   bool start();
@@ -18,8 +19,8 @@ class ZMQWorker {
 
  private:
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
-  void subServer();
-  void subBlockchain();
+  void handleSubServer();
+  void handleSubBlockchain();
   void sendResponse(const std::string& token, const std::string& result);
   
   bool running_;
