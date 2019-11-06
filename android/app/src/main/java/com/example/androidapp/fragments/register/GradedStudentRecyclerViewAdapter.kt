@@ -92,17 +92,15 @@ class GradedStudentRecyclerViewAdapter(
     }
 
     inner class GradedStudentViewHolder(mView: View) : ViewHolder(mView) {
-        private val mLastName: TextView = mView.lastName
-        private val mFirstName: TextView = mView.firstName
+        private val mName: TextView = mView.name
         private val mCode: TextView = mView.code
         private val mGrade: TextView = mView.grade
         private val mPos: TextView = mView.position
 
         fun bind(item: StudentItem, position: Int) {
-            mLastName.text = item.lastName
-            mFirstName.text = item.firstName
-            mCode.text = item.code.toString()
-            mGrade.text = item.grade.toString()
+            mName.text = "${item.firstName} ${item.lastName}"
+            mCode.text = item.code
+            mGrade.text = item.grade
             mPos.text = (position + 1).toString()
         }
     }
