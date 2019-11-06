@@ -122,10 +122,10 @@ class RegisterFragment : Fragment() {
 
     private fun createStudent() {
         val studentLastName = lastName.text.toString()
-        val studentfirstName = firstName.text.toString()
+        val studentFirstName = firstName.text.toString()
         val studentCode = code.text.toString()
         val studentGrade = grade.text.toString()
-        if (studentLastName.isNotEmpty() && studentfirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
+        if (studentLastName.isNotEmpty() && studentFirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
             registeredStudents.add(registeredStudents.size, StudentItem( lastName.text.toString(), firstName.text.toString(), code.text.toString(), grade.text.toString()))
             list.adapter?.notifyItemInserted(registeredStudents.size - 1)
             list.smoothScrollToPosition(registeredStudents.size - 1)
