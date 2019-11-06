@@ -132,17 +132,17 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
 
 std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
   Query query = lastLogId != 0 ? Query(
-                                "SELECT logId, severity, logTime, log FROM logs "
-                                "WHERE logId > '%q' AND provenance = '%q'"
-                                "ORDER BY logTime ASC;",
-                                std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
-                          : Query(
-                                "SELECT * FROM ("
-                                "SELECT logId, severity, logTime, log FROM logs "
-                                "WHERE provenance = '%q'"
-                                "ORDER BY logId DESC LIMIT 20) "
-                                "ORDER BY logTime ASC;",
-                                std::to_string(provenance).c_str());
+                                     "SELECT logId, severity, logTime, log FROM logs "
+                                     "WHERE logId > '%q' AND provenance = '%q'"
+                                     "ORDER BY logTime ASC;",
+                                     std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
+                               : Query(
+                                     "SELECT * FROM ("
+                                     "SELECT logId, severity, logTime, log FROM logs "
+                                     "WHERE provenance = '%q'"
+                                     "ORDER BY logId DESC LIMIT 20) "
+                                     "ORDER BY logTime ASC;",
+                                     std::to_string(provenance).c_str());
   Statement statement = Statement(db_, query);
 
   std::vector<Common::Models::Information> logs;
@@ -160,8 +160,8 @@ std::optional<int> Database::checkForExistingClass(const std::string& acronym, i
       "LIMIT 1;",
       acronym.c_str(), std::to_string(trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
-  if (statementCheck.step()){
-    return std::stoi(statementCheck.getColumnText(0));    
+  if (statementCheck.step()) {
+    return std::stoi(statementCheck.getColumnText(0));
   }
 
   return {};
@@ -247,41 +247,34 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(
   return studentResult;
 }
 
-  std::vector<Common::Models::ClassInfo> Database::getClasses() {
-    Query getClassesQuery = Query(
+std::vector<Common::Models::ClassInfo> Database::getClasses() {
+  Query getClassesQuery = Query(
       "SELECT DISTINCT acronym, name, trimester "
-      "FROM classes;"
-    );
-    std::cout << getClassesQuery.val() << std::endl;
-    Statement getClassesStatement = Statement(db_, getClassesQuery);
-    std::vector<Common::Models::ClassInfo> result;
-    while (getClassesStatement.step()){
-      result.push_back({
-        .acronym = getClassesStatement.getColumnText(0),
-        .name = getClassesStatement.getColumnText(1),
-        .trimester = std::stoi(getClassesStatement.getColumnText(2))
-      });
-    }
-    return result;
+      "FROM classes;");
+  std::cout << getClassesQuery.val() << std::endl;
+  Statement getClassesStatement = Statement(db_, getClassesQuery);
+  std::vector<Common::Models::ClassInfo> result;
+  while (getClassesStatement.step()) {
+    result.push_back({.acronym = getClassesStatement.getColumnText(0),
+                      .name = getClassesStatement.getColumnText(1),
+                      .trimester = std::stoi(getClassesStatement.getColumnText(2))});
   }
+  return result;
+}
 
-  std::vector<Common::Models::StudentInfo> Database::getStudents() {
-    Query getStudentQuery = Query(
+std::vector<Common::Models::StudentInfo> Database::getStudents() {
+  Query getStudentQuery = Query(
       "SELECT DISTINCT firstName, lastName, id "
-      "FROM results;"
-    );
-    std::cout << getStudentQuery.val() << std::endl;
-    Statement getStudentStatement = Statement(db_, getStudentQuery);
-    std::vector<Common::Models::StudentInfo> result;
-    while (getStudentStatement.step()){
-      result.push_back({
-        .lastName = getStudentStatement.getColumnText(0),
-        .firstName = getStudentStatement.getColumnText(1),
-        .id = getStudentStatement.getColumnText(2)
-      });
-    }
-    return result;
+      "FROM results;");
+  std::cout << getStudentQuery.val() << std::endl;
+  Statement getStudentStatement = Statement(db_, getStudentQuery);
+  std::vector<Common::Models::StudentInfo> result;
+  while (getStudentStatement.step()) {
+    result.push_back({.lastName = getStudentStatement.getColumnText(0),
+                      .firstName = getStudentStatement.getColumnText(1),
+                      .id = getStudentStatement.getColumnText(2)});
   }
-
+  return result;
+}
 
 }  // namespace Common
