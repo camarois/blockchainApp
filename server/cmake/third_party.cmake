@@ -115,3 +115,13 @@ ExternalProject_Add(libpicosha2
     PREFIX libpicosha2
     UPDATE_DISCONNECTED ON
 )
+
+ExternalProject_Add(libstduuid
+    GIT_REPOSITORY https://github.com/mariusbancila/stduuid.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include
+                 && cp -rv ${CMAKE_BINARY_DIR}/libstduuid/src/libstduuid/include/
+                           ${CMAKE_BINARY_DIR}/externals/
+    PREFIX libstduuid
+)
