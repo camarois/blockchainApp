@@ -58,7 +58,6 @@ bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, co
 
 void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
   auto salt = Common::FormatHelper::randomStr();
-  std::cout << salt << std::endl;
   Query query = Query(
       "INSERT OR REPLACE INTO users "
       "(username, password, salt, isAdmin) "

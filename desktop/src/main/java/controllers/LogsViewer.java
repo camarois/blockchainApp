@@ -28,7 +28,8 @@ public class LogsViewer {
                 try {
                     LogsRequest request =  logsList.isEmpty() ? new LogsRequest(0) :
                             new LogsRequest(logsList.stream().mapToInt(LogsResponse.Log::getNumber).max().getAsInt());
-                    LogsResponse logsResponse = RestService.postLogs("serveurweb", request);
+                    LogsResponse logsResponse = RestService.postRequest(RestService.urls.getLogs() + "serveurweb",
+                            request, LogsResponse.class);
                     logsList.addAll(logsResponse.logs);
                 } catch (Exception e) {
                     e.printStackTrace();
