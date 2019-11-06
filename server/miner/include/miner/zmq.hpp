@@ -17,7 +17,7 @@ class ZMQWorker {
   void join();
 
  private:
-  void tryConnect(zmq::socket_t& socket, const std::string& address);
+  void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
   void subServer();
   void subBlockchain();
   void sendResponse(const std::string& token, const std::string& result);
@@ -25,10 +25,10 @@ class ZMQWorker {
   bool running_;
   const std::string serverHostname_;
   zmq::context_t context_;
-  zmq::socket_t socketSubServer_;
-  zmq::socket_t socketPushServer_;
-  zmq::socket_t socketPubBlockchain_;
-  zmq::socket_t socketSubBlockchain_;
+  std::unique_ptr<zmq::socket_t> socketSubServer_;
+  std::unique_ptr<zmq::socket_t> socketPushServer_;
+  std::unique_ptr<zmq::socket_t> socketPubBlockchain_;
+  std::unique_ptr<zmq::socket_t> socketSubBlockchain_;
   std::thread threadServer_;
   std::thread threadBlockchain_;
   BlockChain blockchain_;

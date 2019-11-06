@@ -12,15 +12,15 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
     : running_(false),
       serverHostname_(std::move(serverHostname)),
       context_(1),
-      socketSubServer_(context_, zmq::socket_type::sub),
-      socketPushServer_(context_, zmq::socket_type::push),
-      socketPubBlockchain_(context_, zmq::socket_type::pub),
-      socketSubBlockchain_(context_, zmq::socket_type::sub),
+      socketSubServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
+      socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
+      socketPubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::pub)),
+      socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       blockchain_(blockchain) {}
 
 bool ZMQWorker::start() {
   try {
-    socketSubServer_.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    socketSubServer_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/setsockopt: " << e.what() << std::endl;
     return false;
@@ -39,11 +39,10 @@ void ZMQWorker::join() {
   threadBlockchain_.join();
 }
 
-void ZMQWorker::tryConnect(zmq::socket_t& socket, const std::string& address) {
+void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address) {
   while (running_) {
     try {
-      std::cout << "lol " << address << " lol" << std::endl;
-      socket.connect(address);
+      socket->connect(address);
     } catch (const zmq::error_t& e) {
       std::cerr << "ZMQ: failed to connect to " << address << ": " << e.what() << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -62,7 +61,7 @@ void ZMQWorker::subServer() {
 
   while (running_) {
     zmq::message_t msg;
-    std::optional<size_t> len = socketSubServer_.recv(msg, zmq::recv_flags::none);
+    std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
     if (!len) {
       std::cerr << "ZMQ/server: failed to receive message" << std::endl;
       continue;
@@ -92,7 +91,7 @@ void ZMQWorker::subBlockchain() {
 
   while (running_) {
     zmq::message_t msg;
-    std::optional<size_t> len = socketSubBlockchain_.recv(msg, zmq::recv_flags::none);
+    std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
     if (!len) {
       std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
       continue;
@@ -114,7 +113,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
 
   zmq::message_t msg = Common::MessageHelper::fromModel(message);
   try {
-    socketPushServer_.send(msg, zmq::send_flags::none);
+    socketPushServer_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/server: failed to send message" << std::endl;
   }

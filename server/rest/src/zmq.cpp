@@ -46,7 +46,7 @@ void ZMQWorker::join() {
 
 std::string ZMQWorker::getRequest(const std::string& sql) {
   std::future<std::string> request = createGetRequest(sql);
-  request.wait_for(std::chrono::seconds(5));
+  request.wait_for(std::chrono::seconds(kWaitTimeout_));
   return request.get();
 }
 
