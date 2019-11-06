@@ -19,8 +19,18 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       blockchain_(blockchain) {}
 
+ZMQWorker::~ZMQWorker() {
+  join();
+}
+
 bool ZMQWorker::start() {
   try {
+    const int linger = 1000;
+    socketSubServer_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketSubServer_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketSubServer_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketSubServer_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+
     socketSubServer_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/setsockopt: " << e.what() << std::endl;
@@ -36,6 +46,11 @@ bool ZMQWorker::start() {
 
 void ZMQWorker::join() {
   running_ = false;
+  socketSubServer_->close();
+  socketPushServer_->close();
+  socketPubBlockchain_->close();
+  socketSubBlockchain_->close();
+  context_.close();
   threadServer_.join();
   threadBlockchain_.join();
 }
@@ -61,25 +76,29 @@ void ZMQWorker::handleSubServer() {
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
 
   while (running_) {
-    zmq::message_t msg;
-    std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
-    if (!len) {
-      std::cerr << "ZMQ/server: failed to receive message" << std::endl;
-      continue;
-    }
+    try {
+      zmq::message_t msg;
+      std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
+      if (!len) {
+        std::cerr << "ZMQ/server: failed to receive message" << std::endl;
+        continue;
+      }
 
-    Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
+      Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
-    if (received.type == Common::Models::kTypeServerRequest) {
-      Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-      // TODO(gabriel): database request
-      sendResponse(request.token, request.command);
-    } else if (received.type == Common::Models::kTypeTransaction) {
-      std::cout << received.data << std::endl;
-      blockchain_.appendTransaction(received.data);
-      blockchain_.nextBlock();
-      blockchain_.saveAll();
-      // TODO(gabriel): update database
+      if (received.type == Common::Models::kTypeServerRequest) {
+        Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
+        // TODO(gabriel): database request
+        sendResponse(request.token, request.command);
+      } else if (received.type == Common::Models::kTypeTransaction) {
+        std::cout << received.data << std::endl;
+        blockchain_.appendTransaction(received.data);
+        blockchain_.nextBlock();
+        blockchain_.saveAll();
+        // TODO(gabriel): update database
+      }
+    } catch (const std::exception& e) {
+      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
     }
   }
 }
@@ -91,27 +110,31 @@ void ZMQWorker::handleSubBlockchain() {
   std::cout << "ZMQ/blockchain: connected to sub/pub sockets" << std::endl;
 
   while (running_) {
-    zmq::message_t msg;
-    std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
-    if (!len) {
-      std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
-    } else {
-      Common::Models::ZMQMessage zmqMsg = Common::MessageHelper::toJSON(msg);
-      // TODO(gabriel): handle blockchain message
-      std::cout << "TODO: " << Common::MessageHelper::toJSON(msg) << std::endl;
+    try {
+      zmq::message_t msg;
+      std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
+      if (!len) {
+        std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
+      } else {
+        Common::Models::ZMQMessage zmqMsg = Common::MessageHelper::toJSON(msg);
+        // TODO(gabriel): handle blockchain message
+        std::cout << "TODO: " << Common::MessageHelper::toJSON(msg) << std::endl;
+      }
+    } catch (const std::exception& e) {
+      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
     }
   }
 }
 
 void ZMQWorker::sendResponse(const std::string& token, const std::string& result) {
   Common::Models::ServerResponse response = {
-    .token = token,
-    .result = result,
+      .token = token,
+      .result = result,
   };
 
   Common::Models::ZMQMessage message = {
-    .type = Common::Models::kTypeServerResponse,
-    .data = Common::Models::toStr(response),
+      .type = Common::Models::kTypeServerResponse,
+      .data = Common::Models::toStr(response),
   };
 
   zmq::message_t msg = Common::MessageHelper::fromModel(message);

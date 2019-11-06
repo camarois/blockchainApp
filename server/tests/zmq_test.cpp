@@ -22,9 +22,9 @@ TEST(ZMQ, connects) {
 
   std::this_thread::sleep_for(std::chrono::seconds(1));
 
-  rest.getRequest("test-get");
   rest.updateRequest("test-update 1");
   rest.updateRequest("test-update 2");
   rest.updateRequest("test-update 3");
   rest.updateRequest("test-update 4");
+  rest.getRequest("test-get");
 }

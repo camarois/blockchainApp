@@ -21,8 +21,18 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname)
       socketXPubBlockchain_(context_, zmq::socket_type::xpub),
       socketXSubBlockchain_(context_, zmq::socket_type::xsub) {}
 
+ZMQWorker::~ZMQWorker() {
+  join();
+}
+
 bool ZMQWorker::start() {
   try {
+    const int linger = 1000;
+    socketPubToMiner_.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketPullFromMiner_.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketXPubBlockchain_.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+    socketXSubBlockchain_.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+
     socketPubToMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner1Port_));
     socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port_));
     socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port_));
@@ -41,6 +51,11 @@ bool ZMQWorker::start() {
 
 void ZMQWorker::join() {
   running_ = false;
+  socketPubToMiner_.close();
+  socketPullFromMiner_.close();
+  socketXPubBlockchain_.close();
+  socketXSubBlockchain_.close();
+  context_.close();
   threadPullFromMiner_.join();
   threadProxyBlockchain_.join();
 }
@@ -64,18 +79,22 @@ void ZMQWorker::handlePullFromMiner() {
   std::cout << "ZMQ/miners: thread started" << std::endl;
 
   while (running_) {
-    zmq::message_t msg;
-    std::optional<size_t> len = socketPullFromMiner_.recv(msg, zmq::recv_flags::none);
-    if (!len) {
-      std::cerr << "ZMQ/miners: failed to pull message" << std::endl;
-      continue;
-    }
+    try {
+      zmq::message_t msg;
+      std::optional<size_t> len = socketPullFromMiner_.recv(msg, zmq::recv_flags::none);
+      if (!len) {
+        std::cerr << "ZMQ/miners: failed to pull message" << std::endl;
+        continue;
+      }
 
-    auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
+      auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
 
-    if (message.type == Common::Models::kTypeServerResponse) {
-      auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
-      receivedResponse(response.token, response.result);
+      if (message.type == Common::Models::kTypeServerResponse) {
+        auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
+        receivedResponse(response.token, response.result);
+      }
+    } catch (const std::exception& e) {
+      std::cerr << "ZMQ/miners: " << e.what() << std::endl;
     }
   }
 }

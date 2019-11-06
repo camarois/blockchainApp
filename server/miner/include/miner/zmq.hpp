@@ -13,11 +13,12 @@ class ZMQWorker {
  public:
   // NOLINTNEXTLINE(google-runtime-references)
   explicit ZMQWorker(const std::string& serverHostname, BlockChain& blockchain);
+  ~ZMQWorker();
 
   bool start();
-  void join();
 
  private:
+  void join();
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
   void handleSubServer();
   void handleSubBlockchain();

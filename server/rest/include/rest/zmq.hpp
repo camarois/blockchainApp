@@ -13,13 +13,14 @@ namespace Rest {
 class ZMQWorker {
  public:
   explicit ZMQWorker(const std::string& serverHostname);
+  ~ZMQWorker();
 
   bool start();
-  void join();
   std::string getRequest(const std::string& sql);
   void updateRequest(const std::string& sql);
   
  private:
+  void join();
   void handlePullFromMiner();
   void handleProxyBlockchain();
   bool sendRequest(const std::string& json);
