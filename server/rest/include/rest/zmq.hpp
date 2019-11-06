@@ -27,7 +27,7 @@ class ZMQWorker {
   std::future<std::string> createGetRequest(const std::string& sql);
 
   bool running_;
-  const std::string& serverHostname_;
+  const std::string serverHostname_;
   zmq::context_t context_;
   zmq::socket_t socketPubToMiner_;
   zmq::socket_t socketPullFromMiner_;

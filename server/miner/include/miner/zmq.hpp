@@ -23,7 +23,7 @@ class ZMQWorker {
   void sendResponse(const std::string& token, const std::string& result);
   
   bool running_;
-  const std::string& serverHostname_;
+  const std::string serverHostname_;
   zmq::context_t context_;
   zmq::socket_t socketSubServer_;
   zmq::socket_t socketPushServer_;

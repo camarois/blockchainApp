@@ -10,7 +10,7 @@ namespace Miner {
 
 ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
     : running_(false),
-      serverHostname_(serverHostname),
+      serverHostname_(std::move(serverHostname)),
       context_(1),
       socketSubServer_(context_, zmq::socket_type::sub),
       socketPushServer_(context_, zmq::socket_type::push),
@@ -42,6 +42,7 @@ void ZMQWorker::join() {
 void ZMQWorker::tryConnect(zmq::socket_t& socket, const std::string& address) {
   while (running_) {
     try {
+      std::cout << "lol " << address << " lol" << std::endl;
       socket.connect(address);
     } catch (const zmq::error_t& e) {
       std::cerr << "ZMQ: failed to connect to " << address << ": " << e.what() << std::endl;
