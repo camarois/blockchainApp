@@ -14,6 +14,7 @@ import com.example.androidapp.CourseRequest
 
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
+import com.example.androidapp.StudentRequest
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
@@ -34,7 +35,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
             val transaction = supportFragmentManager.beginTransaction()
-            // TODO Link response to detailed student fragment
             val response = restService.postCourseInfoAsync(CourseRequest("inf3995", 1))
             val frag = DetailedCourseFragment(course, response.students)
             transaction.replace(R.id.course_list_fragment, frag)
@@ -46,8 +46,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override fun onListFragmentInteraction(student: StudentItem) {
         launch {
             val transaction = supportFragmentManager.beginTransaction()
-            // TODO Link response to detailed student fragment
-            // val response = restService.postStudentInfoAsync(StudentRequest("*", "*", student.code.toString()))
+            val response = restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
             val frag = DetailedStudentFragment(student, listOf())
             transaction.replace(R.id.student_list_fragment, frag)
             transaction.addToBackStack(null)
