@@ -12,6 +12,9 @@ InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router
 void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "cours", Pistache::Rest::Routes::bind(&InfoController::handleClasses, this));
   router->post(kBasePath_ + "etudiant", Pistache::Rest::Routes::bind(&InfoController::handleStudents, this));
+  router->get(kBasePath_ + "listeEtudiant", Pistache::Rest::Routes::bind(&InfoController::handleListStudents, this));
+  router->get(kBasePath_ + "listeCours", Pistache::Rest::Routes::bind(&InfoController::handleListClasses, this));
+
 }
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -35,5 +38,15 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
   }
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result.value()));
 }
+
+void InfoController::handleListStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result.value()));
+ 
+}
+
+void InfoController::handleListClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+
+}
+
 
 }  // namespace Rest

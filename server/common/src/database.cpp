@@ -236,4 +236,40 @@ std::optional<Common::Models::Result> Database::getStudentResult(int classId, co
 
   return result;
 }
+
+  std::vector<Common::Models::CLassInfo> Database::getClasses() {
+    Query getClassesQuery = Query(
+      "SELECT DISTINC acronym, name, trimester"
+      "FROM classes;"
+    );
+    Statement getClassesStatement = Statement(db_, getClassesQuery);
+    std::vector<Common::Models::ClassInfo> result;
+    while (getClassesStatement.step()){
+      result.push_back({
+        .acronym = getClassesStatement.getColumnText(0),
+        .name = getClassesStatement.getColumnText(1),
+        .trimester = stoi(getResultStatement.getColumnText(2))
+      });
+    }
+    return result;
+  }
+
+  std::vector<Common::Models::StudentInfo> Database::getStudents() {
+    Query getStudentQuery = Query(
+      "SELECT DISTINC firstName, lastName, id"
+      "FROM result;"
+    );
+    Statement getStudentStatement = Statement(db_, getStudentQuery);
+    std::vector<Common::Models::StudentInfo> result;
+    while (getStudentStatement.step()){
+      result.push_back({
+        .lastName = getClassesStatement.getColumnText(0),
+        .firstName = getClassesStatement.getColumnText(1),
+        .id = stoi(getResultStatement.getColumnText(2))
+      });
+    }
+    return result;
+  }
+
+
 }  // namespace Common
