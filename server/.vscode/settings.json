@@ -55,6 +55,8 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "csignal": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp"
     }
 }

@@ -15,7 +15,7 @@ add_custom_target(deps_file
 )
 
 add_executable(rest ${SOURCE_FILES})
-add_dependencies(rest common libpistache deps_file)
+add_dependencies(rest common libpistache libstduuid deps_file)
 
 target_include_directories(rest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -29,6 +29,7 @@ target_link_libraries(rest PRIVATE
     ${EXTERNAL_LIBS_DIR}/libzmq.a
     ${EXTERNAL_LIBS_DIR}/libcurlpp.a
     curl
+    uuid
     ${OPENSSL_LIBRARIES}
     pthread
     sqlite3
