@@ -8,7 +8,11 @@ DECLARE_string(db);
 
 namespace Rest {
 
-AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) {
+  Common::Database db(FLAGS_db);
+  db.addUser({"admin", "equipe01"}, true);
+  setupRoutes(router);
+}
 
 void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this), false);
