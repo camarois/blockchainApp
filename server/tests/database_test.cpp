@@ -26,11 +26,11 @@ TEST(Sqlite3Tests, test_transaction) {
   Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193, expectedResults};
   std::optional<int> classId = db.checkForExistingClass(transaction.acronym, transaction.trimester);
   if (classId){
-    db.DeleteExistingClass(classId.value());
-    db.DeleteExistingResults(classId.value());
+    db.deleteExistingClass(classId.value());
+    db.deleteExistingResults(classId.value());
   }
-  int newClassId = db.AddNewClass(transaction);
-  db.AddNewResult(transaction, newClassId);
+  int newClassId = db.addNewClass(transaction);
+  db.addNewResult(transaction, newClassId);
 
   Common::Models::ClassesRequest classesRequest = {"inf3995", 20193};
   classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
