@@ -5,9 +5,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.androidapp.LoginRequest
-import com.example.androidapp.LoginResponse
-import com.example.androidapp.PasswordRequest
+import com.example.androidapp.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -23,7 +21,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://$it:10000"
+                serverUrl = "https://10.200.4.237:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
@@ -34,6 +32,18 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun getPingAsync(): String {
         return getAsync("ping")
+    }
+
+    suspend fun getCourseInfo(request: CourseRequest): CourseResponse {
+        return getAsync("info/cours", request, CourseResponse::class.java)
+    }
+
+    suspend fun getStudentInfo(request: StudentRequest): StudentResponse {
+        return getAsync("info/etudiant", request, StudentResponse::class.java)
+    }
+
+    suspend fun getFichierNotes(request: PdfFileRequest): String {
+        return getAsync("fichier/notes", request, String::class.java)
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
@@ -62,8 +72,8 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         }
     }
 
-    private suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
-        return baseRequestAsync(Request.Method.GET, url, "", classOfT)
+    private suspend fun <T> getAsync(url: String, data: Any, classOfT: Class<T>): T {
+        return baseRequestAsync(Request.Method.GET, url, data, classOfT)
     }
 
     private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {

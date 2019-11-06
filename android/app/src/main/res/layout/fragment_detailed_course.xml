@@ -15,14 +15,13 @@
         android:id="@+id/code"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_weight="3"
         android:gravity="center_vertical"
         android:hint="@string/sigle"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,23 +29,36 @@
         android:id="@+id/trimester"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="56dp"
         android:layout_weight="3"
         android:gravity="center_vertical"
         android:hint="@string/trimester_hint"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/viewPdfButton"
+        android:layout_width="83dp"
+        android:layout_height="116dp"
+        android:layout_weight="1"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitCenter"
+        android:tint="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.951"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_picture_as_pdf_black_24dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/students_list"
         android:name="com.example.androidapp.ui.fragments.searchCourse.DetailedCourseFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="45dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:layoutManager="LinearLayoutManager"
@@ -54,6 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/trimester"
+        app:layout_constraintVertical_bias="1.0"
         tools:context=".ui.fragments.searchCourse.DetailedCourseFragment"
         tools:listitem="@layout/fragment_course_result" />
 
