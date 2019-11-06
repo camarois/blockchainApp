@@ -7,12 +7,16 @@ stages:
 
 cache:
     paths:
+        - server/build/libcppjwt/**/*
         - server/build/libcppzmq/**/*
         - server/build/libcurlpp/**/*
         - server/build/libgflags/**/*
         - server/build/libgtest/**/*
         - server/build/libjson/**/*
+        - server/build/libpicosha2/**/*
         - server/build/libpistache/**/*
+        - server/build/libsqlite3/**/*
+        - server/build/libstduuid/**/*
         - server/build/libzmq/**/*
 
 ################
