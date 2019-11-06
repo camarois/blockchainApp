@@ -12,7 +12,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -23,7 +24,7 @@ class HomeFragment : Fragment() {
         username.text = (activity!! as SidePanelActivity).username
         val type = (activity!! as SidePanelActivity).type
 
-        if(type == "edition")
+        if (type == "edition")
             description.text = resources.getString(R.string.edition_description)
         else
             description.text = resources.getString(R.string.consultation_description)
