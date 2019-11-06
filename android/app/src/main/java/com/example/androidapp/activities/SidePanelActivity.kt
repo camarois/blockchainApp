@@ -10,11 +10,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.example.androidapp.CourseRequest
 
 import com.example.androidapp.R
-import com.example.androidapp.StudentRequest
-import com.example.androidapp.StudentResponse
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
@@ -37,7 +34,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val transaction = supportFragmentManager.beginTransaction()
             // TODO Link response to detailed student fragment
-            //val response = restService.getCourseInfo(CourseRequest(course.code, course.trimester))
+            // val response = restService.getCourseInfo(CourseRequest(course.code, course.trimester))
             val frag = DetailedCourseFragment(course, listOf())
             transaction.replace(R.id.course_list_fragment, frag)
             transaction.addToBackStack(null)
@@ -49,7 +46,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val transaction = supportFragmentManager.beginTransaction()
             // TODO Link response to detailed student fragment
-            //val response = restService.getStudentInfo(StudentRequest("*", "*", student.code.toString()))
+            // val response = restService.getStudentInfo(StudentRequest("*", "*", student.code.toString()))
             val frag = DetailedStudentFragment(student, listOf())
             transaction.replace(R.id.student_list_fragment, frag)
             transaction.addToBackStack(null)

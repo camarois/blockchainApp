@@ -48,7 +48,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
         try {
             val oldPassword = old_password_edit_text.text.toString()
             val newPassword = new_password_edit_text.text.toString()
-            val response = restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
+            restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
             Toast.makeText(context, "Le mot de passe a été changé avec succès.",
                 Toast.LENGTH_LONG).show()
         } catch (e: AuthFailureError) {

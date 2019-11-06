@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidapp.PdfFileRequest
 import com.example.androidapp.R
 import com.example.androidapp.Student
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
@@ -34,7 +33,6 @@ class DetailedCourseFragment(
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.students_list
@@ -73,7 +71,7 @@ class DetailedCourseFragment(
 
     private suspend fun viewPdf() {
         try {
-            //restService.getFichierNotes(PdfFileRequest(course.code, course.trimester))
+            // restService.getFichierNotes(PdfFileRequest(course.code, course.trimester))
             Toast.makeText(context, "View pdf",
                 Toast.LENGTH_LONG).show()
         } catch (e: Exception) {

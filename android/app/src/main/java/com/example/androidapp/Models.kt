@@ -43,9 +43,10 @@ data class CourseResponse(
 
 data class Student(
     @SerializedName("nom") val lastName: String,
-    @SerializedName("prenom")val firstName: String,
+    @SerializedName("prenom") val firstName: String,
     @SerializedName("matricule") val code: String,
-    @SerializedName("note") val grade: String) {
+    @SerializedName("note") val grade: String
+) {
     override fun toString(): String = "Nom de famille: $lastName, Prénom: $firstName, Matricule: $code"
 }
 
@@ -53,4 +54,3 @@ data class PdfFileRequest(
     @SerializedName("sigle") val acronym: String,
     @SerializedName("trimestre") val trimester: String
 )
-
