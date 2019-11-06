@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/lastName_hint"
+            android:hint="@string/last_Name_hint"
             android:inputType="textPersonName" />
 
         <EditText
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/firstName_hint"
+            android:hint="@string/first_Name_hint"
             android:inputType="textPersonName" />
 
         <EditText
