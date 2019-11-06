@@ -10,9 +10,10 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.androidapp.CourseResult
 
 import com.example.androidapp.R
-import com.example.androidapp.fragments.home.HomeFragment
+import com.example.androidapp.Student
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
@@ -33,7 +34,7 @@ import kotlin.coroutines.CoroutineContext
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         val transaction = supportFragmentManager.beginTransaction()
-        val frag = DetailedCourseFragment(course)
+        val frag = DetailedCourseFragment(course, listOf())
         transaction.replace(R.id.course_list_fragment, frag)
         transaction.addToBackStack(null)
         transaction.commit()
@@ -41,9 +42,8 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
 
     override fun onListFragmentInteraction(student: StudentItem) {
         val transaction = supportFragmentManager.beginTransaction()
-        val frag = DetailedStudentFragment(student)
+        val frag = DetailedStudentFragment(student, listOf())
         transaction.replace(R.id.student_list_fragment, frag)
-
         transaction.addToBackStack(null)
         transaction.commit()
     }

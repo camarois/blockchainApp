@@ -21,7 +21,6 @@ class StudentResultsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        System.out.println(item)
         holder.mNameView.text = item.acronym
         holder.mTrimester.text = item.trimester
         holder.mResult.text = item.grade

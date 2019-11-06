@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/colorListBackground"
+        android:background="?android:windowBackground"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:id="@+id/detailed_course_fragment">
@@ -42,8 +42,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
-        android:name="com.example.androidapp.ui.fragments.search.SearchFragment"
+        android:id="@+id/students_list"
+        android:name="com.example.androidapp.ui.fragments.searchCourse.DetailedCourseFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="25dp"
@@ -54,8 +54,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/trimester"
-        tools:context=".ui.fragments.search.SearchFragment"
-        tools:listitem="@layout/fragment_student" />
+        tools:context=".ui.fragments.searchCourse.DetailedCourseFragment"
+        tools:listitem="@layout/fragment_course_result" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,5 @@
 package com.example.androidapp.fragments.searchCourse.course
 
-import com.example.androidapp.StudentItem
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -28,9 +27,8 @@ object CourseContent {
     init {
         // Add some sample items.
         // TODO: Fill with information from database
-        val studentList = listOf(StudentItem("1000", "charles", "marois", "80"), StudentItem("1000", "charles", "marois", "80"))
         for (i in 1..COUNT) {
-            addItem(createCourseItem(i, studentList))
+            addItem(createCourseItem(i))
         }
     }
 
@@ -39,7 +37,7 @@ object CourseContent {
         item_map[item.code] = item
     }
 
-    private fun createCourseItem(position: Int, students: List<StudentItem>): CourseItem {
-        return CourseItem("MTH$BASE_COURSE_CODE$position", "Nom $position", "A$BASE_YEAR", students)
+    private fun createCourseItem(position: Int): CourseItem {
+        return CourseItem("MTH$BASE_COURSE_CODE$position", "Nom $position", "A$BASE_YEAR")
     }
 }
