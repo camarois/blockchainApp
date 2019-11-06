@@ -3,8 +3,6 @@ package com.example.androidapp.fragments.searchStudent.student
 import java.util.ArrayList
 import java.util.HashMap
 import com.example.androidapp.StudentItem
-import com.example.androidapp.services.RestRequestService
-import org.koin.android.ext.android.get
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -23,9 +21,15 @@ object StudentContent {
      */
     private val item_map: MutableMap<String, StudentItem> = HashMap()
 
+    private const val COUNT = 25
+    private const val BASE_STUDENT_CODE = 1800000
+
     init {
+        // Add some sample items.
         // TODO: Fill with information from database
-        var restService: RestRequestService = get()
+        for (i in 1..COUNT) {
+            addItem(createStudentItem(i))
+        }
     }
 
     private fun addItem(item: StudentItem) {
@@ -33,4 +37,8 @@ object StudentContent {
         item_map[item.code] = item
     }
 
+    private fun createStudentItem(position: Int): StudentItem {
+        return StudentItem("Nom $position", "Prenom $position",
+            (BASE_STUDENT_CODE + position).toString(), "50")
+    }
 }
