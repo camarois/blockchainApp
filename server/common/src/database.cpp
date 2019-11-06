@@ -68,14 +68,14 @@ void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
   statement.step();
 }
 
-void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwords,
+void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
                                const std::string& salt, bool isAdmin) {
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      Common::FormatHelper::hash(passwords.newPwd + salt).c_str(), username.c_str(),
-      Common::FormatHelper::hash(passwords.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
+      Common::FormatHelper::hash(passwordRequest.newPwd + salt).c_str(), username.c_str(),
+      Common::FormatHelper::hash(passwordRequest.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -130,7 +130,7 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
 }
 
 std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
-  Query query = lastLogId ? Query(
+  Query query = lastLogId != 0 ? Query(
                                 "SELECT logId, severity, logTime, log FROM logs "
                                 "WHERE logId > '%q' AND provenance = '%q'"
                                 "ORDER BY logTime ASC;",
