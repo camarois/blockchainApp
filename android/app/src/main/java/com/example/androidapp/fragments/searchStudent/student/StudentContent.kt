@@ -4,7 +4,6 @@ import java.util.ArrayList
 import java.util.HashMap
 import com.example.androidapp.StudentItem
 
-
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.

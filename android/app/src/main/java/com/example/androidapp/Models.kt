@@ -30,4 +30,3 @@ data class StudentItem(
     @SerializedName("matricule") val code: String,
     @SerializedName("note") val grade: String
 )
-
