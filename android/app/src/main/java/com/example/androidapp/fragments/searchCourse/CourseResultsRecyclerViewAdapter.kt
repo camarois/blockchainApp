@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
-import kotlinx.android.synthetic.main.fragment_course_result.view.*
+import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 
 class CourseResultsRecyclerViewAdapter(
     private val mValues: List<StudentItem>
@@ -15,13 +15,14 @@ class CourseResultsRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_course_result, parent, false)
+            .inflate(R.layout.fragment_graded_student, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mNameView.text = item.firstName + item.lastName
+        holder.mLastName.text = item.lastName
+        holder.mFirstName.text = item.firstName
         holder.mCode.text = item.code
         holder.mGrade.text = item.grade
 
@@ -33,7 +34,8 @@ class CourseResultsRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mNameView: TextView = mView.student_name
+        val mLastName: TextView = mView.lastName
+        val mFirstName: TextView = mView.firstName
         val mCode: TextView = mView.code
         val mGrade: TextView = mView.grade
     }
