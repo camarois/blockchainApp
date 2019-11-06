@@ -226,7 +226,8 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(const Comm
   std::string studentId = studentRequest.id;
   Query getClassResultsQuery = Query(
       "SELECT c.acronym, c.trimester, r.grade "
-      "FROM classes c JOIN results r ON c.classId = r.classId "
+      "FROM classes c "
+      "JOIN results r ON c.classId = r.classId "
       "WHERE c.acronym LIKE '%q' AND r.id = '%q' AND c.trimester LIKE '%q';",
       acronym.c_str(), studentId.c_str(), trimester.c_str());
   Statement getResultsStatement = Statement(db_, getClassResultsQuery);
