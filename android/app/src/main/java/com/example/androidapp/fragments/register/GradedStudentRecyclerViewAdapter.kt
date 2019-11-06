@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
 

@@ -40,4 +40,5 @@
     <string name="gradedStudentTag">gradedStudent</string>
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
     <string name="save_results">Enregistrer les résultats</string>
+    <string name="menu_class_search">Consultation de cours</string>
 </resources>
