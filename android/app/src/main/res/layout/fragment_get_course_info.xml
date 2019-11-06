@@ -12,24 +12,42 @@
             android:id="@+id/course_info_fragment"
             android:layout_height="match_parent">
 
+        <TextView
+                android:id="@+id/registerCourse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="200dp"
+                android:text="@string/register_course"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                app:layout_constraintBottom_toTopOf="@+id/sigle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         <EditText
                 android:id="@+id/sigle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="200dp"
+                android:digits="0123456789AaBbCcDdEeFfGgHhIijJkKlLmMnNoOpPqQqRrSsTtUuVvWwXxYyZz"
                 android:ems="10"
                 android:hint="@string/sigle"
+                android:inputType="textCapCharacters"
+                android:maxLength="8"
+                android:singleLine="true"
+                android:textAllCaps="true"
                 app:layout_constraintBottom_toTopOf="@+id/name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/registerCourse" />
 
         <EditText
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Nom du cours"
+                android:digits="0123456789AaBbCcDdEeFfGgHhIijJkKlLmMnNoOpPqQqRrSsTtUuVvWwXxYyZz"
+                android:singleLine="true"
+                android:hint="@string/course_name"
                 app:layout_constraintBottom_toTopOf="@+id/trimester"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +58,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Trimestre du cours"
+                android:digits="0123456789"
+                android:inputType="textCapCharacters"
+                android:maxLength="5"
+                android:singleLine="true"
+                android:hint="@string/course_trimester"
                 app:layout_constraintBottom_toTopOf="@+id/submitButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +78,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/trimester" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -31,11 +31,6 @@ import kotlinx.android.synthetic.main.bottom_button.*
 import org.koin.android.ext.android.get
 import java.io.File
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [RegisterCourseFragment.OnListFragmentInteractionListener] interface.
- */
 class RegisterCourseFragment : Fragment() {
 
     private var pdfFilePath: String = ""
@@ -68,6 +63,8 @@ class RegisterCourseFragment : Fragment() {
         val viewCreated = view.list
         viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterCourseFragment, registeredStudents, listener)
         addStudentButton.setOnClickListener { openBottomSheet() }
+        val bundle = this.arguments!!
+        class_name.text = bundle["code"].toString()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -192,9 +189,12 @@ class RegisterCourseFragment : Fragment() {
         }
 
         val pdf = convertToBase64(File(pdfFilePath))
-        val code = class_name.text.toString()
-        val name = "UN NOM DE CLASSE"
-        val trimester = 20003
+
+        val bundle = this.arguments ?: return
+        val code: String = (bundle["code"] as String?)!!
+        val name: String = (bundle["name"] as String?)!!
+        val trimester: Int = (bundle["trimester"] as Int?)!!
+
         try {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
