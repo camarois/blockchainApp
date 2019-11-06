@@ -38,6 +38,8 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     private lateinit var job: Job
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var restService: RestRequestService = get()
+    var username: String = ""
+    var type: String = ""
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -56,6 +58,9 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 R.id.nav_home, R.id.nav_search, R.id.nav_course_search, R.id.nav_settings, R.id.nav_register
             ), sidePanelDrawerLayout
         )
+
+        username = intent.getStringExtra("username")
+        type = intent.getStringExtra("type")
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)

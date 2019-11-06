@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                putExtra("user", response.edition)
+                putExtra("username", username)
+                putExtra("type", response.edition)
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {
@@ -56,12 +57,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
                 Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun submitRegister() {
-        // TODO : Decide how we want people to register. Do they send a request? Does the PC admin adds them?
-        // val intent = Intent(this@MainActivity, RegisterActivity::class.java).apply { }
-        // startActivity(intent)
     }
 
     private fun requestStoragePermission() {

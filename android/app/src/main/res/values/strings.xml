@@ -42,4 +42,10 @@
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
     <string name="save_results">Enregistrer les résultats</string>
     <string name="menu_class_search">Consultation de cours</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome">Bienvenue,</string>
+    <string name="edition_description">Vous avez un compte d\'édition. Ouvrez le menu sur le côté pour commencer!</string>
+    <string name="consultation_description">Vous avez un compte de consultation. Ouvrez le menu sur le côté pour commencer!</string>
 </resources>
