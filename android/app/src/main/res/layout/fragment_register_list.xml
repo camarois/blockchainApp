@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/class_name"
-        tools:context=".fragments.register.RegisterFragment"
+        tools:context=".fragments.register.RegisterCourseFragment"
         tools:listitem="@layout/fragment_graded_student" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

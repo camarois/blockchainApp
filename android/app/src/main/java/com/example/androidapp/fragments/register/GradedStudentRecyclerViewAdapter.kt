@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.androidapp.R
-import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
+import com.example.androidapp.fragments.register.RegisterCourseFragment.OnListFragmentInteractionListener
 import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
  * specified [OnListFragmentInteractionListener].
  */
 class GradedStudentRecyclerViewAdapter(
-    private val mFragment: RegisterFragment,
+    private val mFragment: RegisterCourseFragment,
     private val mValues: List<StudentItem>,
     private val mListener: OnListFragmentInteractionListener?
 

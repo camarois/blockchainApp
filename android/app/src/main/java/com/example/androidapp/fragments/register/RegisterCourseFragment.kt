@@ -34,9 +34,9 @@ import java.io.File
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [RegisterFragment.OnListFragmentInteractionListener] interface.
+ * [RegisterCourseFragment.OnListFragmentInteractionListener] interface.
  */
-class RegisterFragment : Fragment() {
+class RegisterCourseFragment : Fragment() {
 
     private var pdfFilePath: String = ""
     private var columnCount = 1
@@ -66,7 +66,7 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterFragment, registeredStudents, listener)
+        viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterCourseFragment, registeredStudents, listener)
         addStudentButton.setOnClickListener { openBottomSheet() }
         super.onViewCreated(view, savedInstanceState)
     }
@@ -87,7 +87,7 @@ class RegisterFragment : Fragment() {
                 }
                 adapter =
                     GradedStudentRecyclerViewAdapter(
-                        this@RegisterFragment,
+                        this@RegisterCourseFragment,
                         registeredStudents,
                         listener
                     )
@@ -248,7 +248,7 @@ class RegisterFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            RegisterFragment().apply {
+            RegisterCourseFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

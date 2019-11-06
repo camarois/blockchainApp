@@ -12,7 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
-import com.example.androidapp.fragments.register.RegisterFragment
+import com.example.androidapp.fragments.register.RegisterCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
+class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
