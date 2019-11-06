@@ -116,10 +116,13 @@ else
 fi
 
 if [[ $DO_TIDY -eq 1 ]]; then
-    printf "%s" "$FILENAMES" | lint_files $DO_FIX
-    exit
+    if ! printf "%s" "$FILENAMES" | lint_files $DO_FIX; then
+        exit 1
+    fi
 fi
 
 if [[ $DO_FORMAT -eq 1 ]]; then
-    printf "%s" "$FILENAMES" | format_files $DO_FIX
+    if ! printf "%s" "$FILENAMES" | format_files $DO_FIX; then
+        exit 1
+    fi
 fi
