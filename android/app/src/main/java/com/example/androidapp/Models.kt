@@ -33,22 +33,27 @@ data class CourseResult(
 )
 
 data class CourseRequest(
-    @SerializedName("sigle") val acronym: String,
     @SerializedName("trimestre")val trimester: String
 )
 
 data class CourseResponse(
-    @SerializedName("etudiants") val students: List<Student>
+    @SerializedName("etudiants") val students: List<StudentItem>
 )
 
-data class Student(
+data class TransactionRequest(
+    @SerializedName("sigle") val classCode: String,
+    @SerializedName("nom") val className: String,
+    @SerializedName("trimestre") val trimester: Number,
+    @SerializedName("resultats") val results: List<StudentItem>,
+    @SerializedName("pdf") val pdf: String
+)
+
+data class StudentItem(
     @SerializedName("nom") val lastName: String,
-    @SerializedName("prenom") val firstName: String,
+    @SerializedName("prenom")val firstName: String,
     @SerializedName("matricule") val code: String,
     @SerializedName("note") val grade: String
-) {
-    override fun toString(): String = "Nom de famille: $lastName, Prénom: $firstName, Matricule: $code"
-}
+)
 
 data class PdfFileRequest(
     @SerializedName("sigle") val acronym: String,

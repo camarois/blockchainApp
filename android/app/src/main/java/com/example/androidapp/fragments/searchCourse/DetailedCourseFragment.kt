@@ -9,8 +9,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.androidapp.PdfFileRequest
 import com.example.androidapp.R
-import com.example.androidapp.Student
+import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.RestRequestService
 import kotlinx.android.synthetic.main.fragment_detailed_course.view.*
@@ -24,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 
 class DetailedCourseFragment(
     private val course: CourseItem,
-    private val students: List<Student>
+    private val students: List<StudentItem>
 ) : Fragment(), CoroutineScope {
 
     private var columnCount = 1
@@ -71,7 +72,8 @@ class DetailedCourseFragment(
 
     private suspend fun viewPdf() {
         try {
-            // restService.getFichierNotes(PdfFileRequest(course.code, course.trimester))
+            val response = restService.getFichierNotes(PdfFileRequest("inf3995", "1"))
+            System.out.println(response)
             Toast.makeText(context, "View pdf",
                 Toast.LENGTH_LONG).show()
         } catch (e: Exception) {

@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.androidapp.R
-import com.example.androidapp.Student
+import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.fragment_course_result.view.*
 
 class CourseResultsRecyclerViewAdapter(
-    private val mValues: List<Student>
+    private val mValues: List<StudentItem>
 ) : RecyclerView.Adapter<CourseResultsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,8 +21,7 @@ class CourseResultsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mFirstNameView.text = item.firstName
-        holder.mLastNameView.text = item.lastName
+        holder.mNameView.text = item.firstName + item.lastName
         holder.mCode.text = item.code
         holder.mGrade.text = item.grade
 
@@ -34,8 +33,7 @@ class CourseResultsRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mFirstNameView: TextView = mView.firstName
-        val mLastNameView: TextView = mView.lastName
+        val mNameView: TextView = mView.student_name
         val mCode: TextView = mView.code
         val mGrade: TextView = mView.grade
     }

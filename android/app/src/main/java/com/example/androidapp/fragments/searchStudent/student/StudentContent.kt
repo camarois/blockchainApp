@@ -2,6 +2,8 @@ package com.example.androidapp.fragments.searchStudent.student
 
 import java.util.ArrayList
 import java.util.HashMap
+import com.example.androidapp.StudentItem
+
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -33,11 +35,11 @@ object StudentContent {
 
     private fun addItem(item: StudentItem) {
         items.add(item)
-        item_map[item.id] = item
+        item_map[item.code] = item
     }
 
     private fun createStudentItem(position: Int): StudentItem {
-        return StudentItem(position.toString(),
-            "Prenom Nom $position", BASE_STUDENT_CODE + position)
+        return StudentItem("Nom $position", "Prenom $position",
+            (BASE_STUDENT_CODE + position).toString(), "50")
     }
 }

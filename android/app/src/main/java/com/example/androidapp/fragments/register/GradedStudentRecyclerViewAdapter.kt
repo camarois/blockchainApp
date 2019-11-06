@@ -1,25 +1,32 @@
 package com.example.androidapp.fragments.register
 
-import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterFragment.OnListFragmentInteractionListener
-import com.example.androidapp.fragments.searchStudent.student.StudentItem
+import com.example.androidapp.StudentItem
 import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * [RecyclerView.Adapter] that can display a [StudentItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
 class GradedStudentRecyclerViewAdapter(
+    private val mFragment: RegisterFragment,
     private val mValues: List<StudentItem>,
     private val mListener: OnListFragmentInteractionListener?
+
 ) : RecyclerView.Adapter<GradedStudentRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -61,39 +68,39 @@ class GradedStudentRecyclerViewAdapter(
 
     open inner class ViewHolder(mView: View) : RecyclerView.ViewHolder(mView)
 
-    inner class ButtonsViewHolder(mView: View) : ViewHolder(mView) {
+    inner class ButtonsViewHolder(mView: View) : CoroutineScope, ViewHolder(mView) {
         private val mPDFButton: Button = mView.uploadPDFBtn
         private val mSubmitButton: Button = mView.registerClassBtn
+        private lateinit var job: Job
+
+        override val coroutineContext: CoroutineContext
+            get() = job + Dispatchers.Main
 
         fun bind(mView: View) {
-            mPDFButton.setOnClickListener { uploadPDF(mView) }
-            mSubmitButton.setOnClickListener { submit() }
+            job = Job()
+            mPDFButton.setOnClickListener { mFragment.uploadPDF() }
+            mSubmitButton.setOnClickListener { launch { submit(mView) } }
         }
 
-        private fun uploadPDF(view: View) {
-            val intent = Intent()
-                .setType("application/json")
-                .setAction(Intent.ACTION_GET_CONTENT)
-            view.context.startActivity(Intent.createChooser(intent, "Select a file"))
-            mSubmitButton.isClickable = true
-            mSubmitButton.isEnabled = true
-            mPDFButton.text = "nomDuPDF.pdf"
-            // todo - actually handle pfd uploading
-        }
-
-        private fun submit() {
-            // todo - send information to server
+        private suspend fun submit(view: View) {
+            if (mValues.isEmpty()) {
+                Toast.makeText(view.context, "Il n'y a aucun élève dans la classe!", Toast.LENGTH_SHORT).show()
+                return
+            }
+            mFragment.submit(mValues)
         }
     }
 
     inner class GradedStudentViewHolder(mView: View) : ViewHolder(mView) {
-        private val mName: TextView = mView.name
+        private val mLastName: TextView = mView.lastName
+        private val mFirstName: TextView = mView.firstName
         private val mCode: TextView = mView.code
         private val mGrade: TextView = mView.grade
         private val mPos: TextView = mView.position
 
         fun bind(item: StudentItem, position: Int) {
-            mName.text = item.name
+            mLastName.text = item.lastName
+            mFirstName.text = item.firstName
             mCode.text = item.code.toString()
             mGrade.text = item.grade.toString()
             mPos.text = (position + 1).toString()

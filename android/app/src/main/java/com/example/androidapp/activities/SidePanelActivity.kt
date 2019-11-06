@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 
 import com.example.androidapp.R
+import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
@@ -19,7 +20,6 @@ import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
-import com.example.androidapp.fragments.searchStudent.student.StudentItem
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
 import kotlinx.coroutines.CoroutineScope

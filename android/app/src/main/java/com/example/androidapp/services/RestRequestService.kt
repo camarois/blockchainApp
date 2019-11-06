@@ -59,6 +59,10 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return postAsync("usager/motdepasse", request, String::class.java)
     }
 
+    suspend fun postTransactionAsync(request: TransactionRequest): String {
+        return postAsync("transaction", request, String::class.java)
+    }
+
     suspend fun getAsync(url: String): String {
         return suspendCoroutine { continuation ->
             val request = StringRequest("$serverUrl/$url",

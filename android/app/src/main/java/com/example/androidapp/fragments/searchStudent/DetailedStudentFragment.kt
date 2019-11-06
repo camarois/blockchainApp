@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.CourseResult
 import com.example.androidapp.R
-import com.example.androidapp.fragments.searchStudent.student.StudentItem
+import com.example.androidapp.StudentItem
 
 import kotlinx.android.synthetic.main.fragment_detailed_student.view.*
 
@@ -37,7 +37,7 @@ class DetailedStudentFragment(
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detailed_student, container, false)
         view.student_code.text = student.code.toString()
-        view.student_name.text = student.name
+        view.student_name.text = student.firstName + student.lastName
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
