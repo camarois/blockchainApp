@@ -218,7 +218,8 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
   return results;
 }
 
-std::vector<Common::Models::StudentResult> Database::getStudentResult(const Common::Models::StudentRequest& studentRequest) {
+std::vector<Common::Models::StudentResult> Database::getStudentResult(
+    const Common::Models::StudentRequest& studentRequest) {
   std::string acronym = studentRequest.acronym;
   std::replace(acronym.begin(), acronym.end(), '*', '%');
   std::string trimester = studentRequest.trimester;
