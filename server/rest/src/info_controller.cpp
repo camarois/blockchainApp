@@ -32,11 +32,10 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
   std::optional<Common::Models::Result> result;
   Common::Database db(FLAGS_db);
-  std::optional<int> classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
-  if (classId) {
-    result = db.getStudentResult(classId.value(), studentRequest.id);
-  }
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result.value()));
+  std::vector<Common::Models::StudentResult> studentResults = db.getStudentResult(studentRequest);
+  Common::Models::StudentResponse studentResponse = {studentResults};
+
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(studentResponse));
 }
 
 void InfoController::handleListStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
