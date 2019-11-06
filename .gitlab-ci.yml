@@ -26,9 +26,9 @@ cache:
 build-server:
     stage: build
     before_script:
-        - chmod +x server/build.sh
+        - mkdir -p server/build
     script:
-        - cd server && ./build.sh
+        - cd server/build && cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .. && ninja
     only:
         changes:
             - server/**/*
