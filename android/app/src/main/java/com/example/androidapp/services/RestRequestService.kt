@@ -37,6 +37,10 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return getAsync("ping")
     }
 
+    suspend fun getStudentListAsync(): String {
+        return getAsync("info/listeEtudiant")
+    }
+
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
         credentialsManager.saveFirstAuthToken(context, request.username, request.password)
         return postAsync("usager/login", request, LoginResponse::class.java)

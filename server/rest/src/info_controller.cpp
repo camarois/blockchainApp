@@ -37,14 +37,14 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(studentResponse));
 }
 
-void InfoController::handleListStudents(const Pistache::Rest::Request& request,
+void InfoController::handleListStudents(const Pistache::Rest::Request& /*request*/,
                                         Pistache::Http::ResponseWriter response) {
   Common::Database db(FLAGS_db);
   std::vector<Common::Models::StudentInfo> result = db.getStudents();
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result));
 }
 
-void InfoController::handleListClasses(const Pistache::Rest::Request& request,
+void InfoController::handleListClasses(const Pistache::Rest::Request& /*request*/,
                                        Pistache::Http::ResponseWriter response) {
   Common::Database db(FLAGS_db);
   std::vector<Common::Models::ClassInfo> result = db.getClasses();
