@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 
 import com.example.androidapp.R
-import com.example.androidapp.activities.SidePanelActivity
 import kotlinx.android.synthetic.main.fragment_get_course_info.*
 
 class GetCourseInfoFragment : Fragment() {
 
     private val registerCourseFragment = RegisterCourseFragment()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -33,13 +33,13 @@ class GetCourseInfoFragment : Fragment() {
     }
 
     private fun submit() {
-        if(sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
+        if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
             Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
         } else {
             val bundle = Bundle()
             bundle.putString("code", sigle.text.toString())
             bundle.putString("name", name.text.toString())
-            bundle.putString("trimester", trimester.text.toString())
+            bundle.putInt("trimester", trimester.text.toString().toInt())
             swapFragment(bundle)
         }
     }

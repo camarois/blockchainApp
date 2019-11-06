@@ -59,7 +59,6 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:digits="0123456789"
-                android:inputType="textCapCharacters"
                 android:maxLength="5"
                 android:singleLine="true"
                 android:hint="@string/course_trimester"
