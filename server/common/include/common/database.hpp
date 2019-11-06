@@ -36,12 +36,12 @@ class Database {
   std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
 
   std::optional<int> checkForExistingClass(const std::string& acronym, int trimester);
-  void DeleteExistingClass(int classId);
-  void DeleteExistingResults(int classId);
-  int AddNewClass(const Common::Models::TransactionRequest& transactionRequest);
-  void AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
+  void deleteExistingClass(int classId);
+  void deleteExistingResults(int classId);
+  int addNewClass(const Common::Models::TransactionRequest& transactionRequest);
+  void addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
   std::vector<Common::Models::Result> getClassResult(int classId);
-  std::optional<Common::Models::Result> getStudentResult(int classId, const std::string studentId);
+  std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
 
  private:
   void close();
