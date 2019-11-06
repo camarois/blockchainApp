@@ -2,6 +2,7 @@
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
+#include <iostream>
 
 namespace Common {
 
@@ -246,18 +247,19 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(
   return studentResult;
 }
 
-  std::vector<Common::Models::CLassInfo> Database::getClasses() {
+  std::vector<Common::Models::ClassInfo> Database::getClasses() {
     Query getClassesQuery = Query(
-      "SELECT DISTINC acronym, name, trimester"
+      "SELECT DISTINCT acronym, name, trimester "
       "FROM classes;"
     );
+    std::cout << getClassesQuery.val() << std::endl;
     Statement getClassesStatement = Statement(db_, getClassesQuery);
     std::vector<Common::Models::ClassInfo> result;
     while (getClassesStatement.step()){
       result.push_back({
         .acronym = getClassesStatement.getColumnText(0),
         .name = getClassesStatement.getColumnText(1),
-        .trimester = stoi(getResultStatement.getColumnText(2))
+        .trimester = std::stoi(getClassesStatement.getColumnText(2))
       });
     }
     return result;
@@ -265,16 +267,17 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(
 
   std::vector<Common::Models::StudentInfo> Database::getStudents() {
     Query getStudentQuery = Query(
-      "SELECT DISTINC firstName, lastName, id"
-      "FROM result;"
+      "SELECT DISTINCT firstName, lastName, id "
+      "FROM results;"
     );
+    std::cout << getStudentQuery.val() << std::endl;
     Statement getStudentStatement = Statement(db_, getStudentQuery);
     std::vector<Common::Models::StudentInfo> result;
     while (getStudentStatement.step()){
       result.push_back({
-        .lastName = getClassesStatement.getColumnText(0),
-        .firstName = getClassesStatement.getColumnText(1),
-        .id = stoi(getResultStatement.getColumnText(2))
+        .lastName = getStudentStatement.getColumnText(0),
+        .firstName = getStudentStatement.getColumnText(1),
+        .id = getStudentStatement.getColumnText(2)
       });
     }
     return result;

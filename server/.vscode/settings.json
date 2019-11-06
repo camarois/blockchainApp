@@ -56,6 +56,18 @@
         "typeinfo": "cpp",
         "csignal": "cpp",
         "list": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "bitset": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "map": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "iomanip": "cpp",
+        "cinttypes": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     }
 }
