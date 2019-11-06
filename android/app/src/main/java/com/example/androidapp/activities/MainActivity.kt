@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                putExtra("user", response.edition)
+                putExtra("username", username)
+                putExtra("type", response.edition)
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {
