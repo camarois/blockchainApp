@@ -14,6 +14,8 @@ Checks: >
   -hicpp-vararg,
   -modernize-use-trailing-return-type,
   -clang-diagnostic-unused-result,
+  -hicpp-special-member-functions,
+  -cppcoreguidelines-special-member-functions,
 
 WarningsAsErrors: "*"
 

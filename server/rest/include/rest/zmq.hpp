@@ -18,7 +18,7 @@ class ZMQWorker {
   bool start();
   std::string getRequest(const std::string& sql);
   void updateRequest(const std::string& sql);
-  
+
  private:
   void join();
   void handlePullFromMiner();
@@ -45,6 +45,6 @@ class ZMQWorker {
   const int kWaitTimeout_ = 5;
 };
 
-} // namespace Rest
+}  // namespace Rest
 
-#endif // REST_ZMQ_HPP
+#endif  // REST_ZMQ_HPP

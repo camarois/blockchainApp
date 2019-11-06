@@ -21,9 +21,7 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname)
       socketXPubBlockchain_(context_, zmq::socket_type::xpub),
       socketXSubBlockchain_(context_, zmq::socket_type::xsub) {}
 
-ZMQWorker::~ZMQWorker() {
-  join();
-}
+ZMQWorker::~ZMQWorker() { join(); }
 
 bool ZMQWorker::start() {
   try {

@@ -19,9 +19,7 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       blockchain_(blockchain) {}
 
-ZMQWorker::~ZMQWorker() {
-  join();
-}
+ZMQWorker::~ZMQWorker() { join(); }
 
 bool ZMQWorker::start() {
   try {
