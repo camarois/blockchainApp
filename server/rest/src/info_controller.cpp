@@ -22,7 +22,8 @@ void InfoController::handleClasses(const Pistache::Rest::Request& request, Pista
   if (classId) {
     results = db.getClassResult(classId.value());
   }
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(results));
+  Common::Models::ClassesResponse classesResponse = {{{results}}};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(classesResponse));
 }
 
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

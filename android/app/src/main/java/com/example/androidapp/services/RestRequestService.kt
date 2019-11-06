@@ -6,6 +6,9 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.androidapp.*
+import com.google.gson.JsonArray
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -34,16 +37,16 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return getAsync("ping")
     }
 
-    suspend fun getCourseInfo(request: CourseRequest): CourseResponse {
-        return getAsync("info/cours", request, CourseResponse::class.java)
+    suspend fun postCourseInfoAsync(request: CourseRequest): CourseResponse {
+        return postAsync("info/cours", request, CourseResponse::class.java)
     }
 
-    suspend fun getStudentInfo(request: StudentRequest): StudentResponse {
-        return getAsync("info/etudiant", request, StudentResponse::class.java)
+    suspend fun postStudentInfoAsync(request: StudentRequest): StudentResponse {
+        return postAsync("info/etudiant", request, StudentResponse::class.java)
     }
 
-    suspend fun getFichierNotes(request: PdfFileRequest): String {
-        return getAsync("fichier/notes", request, String::class.java)
+    suspend fun postPdfFileAsync(request: PdfFileRequest): JSONObject {
+        return postAsync("fichier/notes", request, JSONObject::class.java)
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {

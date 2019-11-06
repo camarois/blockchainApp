@@ -144,6 +144,17 @@ inline void from_json(const nlohmann::json& j, ClassesRequest& obj) {
   j.at(kTrimester).get_to(obj.trimester);
 }
 
+struct ClassesResponse {
+  std::vector<Result> results;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ClassesResponse& obj) { j = {{kResults, obj.results}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ClassesResponse& obj) { j.at(kResults).get_to(obj.results); }
+
+
 struct StudentRequest {
   std::string acronym;
   int trimester = 0;

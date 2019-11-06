@@ -72,7 +72,7 @@ class DetailedCourseFragment(
 
     private suspend fun viewPdf() {
         try {
-            val response = restService.getFichierNotes(PdfFileRequest("inf3995", "1"))
+            val response = restService.postPdfFileAsync(PdfFileRequest("inf3995", 1))
             System.out.println(response)
             Toast.makeText(context, "View pdf",
                 Toast.LENGTH_LONG).show()

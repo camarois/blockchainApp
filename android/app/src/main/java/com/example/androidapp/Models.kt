@@ -33,11 +33,12 @@ data class CourseResult(
 )
 
 data class CourseRequest(
-    @SerializedName("trimestre")val trimester: String
+    @SerializedName("sigle") val acronym: String,
+    @SerializedName("trimestre")val trimester: Int
 )
 
 data class CourseResponse(
-    @SerializedName("etudiants") val students: List<StudentItem>
+    @SerializedName("resultats") val students: List<StudentItem>
 )
 
 data class TransactionRequest(
@@ -57,5 +58,5 @@ data class StudentItem(
 
 data class PdfFileRequest(
     @SerializedName("sigle") val acronym: String,
-    @SerializedName("trimestre") val trimester: String
+    @SerializedName("trimestre") val trimester: Int
 )
