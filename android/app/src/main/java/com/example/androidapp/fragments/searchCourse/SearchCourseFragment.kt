@@ -1,4 +1,4 @@
-package com.example.androidapp.fragments.search
+package com.example.androidapp.fragments.searchCourse
 
 import android.content.Context
 import android.os.Bundle
@@ -10,34 +10,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
-import com.example.androidapp.StudentItem
-import com.example.androidapp.ui.fragments.search.StudentRecyclerViewAdapter
-
-import com.example.androidapp.ui.fragments.search.student.StudentContent
+import com.example.androidapp.fragments.searchCourse.course.CourseContent
+import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [SearchFragment.OnListFragmentInteractionListener] interface.
+ * [SearchCourseFragment.OnListFragmentInteractionListener] interface.
  */
-class SearchFragment : Fragment() {
+class SearchCourseFragment : Fragment() {
 
     private var columnCount = 1
 
     private var listener: OnListFragmentInteractionListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = StudentRecyclerViewAdapter(StudentContent.items, listener)
+        viewCreated.adapter = CourseRecyclerViewAdapter(CourseContent.items, listener)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -46,7 +36,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_student_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_course_list, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -55,11 +45,7 @@ class SearchFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter =
-                    StudentRecyclerViewAdapter(
-                        StudentContent.items,
-                        listener
-                    )
+                adapter = CourseRecyclerViewAdapter(CourseContent.items, listener)
             }
         }
         return view
@@ -91,15 +77,19 @@ class SearchFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(student: StudentItem)
+        // TODO: Update argument type and name
+        fun onListFragmentInteraction(course: CourseItem)
     }
 
     companion object {
+
+        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
+        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            SearchFragment().apply {
+            SearchCourseFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

@@ -6,6 +6,11 @@
 
 <TableView fx:id="logTableView" prefHeight="342.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
    <columns>
+      <TableColumn text="Heure">
+         <cellValueFactory>
+            <PropertyValueFactory property="hour" />
+         </cellValueFactory>
+      </TableColumn>
       <TableColumn text="Numéro">
          <cellValueFactory>
             <PropertyValueFactory property="number" />
@@ -14,11 +19,6 @@
       <TableColumn text="Sévérité">
          <cellValueFactory>
             <PropertyValueFactory property="severity" />
-         </cellValueFactory>
-      </TableColumn>
-      <TableColumn text="Date">
-         <cellValueFactory>
-            <PropertyValueFactory property="date" />
          </cellValueFactory>
       </TableColumn>
       <TableColumn text="Provenance">

@@ -3,7 +3,8 @@ BEGIN TRANSACTION;
 CREATE TABLE users (
     username TEXT NOT NULL PRIMARY KEY,
     password TEXT NOT NULL,
-    salt TEXT NOT NULL
+    salt TEXT NOT NULL,
+    isAdmin INTEGER NOT NULL
 );
 
 CREATE TABLE ips (
