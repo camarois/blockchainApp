@@ -13,7 +13,7 @@ namespace Rest {
 
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
-      serverHostname_(std::move(serverHostname)),
+      serverHostname_(serverHostname),  // NOLINT
       context_(1),
       socketPubToMiner_(context_, zmq::socket_type::pub),
       socketPullFromMiner_(context_, zmq::socket_type::pull),

@@ -10,7 +10,7 @@ namespace Miner {
 
 ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
     : running_(false),
-      serverHostname_(std::move(serverHostname)),
+      serverHostname_(serverHostname),  // NOLINT
       context_(1),
       socketSubServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
