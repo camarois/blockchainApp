@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.fragments.search
+package com.example.androidapp.fragments.searchStudent
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.androidapp.R
-import com.example.androidapp.fragments.search.SearchFragment.OnListFragmentInteractionListener
-import com.example.androidapp.ui.fragments.search.student.StudentItem
+import com.example.androidapp.StudentItem
+import kotlinx.android.synthetic.main.add_student_bottom_panel.view.*
+import kotlinx.android.synthetic.main.fragment_student.view.code
+import com.example.androidapp.fragments.searchStudent.SearchStudentFragment.OnListFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_student.view.*
 
 /**
@@ -38,7 +40,7 @@ class StudentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mNameView.text = item.name
+        holder.mNameView.text = item.firstName + " " + item.lastName
         holder.mCode.text = item.code.toString()
 
         with(holder.mView) {

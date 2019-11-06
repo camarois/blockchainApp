@@ -228,7 +228,7 @@ inline void to_json(nlohmann::json& j, const LogsRequest& obj) { j = {{kLast, ob
 inline void from_json(const nlohmann::json& j, LogsRequest& obj) { j.at(kLast).get_to(obj.last); }
 
 struct Information {
-  int no;
+  int no = 0;
   std::string severity;
   std::string time;
   std::string message;
@@ -248,7 +248,7 @@ inline void from_json(const nlohmann::json& j, Information& obj) {
 }
 
 struct LogsResponse {
-  Information information;
+  std::vector<Information> information;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

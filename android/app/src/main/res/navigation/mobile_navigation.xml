@@ -13,9 +13,15 @@
 
     <fragment
             android:id="@+id/nav_search"
-            android:name="com.example.androidapp.fragments.search.SearchFragment"
+            android:name="com.example.androidapp.fragments.searchStudent.SearchStudentFragment"
             android:label="@string/menu_search"
             tools:layout="@layout/fragment_student_list" />
+
+    <fragment
+            android:id="@+id/nav_course_search"
+            android:name="com.example.androidapp.fragments.searchCourse.SearchCourseFragment"
+            android:label="@string/menu_class_search"
+            tools:layout="@layout/fragment_course_list" />
 
     <fragment
         android:id="@+id/nav_settings"

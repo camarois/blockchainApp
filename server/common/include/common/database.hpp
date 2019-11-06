@@ -20,8 +20,10 @@ class Database {
 
   static void assertSqlite(int errCode, const std::string& message = "");
 
-  void addUser(const Common::Models::LoginRequest& user);
-  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt);
+  void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
+  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
+                       const std::string& salt, bool isAdmin = false);
+  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
   std::optional<std::string> getSalt(const std::string& username);
 
   std::vector<std::string> getIps();
@@ -29,15 +31,17 @@ class Database {
   bool containsIp(const std::string& ip);
 
   int addLogSession();
-  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log, int logSessionId);
+  void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
+              int logSessionId);
+  std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
 
   std::optional<int> checkForExistingClass(const std::string& acronym, int trimester);
-  void DeleteExistingClass(int classId);
-  void DeleteExistingResults(int classId);
-  int AddNewClass(const Common::Models::TransactionRequest& transactionRequest);
-  void AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
+  void deleteExistingClass(int classId);
+  void deleteExistingResults(int classId);
+  int addNewClass(const Common::Models::TransactionRequest& transactionRequest);
+  void addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
   std::vector<Common::Models::Result> getClassResult(int classId);
-  std::optional<Common::Models::Result> getStudentResult(int classId, const std::string studentId);
+  std::optional<Common::Models::Result> getStudentResult(int classId, const std::string& studentId);
 
  private:
   void close();

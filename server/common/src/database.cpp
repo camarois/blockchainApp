@@ -46,21 +46,36 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
   return {};
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt) {
+bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
   Query query = Query(
       "SELECT username FROM users "
-      "WHERE username = '%q' AND password = '%q';",
-      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str(),
+      std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
-void Database::addUser(const Common::Models::LoginRequest& user) {
+void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
-      "INSERT OR REPLACE INTO users (username, password, salt) "
-      "VALUES ('%q', '%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str());
+      "INSERT OR REPLACE INTO users "
+      "(username, password, salt, isAdmin) "
+      "VALUES ('%q', '%q', '%q', '%q');",
+      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str(),
+      std::to_string(int(isAdmin)).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
+                               const std::string& salt, bool isAdmin) {
+  Query query = Query(
+      "UPDATE users "
+      "SET password = '%q' "
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      Common::FormatHelper::hash(passwordRequest.newPwd + salt).c_str(), username.c_str(),
+      Common::FormatHelper::hash(passwordRequest.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -108,10 +123,33 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   Query query = Query(
       "INSERT INTO logs (logId, severity, logTime, provenance, log, logSessionId) "
       "VALUES ('%q', '%q', '%q', '%q', '%q', '%q');",
-      std::to_string(logId).c_str(), std::to_string(severity).c_str(), std::to_string(provenance).c_str(), log.c_str(),
-      time.c_str(), std::to_string(logSessionId).c_str());
+      std::to_string(logId).c_str(), std::to_string(severity).c_str(), time.c_str(), std::to_string(provenance).c_str(),
+      log.c_str(), std::to_string(logSessionId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
+}
+
+std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
+  Query query = lastLogId != 0 ? Query(
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE logId > '%q' AND provenance = '%q'"
+                                "ORDER BY logTime ASC;",
+                                std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
+                          : Query(
+                                "SELECT * FROM ("
+                                "SELECT logId, severity, logTime, log FROM logs "
+                                "WHERE provenance = '%q'"
+                                "ORDER BY logId DESC LIMIT 20) "
+                                "ORDER BY logTime ASC;",
+                                std::to_string(provenance).c_str());
+  Statement statement = Statement(db_, query);
+
+  std::vector<Common::Models::Information> logs;
+  while (statement.step()) {
+    logs.push_back({std::stoi(statement.getColumnText(0)), statement.getColumnText(1), statement.getColumnText(2),
+                    statement.getColumnText(3)});
+  }
+  return logs;
 }
 
 std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
@@ -121,25 +159,26 @@ std::optional<int> Database::checkForExistingClass(const std::string& acronym, i
       "LIMIT 1;",
       acronym.c_str(), std::to_string(trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
-  if (statementCheck.step())
-    return std::stoi(statementCheck.getColumnText(0));
-  else
-    return {};
+  if (statementCheck.step()){
+    return std::stoi(statementCheck.getColumnText(0));    
+  }
+
+  return {};
 }
 
-void Database::DeleteExistingClass(int classId) {
+void Database::deleteExistingClass(int classId) {
   Query deleteClassQuery = Query("DELETE FROM classes WHERE classId = '%q'", std::to_string(classId).c_str());
   Statement statementDeleteClass = Statement(db_, deleteClassQuery);
   statementDeleteClass.step();
 }
 
-void Database::DeleteExistingResults(int classId) {
+void Database::deleteExistingResults(int classId) {
   Query deleteResultQuery = Query("DELETE FROM results WHERE classId = '%q'", std::to_string(classId).c_str());
   Statement statementDeleteResults = Statement(db_, deleteResultQuery);
   statementDeleteResults.step();
 }
 
-int Database::AddNewClass(const Common::Models::TransactionRequest& transactionRequest) {
+int Database::addNewClass(const Common::Models::TransactionRequest& transactionRequest) {
   Query newClassQuery = Query(
       "INSERT INTO classes (acronym, name, trimester) "
       "VALUES ('%q', '%q', '%q');",
@@ -150,11 +189,11 @@ int Database::AddNewClass(const Common::Models::TransactionRequest& transactionR
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::AddNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
+void Database::addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
   std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, classId) VALUES";
-  for (Common::Models::Result result : transactionRequest.results) {
+  for (const Common::Models::Result& result : transactionRequest.results) {
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
-                    "', " + std::to_string(classId).c_str() + "),";
+                    "', " + std::to_string(classId) + "),";
   }
   resultsToAdd.replace(resultsToAdd.length() - 1, 1, ";");
   Query resultsToAddQuery = Query(resultsToAdd);
@@ -180,7 +219,7 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
   return results;
 }
 
-std::optional<Common::Models::Result> Database::getStudentResult(int classId, const std::string studentId) {
+std::optional<Common::Models::Result> Database::getStudentResult(int classId, const std::string& studentId) {
   Query getClassResultsQuery = Query(
       "SELECT firstName, lastname, id, grade FROM results "
       "WHERE classId = '%q' AND id = '%q';",

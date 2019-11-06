@@ -1,58 +1,134 @@
 package services;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import constants.ServerUrls;
+import models.LogsResponse;
+import models.LogsRequest;
+import models.ChaineRequest;
+import models.PasswordRequest;
+import models.LoginRequest;
+import models.LoginResponse;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
+
+import org.apache.http.HttpException;
+import org.apache.http.HttpStatus;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
+
 import java.util.function.Consumer;
+import java.lang.String;
 
 public class RestService {
-    public static ServerUrls urls;
+    private static final String HTTP_GET_METHOD = "GET";
+    private static final String HTTP_POST_METHOD = "POST";
+    private static ServerUrls urls;
     private static String baseUrl = "";
+    private static Gson gson;
     private static ExecutorService threadPool;
     private static HttpClient httpClient;
+    private static RestService instance;
 
-    public static void init() {
+    private static void init() {
+        gson = new Gson();
         InputStreamReader reader = new InputStreamReader(
                 RestService.class.getClassLoader().getResourceAsStream("values/strings.json")
         );
-        urls = new Gson().fromJson(reader, ServerUrls.class);
+        urls = gson.fromJson(reader, ServerUrls.class);
 
         threadPool = Executors.newFixedThreadPool(2);
         httpClient = HttpClient.newHttpClient();
-        requestAsync(urls.firebase + "server", (resp) -> {
+        consumeRequestAsync(urls.firebase + "server", (resp) -> {
             baseUrl = "https://" + resp + ":10000/";
             System.out.println("Connected to: " + baseUrl);
         });
         initSslContext();
     }
 
-    public static void requestAsync(String url, Consumer<String> onResponse) {
+    public static RestService getInstance() {
+        if (instance == null) {
+            instance = new RestService();
+            init();
+        }
+        return instance;
+    }
+
+    public static Future postLoginAsync(LoginRequest request) {
+        return callRequestAsync(
+            () -> {
+                String resp = postRequest("admin/login", request);
+                return gson.fromJson(resp, LoginResponse.class);
+            });
+    }
+
+    public Future postLogoutAsync() {
+        return callRequestAsync(
+            () -> postRequest("admin/logout", null));
+    }
+
+    public static Future postChangePasswordAsync(PasswordRequest request) {
+        return callRequestAsync(
+            () -> postRequest("admin/motdepasse", request));
+    }
+
+    public static Future getChaineAsync(ChaineRequest request, Integer miner) {
+        return callRequestAsync(
+            () -> {
+                String resp = postRequest("admin/chaine/" + miner, request);
+                return gson.fromJson(resp, JsonObject.class);
+            });
+    }
+
+    public static LogsResponse postLogs(String origin, LogsRequest request)
+            throws ExecutionException, InterruptedException {
+        return (LogsResponse) callRequestAsync(
+            () -> {
+                String resp = postRequest("admin/logs/" + origin, request);
+                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
+                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
+                return logsResponse;
+            }).get();
+    }
+
+    public static Future postLogsAsync(String origin, LogsRequest request) {
+        return callRequestAsync(
+            () -> {
+                String resp = postRequest("admin/logs/" + origin, request);
+                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
+                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
+                return logsResponse;
+            });
+    }
+
+    private static void consumeRequestAsync(String url, Consumer<String> onResponse) {
         threadPool.submit(() -> {
-            String resp = request(url);
+            String resp = getRequest(url);
             onResponse.accept(resp);
         });
     }
 
-    public static Future<String> requestAsync(String url) {
-        return threadPool.submit(() -> request(url));
+    private static Future callRequestAsync(Callable<?> onResponse) {
+        return threadPool.submit(onResponse);
     }
 
-    public static String request(String url) {
+    private static String getRequest(String url) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
@@ -63,6 +139,33 @@ public class RestService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private static String postRequest(String url, Object data) throws InterruptedException, IOException, HttpException {
+        return baseRequest(HTTP_POST_METHOD, url, data);
+    }
+
+    private static String baseRequest(String method, String url, Object data) throws IOException,
+            InterruptedException, HttpException {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + url))
+                    .headers("Authorization", CredentialsManager.getInstance().getAuthToken())
+                    .method(method, HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpStatus.SC_OK) {
+                String authToken = response.headers().allValues("Authorization").get(0);
+                CredentialsManager.saveAuthToken(authToken);
+                return response.body();
+            } else {
+                throw new HttpException("Forbidden");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 

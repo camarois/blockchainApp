@@ -35,9 +35,11 @@
     <string name="sigle">Sigle du cours</string>
     <string name="note_hint">Note</string>
     <string name="code_hint">Matricule</string>
-    <string name="name_hint">Nom</string>
+    <string name="last_Name_hint">Nom</string>
+    <string name="first_Name_hint">Prénom</string>
     <string name="bottomBtnTag">bottomBtn</string>
     <string name="gradedStudentTag">gradedStudent</string>
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
     <string name="save_results">Enregistrer les résultats</string>
+    <string name="menu_class_search">Consultation de cours</string>
 </resources>
