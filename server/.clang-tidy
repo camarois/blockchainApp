@@ -10,6 +10,7 @@ Checks: >
   -modernize-use-nodiscard,
   -fuchsia-overloaded-operator,
   -hicpp-vararg,
+  -clang-diagnostic-unused-result,
 
 WarningsAsErrors: "*"
 

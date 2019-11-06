@@ -8,6 +8,7 @@ import com.android.volley.toolbox.Volley
 import com.example.androidapp.LoginRequest
 import com.example.androidapp.LoginResponse
 import com.example.androidapp.PasswordRequest
+import com.example.androidapp.TransactionRequest
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -47,6 +48,10 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun postChangePasswordAsync(request: PasswordRequest): String {
         return postAsync("usager/motdepasse", request, String::class.java)
+    }
+
+    suspend fun postTransactionAsync(request: TransactionRequest): String {
+        return postAsync("transaction", request, String::class.java)
     }
 
     suspend fun getAsync(url: String): String {
