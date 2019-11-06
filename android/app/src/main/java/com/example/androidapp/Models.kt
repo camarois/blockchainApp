@@ -20,7 +20,7 @@ data class TransactionRequest(
     @SerializedName("sigle") val classCode: String,
     @SerializedName("nom") val className: String,
     @SerializedName("trimestre") val trimester: Number,
-    @SerializedName("resultats") val results: List<StudentItem>, // todo - figure it out
+    @SerializedName("resultats") val results: List<StudentItem>,
     @SerializedName("pdf") val pdf: String
 )
 
@@ -28,6 +28,6 @@ data class StudentItem(
     @SerializedName("nom") val lastName: String,
     @SerializedName("prenom")val firstName: String,
     @SerializedName("matricule") val code: String,
-    @SerializedName("note") val grade: String) {
-    override fun toString(): String = "Nom de famille: $lastName, Prénom: $firstName, Matricule: $code"
-}
+    @SerializedName("note") val grade: String
+)
+
