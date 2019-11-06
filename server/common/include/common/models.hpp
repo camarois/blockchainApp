@@ -18,6 +18,7 @@ const std::string kAcronym = "sigle";
 const std::string kName = "nom";
 const std::string kTrimester = "trimestre";
 const std::string kResults = "resultats";
+const std::string kStudentResults = "resultatsEtudiant";
 const std::string kFirstName = "prenom";
 const std::string kId = "matricule";
 const std::string kGrade = "note";
@@ -146,7 +147,7 @@ inline void from_json(const nlohmann::json& j, ClassesRequest& obj) {
 
 struct StudentRequest {
   std::string acronym;
-  int trimester = 0;
+  std::string trimester;
   std::string id;
 };
 
@@ -162,15 +163,33 @@ inline void from_json(const nlohmann::json& j, StudentRequest& obj) {
   j.at(kId).get_to(obj.id);
 }
 
-struct StudentResponse {
-  std::string todo;
+struct StudentResult{
+  std::string acronym;
+  int trimester = 0;
+  std::string grade;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const StudentResponse& obj) { j = {{"TODO", obj.todo}}; }
+inline void to_json(nlohmann::json& j, const StudentResult& obj) {
+  j = {{kAcronym, obj.acronym}, {kTrimester, obj.trimester}, {kGrade, obj.grade}}; 
+}
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, StudentResponse& obj) { j.at("TODO").get_to(obj.todo); }
+inline void from_json(const nlohmann::json& j, StudentResult& obj) {
+  j.at(kAcronym).get_to(obj.acronym); 
+  j.at(kTrimester).get_to(obj.trimester); 
+  j.at(kGrade).get_to(obj.grade); 
+}
+
+struct StudentResponse{
+  std::vector<StudentResult> studentResults;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const StudentResponse& obj) { j = {{kStudentResults, obj.studentResults}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, StudentResponse& obj) { j.at(kStudentResults).get_to(obj.studentResults); }
 
 struct GradesRequest {
   std::string acronym;

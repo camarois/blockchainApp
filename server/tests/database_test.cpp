@@ -42,12 +42,8 @@ TEST(Sqlite3Tests, test_transaction) {
   ASSERT_TRUE(!receivedResults.empty());
   ASSERT_EQ(expectedResults.size(), receivedResults.size());
 
-  Common::Models::StudentRequest studentRequest = {"inf3995", 20193, "12345678"};
-  classId = db.checkForExistingClass(studentRequest.acronym, studentRequest.trimester);
-  std::optional<Common::Models::Result> receivedResult;
-  if (classId){
-    receivedResult = db.getStudentResult(classId.value(), studentRequest.id);
-  }
-  ASSERT_EQ(expectedResult1.grade, receivedResult.value().grade);
+  Common::Models::StudentRequest studentRequest = {"inf3995", "20193", "12345678"};
+  std::vector<Common::Models::StudentResult> receivedResult  = db.getStudentResult(studentRequest);
+  ASSERT_EQ(expectedResult1.grade, receivedResult[0].grade);
 
 }
