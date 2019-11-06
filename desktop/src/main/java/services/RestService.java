@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import constants.ServerUrls;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import models.LogsResponse;
 import models.LogsRequest;
 import models.ChaineRequest;
@@ -57,59 +59,59 @@ public class RestService {
         initSslContext();
     }
 
-    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT) {
-        Task task = new Task<>() {
+    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT,
+                                              Consumer<T> onSucceed, Consumer<WorkerStateEvent> onFail) {
+        Task<T> task = new Task<>() {
             @Override
             public T call() throws Exception {
                 return postRequest(url, data, classOfT);
             }
         };
+        task.setOnSucceeded(e -> onSucceed.accept(task.getValue()));
+        task.setOnFailed(onFail::accept);
         return threadPool.submit(task);
     }
 
-    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT, Consumer<T> onResponse) {
+    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT,
+                                              Consumer<T> onSucceed) {
+        return postRequestAsync(url, data, classOfT, onSucceed, (e) -> {});
+    }
+
+    public static <T> Future postRequestAsync(String url, Object data) {
+        return postRequestAsync(url, data, null, (e) -> {}, (e) -> {});
+    }
+
+    public static <T> Future getRequestAsync(String url, Class<T> classOfT,
+                                             Consumer<T> onSucceed, Consumer<WorkerStateEvent> onFail) {
         Task<T> task = new Task<>() {
-            @Override
-            public T call() {
-                return postRequest(url, data, classOfT);
-            }
-        };
-        task.setOnSucceeded(e -> onResponse.accept(task.getValue()));
-        return threadPool.submit(task);
-    }
-
-    public static <T> Future getRequestAsync(String url, Object data, Class<T> classOfT) {
-        Task task = new Task<>() {
             @Override
             public T call() throws Exception {
                 return getRequest(url, classOfT);
             }
         };
+        task.setOnSucceeded(e -> onSucceed.accept(task.getValue()));
+        task.setOnFailed(onFail::accept);
         return threadPool.submit(task);
     }
 
-    public static <T> Future getRequestAsync(String url, Object data, Class<T> classOfT, Consumer<T> onResponse) {
-        Task<T> task = new Task<>() {
-            @Override
-            public T call() {
-                return getRequest(url, classOfT);
-            }
-        };
-        task.setOnSucceeded(e -> onResponse.accept(task.getValue()));
-        return threadPool.submit(task);
+    public static <T> Future getRequestAsync(String url, Class<T> classOfT, Consumer<T> onSucceed) {
+        return getRequestAsync(url, classOfT, onSucceed, (e) -> {});
     }
 
-    public static <T> T getRequest(String url, Class<T> classOfT) {
+    public static <T> Future getRequestAsync(String url) {
+        return getRequestAsync(url, null, (e) -> {}, (e) -> {});
+    }
+
+    public static <T> T getRequest(String url, Class<T> classOfT) throws Exception {
         return gson.fromJson(baseRequest(HTTP_GET_METHOD, url, ""), classOfT);
     }
 
-    public static <T> T postRequest(String url, Object data, Class<T> classOfT) {
+    public static <T> T postRequest(String url, Object data, Class<T> classOfT) throws Exception {
         return gson.fromJson(baseRequest(HTTP_POST_METHOD, url, data), classOfT);
     }
 
-    private static String baseRequest(String method, String url, Object data) {
+    private static String baseRequest(String method, String url, Object data) throws Exception {
         try {
-            Thread.sleep(2000);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
                     .headers("Authorization", CredentialsManager.getInstance().getAuthToken())
@@ -121,12 +123,13 @@ public class RestService {
                 String authToken = response.headers().allValues("Authorization").get(0);
                 CredentialsManager.saveAuthToken(authToken);
                 return response.body();
+            } else {
+                throw new Exception("Forbidden");
             }
-            System.out.println("Forbidden");
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
-        return null;
     }
 
     private static void initSslContext() {

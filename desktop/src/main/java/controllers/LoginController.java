@@ -2,17 +2,7 @@ package controllers;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.control.TextField;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.Button;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ButtonBar;
+import javafx.scene.control.*;
 
 import javafx.scene.layout.GridPane;
 import models.LoginRequest;
@@ -42,26 +32,21 @@ public class LoginController {
 
         RestService.postRequestAsync(RestService.urls.getLogin(), loginRequest, LoginResponse.class, loginResponse -> {
             try {
-                if (loginResponse != null) {
-                    BorderPane rootNode = new BorderPane();
-                    Parent logsViewer = FXMLLoader.load(
-                            Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
-                    );
-                    rootNode.setCenter(logsViewer);
-                    MenuBar menuBar = createMenuBar();
-                    rootNode.setTop(menuBar);
+                BorderPane rootNode = new BorderPane();
+                Parent logsViewer = FXMLLoader.load(
+                        Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
+                );
+                rootNode.setCenter(logsViewer);
+                MenuBar menuBar = createMenuBar();
+                rootNode.setTop(menuBar);
 
-                    Button btn = (Button) event.getSource();
-                    Scene scene = btn.getScene();
-                    scene.setRoot(rootNode);
-                }
-                else {
-                    showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide.");
-                }
+                Button btn = (Button) event.getSource();
+                Scene scene = btn.getScene();
+                scene.setRoot(rootNode);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        });
+        }, (e) -> showErrorDialog("Le nom d'utilisateur et/ou le mot de passe est invalide."));
     }
 
     private MenuBar createMenuBar() {
@@ -73,16 +58,14 @@ public class LoginController {
 
         changePasswordMenuItem.setOnAction(actionEvent -> {
             Optional<PasswordRequest> request = showChangePasswordDialog();
-            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), Object.class, (obj) -> {
-                if (obj == null) {
-                    showErrorDialog("L'ancien mot de passe est invalide.");
-                }
+            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {}, (e) -> {
+                showErrorDialog("L'ancien mot de passe est invalide.");
             });
         });
 
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
-                RestService.postRequestAsync(RestService.urls.getLogout(), new Object(), Object.class);
+                RestService.postRequestAsync(RestService.urls.getLogout(), null);
                 BorderPane rootNode = new BorderPane();
                 Parent loginViewer = FXMLLoader.load(
                         Objects.requireNonNull(getClass().getClassLoader().getResource("views/Login.fxml"))
@@ -113,8 +96,8 @@ public class LoginController {
 
         Label oldPassword = new Label("Ancien: ");
         Label newPassword = new Label("Nouveau: ");
-        TextField textOldPassword = new TextField();
-        TextField textNewPassword = new TextField();
+        PasswordField textOldPassword = new PasswordField();
+        PasswordField textNewPassword = new PasswordField();
 
         GridPane grid = new GridPane();
         grid.add(oldPassword, 1, 1);
