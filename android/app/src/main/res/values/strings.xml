@@ -49,4 +49,7 @@
     <string name="course_name">Nom du cours</string>
     <string name="course_trimester">Trimestre du cours</string>
     <string name="register_course">Enregistrer un cours</string>
+    <string name="welcome">Bienvenue,</string>
+    <string name="edition_description">Vous avez un compte d\'édition. Ouvrez le menu sur le côté pour commencer!</string>
+    <string name="consultation_description">Vous avez un compte de consultation. Ouvrez le menu sur le côté pour commencer!</string>
 </resources>
