@@ -35,7 +35,7 @@ inline unsigned char byteToBase64(unsigned char c) {
   if (c == '/') {
     return slash;
   }
-  return std::string::npos;
+  return static_cast<unsigned char>(std::string::npos);
 }
 
 inline std::string decode(const std::string& encodedString) {
