@@ -8,6 +8,7 @@ std::vector<std::string> Logger::severities = {"ERREUR", "ATTENTION", "INFO"};
 bool Logger::isInitialized = false;
 std::shared_ptr<Logger> Logger::instance;
 
+// NOLINTNEXTLINE
 Logger::Logger(int logSessionId, const std::string& dbPath) : logSessionId_(logSessionId), dbPath_(dbPath) {
   logCount_ = 1;
 }
