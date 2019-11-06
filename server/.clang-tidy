@@ -1,6 +1,8 @@
 Checks: >
   *,
   -fuchsia-default-arguments,
+  -fuchsia-default-arguments-calls,
+  -fuchsia-default-arguments-declarations,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -modernize-use-nodiscard,
   -fuchsia-statically-constructed-objects,
@@ -10,7 +12,10 @@ Checks: >
   -modernize-use-nodiscard,
   -fuchsia-overloaded-operator,
   -hicpp-vararg,
+  -modernize-use-trailing-return-type,
   -clang-diagnostic-unused-result,
+  -hicpp-special-member-functions,
+  -cppcoreguidelines-special-member-functions,
 
 WarningsAsErrors: "*"
 

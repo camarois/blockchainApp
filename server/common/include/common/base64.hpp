@@ -6,10 +6,16 @@
 
 #include <array>
 #include <iostream>
-#include <stdexcept>
+#include <vector>
 
 namespace Common {
 namespace Base64 {
+const int firstBlockSize = 3;
+const int secondBlockSize = 4;
+static const std::string base64_chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+/";
 
 inline bool isBase64(unsigned char c) { return isalnum(c) != 0 || c == '+' || c == '/'; }
 
@@ -38,10 +44,59 @@ inline unsigned char byteToBase64(unsigned char c) {
   return static_cast<unsigned char>(std::string::npos);
 }
 
-inline std::string decode(const std::string& encodedString) {
-  const int firstBlockSize = 3;
-  const int secondBlockSize = 4;
+inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
+  int in_len = bytes_to_encode.size();
+  std::string ret;
+  int i = 0;
+  int j = 0;
+  std::array<unsigned char, firstBlockSize> firstBlock = {};
+  std::array<unsigned char, secondBlockSize> secondBlock = {};
+  int in = 0;
 
+  while (in_len-- != 0) {
+    firstBlock[i++] = bytes_to_encode.at(in++);
+    if (i == firstBlockSize) {
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      secondBlock[0] = (firstBlock[0] & 0xfc) >> 2;
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      secondBlock[1] = ((firstBlock[0] & 0x03) << 4) + ((firstBlock[1] & 0xf0) >> 4);
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      secondBlock[2] = ((firstBlock[1] & 0x0f) << 2) + ((firstBlock[2] & 0xc0) >> 6);
+      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+      secondBlock[3] = firstBlock[2] & 0x3f;
+
+      for (i = 0; i < secondBlockSize; i++) {
+        ret += base64_chars[secondBlock[i]];
+      }
+      i = 0;
+    }
+  }
+
+  if (i != 0) {
+    for (j = i; j < firstBlockSize; j++) {
+      firstBlock[j] = '\0';
+    }
+
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+    secondBlock[0] = (firstBlock[0] & 0xfc) >> 2;
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+    secondBlock[1] = ((firstBlock[0] & 0x03) << 4) + ((firstBlock[1] & 0xf0) >> 4);
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
+    secondBlock[2] = ((firstBlock[1] & 0x0f) << 2) + ((firstBlock[2] & 0xc0) >> 6);
+
+    for (j = 0; j < i + 1; j++) {
+      ret += base64_chars[secondBlock[j]];
+    }
+
+    while (i++ < firstBlockSize) {
+      ret += '=';
+    }
+  }
+
+  return ret;
+}
+
+inline std::string decode(const std::string& encodedString) {
   size_t inLen = encodedString.size();
   int i = 0;
   int j = 0;

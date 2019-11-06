@@ -30,7 +30,7 @@ class Logger {
 
   std::mutex mutex_;
   const int logSessionId_;
-  const std::string& dbPath_;
+  const std::string dbPath_;
   int logCount_;
 };
 
