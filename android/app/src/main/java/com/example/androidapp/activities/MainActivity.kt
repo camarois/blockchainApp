@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
+    private val STORAGE_PERMISSION_CODE: Int = 123
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -73,5 +74,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
             Toast.makeText(this, "L'application utilise cette permission afin de lire des fichiers PDFs.", Toast.LENGTH_LONG).show()
+        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
     }
 }
