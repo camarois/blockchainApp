@@ -55,8 +55,8 @@ void ZMQWorker::tryConnect(zmq::socket_t& socket, const std::string& address) {
 
 void ZMQWorker::subServer() {
   std::cout << "ZMQ/server: thread started" << std::endl;
-  tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port));
-  tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port));
+  tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
+  tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
 
   while (running_) {
@@ -85,8 +85,8 @@ void ZMQWorker::subServer() {
 
 void ZMQWorker::subBlockchain() {
   std::cout << "ZMQ/blockchain: thread started" << std::endl;
-  tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port));
-  tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port));
+  tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port_));
+  tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port_));
   std::cout << "ZMQ/blockchain: connected to sub/pub sockets" << std::endl;
 
   while (running_) {

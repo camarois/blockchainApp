@@ -22,10 +22,10 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname)
 
 bool ZMQWorker::start() {
   try {
-    socketPubToMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner1Port));
-    socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port));
-    socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port));
-    socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port));
+    socketPubToMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner1Port_));
+    socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port_));
+    socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port_));
+    socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port_));
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ: failed to bind socket: " << e.what() << std::endl;
     return false;

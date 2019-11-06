@@ -23,7 +23,7 @@ class ZMQWorker {
   void sendResponse(const std::string& token, const std::string& result);
   
   bool running_;
-  const std::string serverHostname_;
+  const std::string& serverHostname_;
   zmq::context_t context_;
   zmq::socket_t socketSubServer_;
   zmq::socket_t socketPushServer_;
@@ -33,10 +33,10 @@ class ZMQWorker {
   std::thread threadBlockchain_;
   BlockChain blockchain_;
 
-  const int kMiner1Port = 5555;
-  const int kMiner2Port = 5556;
-  const int kMiner3Port = 5557;
-  const int kMiner4Port = 5558;
+  const int kMiner1Port_ = 5555;
+  const int kMiner2Port_ = 5556;
+  const int kMiner3Port_ = 5557;
+  const int kMiner4Port_ = 5558;
 };
 
 } // namespace Miner

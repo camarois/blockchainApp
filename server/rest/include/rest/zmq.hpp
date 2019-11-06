@@ -27,7 +27,7 @@ class ZMQWorker {
   std::future<std::string> createGetRequest(const std::string& sql);
 
   bool running_;
-  const std::string serverHostname_;
+  const std::string& serverHostname_;
   zmq::context_t context_;
   zmq::socket_t socketPubToMiner_;
   zmq::socket_t socketPullFromMiner_;
@@ -37,10 +37,10 @@ class ZMQWorker {
   std::thread threadProxyBlockchain_;
   std::unordered_map<std::string, std::promise<std::string>> getRequests_;
 
-  const int kMiner1Port = 5555;
-  const int kMiner2Port = 5556;
-  const int kMiner3Port = 5557;
-  const int kMiner4Port = 5558;
+  const int kMiner1Port_ = 5555;
+  const int kMiner2Port_ = 5556;
+  const int kMiner3Port_ = 5557;
+  const int kMiner4Port_ = 5558;
 };
 
 } // namespace Rest
