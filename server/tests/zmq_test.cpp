@@ -27,6 +27,4 @@ TEST(ZMQ, connects) {
   rest.updateRequest("test-update 2");
   rest.updateRequest("test-update 3");
   rest.updateRequest("test-update 4");
-
-  while(1);
 }
