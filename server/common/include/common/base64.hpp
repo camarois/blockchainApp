@@ -44,7 +44,7 @@ inline unsigned char byteToBase64(unsigned char c) {
   return static_cast<unsigned char>(std::string::npos);
 }
 
-inline std::string base64_encode(const std::vector<unsigned char>& bytes_to_encode) {
+inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
   int in_len = bytes_to_encode.size();
   std::string ret;
   int i = 0;
