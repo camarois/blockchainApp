@@ -131,17 +131,17 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
 
 std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
   Query query = lastLogId != 0 ? Query(
-                                "SELECT logId, severity, logTime, log FROM logs "
-                                "WHERE logId > '%q' AND provenance = '%q'"
-                                "ORDER BY logTime ASC;",
-                                std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
-                          : Query(
-                                "SELECT * FROM ("
-                                "SELECT logId, severity, logTime, log FROM logs "
-                                "WHERE provenance = '%q'"
-                                "ORDER BY logId DESC LIMIT 20) "
-                                "ORDER BY logTime ASC;",
-                                std::to_string(provenance).c_str());
+                                     "SELECT logId, severity, logTime, log FROM logs "
+                                     "WHERE logId > '%q' AND provenance = '%q'"
+                                     "ORDER BY logTime ASC;",
+                                     std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
+                               : Query(
+                                     "SELECT * FROM ("
+                                     "SELECT logId, severity, logTime, log FROM logs "
+                                     "WHERE provenance = '%q'"
+                                     "ORDER BY logId DESC LIMIT 20) "
+                                     "ORDER BY logTime ASC;",
+                                     std::to_string(provenance).c_str());
   Statement statement = Statement(db_, query);
 
   std::vector<Common::Models::Information> logs;
@@ -159,8 +159,8 @@ std::optional<int> Database::checkForExistingClass(const std::string& acronym, i
       "LIMIT 1;",
       acronym.c_str(), std::to_string(trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
-  if (statementCheck.step()){
-    return std::stoi(statementCheck.getColumnText(0));    
+  if (statementCheck.step()) {
+    return std::stoi(statementCheck.getColumnText(0));
   }
 
   return {};
@@ -219,21 +219,30 @@ std::vector<Common::Models::Result> Database::getClassResult(int classId) {
   return results;
 }
 
-std::optional<Common::Models::Result> Database::getStudentResult(int classId, const std::string& studentId) {
+std::vector<Common::Models::StudentResult> Database::getStudentResult(
+    const Common::Models::StudentRequest& studentRequest) {
+  std::string acronym = studentRequest.acronym;
+  std::replace(acronym.begin(), acronym.end(), '*', '%');
+  std::string trimester = studentRequest.trimester;
+  std::replace(trimester.begin(), trimester.end(), '*', '%');
+  std::string studentId = studentRequest.id;
   Query getClassResultsQuery = Query(
-      "SELECT firstName, lastname, id, grade FROM results "
-      "WHERE classId = '%q' AND id = '%q';",
-      std::to_string(classId).c_str(), studentId.c_str());
+      "SELECT c.acronym, c.trimester, r.grade "
+      "FROM classes c "
+      "JOIN results r ON c.classId = r.classId "
+      "WHERE c.acronym LIKE '%q' AND r.id = '%q' AND c.trimester LIKE '%q';",
+      acronym.c_str(), studentId.c_str(), trimester.c_str());
   Statement getResultsStatement = Statement(db_, getClassResultsQuery);
-  Common::Models::Result result;
+  std::vector<Common::Models::StudentResult> studentResult;
 
-  if (getResultsStatement.step()) {
-    result.firstName = getResultsStatement.getColumnText(0);
-    result.lastName = getResultsStatement.getColumnText(1);
-    result.id = getResultsStatement.getColumnText(2);
-    result.grade = getResultsStatement.getColumnText(3);
+  while (getResultsStatement.step()) {
+    studentResult.push_back({
+        .acronym = getResultsStatement.getColumnText(0),
+        .trimester = std::stoi(getResultsStatement.getColumnText(1)),
+        .grade = getResultsStatement.getColumnText(2),
+    });
   }
 
-  return result;
+  return studentResult;
 }
 }  // namespace Common
