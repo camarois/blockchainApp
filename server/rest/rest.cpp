@@ -15,7 +15,7 @@ DEFINE_string(db, "blockchain.db", "Path to sqlite db file");            // NOLI
 DEFINE_int32(port, 10000, "REST http port");                             // NOLINT
 DEFINE_int32(threads, 4, "Number of threads");                           // NOLINT
 DEFINE_string(transactions, "transactions/", "Path to transactions");    // NOLINT
-DEFINE_int32(buffer_size, 100000, "Maximum number of bytes in buffer");  // NOLINT
+DEFINE_int32(buffer_size, 1000000, "Maximum number of bytes in buffer");  // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);

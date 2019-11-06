@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <gflags/gflags.h>
+#include <iostream>
 #include <rest/transaction_controller.hpp>
 
 DECLARE_string(db);
@@ -24,11 +25,11 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
   Common::Database db(FLAGS_db);
   std::optional<int> classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
   if (classId) {
-    db.DeleteExistingClass(classId.value());
-    db.DeleteExistingResults(classId.value());
+    db.deleteExistingClass(classId.value());
+    db.deleteExistingResults(classId.value());
   }
-  int newClassId = db.AddNewClass(transactionRequest);
-  db.AddNewResult(transactionRequest, newClassId);
+  int newClassId = db.addNewClass(transactionRequest);
+  db.addNewResult(transactionRequest, newClassId);
 
   std::filesystem::create_directories(FLAGS_transactions);
   // Example: transactions/3-inf3995.pdf -> Project in fall
