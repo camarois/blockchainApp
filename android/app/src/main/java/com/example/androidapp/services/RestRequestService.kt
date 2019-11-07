@@ -21,17 +21,13 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://$it:10000"
+                serverUrl = "https://10.200.4.237:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
             })
         val requestQueue = Volley.newRequestQueue(context)
         requestQueue.add(request)
-    }
-
-    suspend fun getPingAsync(): String {
-        return getAsync("ping")
     }
 
     suspend fun getStudentListAsync(): ListStudent {
@@ -68,19 +64,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun postTransactionAsync(request: TransactionRequest): String {
         return postAsync("transaction", request, String::class.java)
-    }
-
-    suspend fun getAsync(url: String): String {
-        return suspendCoroutine { continuation ->
-            val request = StringRequest("$serverUrl/$url",
-                { response ->
-                    continuation.resume(response)
-                },
-                {
-                    continuation.resumeWithException(it)
-                })
-            httpClient.addToRequestQueue(request)
-        }
     }
 
     private suspend fun <T> getAsync(url: String, classOfT: Class<T>, isFile: Boolean = false): T {

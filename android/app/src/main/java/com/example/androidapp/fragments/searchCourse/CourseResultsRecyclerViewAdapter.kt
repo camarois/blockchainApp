@@ -21,7 +21,7 @@ class CourseResultsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mName.text = "${item.firstName} ${item.lastName}"
+        holder.mName.text = "${item.firstName.capitalize()} ${item.lastName.capitalize()}"
         holder.mCode.text = item.code
         holder.mGrade.text = item.grade
 
