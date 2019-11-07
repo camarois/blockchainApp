@@ -65,7 +65,10 @@ class RegisterCourseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
         viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterCourseFragment, registeredStudents, listener)
-        addStudentButton.setOnClickListener { openBottomSheet() }
+        addStudentButton.setOnClickListener {
+            Utils.debounce(addStudentButton)
+            openBottomSheet()
+        }
         val bundle = this.arguments!!
         class_name.text = bundle["code"].toString()
         super.onViewCreated(view, savedInstanceState)
@@ -208,6 +211,7 @@ class RegisterCourseFragment : Fragment() {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
+
             Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
