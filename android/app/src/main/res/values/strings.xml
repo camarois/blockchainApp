@@ -21,7 +21,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Classbook</string>
-    <string name="nav_header_subtitle">Édition/Consultation</string>
+    <string name="nav_header_subtitle_edition">Édition</string>
+    <string name="nav_header_subtitle_consultation">Consultation</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_logout">Déconnexion</string>
 
@@ -52,4 +53,5 @@
     <string name="welcome">Bienvenue,</string>
     <string name="edition_description">Vous avez un compte d\'édition. Ouvrez le menu sur le côté pour commencer!</string>
     <string name="consultation_description">Vous avez un compte de consultation. Ouvrez le menu sur le côté pour commencer!</string>
+    <string name="consultation">Consultation</string>
 </resources>
