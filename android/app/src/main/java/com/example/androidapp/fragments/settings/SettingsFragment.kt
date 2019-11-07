@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.AuthFailureError
+import com.android.volley.TimeoutError
 import com.example.androidapp.PasswordRequest
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
@@ -53,13 +54,23 @@ class SettingsFragment : Fragment(), CoroutineScope {
             val oldPassword = old_password_edit_text.text.toString()
             val newPassword = new_password_edit_text.text.toString()
             val response = restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
-            Toast.makeText(context, "Le mot de passe a été changé avec succès.",
-                Toast.LENGTH_LONG).show()
-        } catch (e: AuthFailureError) {
             Toast.makeText(
-                context, "L'ancien mot de passe est invalide",
+                context,
+                "Le mot de passe a été changé avec succès.",
                 Toast.LENGTH_LONG
             ).show()
+        } catch (e: AuthFailureError) {
+            Toast.makeText(
+                context,
+                "L'ancien mot de passe est invalide",
+                Toast.LENGTH_LONG
+            ).show()
+        } catch (e: TimeoutError) {
+                Toast.makeText(
+                    context,
+                    "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG
+                ).show()
         } finally {
             old_password_edit_text.setText("")
             new_password_edit_text.setText("")

@@ -21,6 +21,7 @@ import android.content.pm.PackageManager
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.services.Utils
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             var accountType = if (response.edition) {
                 AccountTypes.EDITION
             } else {
-                AccountTypes.CONSULTATION
+                AccountTypes.EDITION
             }
 
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         } catch (e: AuthFailureError) {
             password_edit_text.setText("")
             Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
+                Toast.LENGTH_LONG).show()
+        } catch (e: TimeoutError) {
+            Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
                 Toast.LENGTH_LONG).show()
         }
     }

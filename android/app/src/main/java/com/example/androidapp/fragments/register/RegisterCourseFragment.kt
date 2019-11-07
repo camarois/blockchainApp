@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import android.widget.Toast
 import com.android.volley.AuthFailureError
+import com.android.volley.TimeoutError
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
@@ -214,8 +215,8 @@ class RegisterCourseFragment : Fragment() {
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
-        } catch (e: Error) {
-            Toast.makeText(activity, "Une erreur est survenue lors du traitement de la requête", Toast.LENGTH_LONG).show()
+        } catch (e: TimeoutError) {
+            Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
         }
     }
 

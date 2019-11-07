@@ -10,6 +10,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.CourseItem
 import com.example.androidapp.R
@@ -96,9 +98,14 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
     private suspend fun logout() {
-        restService.postLogoutAsync()
-        val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
-        startActivity(intent)
+        try {
+            restService.postLogoutAsync()
+            val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
+            startActivity(intent)
+        } catch (e: TimeoutError) {
+        Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
+            Toast.LENGTH_LONG).show()
+    }
     }
 
     override fun onSupportNavigateUp(): Boolean {
