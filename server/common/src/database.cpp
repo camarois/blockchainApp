@@ -2,6 +2,7 @@
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
+#include <iostream>
 
 namespace Common {
 
@@ -245,4 +246,35 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(
 
   return studentResult;
 }
+
+std::vector<Common::Models::ClassInfo> Database::getClasses() {
+  Query getClassesQuery = Query(
+      "SELECT DISTINCT acronym, name, trimester "
+      "FROM classes;");
+  Statement getClassesStatement = Statement(db_, getClassesQuery);
+  std::vector<Common::Models::ClassInfo> result;
+  while (getClassesStatement.step()) {
+    result.push_back({.acronym = getClassesStatement.getColumnText(0),
+                      .name = getClassesStatement.getColumnText(1),
+                      .trimester = std::stoi(getClassesStatement.getColumnText(2))});
+  }
+  return result;
+}
+
+std::vector<Common::Models::StudentInfo> Database::getStudents() {
+  Query getStudentQuery = Query(
+      "SELECT DISTINCT firstName, lastName, id "
+      "FROM results;");
+  std::cout << getStudentQuery.val() << std::endl;
+  Statement getStudentStatement = Statement(db_, getStudentQuery);
+  std::vector<Common::Models::StudentInfo> result;
+  while (getStudentStatement.step()) {
+    result.push_back({.lastName = getStudentStatement.getColumnText(0),
+                      .firstName = getStudentStatement.getColumnText(1),
+                      .id = getStudentStatement.getColumnText(2)});
+  }
+
+  return result;
+}
+
 }  // namespace Common
