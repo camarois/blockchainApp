@@ -39,3 +39,7 @@ data class ListStudent(
 data class ListClass(
     @SerializedName("listeClasses") val listeClasses: List<CourseItem>
 )
+
+enum class AccountTypes {
+    CONSULTATION, EDITION
+}

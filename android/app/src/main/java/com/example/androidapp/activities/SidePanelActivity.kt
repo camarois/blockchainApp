@@ -10,13 +10,13 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.androidapp.AccountTypes
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
-import com.example.androidapp.services.AccountTypes
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_side_panel.*
