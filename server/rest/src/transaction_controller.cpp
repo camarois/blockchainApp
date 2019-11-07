@@ -27,14 +27,16 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
-  auto classId = zmqWorker_->getRequest(
-      {Common::Functions::checkForExistingClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
+  auto classId = zmqWorker_->getRequest({Common::Functions::checkForExistingClass,
+                                         {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
   if (classId.found) {
     zmqWorker_->updateRequest({Common::Functions::deleteExistingClass, {classId.data}});
     zmqWorker_->updateRequest({Common::Functions::deleteExistingResults, {classId.data}});
   }
-  int newClassId = db.addNewClass(transactionRequest);
-  db.addNewResult(transactionRequest, newClassId);
+  auto newClassId = zmqWorker_->updateRequest(
+      {Common::Functions::addNewClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
+  auto newClassId = zmqWorker_->updateRequest(
+      {Common::Functions::addNewResult, {transactionRequest.acronym, std::to_string(transactionRequest.trimester), newClassId.data}});
 
   std::filesystem::create_directories(FLAGS_transactions);
   // Example: transactions/3-inf3995.pdf -> Project in fall
