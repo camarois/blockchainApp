@@ -25,7 +25,6 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
   auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
   if (salt.found && zmqWorker_
                         ->getRequest({Common::Functions::containsUser,
@@ -67,7 +66,7 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  zmqWorker_->updateRequest({Common::Functions::addUser, {registerRequest.username, registerRequest.password}});
+  zmqWorker_->updateRequest({Common::Functions::addUser, {registerRequest.username, registerRequest.password, "0"}});
   Common::Models::LoginResponse registerResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }

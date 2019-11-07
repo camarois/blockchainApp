@@ -95,21 +95,19 @@ void ZMQWorker::handleSubServer() {
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
-      std::cout << "Received from server: " << received.data << std::endl;
+      Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
+      std::cout << "Received from server: " << request.command << std::endl;
       if (received.type == Common::Models::kTypeServerRequest) {
-        Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-        // TODO(gabriel): database request
+        std::cout << "salut " << db.get(nlohmann::json::parse(request.command)).data << std::endl;
         sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       } else if (received.type == Common::Models::kTypeTransaction) {
-        Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
         blockchain_.appendTransaction(received.data);
         blockchain_.nextBlock();
         blockchain_.saveAll();
-        // TODO(gabriel): update database
         sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain handleSubServer: " << e.what() << std::endl;
     }
   }
 }
@@ -132,7 +130,7 @@ void ZMQWorker::handleSubBlockchain() {
         std::cout << "TODO: " << Common::MessageHelper::toJSON(msg) << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain handleSubBlockchain: " << e.what() << std::endl;
     }
   }
 }
