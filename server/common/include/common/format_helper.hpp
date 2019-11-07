@@ -37,7 +37,12 @@ inline std::string randomStr(size_t size = kDefaultRandomSize) {
 
   std::string result;
   for (size_t i = 0; i < size; i++) {
-    result += static_cast<char>(dist(rng));  // Creates a random ASCII value
+    auto randomChar = static_cast<unsigned char>(dist(rng));
+    if (std::isalnum(randomChar)) {
+      result += randomChar;  // Creates a random alpha num value
+    } else {
+      --i;
+    }
   }
   return result;
 }

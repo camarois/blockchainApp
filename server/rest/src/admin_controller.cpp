@@ -8,7 +8,11 @@ DECLARE_string(db);
 
 namespace Rest {
 
-AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router,
+                                 const std::shared_ptr<ZMQWorker>& zmqWorker)
+    : zmqWorker_(zmqWorker) {
+  setupRoutes(router);
+}
 
 void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this), false);
@@ -24,13 +28,13 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
-  auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value(), true)) {
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
+  Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
+  if (salt.found &&
+      zmqWorker_->getRequest({Common::Functions::containsAdmin, Common::Models::toStr(containsAdminRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
-    Common::Models::LoginResponse loginResponse = {};
-    response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
+    response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
   }
@@ -44,14 +48,17 @@ void AdminController::handleLogout(const Pistache::Rest::Request& /*request*/,
 
 void AdminController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
-  auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value(), true)) {
-    db.setUserPassword(loginRequest.username, passwordRequest, salt.value(), true);
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
+  Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
+  if (salt.found &&
+      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsAdminRequest)}).found) {
+    Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
+                                                                     true};
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsAdminRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);

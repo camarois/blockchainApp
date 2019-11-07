@@ -16,6 +16,31 @@ data class PasswordRequest(
     @SerializedName("nouveau") val newPassword: String
 )
 
+data class StudentRequest(
+    @SerializedName("sigle") val acronym: String,
+    @SerializedName("trimestre") val trimester: String,
+    @SerializedName("matricule") val code: String
+)
+
+data class StudentResponse(
+    @SerializedName("resultatsEtudiant") val results: List<CourseResult>
+)
+
+data class CourseResult(
+    @SerializedName("note") val grade: String,
+    @SerializedName("sigle") val acronym: String,
+    @SerializedName("trimestre") val trimester: Int
+)
+
+data class CourseRequest(
+    @SerializedName("sigle") val acronym: String,
+    @SerializedName("trimestre")val trimester: Int
+)
+
+data class CourseResponse(
+    @SerializedName("resultats") val students: List<StudentItem>
+)
+
 data class TransactionRequest(
     @SerializedName("sigle") val classCode: String,
     @SerializedName("nom") val className: String,
@@ -43,6 +68,11 @@ data class ListStudent(
 
 data class ListClass(
     @SerializedName("listeClasses") val listeClasses: List<CourseItem>
+)
+
+data class PdfFileRequest(
+    @SerializedName("sigle") val acronym: String,
+    @SerializedName("trimestre") val trimester: Int
 )
 
 enum class AccountTypes {

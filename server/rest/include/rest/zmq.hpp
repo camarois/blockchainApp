@@ -1,6 +1,7 @@
 #ifndef REST_ZMQ_HPP
 #define REST_ZMQ_HPP
 
+#include <common/miner_models.hpp>
 #include <future>
 #include <map>
 #include <thread>
@@ -16,16 +17,16 @@ class ZMQWorker {
   ~ZMQWorker();
 
   bool start();
-  std::string getRequest(const std::string& sql);
-  void updateRequest(const std::string& sql);
+  void join();
+  Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse updateRequest(const Common::Models::SqlRequest& sql);
 
  private:
-  void join();
   void handlePullFromMiner();
   void handleProxyBlockchain();
   bool sendRequest(const std::string& json);
   void receivedResponse(const std::string& token, const std::string& response);
-  std::future<std::string> createGetRequest(const std::string& sql);
+  std::future<std::string> createRequest(const std::string& sql, const std::string& type);
 
   bool running_;
   const std::string serverHostname_;
