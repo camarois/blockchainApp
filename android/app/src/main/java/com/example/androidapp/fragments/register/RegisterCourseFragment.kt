@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
@@ -221,7 +222,8 @@ class RegisterCourseFragment : Fragment() {
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
             register_fragment.visibility = View.GONE
-            view!!.clearFocus()
+            val im = view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(view!!.windowToken, 0)
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
