@@ -45,7 +45,6 @@ void UserController::handleLogout(const Pistache::Rest::Request& /*request*/, Pi
 
 void UserController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
@@ -56,7 +55,7 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
       zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      false};
-    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsUserRequest)});
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);

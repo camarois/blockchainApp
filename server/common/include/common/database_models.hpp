@@ -13,7 +13,7 @@ const std::string kLoginRequest = "loginRequest";
 const std::string kIsAdmin = "isAdmin";
 const std::string kPasswordRequest = "passwordRequest";
 const std::string kSalt = "salt";
-const std::string ktransactionRequest = "transactionRequest";
+const std::string kTransactionRequest = "transactionRequest";
 const std::string kClassId = "classId";
 
 struct AddUserRequest {
@@ -93,12 +93,12 @@ struct AddNewResultRequest {
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const AddNewResultRequest& obj) {
-  j = {{ktransactionRequest, obj.transactionRequest}, {kClassId, obj.classId}};
+  j = {{kTransactionRequest, obj.transactionRequest}, {kClassId, obj.classId}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, AddNewResultRequest& obj) {
-  j.at(kAcronym).get_to(obj.transactionRequest);
+  j.at(kTransactionRequest).get_to(obj.transactionRequest);
   j.at(kClassId).get_to(obj.classId);
 }
 
