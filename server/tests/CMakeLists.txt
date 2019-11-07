@@ -4,6 +4,7 @@ function(create_test test_name)
 endfunction()
 
 include_directories(tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/rest/include
     ${CMAKE_SOURCE_DIR}/miner/include
     ${COMMON_SRCS_DIR}/include
 )
@@ -16,6 +17,7 @@ link_libraries(
     gtest_main
     pthread
     dl
+    uuid
     stdc++fs
 )
 
@@ -40,4 +42,12 @@ create_test(blockchain_tests
     ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
     blockchain_test.cpp
     utils.cpp
+)
+
+create_test(zmq_tests 
+    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+    ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
+    ${CMAKE_SOURCE_DIR}/miner/src/zmq.cpp
+    ${CMAKE_SOURCE_DIR}/rest/src/zmq.cpp
+    zmq_test.cpp
 )

@@ -31,7 +31,7 @@ void FileController::handleGrades(const Pistache::Rest::Request& request, Pistac
   buffer.reserve(fileSize);
   buffer.insert(buffer.begin(), std::istream_iterator<unsigned char>(file), std::istream_iterator<unsigned char>());
 
-  response.send(Pistache::Http::Code::Ok, Common::Base64::base64_encode(buffer));
+  response.send(Pistache::Http::Code::Ok, Common::Base64::encode(buffer));
 }
 
 }  // namespace Rest

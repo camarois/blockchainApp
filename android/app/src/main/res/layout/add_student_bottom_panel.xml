@@ -20,19 +20,19 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/lastName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/lastName_hint"
-            android:inputType="textPersonName" />
-
-        <EditText
             android:id="@+id/firstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/firstName_hint"
+            android:hint="@string/first_name_hint"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/lastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/last_name_hint"
             android:inputType="textPersonName" />
 
         <EditText
