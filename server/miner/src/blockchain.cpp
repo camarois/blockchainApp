@@ -1,8 +1,8 @@
+#include "miner/blockchain.hpp"
+
 #include <exception>
 #include <fstream>
 #include <iostream>
-
-#include "miner/blockchain.hpp"
 
 namespace Miner {
 

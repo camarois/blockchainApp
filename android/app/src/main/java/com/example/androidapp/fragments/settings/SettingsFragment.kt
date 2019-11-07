@@ -11,7 +11,6 @@ import com.android.volley.AuthFailureError
 import com.example.androidapp.PasswordRequest
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -48,11 +47,12 @@ class SettingsFragment : Fragment(), CoroutineScope {
         try {
             val oldPassword = old_password_edit_text.text.toString()
             val newPassword = new_password_edit_text.text.toString()
-            val response = restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
+            restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
             Toast.makeText(context, "Le mot de passe a été changé avec succès.",
                 Toast.LENGTH_LONG).show()
         } catch (e: AuthFailureError) {
-            password_edit_text.setText("")
+            old_password_edit_text.setText("")
+            new_password_edit_text.setText("")
             Toast.makeText(context, "L'ancien mot de passe est invalide",
                 Toast.LENGTH_LONG).show()
         }

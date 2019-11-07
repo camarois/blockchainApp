@@ -19,6 +19,7 @@ import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 import android.content.pm.PackageManager
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.androidapp.AccountTypes
@@ -26,14 +27,16 @@ import com.example.androidapp.AccountTypes
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
-    private val STORAGE_PERMISSION_CODE: Int = 123
+    private val READ_STORAGE_PERMISSION_CODE: Int = 123
+    private val WRITE_STORAGE_PERMISSION_CODE: Int = 124
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestStoragePermission()
+        requestReadStoragePermission()
+        requestWriteStoragePermission()
         Fabric.with(this, Crashlytics())
         job = Job()
         setContentView(R.layout.activity_main)
@@ -65,7 +68,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun requestStoragePermission() {
+    private fun requestReadStoragePermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 READ_EXTERNAL_STORAGE
@@ -75,6 +78,19 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
             Toast.makeText(this, "L'application utilise cette permission afin de lire des fichiers PDFs.", Toast.LENGTH_LONG).show()
-        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), READ_STORAGE_PERMISSION_CODE)
+    }
+
+    private fun requestWriteStoragePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+            return
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE))
+            Toast.makeText(this, "L'application utilise cette permission afin de téléverser des fichiers PDFs sur votre appareil.", Toast.LENGTH_LONG).show()
+        ActivityCompat.requestPermissions(this, arrayOf(WRITE_EXTERNAL_STORAGE), WRITE_STORAGE_PERMISSION_CODE)
     }
 }
