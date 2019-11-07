@@ -26,11 +26,11 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
-  auto salt = db.getSalt(loginRequest.username);
-  if (salt && zmqWorker_
-                  ->getRequest({Common::Functions::containsUser,
-                                {loginRequest.username, loginRequest.password, salt.value(), "1"}})
-                  .found) {
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
+  if (salt.found && zmqWorker_
+                        ->getRequest({Common::Functions::containsUser,
+                                      {loginRequest.username, loginRequest.password, salt.data, "0"}})
+                        .found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::LoginResponse loginResponse = {};
@@ -52,10 +52,13 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
-  auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value())) {
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
+  if (salt.found && zmqWorker_
+                        ->getRequest({Common::Functions::containsUser,
+                                      {loginRequest.username, loginRequest.password, salt.data, "0"}})
+                        .found) {
     zmqWorker_->updateRequest({Common::Functions::setUserPassword,
-                               {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.value()}});
+                               {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.data}});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
