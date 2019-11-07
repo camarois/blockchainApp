@@ -9,6 +9,7 @@
 
         <TextView
             android:id="@+id/student_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -26,6 +27,7 @@
 
         <TextView
             android:id="@+id/student_code"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
