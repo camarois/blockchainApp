@@ -10,7 +10,11 @@ DECLARE_string(db);
 
 namespace Rest {
 
-UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router,
+                               const std::shared_ptr<ZMQWorker>& zmqWorker)
+    : zmqWorker_(zmqWorker) {
+  setupRoutes(router);
+}
 
 void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&UserController::handleLogin, this), false);
@@ -56,8 +60,9 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
-  db.addUser(registerRequest);
+  // Common::Database db(FLAGS_db);
+  // db.addUser(registerRequest);
+  zmqWorker_->updateRequest({Common::Functions::addUser, {registerRequest.username, registerRequest.password}});
   Common::Models::LoginResponse registerResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }

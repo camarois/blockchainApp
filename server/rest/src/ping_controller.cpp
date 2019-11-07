@@ -14,8 +14,6 @@ void PingController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 }
 
 void PingController::handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response) {
-  std::cout << "get " << zmqWorker_->getRequest({Common::Functions::getSalt, {"frank"}}) << std::endl;
-  std::cout << "update " << zmqWorker_->updateRequest({Common::Functions::addUser, {"frank", "1234"}}) << std::endl;
   response.send(Pistache::Http::Code::Ok, "PONG");
 }
 

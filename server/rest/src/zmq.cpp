@@ -70,13 +70,6 @@ std::string ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
 }
 
 std::string ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
-  // Common::Models::ZMQMessage message;
-  // message.type = Common::Models::kTypeTransaction;
-  // message.data = Common::Models::toStr(sql);
-  // nlohmann::json messageJSON = message;
-
-  // sendRequest(messageJSON.dump());
-
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
   request.wait_for(std::chrono::seconds(kWaitTimeout_));
   return request.get();

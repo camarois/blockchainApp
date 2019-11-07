@@ -14,7 +14,7 @@ MainController::MainController(Pistache::Address addr, size_t thr)
       router_(std::make_shared<Rest::CustomRouter>()),
       zmqWorker_(std::make_shared<ZMQWorker>("tcp://*")),
       // List of controllers:
-      userController_(router_),
+      userController_(router_, zmqWorker_),
       pingController_(router_, zmqWorker_),
       transactionController_(router_),
       infoController_(router_),
