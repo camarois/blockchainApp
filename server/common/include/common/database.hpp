@@ -23,7 +23,9 @@ class Database {
   void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
   void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
                        const std::string& salt, bool isAdmin = false);
-  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
+  bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt);
+  bool containsAdmin(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
+  std::optional<bool> getRole(const Common::Models::LoginRequest& loginRequest, const std::string& salt);
   std::optional<std::string> getSalt(const std::string& username);
 
   std::vector<std::string> getIps();

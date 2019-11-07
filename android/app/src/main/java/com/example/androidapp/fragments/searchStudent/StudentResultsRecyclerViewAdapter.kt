@@ -22,7 +22,7 @@ class StudentResultsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
         holder.mNameView.text = item.acronym
-        holder.mTrimester.text = item.trimester
+        holder.mTrimester.text = item.trimester.toString()
         holder.mResult.text = item.grade
 
         with(holder.mView) {

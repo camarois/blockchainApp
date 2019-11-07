@@ -26,7 +26,7 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
   auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value(), true)) {
+  if (salt && db.containsAdmin(loginRequest, salt.value(), true)) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::LoginResponse loginResponse = {};
@@ -50,7 +50,7 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
   auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value(), true)) {
+  if (salt && db.containsAdmin(loginRequest, salt.value(), true)) {
     db.setUserPassword(loginRequest.username, passwordRequest, salt.value(), true);
     response.send(Pistache::Http::Code::Ok);
   } else {

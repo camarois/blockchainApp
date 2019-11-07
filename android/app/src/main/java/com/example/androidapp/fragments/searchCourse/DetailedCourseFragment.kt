@@ -10,10 +10,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.androidapp.CourseItem
 import com.example.androidapp.PdfFileRequest
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
-import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.RestRequestService
 import kotlinx.android.synthetic.main.fragment_detailed_course.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +55,7 @@ class DetailedCourseFragment(
         job = Job()
         val view = inflater.inflate(R.layout.fragment_detailed_course, container, false)
         view.code.text = course.code
-        view.trimester.text = course.trimester
+        view.trimester.text = course.trimester.toString()
         view.viewPdfButton.setOnClickListener { launch { viewPdf() } }
         // Set the adapter
         if (view is RecyclerView) {

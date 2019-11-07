@@ -47,7 +47,16 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
   return {};
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
+bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt) {
+  Query query = Query(
+      "SELECT username FROM users "
+      "WHERE username = '%q' AND password = '%q';",
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
+  Statement statement = Statement(db_, query);
+  return statement.step();
+}
+
+bool Database::containsAdmin(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
   Query query = Query(
       "SELECT username FROM users "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
@@ -55,6 +64,19 @@ bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, co
       std::to_string(int(isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
+}
+
+std::optional<bool> Database::getRole(const Common::Models::LoginRequest& loginRequest, const std::string& salt) {
+  Query query = Query(
+      "SELECT isAdmin FROM users "
+      "WHERE username = '%q' AND password = '%q';",
+      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str());
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return std::stoi(statement.getColumnText(0));
+  }
+
+  return {};
 }
 
 void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {

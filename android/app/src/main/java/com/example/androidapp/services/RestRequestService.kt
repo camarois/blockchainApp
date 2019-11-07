@@ -55,7 +55,6 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
-        credentialsManager.saveFirstAuthToken(context, request.username, request.password)
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
@@ -84,8 +83,8 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         }
     }
 
-    private suspend fun <T> getAsync(url: String, data: Any, classOfT: Class<T>, isFile: Boolean = false): T {
-        return baseRequestAsync(Request.Method.GET, url, data, classOfT, isFile)
+    private suspend fun <T> getAsync(url: String, classOfT: Class<T>, isFile: Boolean = false): T {
+        return baseRequestAsync(Request.Method.GET, url, "", classOfT, isFile)
     }
 
     private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>, isFile: Boolean = false): T {

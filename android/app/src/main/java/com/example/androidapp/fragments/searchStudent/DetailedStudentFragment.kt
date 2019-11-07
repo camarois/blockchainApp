@@ -37,7 +37,7 @@ class DetailedStudentFragment(
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detailed_student, container, false)
         view.student_code.text = student.code.toString()
-        view.student_name.text = student.firstName + student.lastName
+        view.student_name.text = "${student.firstName} ${student.lastName}"
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {

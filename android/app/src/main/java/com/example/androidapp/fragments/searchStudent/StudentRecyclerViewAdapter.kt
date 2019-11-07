@@ -40,8 +40,8 @@ class StudentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mNameView.text = item.firstName + " " + item.lastName
-        holder.mCode.text = item.code.toString()
+        holder.mNameView.text = "${item.firstName} ${item.lastName}"
+        holder.mCode.text = item.code
 
         with(holder.mView) {
             tag = item

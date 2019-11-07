@@ -23,13 +23,13 @@ data class StudentRequest(
 )
 
 data class StudentResponse(
-    @SerializedName("resultats") val results: List<CourseResult>
+    @SerializedName("resultatsEtudiant") val results: List<CourseResult>
 )
 
 data class CourseResult(
+    @SerializedName("note") val grade: String,
     @SerializedName("sigle") val acronym: String,
-    @SerializedName("trimestre") val trimester: String,
-    @SerializedName("note") val grade: String
+    @SerializedName("trimestre") val trimester: Int
 )
 
 data class CourseRequest(

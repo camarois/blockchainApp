@@ -26,7 +26,7 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
   if (salt && db.containsUser(loginRequest, salt.value())) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
-    Common::Models::LoginResponse loginResponse = {};
+    Common::Models::LoginResponse loginResponse = {db.getRole(loginRequest, salt.value()).value()};
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   } else {
     response.send(Pistache::Http::Code::Forbidden);

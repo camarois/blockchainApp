@@ -20,7 +20,6 @@ import com.example.androidapp.StudentRequest
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
-import com.example.androidapp.services.AccountTypes
 import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.navigation.NavigationView
