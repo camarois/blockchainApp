@@ -12,7 +12,7 @@ namespace Rest {
 
 class UserController {
  public:
-  explicit UserController(const std::shared_ptr<Rest::CustomRouter>& router, const std::shared_ptr<ZMQWorker>& zmqWorker);
+  explicit UserController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker);
 
  private:
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);

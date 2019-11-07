@@ -10,9 +10,9 @@
 
 namespace Common {
 namespace Base64 {
-const int firstBlockSize = 3;
-const int secondBlockSize = 4;
-static const std::string base64_chars =
+const int kFirstBlockSize = 3;
+const int kSecondBlockSize = 4;
+static const std::string kBase64Chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789+/";
@@ -45,50 +45,50 @@ inline unsigned char byteToBase64(unsigned char c) {
 }
 
 inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
-  int in_len = bytes_to_encode.size();
+  int inLen = bytes_to_encode.size();
   std::string ret;
   int i = 0;
   int j = 0;
-  std::array<unsigned char, firstBlockSize> firstBlock = {};
-  std::array<unsigned char, secondBlockSize> secondBlock = {};
+  std::array<unsigned char, kFirstBlockSize> firstBlock = {};
+  std::array<unsigned char, kSecondBlockSize> secondBlock = {};
   int in = 0;
 
-  while (in_len-- != 0) {
-    firstBlock[i++] = bytes_to_encode.at(in++);
-    if (i == firstBlockSize) {
+  while (inLen-- != 0) {
+    firstBlock.at(i++) = bytes_to_encode.at(in++);
+    if (i == kFirstBlockSize) {
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock[0] = (firstBlock[0] & 0xfc) >> 2;
+      secondBlock.at(i) = (firstBlock.at(i) & 0xfc) >> 2;
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock[1] = ((firstBlock[0] & 0x03) << 4) + ((firstBlock[1] & 0xf0) >> 4);
+      secondBlock.at(i) = ((firstBlock.at(i) & 0x03) << 4) + ((firstBlock.at(i) & 0xf0) >> 4);
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock[2] = ((firstBlock[1] & 0x0f) << 2) + ((firstBlock[2] & 0xc0) >> 6);
+      secondBlock.at(i) = ((firstBlock.at(i) & 0x0f) << 2) + ((firstBlock.at(i) & 0xc0) >> 6);
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock[3] = firstBlock[2] & 0x3f;
+      secondBlock.at(i) = firstBlock.at(i) & 0x3f;
 
-      for (i = 0; i < secondBlockSize; i++) {
-        ret += base64_chars[secondBlock[i]];
+      for (i = 0; i < kSecondBlockSize; i++) {
+        ret += kBase64Chars[secondBlock.at(i)];
       }
       i = 0;
     }
   }
 
   if (i != 0) {
-    for (j = i; j < firstBlockSize; j++) {
-      firstBlock[j] = '\0';
+    for (j = i; j < kFirstBlockSize; j++) {
+      firstBlock.at(i) = '\0';
     }
 
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock[0] = (firstBlock[0] & 0xfc) >> 2;
+    secondBlock.at(i) = (firstBlock.at(i) & 0xfc) >> 2;
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock[1] = ((firstBlock[0] & 0x03) << 4) + ((firstBlock[1] & 0xf0) >> 4);
+    secondBlock.at(i) = ((firstBlock.at(i) & 0x03) << 4) + ((firstBlock.at(i) & 0xf0) >> 4);
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock[2] = ((firstBlock[1] & 0x0f) << 2) + ((firstBlock[2] & 0xc0) >> 6);
+    secondBlock.at(i) = ((firstBlock.at(i) & 0x0f) << 2) + ((firstBlock.at(i) & 0xc0) >> 6);
 
     for (j = 0; j < i + 1; j++) {
-      ret += base64_chars[secondBlock[j]];
+      ret += kBase64Chars[secondBlock.at(i)];
     }
 
-    while (i++ < firstBlockSize) {
+    while (i++ < kFirstBlockSize) {
       ret += '=';
     }
   }
@@ -101,15 +101,15 @@ inline std::string decode(const std::string& encodedString) {
   int i = 0;
   int j = 0;
   int in = 0;
-  std::array<unsigned char, firstBlockSize> firstBlock = {};
-  std::array<unsigned char, secondBlockSize> secondBlock = {};
+  std::array<unsigned char, kFirstBlockSize> firstBlock = {};
+  std::array<unsigned char, kSecondBlockSize> secondBlock = {};
   std::string ret;
 
   while ((inLen--) != 0U && encodedString.at(in) != '=' && isBase64(encodedString.at(in))) {
     secondBlock.at(i++) = encodedString.at(in);
     in++;
-    if (i == secondBlockSize) {
-      for (i = 0; i < secondBlockSize; i++) {
+    if (i == kSecondBlockSize) {
+      for (i = 0; i < kSecondBlockSize; i++) {
         secondBlock.at(i) = byteToBase64(secondBlock.at(i));
       }
 
@@ -120,7 +120,7 @@ inline std::string decode(const std::string& encodedString) {
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
       firstBlock.at(2) = ((secondBlock.at(2) & 0x3) << 6) + secondBlock.at(3);
 
-      for (i = 0; i < firstBlockSize; i++) {
+      for (i = 0; i < kFirstBlockSize; i++) {
         ret += firstBlock.at(i);
       }
       i = 0;

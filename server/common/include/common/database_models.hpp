@@ -1,5 +1,5 @@
-#ifndef DATABASE_MODELS_HPP
-#define DATABASE_MODELS_HPP
+#ifndef COMMON_DATABASE_MODELS_HPP
+#define COMMON_DATABASE_MODELS_HPP
 
 #include <common/models.hpp>
 #include <nlohmann/json.hpp>
@@ -137,4 +137,4 @@ inline void from_json(const nlohmann::json& j, GetRoleRequest& obj) {
 }  // namespace Models
 }  // namespace Common
 
-#endif  // DATABASE_MODELS_HPP
+#endif  // COMMON_DATABASE_MODELS_HPP

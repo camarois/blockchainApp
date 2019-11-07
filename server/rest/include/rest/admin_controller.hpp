@@ -13,7 +13,7 @@ namespace Rest {
 class AdminController {
  public:
   explicit AdminController(const std::shared_ptr<Rest::CustomRouter>& router,
-                           const std::shared_ptr<ZMQWorker>& zmqWorker);
+                           std::shared_ptr<ZMQWorker> zmqWorker);
 
  private:
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);

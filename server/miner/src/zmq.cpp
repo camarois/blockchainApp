@@ -1,11 +1,11 @@
 #include <cerrno>
+#include <gflags/gflags.h>
 #include <iostream>
 
-#include "common/database.hpp"
+#include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
-#include <gflags/gflags.h>
 #include <miner/zmq.hpp>
 
 DECLARE_string(db);
@@ -13,7 +13,7 @@ DECLARE_string(db);
 namespace Miner {
 
 // NOLINTNEXTLINE(modernize-pass-by-value)
-ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
+ZMQWorker::ZMQWorker(const std::string& serverHostname, std::unique_ptr<BlockChain> blockchain)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
       context_(1),
@@ -21,7 +21,7 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
       socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
       socketPubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::pub)),
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
-      blockchainController_(blockchain) {}
+      blockchainController_(std::move(blockchain)) {}
 
 ZMQWorker::~ZMQWorker() {
   running_ = false;

@@ -1,37 +1,37 @@
-
 #ifndef COMMON_DATABASE_HPP
 #define COMMON_DATABASE_HPP
 
-#include "common/miner_models.hpp"
-#include "common/models.hpp"
-#include "common/query.hpp"
-#include "common/statement.hpp"
-#include "nlohmann/json.hpp"
-#include "sqlite_err.hpp"
 #include <cstddef>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <sqlite3.h>
 #include <string>
+
 #include <common/database_models.hpp>
+#include <common/miner_models.hpp>
+#include <common/models.hpp>
+#include <common/query.hpp>
+#include <common/sqlite_err.hpp>
+#include <common/statement.hpp>
 
 namespace Common {
 
 enum Functions {
-  addUser,
-  setUserPassword,
-  containsUser,
-  containsAdmin,
-  getRole,
-  getSalt,
-  checkForExistingClass,
-  deleteExistingClass,
-  deleteExistingResults,
-  addNewClass,
-  addNewResult,
-  getClassResult,
-  getStudentResult,
-  getClasses,
-  getStudents
+  AddUser,
+  SetUserPassword,
+  ContainsUser,
+  ContainsAdmin,
+  GetRole,
+  GetSalt,
+  CheckForExistingClass,
+  DeleteExistingClass,
+  DeleteExistingResults,
+  AddNewClass,
+  AddNewResult,
+  GetClassResult,
+  GetStudentResult,
+  GetClasses,
+  GetStudents
 };
 
 class Database {
