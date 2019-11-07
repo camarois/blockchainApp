@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
     private val READ_STORAGE_PERMISSION_CODE: Int = 123
-    private val WRITE_STORAGE_PERMISSION_CODE: Int = 124
+    private val WRITE_STORAGE_PERMISSION_CODE: Int = 125
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
