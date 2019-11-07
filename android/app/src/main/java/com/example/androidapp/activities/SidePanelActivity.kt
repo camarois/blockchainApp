@@ -17,8 +17,10 @@ import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.RestRequestService
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
+import kotlinx.android.synthetic.main.nav_header_side_panel.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -64,9 +66,20 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)
+
+        if (type != "edition") {
+            val v: NavigationView = findViewById(R.id.sidePanelNavigationView)
+            val menu = v.menu
+            menu.setGroupVisible(R.id.editionGroup, false)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        if (type == "edition") {
+            textView.text = resources.getString(R.string.nav_header_subtitle_edition)
+        } else {
+            textView.text = resources.getString(R.string.nav_header_subtitle_consultation)
+        }
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.side_panel, menu)
         return true
