@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private suspend fun submitLogin() {
         try {
             val username = username_edit_text.text.toString()
-            //restService.initServerUrl(username) // Activate this while developping
+            // restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
             var accountType = if (response.edition) {

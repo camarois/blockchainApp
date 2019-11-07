@@ -1,5 +1,6 @@
 package com.example.androidapp.fragments.searchCourse.course
 
+import com.example.androidapp.CourseItem
 import java.util.ArrayList
 import java.util.HashMap
 

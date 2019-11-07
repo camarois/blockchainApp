@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
-import com.example.androidapp.fragments.searchStudent.student.StudentContent
 import com.example.androidapp.services.RestRequestService
 import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
@@ -48,14 +47,14 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
 
         launch {
             val newStudents = restService.getStudentListAsync()
-            for (element in newStudents.listeEtudiant){
+            for (element in newStudents.listeEtudiant) {
                 students.add(element)
                 list.adapter?.notifyItemInserted(students.size - 1)
             }
         }
 
         viewCreated.adapter =
-            StudentRecyclerViewAdapter( students, listener )
+            StudentRecyclerViewAdapter(students, listener)
         super.onViewCreated(view, savedInstanceState)
     }
 

@@ -21,7 +21,7 @@ object StudentContent {
      */
     private val item_map: MutableMap<String, StudentItem> = HashMap()
 
-     fun addItem(item: StudentItem) {
+    fun addItem(item: StudentItem) {
         items.add(item)
         item_map[item.code] = item
     }
