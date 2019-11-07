@@ -40,6 +40,7 @@ class RegisterCourseFragment : Fragment() {
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private val PDF_UPLOAD_CODE = 111
     private var restService: RestRequestService = get()
+    private val homeFragment: HomeFragment = HomeFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -196,14 +197,16 @@ class RegisterCourseFragment : Fragment() {
         val name: String = (bundle["name"] as String?)!!
         val trimester: Int = (bundle["trimester"] as Int?)!!
 
+        bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+
         try {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
             Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
-            val frag = HomeFragment()
-            transaction.replace(R.id.register_fragment, frag)
+            transaction.replace(R.id.curr_fragment, homeFragment)
+            register_fragment.visibility = View.GONE
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
