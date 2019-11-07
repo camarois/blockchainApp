@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <optional>
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,7 @@ class Block {
   void append(const std::string& data);
   void mine(unsigned int difficulty);
   void save(const std::filesystem::path& blockDir) const;
+  void queueNonce(unsigned int nonce);
 
   unsigned int id() const;
   unsigned int nonce() const;
@@ -39,6 +41,7 @@ class Block {
   std::string hash_;
   std::string previousHash_;
   std::vector<std::string> data_;
+  std::queue<unsigned int> receivedNonces_;
 
   const std::string kId_ = "id";
   const std::string kNonce_ = "nonce";

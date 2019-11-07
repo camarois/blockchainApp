@@ -21,7 +21,7 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
       socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
       socketPubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::pub)),
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
-      blockchain_(blockchain) {}
+      blockchainController_(blockchain) {}
 
 ZMQWorker::~ZMQWorker() {
   running_ = false;
@@ -42,6 +42,7 @@ bool ZMQWorker::start() {
     socketSubServer_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
 
     socketSubServer_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    socketSubBlockchain_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/setsockopt: " << e.what() << std::endl;
     return false;
@@ -82,7 +83,7 @@ void ZMQWorker::handleSubServer() {
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
-  Common::Database db("blockchain.db");
+  Common::Database db(FLAGS_db);
 
   while (running_) {
     try {
@@ -100,9 +101,11 @@ void ZMQWorker::handleSubServer() {
       if (received.type == Common::Models::kTypeServerRequest) {
         sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       } else if (received.type == Common::Models::kTypeTransaction) {
-        blockchain_.appendTransaction(received.data);
-        blockchain_.nextBlock();
-        blockchain_.saveAll();
+        std::cout << "ZMQ/blockchain: received data" << std::endl << "--> " << received.data << std::endl;
+        std::optional<Block> block = blockchainController_.addTransaction(received.data);
+        if (block) {
+          sendBlockMined(block->id(), block->nonce());
+        }
         sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       }
     } catch (const std::exception& e) {
@@ -123,10 +126,16 @@ void ZMQWorker::handleSubBlockchain() {
       std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
       if (!len) {
         std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
-      } else {
-        Common::Models::ZMQMessage zmqMsg = Common::MessageHelper::toJSON(msg);
-        // TODO(gabriel): handle blockchain message
-        std::cout << "TODO: " << Common::MessageHelper::toJSON(msg) << std::endl;
+        continue;
+      }
+
+      Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
+
+      if (received.type == Common::Models::kTypeBlockMined) {
+        Common::Models::BlockMined blockMined = nlohmann::json::parse(received.data);
+        blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce);
+        std::cout << "ZMQ/blockchain: received nonce " << blockMined.nonce << " for block #" << blockMined.id
+                  << std::endl;
       }
     } catch (const std::exception& e) {
       std::cerr << "ZMQ/blockchain handleSubBlockchain: " << e.what() << std::endl;
@@ -150,6 +159,25 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
     socketPushServer_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/server: failed to send message" << std::endl;
+  }
+}
+
+void ZMQWorker::sendBlockMined(unsigned int id, unsigned int nonce) {
+  Common::Models::BlockMined response = {
+      .id = id,
+      .nonce = nonce,
+  };
+
+  Common::Models::ZMQMessage message = {
+      .type = Common::Models::kTypeBlockMined,
+      .data = Common::Models::toStr(response),
+  };
+
+  zmq::message_t msg = Common::MessageHelper::fromModel(message);
+  try {
+    socketPubBlockchain_->send(msg, zmq::send_flags::none);
+  } catch (const zmq::error_t& e) {
+    std::cerr << "ZMQ/blockchain: failed to publish message" << std::endl;
   }
 }
 
