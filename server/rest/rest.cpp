@@ -12,7 +12,7 @@ DEFINE_string(user, "server", "Developper using the service");            // NOL
 DEFINE_string(cert, "server.crt", "Path to server cert");                 // NOLINT
 DEFINE_string(key, "server.key", "Path to server key");                   // NOLINT
 DEFINE_string(db, "rest.db", "Path to sqlite db file");                   // NOLINT
-DEFINE_int32(port, 10000, "REST http port");                              // NOLINT
+DEFINE_int32(port, 8080, "REST http port");                              // NOLINT
 DEFINE_int32(threads, 4, "Number of threads");                            // NOLINT
 DEFINE_string(transactions, "transactions/", "Path to transactions");     // NOLINT
 DEFINE_int32(buffer_size, 1000000, "Maximum number of bytes in buffer");  // NOLINT
