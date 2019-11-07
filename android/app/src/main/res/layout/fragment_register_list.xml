@@ -71,4 +71,4 @@
         <include layout="@layout/add_student_bottom_panel" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    </FrameLayout>
+</FrameLayout>
