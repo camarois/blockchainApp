@@ -53,7 +53,6 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
                     students.add(element)
                     list.adapter?.notifyItemInserted(students.size - 1)
                 }
-
             } catch (e: TimeoutError) {
                 Toast.makeText(
                     context,
