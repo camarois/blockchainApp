@@ -56,9 +56,13 @@ class SettingsFragment : Fragment(), CoroutineScope {
             Toast.makeText(context, "Le mot de passe a été changé avec succès.",
                 Toast.LENGTH_LONG).show()
         } catch (e: AuthFailureError) {
-            password_edit_text.setText("")
-            Toast.makeText(context, "L'ancien mot de passe est invalide",
-                Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context, "L'ancien mot de passe est invalide",
+                Toast.LENGTH_LONG
+            ).show()
+        } finally {
+            old_password_edit_text.setText("")
+            new_password_edit_text.setText("")
         }
     }
 }
