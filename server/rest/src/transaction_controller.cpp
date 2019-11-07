@@ -30,8 +30,8 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
   auto classId = zmqWorker_->getRequest(
       {Common::Functions::checkForExistingClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
   if (classId.found) {
-    db.deleteExistingClass(std::stoi(classId.data));
-    db.deleteExistingResults(std::stoi(classId.data));
+    zmqWorker_->updateRequest({Common::Functions::deleteExistingClass, {classId.data}});
+    zmqWorker_->updateRequest({Common::Functions::deleteExistingResults, {classId.data}});
   }
   int newClassId = db.addNewClass(transactionRequest);
   db.addNewResult(transactionRequest, newClassId);
