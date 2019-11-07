@@ -210,7 +210,7 @@ class RegisterCourseFragment : Fragment() {
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
         val pd = ProgressDialog(context)
-        pd.setMessage("En d'une réponse des mineurs...")
+        pd.setMessage("En attente d'une réponse des mineurs...")
         pd.show()
 
         try {
