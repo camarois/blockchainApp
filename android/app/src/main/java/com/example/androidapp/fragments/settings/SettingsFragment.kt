@@ -58,7 +58,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
         } catch (e: AuthFailureError) {
             Toast.makeText(context, "L'ancien mot de passe est invalide",
                 Toast.LENGTH_LONG).show()
-        } catch(e:TimeoutError) {
+        } catch (e: TimeoutError) {
             Toast.makeText(context, "Petit problème de connexion au serveur, veuillez réessayer!",
                 Toast.LENGTH_LONG).show()
         } finally {
