@@ -7,7 +7,11 @@ DECLARE_string(db);
 
 namespace Rest {
 
-InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router,
+                               const std::shared_ptr<ZMQWorker>& zmqWorker)
+    : zmqWorker_(zmqWorker) {
+  setupRoutes(router);
+}
 
 void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "cours", Pistache::Rest::Routes::bind(&InfoController::handleClasses, this));
@@ -16,11 +20,13 @@ void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::ClassesRequest classesRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
-  std::optional<int> classId = db.checkForExistingClass(classesRequest.acronym, classesRequest.trimester);
+  auto classId = zmqWorker_->getRequest(
+      {Common::Functions::checkForExistingClass, {classesRequest.acronym, std::to_string(classesRequest.trimester)}});
   std::vector<Common::Models::Result> results;
-  if (classId) {
-    results = db.getClassResult(classId.value());
+  if (classId.found) {
+    auto classResult = zmqWorker_->getRequest({Common::Functions::getClassResult, {classId.data}});
+    std::vector<Common::Models::Result> classResults = nlohmann::json::parse(classResult.data);
+    results = classResults;
   }
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(results));
 }

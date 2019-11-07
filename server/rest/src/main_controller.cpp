@@ -16,8 +16,8 @@ MainController::MainController(Pistache::Address addr, size_t thr)
       // List of controllers:
       userController_(router_, zmqWorker_),
       pingController_(router_, zmqWorker_),
-      transactionController_(router_),
-      infoController_(router_),
+      transactionController_(router_, zmqWorker_),
+      infoController_(router_, zmqWorker_),
       fileController_(router_),
       adminController_(router_, zmqWorker_) {
   auto opts = Pistache::Http::Endpoint::options().maxRequestSize(FLAGS_buffer_size).threads(thr);

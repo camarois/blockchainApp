@@ -13,7 +13,11 @@ DECLARE_string(transactions);
 
 namespace Rest {
 
-TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router,
+                                             const std::shared_ptr<ZMQWorker>& zmqWorker)
+    : zmqWorker_(zmqWorker) {
+  setupRoutes(router);
+}
 
 void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_, Pistache::Rest::Routes::bind(&TransactionController::handleTransaction, this));
@@ -23,10 +27,11 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
-  std::optional<int> classId = db.checkForExistingClass(transactionRequest.acronym, transactionRequest.trimester);
-  if (classId) {
-    db.deleteExistingClass(classId.value());
-    db.deleteExistingResults(classId.value());
+  auto classId = zmqWorker_->getRequest(
+      {Common::Functions::checkForExistingClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
+  if (classId.found) {
+    db.deleteExistingClass(std::stoi(classId.data));
+    db.deleteExistingResults(std::stoi(classId.data));
   }
   int newClassId = db.addNewClass(transactionRequest);
   db.addNewResult(transactionRequest, newClassId);
