@@ -35,8 +35,8 @@
     <string name="sigle">Sigle du cours</string>
     <string name="note_hint">Note</string>
     <string name="code_hint">Matricule</string>
-    <string name="last_Name_hint">Nom</string>
-    <string name="first_Name_hint">Prénom</string>
+    <string name="last_name_hint">Nom</string>
+    <string name="first_name_hint">Prénom</string>
     <string name="bottomBtnTag">bottomBtn</string>
     <string name="gradedStudentTag">gradedStudent</string>
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
@@ -45,6 +45,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="submit_course_info">Continuer</string>
+    <string name="course_name">Nom du cours</string>
+    <string name="course_trimester">Trimestre du cours</string>
+    <string name="register_course">Enregistrer un cours</string>
     <string name="welcome">Bienvenue,</string>
     <string name="edition_description">Vous avez un compte d\'édition. Ouvrez le menu sur le côté pour commencer!</string>
     <string name="consultation_description">Vous avez un compte de consultation. Ouvrez le menu sur le côté pour commencer!</string>

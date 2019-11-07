@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(R.layout.activity_main)
 
         connection_button.setOnClickListener { launch { submitLogin() } }
-        register_text_view.setOnClickListener { submitRegister() }
     }
 
     private suspend fun submitLogin() {
