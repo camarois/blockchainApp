@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.CourseRequest
-
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
@@ -38,8 +37,8 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
             val transaction = supportFragmentManager.beginTransaction()
-            val response = restService.postCourseInfoAsync(CourseRequest("inf3995", 1))
-            val frag = DetailedCourseFragment(course, listOf())
+            val response = restService.postCourseInfoAsync(CourseRequest(course.code, course.trimester.toInt()))
+            val frag = DetailedCourseFragment(course, response.students)
             transaction.replace(R.id.course_list_fragment, frag)
             transaction.addToBackStack(null)
             transaction.commit()
@@ -50,7 +49,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val transaction = supportFragmentManager.beginTransaction()
             val response = restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
-            val frag = DetailedStudentFragment(student, listOf())
+            val frag = DetailedStudentFragment(student, response.results)
             transaction.replace(R.id.student_list_fragment, frag)
             transaction.addToBackStack(null)
             transaction.commit()

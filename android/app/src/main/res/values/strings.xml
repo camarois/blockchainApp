@@ -38,7 +38,7 @@
     <string name="code_hint">Matricule</string>
     <string name="last_name_hint">Nom</string>
     <string name="first_name_hint">Prénom</string>
-    <string name="trimester_hint">Trimester</string>
+    <string name="trimester_hint">Trimestre</string>
     <string name="bottomBtnTag">bottomBtn</string>
     <string name="gradedStudentTag">gradedStudent</string>
     <string name="ajouter_un_pdf">Ajouter un PDF</string>
