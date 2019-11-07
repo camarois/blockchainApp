@@ -18,8 +18,8 @@ class ZMQWorker {
 
   bool start();
   void join();
-  std::string getRequest(const Common::Models::SqlRequest& sql);
-  std::string updateRequest(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse updateRequest(const Common::Models::SqlRequest& sql);
 
  private:
   void handlePullFromMiner();

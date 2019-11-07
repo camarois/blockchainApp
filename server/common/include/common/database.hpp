@@ -2,6 +2,7 @@
 #ifndef COMMON_DATABASE_HPP
 #define COMMON_DATABASE_HPP
 
+#include "common/miner_models.hpp"
 #include "common/models.hpp"
 #include "common/query.hpp"
 #include "common/statement.hpp"
@@ -11,7 +12,6 @@
 #include <memory>
 #include <sqlite3.h>
 #include <string>
-#include "common/miner_models.hpp"
 
 namespace Common {
 
@@ -44,6 +44,9 @@ class Database {
 
   Common::Models::SqlResponse get(const Common::Models::SqlRequest& sql);
 
+  void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
+  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
+                       const std::string& salt, bool isAdmin = false);
   bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
   std::optional<std::string> getSalt(const std::string& username);
 
@@ -66,10 +69,6 @@ class Database {
 
  private:
   void close();
-  
-  void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
-  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
-                       const std::string& salt, bool isAdmin = false);
 
   std::shared_ptr<sqlite3> db_;
 };

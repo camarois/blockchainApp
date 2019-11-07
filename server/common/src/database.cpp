@@ -42,8 +42,12 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
       return {salt.has_value(), salt.has_value() ? salt.value() : ""};
     }
     case Functions::addUser: {
-      addUser({sql.params.at(0), sql.params.at(1)}, false); // TODO(LOL) change all common models
+      addUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(2) == "1");  // TODO(LOL) change all common models
       return {false, "gpol"};
+    }
+    case Functions::containsUser: {
+      return {containsUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(1),
+                   sql.params.at(2) == "1"), ""};
     }
     default:
       throw std::runtime_error("Function not allowed:" + sql.function);

@@ -27,7 +27,10 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   Common::Database db(FLAGS_db);
   auto salt = db.getSalt(loginRequest.username);
-  if (salt && db.containsUser(loginRequest, salt.value())) {
+  if (salt && zmqWorker_
+                  ->getRequest({Common::Functions::containsUser,
+                                {loginRequest.username, loginRequest.password, salt.value(), "1"}})
+                  .found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::LoginResponse loginResponse = {};
@@ -51,7 +54,6 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
   auto salt = db.getSalt(loginRequest.username);
   if (salt && db.containsUser(loginRequest, salt.value())) {
-    // db.setUserPassword(loginRequest.username, passwordRequest, salt.value());
     zmqWorker_->updateRequest({Common::Functions::setUserPassword,
                                {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.value()}});
     response.send(Pistache::Http::Code::Ok);
@@ -62,8 +64,6 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  // Common::Database db(FLAGS_db);
-  // db.addUser(registerRequest);
   zmqWorker_->updateRequest({Common::Functions::addUser, {registerRequest.username, registerRequest.password}});
   Common::Models::LoginResponse registerResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));

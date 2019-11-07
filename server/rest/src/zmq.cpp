@@ -63,16 +63,16 @@ void ZMQWorker::join() {
   }
 }
 
-std::string ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
+Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeServerRequest);
   request.wait_for(std::chrono::seconds(kWaitTimeout_));
-  return request.get();
+  return nlohmann::json::parse(request.get());
 }
 
-std::string ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
+Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
   request.wait_for(std::chrono::seconds(kWaitTimeout_));
-  return request.get();
+  return nlohmann::json::parse(request.get());
 }
 
 void ZMQWorker::handlePullFromMiner() {
