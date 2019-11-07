@@ -139,7 +139,7 @@ public class RestService {
                     .build();
 
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            baseUrl = "https://" + response.body() + ":10000/";
+            baseUrl = "https://" + response.body() + ":8080/";
             System.out.println("Connected to: " + baseUrl);
 
             InputStream caInput = RestService.class.getClassLoader().getResourceAsStream("cert/rootCA.crt");

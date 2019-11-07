@@ -3,13 +3,16 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <gflags/gflags.h>
+
+DECLARE_int32(difficulty);
 
 namespace Miner {
 
 const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
-  difficulty_ = 3;
+  difficulty_ = FLAGS_difficulty;
   createBlock();
 }
 

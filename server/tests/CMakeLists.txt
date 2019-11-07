@@ -47,7 +47,9 @@ create_test(blockchain_tests
 create_test(zmq_tests 
     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
     ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
+    ${CMAKE_SOURCE_DIR}/miner/src/blockchain-controller.cpp
     ${CMAKE_SOURCE_DIR}/miner/src/zmq.cpp
     ${CMAKE_SOURCE_DIR}/rest/src/zmq.cpp
     zmq_test.cpp
+    utils.cpp
 )

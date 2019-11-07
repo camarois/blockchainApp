@@ -2,10 +2,11 @@
 #define MINER_ZMQ_HPP
 
 #include <chrono>
+#include <set>
 #include <thread>
 #include <zmq.hpp>
 
-#include <miner/blockchain.hpp>
+#include <miner/blockchain-controller.hpp>
 
 namespace Miner {
 
@@ -17,6 +18,8 @@ class ZMQWorker {
 
   bool start();
   void join();
+
+  void sendBlockMined(unsigned int id, unsigned int nonce);
 
  private:
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
@@ -33,7 +36,7 @@ class ZMQWorker {
   std::unique_ptr<zmq::socket_t> socketSubBlockchain_;
   std::thread threadServer_;
   std::thread threadBlockchain_;
-  BlockChain blockchain_;
+  BlockChainController blockchainController_;
 
   const int kMiner1Port_ = 5555;
   const int kMiner2Port_ = 5556;
