@@ -1,5 +1,6 @@
 package com.example.androidapp.fragments.searchCourse
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -44,6 +45,10 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
         val viewCreated = view.list
 
         launch {
+            val pd = ProgressDialog(context)
+            pd.setMessage("En attente d'une réponse des mineurs...")
+            pd.setCancelable(false)
+            pd.show()
             try {
                 val newCourses = restService.getClassListAsync()
                 for (element in newCourses.listeClasses) {
@@ -57,6 +62,7 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
                     Toast.LENGTH_LONG
                 ).show()
             }
+            pd.dismiss()
         }
 
         viewCreated.adapter = CourseRecyclerViewAdapter(courses, listener)

@@ -20,6 +20,7 @@ import kotlin.coroutines.CoroutineContext
 import android.content.pm.PackageManager
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.ProgressDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.android.volley.TimeoutError
@@ -50,6 +51,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private suspend fun submitLogin() {
+        val pd = ProgressDialog(this)
+        pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
+        pd.show()
+
         try {
             val username = username_edit_text.text.toString()
             // restService.initServerUrl(username) // Activate this while developping
@@ -74,6 +80,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
                 Toast.LENGTH_LONG).show()
         }
+
+        pd.dismiss()
     }
 
     private fun requestReadStoragePermission() {

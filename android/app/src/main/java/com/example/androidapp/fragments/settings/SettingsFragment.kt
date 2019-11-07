@@ -1,5 +1,6 @@
 package com.example.androidapp.fragments.settings
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +50,10 @@ class SettingsFragment : Fragment(), CoroutineScope {
     }
 
     private suspend fun submitNewPassword() {
+        val pd = ProgressDialog(context)
+        pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
+        pd.show()
         try {
             val oldPassword = old_password_edit_text.text.toString()
             val newPassword = new_password_edit_text.text.toString()
@@ -65,5 +70,6 @@ class SettingsFragment : Fragment(), CoroutineScope {
                 old_password_edit_text.setText("")
                 new_password_edit_text.setText("")
         }
+        pd.dismiss()
     }
 }

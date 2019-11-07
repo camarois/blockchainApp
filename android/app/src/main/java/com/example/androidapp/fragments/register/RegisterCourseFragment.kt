@@ -1,6 +1,7 @@
 package com.example.androidapp.fragments.register
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
@@ -208,21 +210,29 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
+        val pd = ProgressDialog(context)
+        pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
+        pd.show()
+
         try {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
-
             Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
             register_fragment.visibility = View.GONE
+            val im = view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(view!!.windowToken, 0)
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
         } catch (e: TimeoutError) {
             Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
         }
+
+        pd.dismiss()
     }
 
     override fun onAttach(context: Context) {

@@ -1,5 +1,6 @@
 package com.example.androidapp.fragments.searchCourse
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Environment
 import androidx.fragment.app.Fragment
@@ -74,6 +75,10 @@ class DetailedCourseFragment(
     }
 
     private suspend fun viewPdf() {
+        val pd = ProgressDialog(context)
+        pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
+        pd.show()
         try {
             val response = restService.postPdfFileAsync(PdfFileRequest(course.code, course.trimester.toInt()))
             val os = FileOutputStream(getReportPath(course.code + "_" + course.trimester), false)
@@ -87,6 +92,7 @@ class DetailedCourseFragment(
             Toast.makeText(context, "${getString(R.string.error_message_unknown)}: ${e.message}",
                 Toast.LENGTH_LONG).show()
         }
+        pd.dismiss()
     }
 
     private fun getReportPath(filename: String): String {

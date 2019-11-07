@@ -1,6 +1,8 @@
 package com.example.androidapp.services
 
 import android.content.Context
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -85,6 +87,12 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
                 },
                 Response.ErrorListener { continuation.resumeWithException(it) }
             )
+            request.retryPolicy =
+                DefaultRetryPolicy(
+                    30000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DEFAULT_BACKOFF_MULT
+                )
             httpClient.addToRequestQueue(request)
         }
     }
