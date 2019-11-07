@@ -21,15 +21,6 @@ object StudentContent {
      */
     private val item_map: MutableMap<String, StudentItem> = HashMap()
 
-    private const val COUNT = 25
-    private const val BASE_STUDENT_CODE = 1800000
-
-    init {
-        // Add some sample items.
-        // TODO: Fill with information from database
-
-    }
-
      fun addItem(item: StudentItem) {
         items.add(item)
         item_map[item.code] = item

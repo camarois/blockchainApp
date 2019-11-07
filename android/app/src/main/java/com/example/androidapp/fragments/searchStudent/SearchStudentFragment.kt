@@ -13,24 +13,22 @@ import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.searchStudent.student.StudentContent
 import com.example.androidapp.services.RestRequestService
+import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [SearchStudentFragment.OnListFragmentInteractionListener] interface.
- */
 class SearchStudentFragment : Fragment(), CoroutineScope {
 
     private var columnCount = 1
     private lateinit var job: Job
     private var restService: RestRequestService = get()
+    private val students: MutableList<StudentItem> = ArrayList()
     private var listener: OnListFragmentInteractionListener? = null
 
     override val coroutineContext: CoroutineContext
@@ -49,18 +47,15 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
         val viewCreated = view.list
 
         launch {
-            val studentList = restService.getStudentListAsync()
-            StudentContent.clearList()
-            for (i in 0..studentList.listeEtudiant.size-1){
-                StudentContent.addItem(studentList.listeEtudiant[i])
+            val newStudents = restService.getStudentListAsync()
+            for (element in newStudents.listeEtudiant){
+                students.add(element)
+                list.adapter?.notifyItemInserted(students.size - 1)
             }
         }
 
         viewCreated.adapter =
-            StudentRecyclerViewAdapter(
-                StudentContent.items,
-                listener
-            )
+            StudentRecyclerViewAdapter( students, listener )
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -79,10 +74,7 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
                     else -> GridLayoutManager(context, columnCount)
                 }
                 adapter =
-                    StudentRecyclerViewAdapter(
-                        StudentContent.items,
-                        listener
-                    )
+                    StudentRecyclerViewAdapter(students, listener)
             }
         }
         return view
