@@ -41,7 +41,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
             ViewModelProviders.of(this).get(SettingsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
         root.connection_button.setOnClickListener {
-            Utils.preventTwoClick(root.connection_button)
+            Utils.debounce(root.connection_button)
             launch { submitNewPassword() }
         }
 

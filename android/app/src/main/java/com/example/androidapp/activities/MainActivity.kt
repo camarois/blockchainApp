@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(R.layout.activity_main)
 
         connection_button.setOnClickListener {
-            Utils.preventTwoClick(connection_button)
+            Utils.debounce(connection_button)
             launch { submitLogin() }
         }
     }

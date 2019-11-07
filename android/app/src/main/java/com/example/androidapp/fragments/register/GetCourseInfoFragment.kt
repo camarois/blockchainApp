@@ -25,7 +25,7 @@ class GetCourseInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         submitButton.setOnClickListener {
-            Utils.preventTwoClick(submitButton)
+            Utils.debounce(submitButton)
             submit()
         }
         super.onViewCreated(view, savedInstanceState)

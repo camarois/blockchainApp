@@ -80,11 +80,11 @@ class GradedStudentRecyclerViewAdapter(
         fun bind(mView: View) {
             job = Job()
             mPDFButton.setOnClickListener {
-                Utils.preventTwoClick(mPDFButton)
+                Utils.debounce(mPDFButton)
                 mFragment.uploadPDF()
             }
             mSubmitButton.setOnClickListener {
-                Utils.preventTwoClick(mSubmitButton)
+                Utils.debounce(mSubmitButton)
                 launch { submit(mView) }
             }
         }

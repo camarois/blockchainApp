@@ -116,7 +116,7 @@ class RegisterCourseFragment : Fragment() {
 
         val createStudentButton: ImageButton = view.findViewById(R.id.createStudentButton)
         createStudentButton.setOnClickListener {
-            Utils.preventTwoClick(createStudentButton)
+            Utils.debounce(createStudentButton)
             createStudent()
         }
         return view
