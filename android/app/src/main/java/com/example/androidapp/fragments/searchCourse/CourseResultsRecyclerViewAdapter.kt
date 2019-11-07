@@ -21,8 +21,7 @@ class CourseResultsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mLastName.text = item.lastName
-        holder.mFirstName.text = item.firstName
+        holder.mName.text = "${item.firstName} ${item.lastName}"
         holder.mCode.text = item.code
         holder.mGrade.text = item.grade
 
@@ -34,8 +33,7 @@ class CourseResultsRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mLastName: TextView = mView.lastName
-        val mFirstName: TextView = mView.firstName
+        val mName: TextView = mView.name
         val mCode: TextView = mView.code
         val mGrade: TextView = mView.grade
     }

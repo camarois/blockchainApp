@@ -36,7 +36,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val transaction = supportFragmentManager.beginTransaction()
             val response = restService.postCourseInfoAsync(CourseRequest("inf3995", 1))
-            val frag = DetailedCourseFragment(course, response.students)
+            val frag = DetailedCourseFragment(course, listOf())
             transaction.replace(R.id.course_list_fragment, frag)
             transaction.addToBackStack(null)
             transaction.commit()

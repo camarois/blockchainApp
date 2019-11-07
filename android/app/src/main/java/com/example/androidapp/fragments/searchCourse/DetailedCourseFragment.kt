@@ -1,6 +1,7 @@
 package com.example.androidapp.fragments.searchCourse
 
 import android.os.Bundle
+import android.os.Environment
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,8 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
+import java.io.FileOutputStream
+import java.io.File
 
 class DetailedCourseFragment(
     private val course: CourseItem,
@@ -73,12 +76,24 @@ class DetailedCourseFragment(
     private suspend fun viewPdf() {
         try {
             val response = restService.postPdfFileAsync(PdfFileRequest("inf3995", 1))
-            System.out.println(response)
-            Toast.makeText(context, "View pdf",
+            val os = FileOutputStream(getReportPath(course.code + "_" + course.trimester), false)
+            os.write(response)
+            os.flush()
+            os.close()
+
+            Toast.makeText(context, "Les résultats de ce cours ont été téléversés dans vos dossiers.",
                 Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(context, "${getString(R.string.error_message_unknown)}: ${e.message}",
                 Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun getReportPath(filename: String): String {
+        val file = File(Environment.getExternalStorageDirectory().path, "Classbook")
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        return file.absolutePath + "/" + filename + ".pdf"
     }
 }

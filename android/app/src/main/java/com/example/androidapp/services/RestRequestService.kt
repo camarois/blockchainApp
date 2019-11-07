@@ -6,7 +6,6 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.androidapp.*
-import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -43,8 +42,8 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return postAsync("info/etudiant", request, StudentResponse::class.java)
     }
 
-    suspend fun postPdfFileAsync(request: PdfFileRequest): JSONObject {
-        return postAsync("fichier/notes", request, JSONObject::class.java)
+    suspend fun postPdfFileAsync(request: PdfFileRequest): ByteArray {
+        return postAsync("fichier/notes", request, ByteArray::class.java, true)
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
@@ -77,17 +76,17 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         }
     }
 
-    private suspend fun <T> getAsync(url: String, data: Any, classOfT: Class<T>): T {
-        return baseRequestAsync(Request.Method.GET, url, data, classOfT)
+    private suspend fun <T> getAsync(url: String, data: Any, classOfT: Class<T>, isFile: Boolean = false): T {
+        return baseRequestAsync(Request.Method.GET, url, data, classOfT, isFile)
     }
 
-    private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
-        return baseRequestAsync(Request.Method.POST, url, data, classOfT)
+    private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>, isFile: Boolean = false): T {
+        return baseRequestAsync(Request.Method.POST, url, data, classOfT, isFile)
     }
 
-    private suspend fun <T> baseRequestAsync(method: Int, url: String, data: Any, classOfT: Class<T>): T {
+    private suspend fun <T> baseRequestAsync(method: Int, url: String, data: Any, classOfT: Class<T>, isFile: Boolean): T {
         return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, method, "$serverUrl/$url", data, classOfT,
+            val request = GsonRequest(context, credentialsManager, method, "$serverUrl/$url", data, classOfT, isFile,
                 mutableMapOf(
                     CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
                 ),
