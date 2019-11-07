@@ -33,7 +33,7 @@ import kotlin.coroutines.CoroutineContext
 
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        // TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onListFragmentInteraction(student: StudentItem) {
