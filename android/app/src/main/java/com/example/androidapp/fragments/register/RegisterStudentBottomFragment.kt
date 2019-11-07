@@ -7,12 +7,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class RegisterStudentBottomFragment : BottomSheetDialogFragment() {
 
-    var registerFragment: RegisterFragment? = null
+    private var registerFragment: RegisterCourseFragment? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         registerFragment = (activity!!
             .supportFragmentManager
-            .findFragmentById(R.id.register_fragment) as RegisterFragment)
+            .findFragmentById(R.id.register_fragment) as RegisterCourseFragment)
         super.onViewCreated(view, savedInstanceState)
     }
 }
