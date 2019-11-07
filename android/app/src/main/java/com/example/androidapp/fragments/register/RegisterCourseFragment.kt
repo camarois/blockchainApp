@@ -166,6 +166,7 @@ class RegisterCourseFragment : Fragment() {
                 } else {
                     pdfFilePath = getFilePath(data.data!!)
                     uploadPDFBtn.text = pdfFilePath.split("/").last()
+                    uploadPDFBtn.setBackgroundColor(activity!!.resources.getColor(R.color.colorAccent))
                 }
             }
         }
