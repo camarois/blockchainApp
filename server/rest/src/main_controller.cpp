@@ -4,7 +4,6 @@
 
 DECLARE_string(cert);
 DECLARE_string(key);
-DECLARE_string(db);
 DECLARE_int32(buffer_size);
 
 namespace Rest {

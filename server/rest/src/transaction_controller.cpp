@@ -8,7 +8,6 @@
 #include <iostream>
 #include <rest/transaction_controller.hpp>
 
-DECLARE_string(db);
 DECLARE_string(transactions);
 
 namespace Rest {

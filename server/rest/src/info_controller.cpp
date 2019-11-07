@@ -3,8 +3,6 @@
 #include <gflags/gflags.h>
 #include <rest/info_controller.hpp>
 
-DECLARE_string(db);
-
 namespace Rest {
 
 InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router,

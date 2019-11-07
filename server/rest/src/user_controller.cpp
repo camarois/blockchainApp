@@ -6,8 +6,6 @@
 #include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
 
-DECLARE_string(db);
-
 namespace Rest {
 
 UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router,
