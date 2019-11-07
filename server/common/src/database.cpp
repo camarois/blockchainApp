@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+#include "common/miner_models.hpp"
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
@@ -32,6 +33,22 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   if (errCode != SQLITE_DONE && errCode != SQLITE_OK && errCode != SQLITE_ROW) {
     throw SqliteErr(message + " -> Sqlite error message: " + sqlite3_errstr(errCode));
   }
+}
+
+Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
+  switch (sql.function) {
+    case Functions::getSalt: {
+      auto salt = getSalt(sql.params.at(0));
+      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
+    }
+    case Functions::addUser: {
+      addUser({sql.params.at(0), sql.params.at(1)}, false); // TODO(LOL) change all common models
+      return {false, "gpol"};
+    }
+    default:
+      throw std::runtime_error("Function not allowed:" + sql.function);
+  }
+  return {};
 }
 
 std::optional<std::string> Database::getSalt(const std::string& username) {

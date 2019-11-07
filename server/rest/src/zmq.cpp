@@ -5,7 +5,6 @@
 #include <uuid.h>
 
 #include <common/message_helper.hpp>
-#include <common/miner_models.hpp>
 #include <common/models.hpp>
 #include <rest/zmq.hpp>
 
@@ -21,7 +20,15 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname)
       socketXPubBlockchain_(context_, zmq::socket_type::xpub),
       socketXSubBlockchain_(context_, zmq::socket_type::xsub) {}
 
-ZMQWorker::~ZMQWorker() { join(); }
+ZMQWorker::~ZMQWorker() {
+  running_ = false;
+  socketPubToMiner_.close();
+  socketPullFromMiner_.close();
+  socketXPubBlockchain_.close();
+  socketXSubBlockchain_.close();
+  context_.close();
+  join();
+}
 
 bool ZMQWorker::start() {
   try {
@@ -48,29 +55,31 @@ bool ZMQWorker::start() {
 }
 
 void ZMQWorker::join() {
-  running_ = false;
-  socketPubToMiner_.close();
-  socketPullFromMiner_.close();
-  socketXPubBlockchain_.close();
-  socketXSubBlockchain_.close();
-  context_.close();
-  threadPullFromMiner_.join();
-  threadProxyBlockchain_.join();
+  if (threadPullFromMiner_.joinable()) {
+    threadPullFromMiner_.join();
+  }
+  if (threadProxyBlockchain_.joinable()) {
+    threadProxyBlockchain_.join();
+  }
 }
 
-std::string ZMQWorker::getRequest(const std::string& sql) {
-  std::future<std::string> request = createGetRequest(sql);
+std::string ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
+  std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeServerRequest);
   request.wait_for(std::chrono::seconds(kWaitTimeout_));
   return request.get();
 }
 
-void ZMQWorker::updateRequest(const std::string& sql) {
-  Common::Models::ZMQMessage message;
-  message.type = Common::Models::kTypeTransaction;
-  message.data = sql;
-  nlohmann::json messageJSON = message;
+std::string ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
+  // Common::Models::ZMQMessage message;
+  // message.type = Common::Models::kTypeTransaction;
+  // message.data = Common::Models::toStr(sql);
+  // nlohmann::json messageJSON = message;
 
-  sendRequest(messageJSON.dump());
+  // sendRequest(messageJSON.dump());
+
+  std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
+  request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  return request.get();
 }
 
 void ZMQWorker::handlePullFromMiner() {
@@ -129,7 +138,7 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
   getRequests_.erase(token);
 }
 
-std::future<std::string> ZMQWorker::createGetRequest(const std::string& sql) {
+std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
   Common::Models::ServerRequest request;
@@ -138,7 +147,7 @@ std::future<std::string> ZMQWorker::createGetRequest(const std::string& sql) {
   nlohmann::json requestJSON = request;
 
   Common::Models::ZMQMessage message;
-  message.type = Common::Models::kTypeServerRequest;
+  message.type = type;
   message.data = requestJSON.dump();
   nlohmann::json messageJSON = message;
 

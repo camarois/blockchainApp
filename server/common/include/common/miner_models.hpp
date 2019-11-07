@@ -12,16 +12,51 @@ const std::string kBlockID = "block-id";
 const std::string kBlockNonce = "block-nonce";
 const std::string kCommand = "command";
 const std::string kContent = "content";
+const std::string kFound = "found";
 const std::string kData = "data";
 const std::string kID = "id";
 const std::string kResult = "result";
 const std::string kToken = "token";
 const std::string kType = "type";
+const std::string kFunction = "function";
+const std::string kParams = "params";
 const std::string kTypeBlockMined = "block-mined";
 const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
 const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
+
+struct SqlRequest {
+  int function;
+  std::vector<std::string> params;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const SqlRequest& obj) {
+  j = {{kFunction, obj.function}, {kParams, obj.params}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, SqlRequest& obj) {
+  j.at(kFunction).get_to(obj.function);
+  j.at(kParams).get_to(obj.params);
+}
+
+struct SqlResponse {
+  bool found;
+  std::string data;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const SqlResponse& obj) {
+  j = {{kFound, obj.found}, {kData, obj.data}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, SqlResponse& obj) {
+  j.at(kFound).get_to(obj.found);
+  j.at(kData).get_to(obj.data);
+}
 
 struct ZMQMessage {
   std::string type;

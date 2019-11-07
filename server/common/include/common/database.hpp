@@ -5,13 +5,35 @@
 #include "common/models.hpp"
 #include "common/query.hpp"
 #include "common/statement.hpp"
+#include "nlohmann/json.hpp"
 #include "sqlite_err.hpp"
 #include <cstddef>
 #include <memory>
 #include <sqlite3.h>
 #include <string>
+#include "common/miner_models.hpp"
 
 namespace Common {
+
+enum Functions {
+  addUser,
+  setUserPassword,
+  containsUser,
+  getSalt,
+  getIps,
+  addIp,
+  containsIp,
+  addLogSession,
+  addLog,
+  getLogs,
+  checkForExistingClass,
+  deleteExistingClass,
+  deleteExistingResults,
+  addNewClass,
+  addNewResult,
+  getClassResult,
+  getStudentResult
+};
 
 class Database {
  public:
@@ -19,6 +41,8 @@ class Database {
   explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
+
+  Common::Models::SqlResponse get(const Common::Models::SqlRequest& sql);
 
   void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
   void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,

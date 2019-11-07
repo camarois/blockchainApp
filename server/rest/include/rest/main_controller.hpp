@@ -12,6 +12,7 @@
 #include <rest/ping_controller.hpp>
 #include <rest/transaction_controller.hpp>
 #include <rest/user_controller.hpp>
+#include <rest/zmq.hpp>
 
 namespace Rest {
 
@@ -24,8 +25,9 @@ class MainController {
  private:
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
+  std::shared_ptr<ZMQWorker> zmqWorker_;
   Rest::UserController userController_;
-  Rest::PingController exampleController_;
+  Rest::PingController pingController_;
   Rest::TransactionController transactionController_;
   Rest::InfoController infoController_;
   Rest::FileController fileController_;
