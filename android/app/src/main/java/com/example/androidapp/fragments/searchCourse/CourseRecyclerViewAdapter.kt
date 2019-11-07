@@ -40,7 +40,7 @@ class CourseRecyclerViewAdapter(
         val item = mValues[position]
         holder.mNameView.text = item.name
         holder.mCodeView.text = item.code
-        holder.mTrimesterView.text = item.trimester
+        holder.mTrimesterView.text = item.trimester.toString()
 
         with(holder.mView) {
             tag = item

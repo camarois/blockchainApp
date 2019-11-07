@@ -47,7 +47,15 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        val studentList = launch { restService.getStudentListAsync() }
+
+        launch {
+            val studentList = restService.getStudentListAsync()
+            StudentContent.clearList()
+            for (i in 0..studentList.listeEtudiant.size-1){
+                StudentContent.addItem(studentList.listeEtudiant[i])
+            }
+        }
+
         viewCreated.adapter =
             StudentRecyclerViewAdapter(
                 StudentContent.items,

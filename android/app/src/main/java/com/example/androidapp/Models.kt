@@ -1,5 +1,6 @@
 package com.example.androidapp
 
+import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.google.gson.annotations.SerializedName
 
 data class LoginRequest(
@@ -29,4 +30,12 @@ data class StudentItem(
     @SerializedName("prenom")val firstName: String,
     @SerializedName("matricule") val code: String,
     @SerializedName("note") val grade: String
+)
+
+data class ListStudent(
+    @SerializedName("listeEtudiant") val listeEtudiant: List<StudentItem>
+)
+
+data class ListClass(
+    @SerializedName("listeClasses") val listeClasses: List<CourseItem>
 )

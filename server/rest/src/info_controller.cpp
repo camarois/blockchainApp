@@ -12,7 +12,7 @@ InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router
 void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "cours", Pistache::Rest::Routes::bind(&InfoController::handleClasses, this));
   router->post(kBasePath_ + "etudiant", Pistache::Rest::Routes::bind(&InfoController::handleStudents, this));
-  router->get(kBasePath_ + "listeEtudiant", Pistache::Rest::Routes::bind(&InfoController::handleListStudents, this));
+  router->get(kBasePath_ + "listeEtudiants", Pistache::Rest::Routes::bind(&InfoController::handleListStudents, this));
   router->get(kBasePath_ + "listeCours", Pistache::Rest::Routes::bind(&InfoController::handleListClasses, this));
 }
 
@@ -40,15 +40,17 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
 void InfoController::handleListStudents(const Pistache::Rest::Request& /*request*/,
                                         Pistache::Http::ResponseWriter response) {
   Common::Database db(FLAGS_db);
-  std::vector<Common::Models::StudentInfo> result = db.getStudents();
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result));
+  std::vector<Common::Models::StudentInfo> studentInfo = db.getStudents();
+  Common::Models::ListStudentInfo listStudentInfo = {studentInfo};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(listStudentInfo));
 }
 
 void InfoController::handleListClasses(const Pistache::Rest::Request& /*request*/,
                                        Pistache::Http::ResponseWriter response) {
   Common::Database db(FLAGS_db);
-  std::vector<Common::Models::ClassInfo> result = db.getClasses();
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(result));
+  std::vector<Common::Models::ClassInfo> classInfo = db.getClasses();
+  Common::Models::ListClasses listClasses = {classInfo};  
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(listClasses));
 }
 
 }  // namespace Rest

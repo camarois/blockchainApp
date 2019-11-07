@@ -27,18 +27,15 @@ object StudentContent {
     init {
         // Add some sample items.
         // TODO: Fill with information from database
-        for (i in 1..COUNT) {
-            addItem(createStudentItem(i))
-        }
+
     }
 
-    private fun addItem(item: StudentItem) {
+     fun addItem(item: StudentItem) {
         items.add(item)
         item_map[item.code] = item
     }
 
-    private fun createStudentItem(position: Int): StudentItem {
-        return StudentItem("Nom $position", "Prenom $position",
-            (BASE_STUDENT_CODE + position).toString(), "50")
+    fun clearList() {
+        items.clear()
     }
 }

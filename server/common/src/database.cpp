@@ -251,7 +251,6 @@ std::vector<Common::Models::ClassInfo> Database::getClasses() {
   Query getClassesQuery = Query(
       "SELECT DISTINCT acronym, name, trimester "
       "FROM classes;");
-  std::cout << getClassesQuery.val() << std::endl;
   Statement getClassesStatement = Statement(db_, getClassesQuery);
   std::vector<Common::Models::ClassInfo> result;
   while (getClassesStatement.step()) {
@@ -274,6 +273,7 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
                       .firstName = getStudentStatement.getColumnText(1),
                       .id = getStudentStatement.getColumnText(2)});
   }
+
   return result;
 }
 

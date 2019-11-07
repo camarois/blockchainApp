@@ -5,10 +5,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.androidapp.LoginRequest
-import com.example.androidapp.LoginResponse
-import com.example.androidapp.PasswordRequest
-import com.example.androidapp.TransactionRequest
+import com.example.androidapp.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -24,7 +21,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://$it:10000"
+                serverUrl = "https://10.200.3.110:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
@@ -37,8 +34,12 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return getAsync("ping")
     }
 
-    suspend fun getStudentListAsync(): String {
-        return getAsync("info/listeEtudiant")
+    suspend fun getStudentListAsync(): ListStudent {
+        return getAsync("info/listeEtudiants", ListStudent::class.java)
+    }
+
+    suspend fun getClassListAsync(): ListClass {
+        return getAsync("info/listeEtudiants", ListClass::class.java)
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
