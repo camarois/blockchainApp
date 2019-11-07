@@ -39,7 +39,7 @@ import kotlin.coroutines.CoroutineContext
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
-            val pd = ProgressDialog(parent)
+            val pd = ProgressDialog(this)
             pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
@@ -64,7 +64,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
 
     override fun onListFragmentInteraction(student: StudentItem) {
         launch {
-            val pd = ProgressDialog(parent)
+            val pd = ProgressDialog(this)
             pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
@@ -141,7 +141,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
     private suspend fun logout() {
-        val pd = ProgressDialog(parent)
+        val pd = ProgressDialog(this)
         pd.setMessage("En d'une réponse des mineurs...")
         pd.show()
         try {
