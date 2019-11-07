@@ -5,10 +5,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.androidapp.LoginRequest
-import com.example.androidapp.LoginResponse
-import com.example.androidapp.PasswordRequest
-import com.example.androidapp.TransactionRequest
+import com.example.androidapp.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resumeWithException
@@ -35,6 +32,14 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
 
     suspend fun getPingAsync(): String {
         return getAsync("ping")
+    }
+
+    suspend fun getStudentListAsync(): ListStudent {
+        return getAsync("info/listeEtudiants", ListStudent::class.java)
+    }
+
+    suspend fun getClassListAsync(): ListClass {
+        return getAsync("info/listeCours", ListClass::class.java)
     }
 
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {

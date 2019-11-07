@@ -10,15 +10,18 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.androidapp.AccountTypes
+import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
-import com.example.androidapp.fragments.register.RegisterFragment
+import com.example.androidapp.fragments.register.RegisterCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
-import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.RestRequestService
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
+import kotlinx.android.synthetic.main.nav_header_side_panel.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,7 +29,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
-class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterFragment.OnListFragmentInteractionListener {
+class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
@@ -38,6 +41,8 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     private lateinit var job: Job
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var restService: RestRequestService = get()
+    var username: String = ""
+    lateinit var type: AccountTypes
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -57,12 +62,26 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
             ), sidePanelDrawerLayout
         )
 
+        username = intent.getStringExtra("username")
+        type = intent!!.getSerializableExtra("type") as AccountTypes
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)
+
+        if (type == AccountTypes.CONSULTATION) {
+            val v: NavigationView = findViewById(R.id.sidePanelNavigationView)
+            val menu = v.menu
+            menu.setGroupVisible(R.id.editionGroup, false)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        if (type == AccountTypes.EDITION) {
+            textView.text = resources.getString(R.string.nav_header_subtitle_edition)
+        } else {
+            textView.text = resources.getString(R.string.nav_header_subtitle_consultation)
+        }
+
         menuInflater.inflate(R.menu.side_panel, menu)
         return true
     }

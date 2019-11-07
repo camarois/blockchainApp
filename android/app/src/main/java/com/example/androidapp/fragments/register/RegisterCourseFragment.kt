@@ -31,12 +31,7 @@ import kotlinx.android.synthetic.main.bottom_button.*
 import org.koin.android.ext.android.get
 import java.io.File
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [RegisterFragment.OnListFragmentInteractionListener] interface.
- */
-class RegisterFragment : Fragment() {
+class RegisterCourseFragment : Fragment() {
 
     private var pdfFilePath: String = ""
     private var columnCount = 1
@@ -45,6 +40,7 @@ class RegisterFragment : Fragment() {
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private val PDF_UPLOAD_CODE = 111
     private var restService: RestRequestService = get()
+    private val homeFragment: HomeFragment = HomeFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +62,10 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterFragment, registeredStudents, listener)
+        viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterCourseFragment, registeredStudents, listener)
         addStudentButton.setOnClickListener { openBottomSheet() }
+        val bundle = this.arguments!!
+        class_name.text = bundle["code"].toString()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -87,7 +85,7 @@ class RegisterFragment : Fragment() {
                 }
                 adapter =
                     GradedStudentRecyclerViewAdapter(
-                        this@RegisterFragment,
+                        this@RegisterCourseFragment,
                         registeredStudents,
                         listener
                     )
@@ -125,6 +123,7 @@ class RegisterFragment : Fragment() {
         val studentFirstName = firstName.text.toString()
         val studentCode = code.text.toString()
         val studentGrade = grade.text.toString()
+
         if (studentLastName.isNotEmpty() && studentFirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
             registeredStudents.add(registeredStudents.size, StudentItem(lastName.text.toString(), firstName.text.toString(), code.text.toString(), grade.text.toString()))
             list.adapter?.notifyItemInserted(registeredStudents.size - 1)
@@ -192,17 +191,22 @@ class RegisterFragment : Fragment() {
         }
 
         val pdf = convertToBase64(File(pdfFilePath))
-        val code = class_name.text.toString()
-        val name = "UN NOM DE CLASSE"
-        val trimester = 20003
+
+        val bundle = this.arguments ?: return
+        val code: String = (bundle["code"] as String?)!!
+        val name: String = (bundle["name"] as String?)!!
+        val trimester: Int = (bundle["trimester"] as Int?)!!
+
+        bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+
         try {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
             Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
-            val frag = HomeFragment()
-            transaction.replace(R.id.register_fragment, frag)
+            transaction.replace(R.id.curr_fragment, homeFragment)
+            register_fragment.visibility = View.GONE
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
@@ -248,7 +252,7 @@ class RegisterFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            RegisterFragment().apply {
+            RegisterCourseFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

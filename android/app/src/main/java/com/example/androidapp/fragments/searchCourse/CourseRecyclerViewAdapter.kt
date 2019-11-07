@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment.OnListFragmentInteractionListener
-import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import kotlinx.android.synthetic.main.fragment_course.view.*
 
 /**
@@ -40,7 +40,7 @@ class CourseRecyclerViewAdapter(
         val item = mValues[position]
         holder.mNameView.text = item.name
         holder.mCodeView.text = item.code
-        holder.mTrimesterView.text = item.trimester
+        holder.mTrimesterView.text = item.trimester.toString()
 
         with(holder.mView) {
             tag = item

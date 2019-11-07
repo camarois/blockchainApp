@@ -1,47 +1,33 @@
 package com.example.androidapp.fragments.home
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import com.example.androidapp.AccountTypes
 import com.example.androidapp.R
-import com.example.androidapp.services.RestRequestService
-import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.*
-import org.koin.android.ext.android.get
-import kotlin.coroutines.CoroutineContext
+import com.example.androidapp.activities.SidePanelActivity
+import kotlinx.android.synthetic.main.fragment_home.*
 
-class HomeFragment : Fragment(), CoroutineScope {
-
-    private var restService: RestRequestService = get()
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
-    private lateinit var homeViewModel: HomeViewModel
-
+class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        job = Job()
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        root.refresh_button.setOnClickListener { launch {
-            try {
-                root.ping_text_view.text = restService.getPingAsync()
-            } catch (e: Exception) {
-                root.ping_text_view.text = "${getString(R.string.error_message_unknown)}: ${e.message}"
-            }
-        } }
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
 
-        return root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        username.text = (activity!! as SidePanelActivity).username
+        val type = (activity!! as SidePanelActivity).type
+
+        if (type == AccountTypes.EDITION)
+            description.text = resources.getString(R.string.edition_description)
+        else
+            description.text = resources.getString(R.string.consultation_description)
+        super.onViewCreated(view, savedInstanceState)
     }
 }

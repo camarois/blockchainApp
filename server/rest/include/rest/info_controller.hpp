@@ -19,6 +19,8 @@ class InfoController {
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
   void handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleListStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleListClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   std::shared_ptr<ZMQWorker> zmqWorker_;
   const std::string kBasePath_ = "/info/";
