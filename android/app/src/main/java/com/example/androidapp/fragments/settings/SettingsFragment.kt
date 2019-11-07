@@ -70,6 +70,6 @@ class SettingsFragment : Fragment(), CoroutineScope {
                 old_password_edit_text.setText("")
                 new_password_edit_text.setText("")
         }
-        pd.show()
+        pd.dismiss()
     }
 }
