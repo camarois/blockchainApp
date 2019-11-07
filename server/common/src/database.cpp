@@ -18,6 +18,8 @@ Database::Database(const std::string& dbPath) {
                         nullptr),
         "Cannot connect to database");
     db_.reset(dbPtr, sqlite3_close_v2);
+
+    addUser({{"admin", "equipe01"}, true});
   } catch (...) {
     close();
     throw;
@@ -37,17 +39,47 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
   switch (sql.function) {
-    case Functions::getSalt: {
-      auto salt = getSalt(sql.params);
-      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
-    }
     case Functions::addUser: {
-      addUser(nlohmann::json::parse(sql.params));  // TODO(LOL) change all common models
-      return {false, "gpol"};
+      addUser(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::setUserPassword: {
+      setUserPassword(nlohmann::json::parse(sql.params));
+      return {false, ""};
     }
     case Functions::containsUser: {
       return {containsUser(nlohmann::json::parse(sql.params)), ""};
     }
+    case Functions::getSalt: {
+      auto salt = getSalt(sql.params);
+      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
+    }
+    case Functions::checkForExistingClass: {
+      auto classId = checkForExistingClass(nlohmann::json::parse(sql.params));
+      return {classId.has_value(), classId.has_value() ? std::to_string(classId.value()) : ""};
+    }
+    case Functions::deleteExistingClass: {
+      deleteExistingClass(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::deleteExistingResults: {
+      deleteExistingResults(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::addNewClass: {
+      return {true, std::to_string(addNewClass(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::addNewResult: {
+      addNewResult(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::getClassResult: {
+      return {true, Common::Models::toStr(getClassResult(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::getStudentResult: {
+      return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
+    }
+
     default:
       throw std::runtime_error("Function not allowed:" + sql.function);
   }

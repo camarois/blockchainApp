@@ -34,8 +34,7 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
       zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
-    Common::Models::LoginResponse loginResponse = {};
-    response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
+    response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
   }

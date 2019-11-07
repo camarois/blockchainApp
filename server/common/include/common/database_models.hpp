@@ -66,7 +66,7 @@ inline void to_json(nlohmann::json& j, const ContainsUserRequest& obj) {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ContainsUserRequest& obj) {
   j.at(kLoginRequest).get_to(obj.loginRequest);
-  j.at(kPasswordRequest).get_to(obj.salt);
+  j.at(kSalt).get_to(obj.salt);
   j.at(kIsAdmin).get_to(obj.isAdmin);
 }
 
