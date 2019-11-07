@@ -17,6 +17,7 @@ CustomRouter::CustomRouter() { Common::Logger::init(FLAGS_db); }
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             const Pistache::Rest::Route::Handler& handler, bool requiresAuth) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+    response.timeoutAfter(std::chrono::seconds(30));
     auto body = request.body().empty() ? kDefaultBody_ : request.body();
     body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
     try {

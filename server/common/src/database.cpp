@@ -227,7 +227,7 @@ std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int pr
                                : Query(
                                      "SELECT * FROM ("
                                      "SELECT logId, severity, logTime, log FROM logs "
-                                     "WHERE provenance = '%q'"
+                                     "WHERE provenance = '%q' "
                                      "ORDER BY logId DESC LIMIT 20) "
                                      "ORDER BY logTime ASC;",
                                      std::to_string(provenance).c_str());
