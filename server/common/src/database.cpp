@@ -46,8 +46,7 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
       return {false, "gpol"};
     }
     case Functions::containsUser: {
-      return {containsUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(1),
-                   sql.params.at(2) == "1"), ""};
+      return {containsUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(2), sql.params.at(3) == "1"), ""};
     }
     default:
       throw std::runtime_error("Function not allowed:" + sql.function);

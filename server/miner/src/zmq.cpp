@@ -98,7 +98,7 @@ void ZMQWorker::handleSubServer() {
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
       std::cout << "Received from server: " << request.command << std::endl;
       if (received.type == Common::Models::kTypeServerRequest) {
-        std::cout << "salut " << db.get(nlohmann::json::parse(request.command)).data << std::endl;
+        std::cout << Common::Models::toStr(db.get(nlohmann::json::parse(request.command))) << std::endl;
         sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       } else if (received.type == Common::Models::kTypeTransaction) {
         blockchain_.appendTransaction(received.data);

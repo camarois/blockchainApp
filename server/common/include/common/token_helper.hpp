@@ -41,12 +41,12 @@ inline std::optional<std::string> decode(const std::string& token, const std::st
   std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
   std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
 
-  Common::Database db(dbPath);
-  auto salt = db.getSalt(username);
-  if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && salt &&
-      db.containsUser({username, password}, salt.value())) {
-    return encode(username, password);
-  }
+  // Common::Database db(dbPath);
+  // auto salt = db.getSalt(username);
+  // if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && salt &&
+  //     db.containsUser({username, password}, salt.value())) {
+  //   return encode(username, password);
+  // }
   return token;
 }
 
