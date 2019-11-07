@@ -10,7 +10,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
@@ -68,7 +67,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)
 
-        if(type != "edition") {
+        if (type != "edition") {
             val v: NavigationView = findViewById(R.id.sidePanelNavigationView)
             val menu = v.menu
             menu.setGroupVisible(R.id.editionGroup, false)
@@ -76,7 +75,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if(type == "edition") {
+        if (type == "edition") {
             textView.text = resources.getString(R.string.nav_header_subtitle_edition)
         } else {
             textView.text = resources.getString(R.string.nav_header_subtitle_consultation)
