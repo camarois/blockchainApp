@@ -1,13 +1,12 @@
 #include <cerrno>
 #include <chrono>
-#include <iostream>
-#include <set>
-#include <uuid.h>
-
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
+#include <iostream>
 #include <rest/zmq.hpp>
+#include <set>
+#include <uuid.h>
 
 namespace Rest {
 

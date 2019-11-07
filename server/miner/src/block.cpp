@@ -41,12 +41,16 @@ void Block::append(const std::string& data) {
 }
 
 void Block::mine(unsigned int difficulty) {
-  nonce_ = 0;
-
   bool invalid = true;
   while (invalid) {
+    if (receivedNonces_.empty()) {
+      nonce_ = receivedNonces_.front();
+      receivedNonces_.pop();
+    }
+
     std::string blockHash = hash();
     invalid = false;
+
     for (unsigned int i = 0; i < difficulty; i++) {
       if (blockHash.at(i) != '0') {
         nonce_++;
@@ -54,6 +58,10 @@ void Block::mine(unsigned int difficulty) {
         invalid = true;
       }
     }
+  }
+
+  while (!receivedNonces_.empty()) {
+    receivedNonces_.pop();
   }
 }
 
@@ -64,6 +72,8 @@ void Block::save(const std::filesystem::path& blockDir) const {
   file << json;
   file.close();
 }
+
+void Block::queueNonce(unsigned int nonce) { receivedNonces_.push(nonce); }
 
 unsigned int Block::id() const { return id_; }
 

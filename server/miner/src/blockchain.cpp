@@ -1,15 +1,15 @@
+#include "miner/blockchain.hpp"
+
 #include <exception>
 #include <fstream>
 #include <iostream>
-
-#include "miner/blockchain.hpp"
 
 namespace Miner {
 
 const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
-  difficulty_ = 3;
+  difficulty_ = 4;
   createBlock();
 }
 
