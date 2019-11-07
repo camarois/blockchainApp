@@ -83,7 +83,7 @@ void ZMQWorker::handleSubServer() {
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
-  Common::Database db("blockchain.db");
+  Common::Database db(FLAGS_db);
 
   while (running_) {
     try {
