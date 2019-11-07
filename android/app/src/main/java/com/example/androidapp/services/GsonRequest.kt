@@ -1,15 +1,13 @@
 package com.example.androidapp.services
 
 import android.content.Context
-import com.android.volley.NetworkResponse
-import com.android.volley.ParseError
-import com.android.volley.Request
-import com.android.volley.Response
+import android.util.Base64
+import android.widget.Toast
+import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import java.io.UnsupportedEncodingException
-import java.nio.charset.Charset
 
 // Inspired by : https://developer.android.com/training/volley/request-custom#example:-gsonrequest
 class GsonRequest <T> (
@@ -19,6 +17,7 @@ class GsonRequest <T> (
     url: String,
     private val body: Any = "",
     private val classOfT: Class<T>,
+    private val isFile: Boolean = false,
     private val headers: MutableMap<String, String?>?,
     private val listener: Response.Listener<T>,
     errorListener: Response.ErrorListener?
@@ -39,17 +38,20 @@ class GsonRequest <T> (
         return try {
             val json = String(
                 response?.data ?: ByteArray(0),
-                Charset.forName(HttpHeaderParser.parseCharset(response?.headers)))
-
+                Charsets.UTF_8)
             val token = response?.headers?.get(CredentialsManager.HTTP_HEADER_AUTHORIZATION)
             credentialsManager.saveCredentials(context, token)
+
+            val bodyParsed = if (isFile) Base64.decode(json, Base64.NO_WRAP) as T else gson.fromJson(json, classOfT)
+
             Response.success(
-                gson.fromJson(json, classOfT),
+                bodyParsed,
                 HttpHeaderParser.parseCacheHeaders(response))
         } catch (e: UnsupportedEncodingException) {
             Response.error(ParseError(e))
         } catch (e: JsonSyntaxException) {
             Response.error(ParseError(e))
         }
+        // todo - catch timeout error globally
     }
 }

@@ -1,8 +1,15 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
+add_custom_target(deps_file_miner
+    COMMAND cp
+        ${SQL_DIR}/createDb.sh
+        ${SQL_DIR}/createDb.sql
+        ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 add_executable(miner ${SOURCE_FILES})
-add_dependencies(miner common)
+add_dependencies(miner common deps_file_miner)
 
 target_include_directories(miner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -17,4 +24,5 @@ target_link_libraries(miner PRIVATE
     curl
     pthread
     stdc++fs
+    sqlite3
 )

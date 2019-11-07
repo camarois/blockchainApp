@@ -1,8 +1,8 @@
+#include "miner/blockchain.hpp"
+
 #include <exception>
 #include <fstream>
 #include <iostream>
-
-#include "miner/blockchain.hpp"
 
 namespace Miner {
 
@@ -16,6 +16,7 @@ BlockChain::BlockChain() {
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
 
 std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
+  std::filesystem::create_directories(blockDir);
   if (blockDir.empty()) {
     return BlockChain(blockDir);
   }

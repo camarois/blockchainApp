@@ -13,12 +13,16 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
+import com.example.androidapp.CourseRequest
 import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
+import com.example.androidapp.StudentRequest
+import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
+import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_side_panel.*
@@ -33,11 +37,42 @@ import kotlin.coroutines.CoroutineContext
 
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
-        // TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        launch {
+            try {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response = restService.postCourseInfoAsync(
+                    CourseRequest(
+                        course.code,
+                        course.trimester.toInt()
+                    )
+                )
+                val frag = DetailedCourseFragment(course, response.students)
+                transaction.replace(R.id.course_list_fragment, frag)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            } catch (e: TimeoutError) {
+                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG).show()
+            }
+
+        }
     }
 
     override fun onListFragmentInteraction(student: StudentItem) {
-        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        launch {
+            try {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response =
+                    restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
+                val frag = DetailedStudentFragment(student, response.results)
+                transaction.replace(R.id.student_list_fragment, frag)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            } catch (e: TimeoutError) {
+                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private lateinit var job: Job

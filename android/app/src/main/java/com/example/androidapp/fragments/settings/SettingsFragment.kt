@@ -52,24 +52,12 @@ class SettingsFragment : Fragment(), CoroutineScope {
         try {
             val oldPassword = old_password_edit_text.text.toString()
             val newPassword = new_password_edit_text.text.toString()
-            val response = restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
-            Toast.makeText(
-                context,
-                "Le mot de passe a été changé avec succès.",
-                Toast.LENGTH_LONG
-            ).show()
+            restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
+            Toast.makeText(context, "Le mot de passe a été changé avec succès.",
+                Toast.LENGTH_LONG).show()
         } catch (e: AuthFailureError) {
-            Toast.makeText(
-                context,
-                "L'ancien mot de passe est invalide",
-                Toast.LENGTH_LONG
-            ).show()
-        } catch (e: TimeoutError) {
-                Toast.makeText(
-                    context,
-                    "Petit problème de connexion au serveur, veuillez réessayer!",
-                    Toast.LENGTH_LONG
-                ).show()
+            Toast.makeText(context, "L'ancien mot de passe est invalide",
+                Toast.LENGTH_LONG).show()
         } finally {
             old_password_edit_text.setText("")
             new_password_edit_text.setText("")

@@ -21,17 +21,13 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://$it:10000"
+                serverUrl = "https://10.200.23.190:10000"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
             })
         val requestQueue = Volley.newRequestQueue(context)
         requestQueue.add(request)
-    }
-
-    suspend fun getPingAsync(): String {
-        return getAsync("ping")
     }
 
     suspend fun getStudentListAsync(): ListStudent {
@@ -42,8 +38,19 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return getAsync("info/listeCours", ListClass::class.java)
     }
 
+    suspend fun postCourseInfoAsync(request: CourseRequest): CourseResponse {
+        return postAsync("info/cours", request, CourseResponse::class.java)
+    }
+
+    suspend fun postStudentInfoAsync(request: StudentRequest): StudentResponse {
+        return postAsync("info/etudiant", request, StudentResponse::class.java)
+    }
+
+    suspend fun postPdfFileAsync(request: PdfFileRequest): ByteArray {
+        return postAsync("fichier/notes", request, ByteArray::class.java, true)
+    }
+
     suspend fun postLoginAsync(request: LoginRequest): LoginResponse {
-        credentialsManager.saveFirstAuthToken(context, request.username, request.password)
         return postAsync("usager/login", request, LoginResponse::class.java)
     }
 
@@ -59,30 +66,17 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return postAsync("transaction", request, String::class.java)
     }
 
-    suspend fun getAsync(url: String): String {
+    private suspend fun <T> getAsync(url: String, classOfT: Class<T>, isFile: Boolean = false): T {
+        return baseRequestAsync(Request.Method.GET, url, "", classOfT, isFile)
+    }
+
+    private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>, isFile: Boolean = false): T {
+        return baseRequestAsync(Request.Method.POST, url, data, classOfT, isFile)
+    }
+
+    private suspend fun <T> baseRequestAsync(method: Int, url: String, data: Any, classOfT: Class<T>, isFile: Boolean): T {
         return suspendCoroutine { continuation ->
-            val request = StringRequest("$serverUrl/$url",
-                { response ->
-                    continuation.resume(response)
-                },
-                {
-                    continuation.resumeWithException(it)
-                })
-            httpClient.addToRequestQueue(request)
-        }
-    }
-
-    private suspend fun <T> getAsync(url: String, classOfT: Class<T>): T {
-        return baseRequestAsync(Request.Method.GET, url, "", classOfT)
-    }
-
-    private suspend fun <T> postAsync(url: String, data: Any, classOfT: Class<T>): T {
-        return baseRequestAsync(Request.Method.POST, url, data, classOfT)
-    }
-
-    private suspend fun <T> baseRequestAsync(method: Int, url: String, data: Any, classOfT: Class<T>): T {
-        return suspendCoroutine { continuation ->
-            val request = GsonRequest(context, credentialsManager, method, "$serverUrl/$url", data, classOfT,
+            val request = GsonRequest(context, credentialsManager, method, "$serverUrl/$url", data, classOfT, isFile,
                 mutableMapOf(
                     CredentialsManager.HTTP_HEADER_AUTHORIZATION to credentialsManager.getAuthToken(context)
                 ),

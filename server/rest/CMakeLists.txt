@@ -1,7 +1,7 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".ccls-cache")
 
-add_custom_target(deps_file
+add_custom_target(deps_file_rest
     COMMAND cp
         ${SQL_DIR}/createDb.sh
         ${SQL_DIR}/createDb.sql
@@ -15,7 +15,7 @@ add_custom_target(deps_file
 )
 
 add_executable(rest ${SOURCE_FILES})
-add_dependencies(rest common libpistache libstduuid deps_file)
+add_dependencies(rest common libpistache libstduuid deps_file_rest)
 
 target_include_directories(rest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
