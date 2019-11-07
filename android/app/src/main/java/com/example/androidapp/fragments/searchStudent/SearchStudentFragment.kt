@@ -49,7 +49,7 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
         val viewCreated = view.list
         launch {
             val pd = ProgressDialog(context)
-            pd.setMessage("En d'une réponse des mineurs...")
+            pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
                 val newStudents = restService.getStudentListAsync()

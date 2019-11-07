@@ -46,7 +46,7 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
 
         launch {
             val pd = ProgressDialog(context)
-            pd.setMessage("En d'une réponse des mineurs...")
+            pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
                 val newCourses = restService.getClassListAsync()

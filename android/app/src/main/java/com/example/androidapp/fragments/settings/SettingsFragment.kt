@@ -51,7 +51,7 @@ class SettingsFragment : Fragment(), CoroutineScope {
 
     private suspend fun submitNewPassword() {
         val pd = ProgressDialog(context)
-        pd.setMessage("En d'une réponse des mineurs...")
+        pd.setMessage("En attente d'une réponse des mineurs...")
         pd.show()
         try {
             val oldPassword = old_password_edit_text.text.toString()

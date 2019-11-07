@@ -40,7 +40,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
             val pd = ProgressDialog(parent)
-            pd.setMessage("En d'une réponse des mineurs...")
+            pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()
@@ -65,7 +65,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override fun onListFragmentInteraction(student: StudentItem) {
         launch {
             val pd = ProgressDialog(parent)
-            pd.setMessage("En d'une réponse des mineurs...")
+            pd.setMessage("En attente d'une réponse des mineurs...")
             pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()

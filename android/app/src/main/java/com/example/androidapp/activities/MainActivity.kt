@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private suspend fun submitLogin() {
         val pd = ProgressDialog(this)
-        pd.setMessage("En d'une réponse des mineurs...")
+        pd.setMessage("En attente d'une réponse des mineurs...")
         pd.show()
 
         try {
