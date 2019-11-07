@@ -64,7 +64,6 @@ class SettingsFragment : Fragment(), CoroutineScope {
         } finally {
                 old_password_edit_text.setText("")
                 new_password_edit_text.setText("")
-            }
         }
     }
 }
