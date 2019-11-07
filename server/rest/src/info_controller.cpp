@@ -34,8 +34,9 @@ void InfoController::handleClasses(const Pistache::Rest::Request& request, Pista
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
   std::optional<Common::Models::Result> result;
-  Common::Database db(FLAGS_db);
-  std::vector<Common::Models::StudentResult> studentResults = db.getStudentResult(studentRequest);
+  auto studentRes = zmqWorker_->getRequest(
+      {Common::Functions::getStudentResult, {studentRequest.acronym, studentRequest.trimester, studentRequest.id}});
+  std::vector<Common::Models::StudentResult> studentResults = nlohmann::json::parse(studentRes.data);
   Common::Models::StudentResponse studentResponse = {studentResults};
 
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(studentResponse));

@@ -35,7 +35,7 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
   }
   auto newClassId = zmqWorker_->updateRequest(
       {Common::Functions::addNewClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
-  auto newClassId = zmqWorker_->updateRequest(
+  zmqWorker_->updateRequest(
       {Common::Functions::addNewResult, {transactionRequest.acronym, std::to_string(transactionRequest.trimester), newClassId.data}});
 
   std::filesystem::create_directories(FLAGS_transactions);
