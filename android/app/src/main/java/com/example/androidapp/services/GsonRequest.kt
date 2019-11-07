@@ -44,7 +44,7 @@ class GsonRequest <T> (
             val token = response?.headers?.get(CredentialsManager.HTTP_HEADER_AUTHORIZATION)
             credentialsManager.saveCredentials(context, token)
 
-            val bodyParsed = if (isFile) Base64.decode(json, Base64.NO_WRAP)  as T else gson.fromJson(json, classOfT)
+            val bodyParsed = if (isFile) Base64.decode(json, Base64.NO_WRAP) as T else gson.fromJson(json, classOfT)
 
             Response.success(
                 bodyParsed,

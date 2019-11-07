@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun requestStoragePermission() {
+    private fun requestReadStoragePermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 READ_EXTERNAL_STORAGE

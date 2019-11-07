@@ -16,7 +16,6 @@ import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
 import com.example.androidapp.StudentRequest
-import com.example.androidapp.fragments.register.RegisterFragment
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
