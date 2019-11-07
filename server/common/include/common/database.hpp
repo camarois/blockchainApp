@@ -29,7 +29,9 @@ enum Functions {
   addNewClass,
   addNewResult,
   getClassResult,
-  getStudentResult
+  getStudentResult,
+  getClasses,
+  getStudents
 };
 
 class Database {

@@ -49,10 +49,10 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
       return {false, ""};
     }
     case Functions::containsUser: {
-      return {true, std::to_string(containsUser(nlohmann::json::parse(sql.params)))};
+      return {containsUser(nlohmann::json::parse(sql.params)), ""};
     }
     case Functions::containsAdmin: {
-      return {true, std::to_string(containsAdmin(nlohmann::json::parse(sql.params)))};
+      return {containsAdmin(nlohmann::json::parse(sql.params)), ""};
     }
     case Functions::getRole: {
       auto edition = getRole(nlohmann::json::parse(sql.params));
@@ -86,6 +86,12 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
     }
     case Functions::getStudentResult: {
       return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::getClasses: {
+      return {true, Common::Models::toStr(getClasses())};
+    }
+    case Functions::getStudents: {
+      return {true, Common::Models::toStr(getStudents())};
     }
 
     default:
@@ -347,7 +353,6 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   Query getStudentQuery = Query(
       "SELECT DISTINCT firstName, lastName, id "
       "FROM results;");
-  std::cout << getStudentQuery.val() << std::endl;
   Statement getStudentStatement = Statement(db_, getStudentQuery);
   std::vector<Common::Models::StudentInfo> result;
   while (getStudentStatement.step()) {

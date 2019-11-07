@@ -48,17 +48,17 @@ void InfoController::handleStudents(const Pistache::Rest::Request& request, Pist
 
 void InfoController::handleListStudents(const Pistache::Rest::Request& /*request*/,
                                         Pistache::Http::ResponseWriter response) {
-  Common::Database db(FLAGS_db);
-  std::vector<Common::Models::StudentInfo> studentInfo = db.getStudents();
+  auto students = zmqWorker_->getRequest({Common::Functions::getStudents, ""});
+  std::vector<Common::Models::StudentInfo> studentInfo = nlohmann::json::parse(students.data);
   Common::Models::ListStudentInfo listStudentInfo = {studentInfo};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(listStudentInfo));
 }
 
 void InfoController::handleListClasses(const Pistache::Rest::Request& /*request*/,
                                        Pistache::Http::ResponseWriter response) {
-  Common::Database db(FLAGS_db);
-  std::vector<Common::Models::ClassInfo> classInfo = db.getClasses();
-  Common::Models::ListClasses listClasses = {classInfo};  
+  auto classes = zmqWorker_->getRequest({Common::Functions::getClasses, ""});
+  std::vector<Common::Models::ClassInfo> classInfo = nlohmann::json::parse(classes.data);
+  Common::Models::ListClasses listClasses = {classInfo};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(listClasses));
 }
 
