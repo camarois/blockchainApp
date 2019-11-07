@@ -24,13 +24,13 @@ void InfoController::handleClasses(const Pistache::Rest::Request& request, Pista
                                                                                classesRequest.trimester};
   auto classId = zmqWorker_->getRequest(
       {Common::Functions::checkForExistingClass, Common::Models::toStr(checkForExistingClassRequest)});
-  std::vector<Common::Models::Result> results;
+  Common::Models::ClassesResponse classesResponse;
   if (classId.found) {
     auto classResult = zmqWorker_->getRequest({Common::Functions::getClassResult, classId.data});
     std::vector<Common::Models::Result> classResults = nlohmann::json::parse(classResult.data);
-    results = classResults;
+    classesResponse.results = classResults;
   }
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(results));
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(classesResponse));
 }
 
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

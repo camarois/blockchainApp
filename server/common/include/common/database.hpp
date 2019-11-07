@@ -20,6 +20,8 @@ enum Functions {
   addUser,
   setUserPassword,
   containsUser,
+  containsAdmin,
+  getRole,
   getSalt,
   checkForExistingClass,
   deleteExistingClass,
@@ -42,6 +44,8 @@ class Database {
   void addUser(const Common::Models::AddUserRequest& request);
   void setUserPassword(const Common::Models::SetUserPasswordRequest& request);
   bool containsUser(const Common::Models::ContainsUserRequest& request);
+  bool containsAdmin(const Common::Models::ContainsAdminRequest& request);
+  std::optional<bool> getRole(const Common::Models::GetRoleRequest& request);
   std::optional<std::string> getSalt(const std::string& username);
 
   std::vector<std::string> getIps();

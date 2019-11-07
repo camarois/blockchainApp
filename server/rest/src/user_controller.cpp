@@ -26,12 +26,14 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
-  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, false};
+  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data};
   if (salt.found &&
       zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
-    Common::Models::LoginResponse loginResponse = {};
+    Common::Models::GetRoleRequest getRoleRequest = {loginRequest, salt.data};
+    auto edition = zmqWorker_->getRequest({Common::Functions::getRole, Common::Models::toStr(getRoleRequest)});
+    Common::Models::LoginResponse loginResponse = {edition.data == "1"};
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   } else {
     response.send(Pistache::Http::Code::Forbidden);
@@ -50,7 +52,7 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
   auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
-  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, false};
+  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data};
   if (salt.found &&
       zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,

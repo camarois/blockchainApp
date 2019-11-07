@@ -29,9 +29,9 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
   auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
-  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, true};
+  Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
+      zmqWorker_->getRequest({Common::Functions::containsAdmin, Common::Models::toStr(containsAdminRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     response.send(Pistache::Http::Code::Ok);
@@ -48,18 +48,17 @@ void AdminController::handleLogout(const Pistache::Rest::Request& /*request*/,
 
 void AdminController::handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
   auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
-  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, true};
+  Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
+      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsAdminRequest)}).found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      true};
-    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsUserRequest)});
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsAdminRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);

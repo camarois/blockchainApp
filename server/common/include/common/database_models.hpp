@@ -55,19 +55,17 @@ inline void from_json(const nlohmann::json& j, SetUserPasswordRequest& obj) {
 struct ContainsUserRequest {
   Common::Models::LoginRequest loginRequest;
   std::string salt;
-  bool isAdmin;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const ContainsUserRequest& obj) {
-  j = {{kLoginRequest, obj.loginRequest}, {kSalt, obj.salt}, {kIsAdmin, obj.isAdmin}};
+  j = {{kLoginRequest, obj.loginRequest}, {kSalt, obj.salt}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ContainsUserRequest& obj) {
   j.at(kLoginRequest).get_to(obj.loginRequest);
   j.at(kSalt).get_to(obj.salt);
-  j.at(kIsAdmin).get_to(obj.isAdmin);
 }
 
 struct CheckForExistingClassRequest {
@@ -88,7 +86,7 @@ inline void from_json(const nlohmann::json& j, CheckForExistingClassRequest& obj
 
 struct AddNewResultRequest {
   Common::Models::TransactionRequest transactionRequest;
-   int classId;
+  int classId;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -100,6 +98,40 @@ inline void to_json(nlohmann::json& j, const AddNewResultRequest& obj) {
 inline void from_json(const nlohmann::json& j, AddNewResultRequest& obj) {
   j.at(kTransactionRequest).get_to(obj.transactionRequest);
   j.at(kClassId).get_to(obj.classId);
+}
+
+struct ContainsAdminRequest {
+  Common::Models::LoginRequest loginRequest;
+  std::string salt;
+  bool isAdmin;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ContainsAdminRequest& obj) {
+  j = {{kLoginRequest, obj.loginRequest}, {kSalt, obj.salt}, {kIsAdmin, obj.isAdmin}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ContainsAdminRequest& obj) {
+  j.at(kLoginRequest).get_to(obj.loginRequest);
+  j.at(kSalt).get_to(obj.salt);
+  j.at(kIsAdmin).get_to(obj.isAdmin);
+}
+
+struct GetRoleRequest {
+  Common::Models::LoginRequest loginRequest;
+  std::string salt;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const GetRoleRequest& obj) {
+  j = {{kLoginRequest, obj.loginRequest}, {kSalt, obj.salt}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, GetRoleRequest& obj) {
+  j.at(kLoginRequest).get_to(obj.loginRequest);
+  j.at(kSalt).get_to(obj.salt);
 }
 
 }  // namespace Models

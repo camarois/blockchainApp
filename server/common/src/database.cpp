@@ -48,7 +48,14 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
       return {false, ""};
     }
     case Functions::containsUser: {
-      return {containsUser(nlohmann::json::parse(sql.params)), ""};
+      return {true, std::to_string(containsUser(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::containsAdmin: {
+      return {true, std::to_string(containsAdmin(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::getRole: {
+      auto edition = getRole(nlohmann::json::parse(sql.params));
+      return {edition.has_value(), edition.has_value() ? std::to_string(edition.value()) : ""};
     }
     case Functions::getSalt: {
       auto salt = getSalt(sql.params);
@@ -101,12 +108,34 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
 bool Database::containsUser(const Common::Models::ContainsUserRequest& request) {
   Query query = Query(
       "SELECT username FROM users "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      "WHERE username = '%q' AND password = '%q';",
       request.loginRequest.username.c_str(),
-      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
+      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
+  Statement statement = Statement(db_, query);
+  return statement.step();
+}
+
+bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request) {
+  Query query = Query(
+      "SELECT username FROM users "
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
       std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
+}
+
+std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& request) {
+  Query query = Query(
+      "SELECT isAdmin FROM users "
+      "WHERE username = '%q' AND password = '%q';",
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return std::stoi(statement.getColumnText(0));
+  }
+
+  return {};
 }
 
 void Database::addUser(const Common::Models::AddUserRequest& request) {
