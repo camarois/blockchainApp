@@ -142,7 +142,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     }
     private suspend fun logout() {
         val pd = ProgressDialog(this@SidePanelActivity)
-        pd.setMessage("En d'une réponse des mineurs...")
+        pd.setMessage("En attente d'une réponse des mineurs...")
         pd.show()
         try {
             restService.postLogoutAsync()
