@@ -1,6 +1,7 @@
 package com.example.androidapp.fragments.register
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -208,6 +209,10 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
+        val pd = ProgressDialog(context)
+        pd.setMessage("En d'une réponse des mineurs...")
+        pd.show()
+
         try {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
@@ -223,6 +228,8 @@ class RegisterCourseFragment : Fragment() {
         } catch (e: TimeoutError) {
             Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
         }
+
+        pd.dismiss()
     }
 
     override fun onAttach(context: Context) {

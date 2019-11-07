@@ -1,5 +1,6 @@
 package com.example.androidapp.fragments.searchStudent
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -47,6 +48,9 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
         launch {
+            val pd = ProgressDialog(context)
+            pd.setMessage("En d'une réponse des mineurs...")
+            pd.show()
             try {
                 val newStudents = restService.getStudentListAsync()
                 for (element in newStudents.listeEtudiant) {
@@ -60,6 +64,7 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
                     Toast.LENGTH_LONG
                 ).show()
             }
+            pd.dismiss()
         }
         viewCreated.adapter =
             StudentRecyclerViewAdapter(students, listener)

@@ -1,5 +1,6 @@
 package com.example.androidapp.activities
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.findNavController
@@ -38,6 +39,9 @@ import kotlin.coroutines.CoroutineContext
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
+            val pd = ProgressDialog(parent)
+            pd.setMessage("En d'une réponse des mineurs...")
+            pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()
                 val response = restService.postCourseInfoAsync(
@@ -54,11 +58,15 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
                     Toast.LENGTH_LONG).show()
             }
+            pd.dismiss()
         }
     }
 
     override fun onListFragmentInteraction(student: StudentItem) {
         launch {
+            val pd = ProgressDialog(parent)
+            pd.setMessage("En d'une réponse des mineurs...")
+            pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()
                 val response =
@@ -71,6 +79,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
                     Toast.LENGTH_LONG).show()
             }
+            pd.dismiss()
         }
     }
 
@@ -132,6 +141,9 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
     private suspend fun logout() {
+        val pd = ProgressDialog(parent)
+        pd.setMessage("En d'une réponse des mineurs...")
+        pd.show()
         try {
             restService.postLogoutAsync()
             val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
@@ -139,7 +151,8 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         } catch (e: TimeoutError) {
         Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
             Toast.LENGTH_LONG).show()
-    }
+        }
+        pd.dismiss()
     }
 
     override fun onSupportNavigateUp(): Boolean {
