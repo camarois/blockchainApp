@@ -22,6 +22,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.androidapp.services.AccountTypes
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
@@ -49,9 +50,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             // restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
             val response = restService.postLoginAsync(LoginRequest(username, password))
+            var accountType = if (response.edition) {
+                AccountTypes.EDITION
+            } else {
+                AccountTypes.CONSULTATION
+            }
+
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
                 putExtra("username", username)
-                putExtra("type", response.edition)
+                putExtra("type", accountType)
             }
             startActivity(intent)
         } catch (e: AuthFailureError) {

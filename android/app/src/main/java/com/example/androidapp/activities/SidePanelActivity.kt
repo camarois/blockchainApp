@@ -20,6 +20,7 @@ import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchCourse.course.CourseItem
+import com.example.androidapp.services.AccountTypes
 import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
 import com.google.android.material.navigation.NavigationView
@@ -60,7 +61,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var restService: RestRequestService = get()
     var username: String = ""
-    var type: String = ""
+    lateinit var type: AccountTypes
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -81,12 +82,12 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         )
 
         username = intent.getStringExtra("username")
-        type = intent.getStringExtra("type")
+        type = intent!!.getSerializableExtra("type") as AccountTypes
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)
 
-        if (type != "edition") {
+        if (type == AccountTypes.CONSULTATION) {
             val v: NavigationView = findViewById(R.id.sidePanelNavigationView)
             val menu = v.menu
             menu.setGroupVisible(R.id.editionGroup, false)
@@ -94,12 +95,12 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (type == "edition") {
+        if (type == AccountTypes.EDITION) {
             textView.text = resources.getString(R.string.nav_header_subtitle_edition)
         } else {
             textView.text = resources.getString(R.string.nav_header_subtitle_consultation)
         }
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         menuInflater.inflate(R.menu.side_panel, menu)
         return true
     }
