@@ -9,13 +9,14 @@ namespace Miner {
 const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
-  difficulty_ = 4;
+  difficulty_ = 3;
   createBlock();
 }
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
 
 std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path& blockDir) {
+  std::filesystem::create_directories(blockDir);
   if (blockDir.empty()) {
     return BlockChain(blockDir);
   }

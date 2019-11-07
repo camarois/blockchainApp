@@ -1,4 +1,9 @@
 {
     "firebase":"https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=",
-    "ping": "/ping"
+    "ping": "/ping/",
+    "login": "/admin/login/",
+    "logout": "/admin/logout/",
+    "changePassword": "/admin/motdepasse/",
+    "chain": "/admin/chaine/",
+    "logs": "/admin/logs/"
 }

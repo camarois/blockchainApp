@@ -32,6 +32,8 @@ const std::string kSeverity = "severite";
 const std::string kTime = "heure";
 const std::string kMessage = "message";
 const std::string kPdf = "pdf";
+const std::string kListClasses = "listeClasses";
+const std::string kStudentsInfo = "listeEtudiant";
 
 template <typename T>
 inline T fromStr(const std::string& str) {
@@ -207,6 +209,62 @@ inline void from_json(const nlohmann::json& j, GradesRequest& obj) {
   j.at(kTrimester).get_to(obj.trimester);
 }
 
+struct ClassInfo {
+  std::string acronym;
+  std::string name;
+  int trimester = 0;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ClassInfo& obj) {
+  j = {{kAcronym, obj.acronym}, {kName, obj.name}, {kTrimester, obj.trimester}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ClassInfo& obj) {
+  j.at(kAcronym).get_to(obj.acronym);
+  j.at(kName).get_to(obj.name);
+  j.at(kTrimester).get_to(obj.trimester);
+}
+
+struct ListClasses {
+  std::vector<Common::Models::ClassInfo> classes;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ListClasses& obj) { j = {{kListClasses, obj.classes}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ListClasses& obj) { j.at(kListClasses).get_to(obj.classes); }
+
+struct StudentInfo {
+  std::string lastName;
+  std::string firstName;
+  std::string id;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const StudentInfo& obj) {
+  j = {{kName, obj.lastName}, {kFirstName, obj.firstName}, {kId, obj.id}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, StudentInfo& obj) {
+  j.at(kName).get_to(obj.lastName);
+  j.at(kFirstName).get_to(obj.firstName);
+  j.at(kId).get_to(obj.id);
+}
+
+struct ListStudentInfo{
+  std::vector<Common::Models::StudentInfo> studentsInfo;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ListStudentInfo& obj) { j = {{kStudentsInfo, obj.studentsInfo}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ListStudentInfo& obj) { j.at(kStudentsInfo).get_to(obj.studentsInfo); }
+
 struct ChainRequest {
   int lastBlocks;
 };
@@ -303,6 +361,16 @@ inline void to_json(nlohmann::json& j, const DeleteAccountRequest& obj) { j = {{
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, DeleteAccountRequest& obj) { j.at(kUsername).get_to(obj.username); }
+
+struct ClassesResponse {
+  std::vector<Result> results;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ClassesResponse& obj) { j = {{kResults, obj.results}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ClassesResponse& obj) { j.at(kResults).get_to(obj.results); }
 
 }  // namespace Models
 }  // namespace Common

@@ -1,7 +1,9 @@
 #include "common/database.hpp"
+#include "common/miner_models.hpp"
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
+#include <iostream>
 
 namespace Common {
 
@@ -17,6 +19,8 @@ Database::Database(const std::string& dbPath) {
                         nullptr),
         "Cannot connect to database");
     db_.reset(dbPtr, sqlite3_close_v2);
+
+    addUser({{"admin", "equipe01"}, true});
   } catch (...) {
     close();
     throw;
@@ -34,6 +38,68 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
+Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
+  switch (sql.function) {
+    case Functions::addUser: {
+      addUser(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::setUserPassword: {
+      setUserPassword(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::containsUser: {
+      return {containsUser(nlohmann::json::parse(sql.params)), ""};
+    }
+    case Functions::containsAdmin: {
+      return {containsAdmin(nlohmann::json::parse(sql.params)), ""};
+    }
+    case Functions::getRole: {
+      auto edition = getRole(nlohmann::json::parse(sql.params));
+      return {edition.has_value(), edition.has_value() ? std::to_string(edition.value()) : ""};
+    }
+    case Functions::getSalt: {
+      auto salt = getSalt(sql.params);
+      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
+    }
+    case Functions::checkForExistingClass: {
+      auto classId = checkForExistingClass(nlohmann::json::parse(sql.params));
+      return {classId.has_value(), classId.has_value() ? std::to_string(classId.value()) : ""};
+    }
+    case Functions::deleteExistingClass: {
+      deleteExistingClass(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::deleteExistingResults: {
+      deleteExistingResults(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::addNewClass: {
+      return {true, std::to_string(addNewClass(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::addNewResult: {
+      addNewResult(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::getClassResult: {
+      return {true, Common::Models::toStr(getClassResult(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::getStudentResult: {
+      return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
+    }
+    case Functions::getClasses: {
+      return {true, Common::Models::toStr(getClasses())};
+    }
+    case Functions::getStudents: {
+      return {true, Common::Models::toStr(getStudents())};
+    }
+
+    default:
+      throw std::runtime_error("Function not allowed:" + sql.function);
+  }
+  return {};
+}
+
 std::optional<std::string> Database::getSalt(const std::string& username) {
   Query query = Query(
       "SELECT salt FROM users "
@@ -46,36 +112,59 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
   return {};
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
+bool Database::containsUser(const Common::Models::ContainsUserRequest& request) {
   Query query = Query(
       "SELECT username FROM users "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str(),
-      std::to_string(int(isAdmin)).c_str());
+      "WHERE username = '%q' AND password = '%q';",
+      request.loginRequest.username.c_str(),
+      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
-void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
+bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request) {
+  Query query = Query(
+      "SELECT username FROM users "
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
+      std::to_string(int(request.isAdmin)).c_str());
+  Statement statement = Statement(db_, query);
+  return statement.step();
+}
+
+std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& request) {
+  Query query = Query(
+      "SELECT isAdmin FROM users "
+      "WHERE username = '%q' AND password = '%q';",
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return std::stoi(statement.getColumnText(0));
+  }
+
+  return {};
+}
+
+void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
       "(username, password, salt, isAdmin) "
       "VALUES ('%q', '%q', '%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str(),
-      std::to_string(int(isAdmin)).c_str());
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
 
-void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
-                               const std::string& salt, bool isAdmin) {
+void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& request) {
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      Common::FormatHelper::hash(passwordRequest.newPwd + salt).c_str(), username.c_str(),
-      Common::FormatHelper::hash(passwordRequest.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
+      Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
+      Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
+      std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -152,12 +241,12 @@ std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int pr
   return logs;
 }
 
-std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
+std::optional<int> Database::checkForExistingClass(const Common::Models::CheckForExistingClassRequest& request) {
   Query checkForExistingClassQuery = Query(
       "SELECT classId FROM classes "
       "WHERE acronym = '%q' AND trimester = '%q' "
       "LIMIT 1;",
-      acronym.c_str(), std::to_string(trimester).c_str());
+      request.acronym.c_str(), std::to_string(request.trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
   if (statementCheck.step()) {
     return std::stoi(statementCheck.getColumnText(0));
@@ -189,11 +278,11 @@ int Database::addNewClass(const Common::Models::TransactionRequest& transactionR
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
+void Database::addNewResult(const Common::Models::AddNewResultRequest& request) {
   std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, classId) VALUES";
-  for (const Common::Models::Result& result : transactionRequest.results) {
+  for (const Common::Models::Result& result : request.transactionRequest.results) {
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
-                    "', " + std::to_string(classId) + "),";
+                    "', " + std::to_string(request.classId) + "),";
   }
   resultsToAdd.replace(resultsToAdd.length() - 1, 1, ";");
   Query resultsToAddQuery = Query(resultsToAdd);
@@ -245,4 +334,34 @@ std::vector<Common::Models::StudentResult> Database::getStudentResult(
 
   return studentResult;
 }
+
+std::vector<Common::Models::ClassInfo> Database::getClasses() {
+  Query getClassesQuery = Query(
+      "SELECT DISTINCT acronym, name, trimester "
+      "FROM classes;");
+  Statement getClassesStatement = Statement(db_, getClassesQuery);
+  std::vector<Common::Models::ClassInfo> result;
+  while (getClassesStatement.step()) {
+    result.push_back({.acronym = getClassesStatement.getColumnText(0),
+                      .name = getClassesStatement.getColumnText(1),
+                      .trimester = std::stoi(getClassesStatement.getColumnText(2))});
+  }
+  return result;
+}
+
+std::vector<Common::Models::StudentInfo> Database::getStudents() {
+  Query getStudentQuery = Query(
+      "SELECT DISTINCT firstName, lastName, id "
+      "FROM results;");
+  Statement getStudentStatement = Statement(db_, getStudentQuery);
+  std::vector<Common::Models::StudentInfo> result;
+  while (getStudentStatement.step()) {
+    result.push_back({.lastName = getStudentStatement.getColumnText(0),
+                      .firstName = getStudentStatement.getColumnText(1),
+                      .id = getStudentStatement.getColumnText(2)});
+  }
+
+  return result;
+}
+
 }  // namespace Common

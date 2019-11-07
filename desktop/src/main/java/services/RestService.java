@@ -3,6 +3,9 @@ package services;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import constants.ServerUrls;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import models.LogsResponse;
 import models.LogsRequest;
 import models.ChaineRequest;
@@ -29,7 +32,6 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutionException;
 
@@ -39,14 +41,13 @@ import java.lang.String;
 public class RestService {
     private static final String HTTP_GET_METHOD = "GET";
     private static final String HTTP_POST_METHOD = "POST";
-    private static ServerUrls urls;
     private static String baseUrl = "";
     private static Gson gson;
     private static ExecutorService threadPool;
     private static HttpClient httpClient;
-    private static RestService instance;
+    public static ServerUrls urls;
 
-    private static void init() {
+    public static void init() {
         gson = new Gson();
         InputStreamReader reader = new InputStreamReader(
                 RestService.class.getClassLoader().getResourceAsStream("values/strings.json")
@@ -55,99 +56,61 @@ public class RestService {
 
         threadPool = Executors.newFixedThreadPool(2);
         httpClient = HttpClient.newHttpClient();
-        consumeRequestAsync(urls.firebase + "server", (resp) -> {
-            baseUrl = "https://" + resp + ":10000/";
-            System.out.println("Connected to: " + baseUrl);
-        });
         initSslContext();
     }
 
-    public static RestService getInstance() {
-        if (instance == null) {
-            instance = new RestService();
-            init();
-        }
-        return instance;
+    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT,
+                                              Consumer<T> onSucceed, Consumer<WorkerStateEvent> onFail) {
+        Task<T> task = new Task<>() {
+            @Override
+            public T call() throws Exception {
+                return postRequest(url, data, classOfT);
+            }
+        };
+        task.setOnSucceeded(e -> onSucceed.accept(task.getValue()));
+        task.setOnFailed(onFail::accept);
+        return threadPool.submit(task);
     }
 
-    public static Future postLoginAsync(LoginRequest request) {
-        return callRequestAsync(
-            () -> {
-                String resp = postRequest("admin/login", request);
-                return gson.fromJson(resp, LoginResponse.class);
-            });
+    public static <T> Future postRequestAsync(String url, Object data, Class<T> classOfT,
+                                              Consumer<T> onSucceed) {
+        return postRequestAsync(url, data, classOfT, onSucceed, (e) -> {});
     }
 
-    public Future postLogoutAsync() {
-        return callRequestAsync(
-            () -> postRequest("admin/logout", null));
+    public static <T> Future postRequestAsync(String url, Object data) {
+        return postRequestAsync(url, data, null, (e) -> {}, (e) -> {});
     }
 
-    public static Future postChangePasswordAsync(PasswordRequest request) {
-        return callRequestAsync(
-            () -> postRequest("admin/motdepasse", request));
+    public static <T> Future getRequestAsync(String url, Class<T> classOfT,
+                                             Consumer<T> onSucceed, Consumer<WorkerStateEvent> onFail) {
+        Task<T> task = new Task<>() {
+            @Override
+            public T call() throws Exception {
+                return getRequest(url, classOfT);
+            }
+        };
+        task.setOnSucceeded(e -> onSucceed.accept(task.getValue()));
+        task.setOnFailed(onFail::accept);
+        return threadPool.submit(task);
     }
 
-    public static Future getChaineAsync(ChaineRequest request, Integer miner) {
-        return callRequestAsync(
-            () -> {
-                String resp = postRequest("admin/chaine/" + miner, request);
-                return gson.fromJson(resp, JsonObject.class);
-            });
+    public static <T> Future getRequestAsync(String url, Class<T> classOfT, Consumer<T> onSucceed) {
+        return getRequestAsync(url, classOfT, onSucceed, (e) -> {});
     }
 
-    public static LogsResponse postLogs(String origin, LogsRequest request)
-            throws ExecutionException, InterruptedException {
-        return (LogsResponse) callRequestAsync(
-            () -> {
-                String resp = postRequest("admin/logs/" + origin, request);
-                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
-                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
-                return logsResponse;
-            }).get();
+    public static <T> Future getRequestAsync(String url) {
+        return getRequestAsync(url, null, (e) -> {}, (e) -> {});
     }
 
-    public static Future postLogsAsync(String origin, LogsRequest request) {
-        return callRequestAsync(
-            () -> {
-                String resp = postRequest("admin/logs/" + origin, request);
-                LogsResponse logsResponse = gson.fromJson(resp, LogsResponse.class);
-                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
-                return logsResponse;
-            });
+    public static <T> T getRequest(String url, Class<T> classOfT) throws Exception {
+        return gson.fromJson(baseRequest(HTTP_GET_METHOD, url, ""), classOfT);
     }
 
-    private static void consumeRequestAsync(String url, Consumer<String> onResponse) {
-        threadPool.submit(() -> {
-            String resp = getRequest(url);
-            onResponse.accept(resp);
-        });
+    public static <T> T postRequest(String url, Object data, Class<T> classOfT) throws Exception {
+        return gson.fromJson(baseRequest(HTTP_POST_METHOD, url, data), classOfT);
     }
 
-    private static Future callRequestAsync(Callable<?> onResponse) {
-        return threadPool.submit(onResponse);
-    }
-
-    private static String getRequest(String url) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + url))
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.body();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static String postRequest(String url, Object data) throws InterruptedException, IOException, HttpException {
-        return baseRequest(HTTP_POST_METHOD, url, data);
-    }
-
-    private static String baseRequest(String method, String url, Object data) throws IOException,
-            InterruptedException, HttpException {
+    private static String baseRequest(String method, String url, Object data) throws Exception {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + url))
@@ -161,7 +124,7 @@ public class RestService {
                 CredentialsManager.saveAuthToken(authToken);
                 return response.body();
             } else {
-                throw new HttpException("Forbidden");
+                throw new Exception("Forbidden");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,6 +134,14 @@ public class RestService {
 
     private static void initSslContext() {
         try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urls.getFirebase() + "server"))
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            baseUrl = "https://" + response.body() + ":10000/";
+            System.out.println("Connected to: " + baseUrl);
+
             InputStream caInput = RestService.class.getClassLoader().getResourceAsStream("cert/rootCA.crt");
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
@@ -191,6 +162,7 @@ public class RestService {
             sslContext.init(null, tmf.getTrustManagers(), null);
 
             httpClient = HttpClient.newBuilder().sslContext(sslContext).build();
+            System.out.println("Initialized secure connection");
         } catch (Exception e) {
             e.printStackTrace();
         }

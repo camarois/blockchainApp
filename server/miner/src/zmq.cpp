@@ -1,9 +1,14 @@
 #include <cerrno>
+#include <iostream>
+
+#include "common/database.hpp"
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
-#include <iostream>
+#include <gflags/gflags.h>
 #include <miner/zmq.hpp>
+
+DECLARE_string(db);
 
 namespace Miner {
 
@@ -18,7 +23,15 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, BlockChain& blockchain)
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       blockchainController_(blockchain) {}
 
-ZMQWorker::~ZMQWorker() { join(); }
+ZMQWorker::~ZMQWorker() {
+  running_ = false;
+  socketSubServer_->close();
+  socketPushServer_->close();
+  socketPubBlockchain_->close();
+  socketSubBlockchain_->close();
+  context_.close();
+  join();
+}
 
 bool ZMQWorker::start() {
   try {
@@ -43,14 +56,12 @@ bool ZMQWorker::start() {
 }
 
 void ZMQWorker::join() {
-  running_ = false;
-  socketSubServer_->close();
-  socketPushServer_->close();
-  socketPubBlockchain_->close();
-  socketSubBlockchain_->close();
-  context_.close();
-  threadServer_.join();
-  threadBlockchain_.join();
+  if (threadServer_.joinable()) {
+    threadServer_.join();
+  }
+  if (threadBlockchain_.joinable()) {
+    threadBlockchain_.join();
+  }
 }
 
 void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address) {
@@ -72,6 +83,7 @@ void ZMQWorker::handleSubServer() {
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
+  Common::Database db("blockchain.db");
 
   while (running_) {
     try {
@@ -84,19 +96,20 @@ void ZMQWorker::handleSubServer() {
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
+      Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
+      std::cout << "Received from server: " << request.command << std::endl;
       if (received.type == Common::Models::kTypeServerRequest) {
-        Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-        // TODO(gabriel): database request
-        sendResponse(request.token, request.command);
+        sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       } else if (received.type == Common::Models::kTypeTransaction) {
         std::cout << "ZMQ/blockchain: received data" << std::endl << "--> " << received.data << std::endl;
         std::optional<Block> block = blockchainController_.addTransaction(received.data);
         if (block) {
           sendBlockMined(block->id(), block->nonce());
         }
+        sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain handleSubServer: " << e.what() << std::endl;
     }
   }
 }
@@ -125,7 +138,7 @@ void ZMQWorker::handleSubBlockchain() {
                   << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain handleSubBlockchain: " << e.what() << std::endl;
     }
   }
 }
