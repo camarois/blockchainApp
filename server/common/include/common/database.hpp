@@ -42,6 +42,8 @@ class Database {
   void addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId);
   std::vector<Common::Models::Result> getClassResult(int classId);
   std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
+  std::vector<Common::Models::ClassInfo> getClasses();
+  std::vector<Common::Models::StudentInfo> getStudents();
 
  private:
   void close();

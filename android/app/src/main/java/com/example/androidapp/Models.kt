@@ -56,6 +56,20 @@ data class StudentItem(
     @SerializedName("note") val grade: String
 )
 
+data class CourseItem(
+    @SerializedName("sigle") val code: String,
+    @SerializedName("nom") val name: String,
+    @SerializedName("trimestre") val trimester: Number
+)
+
+data class ListStudent(
+    @SerializedName("listeEtudiant") val listeEtudiant: List<StudentItem>
+)
+
+data class ListClass(
+    @SerializedName("listeClasses") val listeClasses: List<CourseItem>
+)
+
 data class PdfFileRequest(
     @SerializedName("sigle") val acronym: String,
     @SerializedName("trimestre") val trimester: Int

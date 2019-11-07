@@ -34,6 +34,14 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         return getAsync("ping")
     }
 
+    suspend fun getStudentListAsync(): ListStudent {
+        return getAsync("info/listeEtudiants", ListStudent::class.java)
+    }
+
+    suspend fun getClassListAsync(): ListClass {
+        return getAsync("info/listeCours", ListClass::class.java)
+    }
+
     suspend fun postCourseInfoAsync(request: CourseRequest): CourseResponse {
         return postAsync("info/cours", request, CourseResponse::class.java)
     }

@@ -9,25 +9,47 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.androidapp.CourseItem
 import com.example.androidapp.R
-import com.example.androidapp.fragments.searchCourse.course.CourseContent
-import com.example.androidapp.fragments.searchCourse.course.CourseItem
+import com.example.androidapp.services.RestRequestService
+import kotlinx.android.synthetic.main.fragment_register_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
+import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
  * [SearchCourseFragment.OnListFragmentInteractionListener] interface.
  */
-class SearchCourseFragment : Fragment() {
+class SearchCourseFragment : Fragment(), CoroutineScope {
 
     private var columnCount = 1
-
+    private lateinit var job: Job
+    private var restService: RestRequestService = get()
+    private val courses: MutableList<CourseItem> = ArrayList()
     private var listener: OnListFragmentInteractionListener? = null
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-        viewCreated.adapter = CourseRecyclerViewAdapter(CourseContent.items, listener)
+
+        launch {
+            val newCourses = restService.getClassListAsync()
+            for (element in newCourses.listeClasses) {
+                courses.add(element)
+                list.adapter?.notifyItemInserted(courses.size - 1)
+            }
+        }
+
+        viewCreated.adapter = CourseRecyclerViewAdapter(courses, listener)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -36,6 +58,7 @@ class SearchCourseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        job = Job()
         val view = inflater.inflate(R.layout.fragment_course_list, container, false)
 
         // Set the adapter
@@ -45,7 +68,7 @@ class SearchCourseFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = CourseRecyclerViewAdapter(CourseContent.items, listener)
+                adapter = CourseRecyclerViewAdapter(courses, listener)
             }
         }
         return view

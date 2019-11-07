@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.CourseRequest
+import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.fragments.register.RegisterCourseFragment
@@ -19,7 +20,6 @@ import com.example.androidapp.StudentRequest
 import com.example.androidapp.fragments.searchCourse.DetailedCourseFragment
 import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
-import com.example.androidapp.fragments.searchCourse.course.CourseItem
 import com.example.androidapp.services.AccountTypes
 import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
