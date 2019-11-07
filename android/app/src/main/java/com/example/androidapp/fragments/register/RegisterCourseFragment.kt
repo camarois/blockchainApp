@@ -212,7 +212,7 @@ class RegisterCourseFragment : Fragment() {
                 TransactionRequest(code, name, trimester, values, pdf)
             )
 
-            Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
             register_fragment.visibility = View.GONE
