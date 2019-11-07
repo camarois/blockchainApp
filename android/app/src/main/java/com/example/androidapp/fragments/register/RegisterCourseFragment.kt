@@ -212,6 +212,7 @@ class RegisterCourseFragment : Fragment() {
 
         val pd = ProgressDialog(context)
         pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
         pd.show()
 
         try {

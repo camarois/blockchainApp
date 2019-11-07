@@ -77,6 +77,7 @@ class DetailedCourseFragment(
     private suspend fun viewPdf() {
         val pd = ProgressDialog(context)
         pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
         pd.show()
         try {
             val response = restService.postPdfFileAsync(PdfFileRequest(course.code, course.trimester.toInt()))

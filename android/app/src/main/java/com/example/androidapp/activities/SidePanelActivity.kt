@@ -41,6 +41,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val pd = ProgressDialog(this@SidePanelActivity)
             pd.setMessage("En attente d'une réponse des mineurs...")
+            pd.setCancelable(false)
             pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()
@@ -66,6 +67,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         launch {
             val pd = ProgressDialog(this@SidePanelActivity)
             pd.setMessage("En attente d'une réponse des mineurs...")
+            pd.setCancelable(false)
             pd.show()
             try {
                 val transaction = supportFragmentManager.beginTransaction()
@@ -143,6 +145,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     private suspend fun logout() {
         val pd = ProgressDialog(this@SidePanelActivity)
         pd.setMessage("En attente d'une réponse des mineurs...")
+        pd.setCancelable(false)
         pd.show()
         try {
             restService.postLogoutAsync()
