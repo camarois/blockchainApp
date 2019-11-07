@@ -54,7 +54,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
                     Toast.LENGTH_LONG).show()
             }
-
         }
     }
 

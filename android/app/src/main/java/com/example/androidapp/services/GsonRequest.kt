@@ -2,7 +2,6 @@ package com.example.androidapp.services
 
 import android.content.Context
 import android.util.Base64
-import android.widget.Toast
 import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.google.gson.Gson
