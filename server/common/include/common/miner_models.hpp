@@ -28,7 +28,7 @@ const std::string kTypeTransaction = "update-transaction";
 
 struct SqlRequest {
   int function;
-  std::vector<std::string> params;
+  std::string params;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

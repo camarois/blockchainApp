@@ -38,15 +38,15 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
   switch (sql.function) {
     case Functions::getSalt: {
-      auto salt = getSalt(sql.params.at(0));
+      auto salt = getSalt(sql.params);
       return {salt.has_value(), salt.has_value() ? salt.value() : ""};
     }
     case Functions::addUser: {
-      addUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(2) == "1");  // TODO(LOL) change all common models
+      addUser(nlohmann::json::parse(sql.params));  // TODO(LOL) change all common models
       return {false, "gpol"};
     }
     case Functions::containsUser: {
-      return {containsUser({sql.params.at(0), sql.params.at(1)}, sql.params.at(2), sql.params.at(3) == "1"), ""};
+      return {containsUser(nlohmann::json::parse(sql.params)), ""};
     }
     default:
       throw std::runtime_error("Function not allowed:" + sql.function);
@@ -66,36 +66,37 @@ std::optional<std::string> Database::getSalt(const std::string& username) {
   return {};
 }
 
-bool Database::containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin) {
+bool Database::containsUser(const Common::Models::ContainsUserRequest& request) {
   Query query = Query(
       "SELECT username FROM users "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      loginRequest.username.c_str(), Common::FormatHelper::hash(loginRequest.password + salt).c_str(),
-      std::to_string(int(isAdmin)).c_str());
+      request.loginRequest.username.c_str(),
+      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
+      std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
 }
 
-void Database::addUser(const Common::Models::LoginRequest& user, bool isAdmin) {
+void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
       "(username, password, salt, isAdmin) "
       "VALUES ('%q', '%q', '%q', '%q');",
-      user.username.c_str(), Common::FormatHelper::hash(user.password + salt).c_str(), salt.c_str(),
-      std::to_string(int(isAdmin)).c_str());
+      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
 
-void Database::setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
-                               const std::string& salt, bool isAdmin) {
+void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& request) {
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      Common::FormatHelper::hash(passwordRequest.newPwd + salt).c_str(), username.c_str(),
-      Common::FormatHelper::hash(passwordRequest.oldPwd + salt).c_str(), std::to_string(int(isAdmin)).c_str());
+      Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
+      Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
+      std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -172,12 +173,12 @@ std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int pr
   return logs;
 }
 
-std::optional<int> Database::checkForExistingClass(const std::string& acronym, int trimester) {
+std::optional<int> Database::checkForExistingClass(const Common::Models::CheckForExistingClassRequest& request) {
   Query checkForExistingClassQuery = Query(
       "SELECT classId FROM classes "
       "WHERE acronym = '%q' AND trimester = '%q' "
       "LIMIT 1;",
-      acronym.c_str(), std::to_string(trimester).c_str());
+      request.acronym.c_str(), std::to_string(request.trimester).c_str());
   Statement statementCheck = Statement(db_, checkForExistingClassQuery);
   if (statementCheck.step()) {
     return std::stoi(statementCheck.getColumnText(0));
@@ -209,11 +210,11 @@ int Database::addNewClass(const Common::Models::TransactionRequest& transactionR
   return sqlite3_last_insert_rowid(db_.get());
 }
 
-void Database::addNewResult(const Common::Models::TransactionRequest& transactionRequest, int classId) {
+void Database::addNewResult(const Common::Models::AddNewResultRequest& request) {
   std::string resultsToAdd = "INSERT INTO results (lastName, firstName, id, grade, classId) VALUES";
-  for (const Common::Models::Result& result : transactionRequest.results) {
+  for (const Common::Models::Result& result : request.transactionRequest.results) {
     resultsToAdd += " ('" + result.lastName + "', '" + result.firstName + "', '" + result.id + "', '" + result.grade +
-                    "', " + std::to_string(classId) + "),";
+                    "', " + std::to_string(request.classId) + "),";
   }
   resultsToAdd.replace(resultsToAdd.length() - 1, 1, ";");
   Query resultsToAddQuery = Query(resultsToAdd);

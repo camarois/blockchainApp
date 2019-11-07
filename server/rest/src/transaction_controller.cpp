@@ -26,17 +26,19 @@ void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter
 void TransactionController::handleTransaction(const Pistache::Rest::Request& request,
                                               Pistache::Http::ResponseWriter response) {
   Common::Models::TransactionRequest transactionRequest = nlohmann::json::parse(request.body());
-  Common::Database db(FLAGS_db);
-  auto classId = zmqWorker_->getRequest({Common::Functions::checkForExistingClass,
-                                         {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
+  Common::Models::CheckForExistingClassRequest checkForExistingClass = {transactionRequest.acronym,
+                                                                        transactionRequest.trimester};
+  auto classId =
+      zmqWorker_->getRequest({Common::Functions::checkForExistingClass, Common::Models::toStr(checkForExistingClass)});
   if (classId.found) {
     zmqWorker_->updateRequest({Common::Functions::deleteExistingClass, {classId.data}});
     zmqWorker_->updateRequest({Common::Functions::deleteExistingResults, {classId.data}});
   }
   auto newClassId = zmqWorker_->updateRequest(
-      {Common::Functions::addNewClass, {transactionRequest.acronym, std::to_string(transactionRequest.trimester)}});
+      {Common::Functions::addNewClass, Common::Models::toStr(transactionRequest)});
+  Common::Models::AddNewResultRequest addNewResultRequest = {transactionRequest, std::stoi(newClassId.data)};
   zmqWorker_->updateRequest(
-      {Common::Functions::addNewResult, {transactionRequest.acronym, std::to_string(transactionRequest.trimester), newClassId.data}});
+      {Common::Functions::addNewResult, Common::Models::toStr(addNewResultRequest)});
 
   std::filesystem::create_directories(FLAGS_transactions);
   // Example: transactions/3-inf3995.pdf -> Project in fall

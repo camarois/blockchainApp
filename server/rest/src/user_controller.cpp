@@ -25,11 +25,10 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
-  if (salt.found && zmqWorker_
-                        ->getRequest({Common::Functions::containsUser,
-                                      {loginRequest.username, loginRequest.password, salt.data, "0"}})
-                        .found) {
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
+  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, false};
+  if (salt.found &&
+      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::LoginResponse loginResponse = {};
@@ -51,13 +50,13 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
-  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
-  if (salt.found && zmqWorker_
-                        ->getRequest({Common::Functions::containsUser,
-                                      {loginRequest.username, loginRequest.password, salt.data, "0"}})
-                        .found) {
-    zmqWorker_->updateRequest({Common::Functions::setUserPassword,
-                               {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.data}});
+  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
+  Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data, false};
+  if (salt.found &&
+      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsUserRequest)}).found) {
+    Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
+                                                                     false};
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsUserRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
@@ -66,7 +65,8 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  zmqWorker_->updateRequest({Common::Functions::addUser, {registerRequest.username, registerRequest.password, "0"}});
+  Common::Models::AddUserRequest addUserRequest = {registerRequest, false};
+  zmqWorker_->updateRequest({Common::Functions::addUser, Common::Models::toStr(addUserRequest)});
   Common::Models::LoginResponse registerResponse = {};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }

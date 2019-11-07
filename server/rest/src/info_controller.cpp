@@ -20,11 +20,13 @@ void InfoController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void InfoController::handleClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::ClassesRequest classesRequest = nlohmann::json::parse(request.body());
+  Common::Models::CheckForExistingClassRequest checkForExistingClassRequest = {classesRequest.acronym,
+                                                                               classesRequest.trimester};
   auto classId = zmqWorker_->getRequest(
-      {Common::Functions::checkForExistingClass, {classesRequest.acronym, std::to_string(classesRequest.trimester)}});
+      {Common::Functions::checkForExistingClass, Common::Models::toStr(checkForExistingClassRequest)});
   std::vector<Common::Models::Result> results;
   if (classId.found) {
-    auto classResult = zmqWorker_->getRequest({Common::Functions::getClassResult, {classId.data}});
+    auto classResult = zmqWorker_->getRequest({Common::Functions::getClassResult, classId.data});
     std::vector<Common::Models::Result> classResults = nlohmann::json::parse(classResult.data);
     results = classResults;
   }
@@ -34,8 +36,8 @@ void InfoController::handleClasses(const Pistache::Rest::Request& request, Pista
 void InfoController::handleStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::StudentRequest studentRequest = nlohmann::json::parse(request.body());
   std::optional<Common::Models::Result> result;
-  auto studentRes = zmqWorker_->getRequest(
-      {Common::Functions::getStudentResult, {studentRequest.acronym, studentRequest.trimester, studentRequest.id}});
+  auto studentRes =
+      zmqWorker_->getRequest({Common::Functions::getStudentResult, Common::Models::toStr(studentRequest)});
   std::vector<Common::Models::StudentResult> studentResults = nlohmann::json::parse(studentRes.data);
   Common::Models::StudentResponse studentResponse = {studentResults};
 
