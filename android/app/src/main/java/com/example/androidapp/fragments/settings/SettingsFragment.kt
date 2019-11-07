@@ -11,6 +11,7 @@ import com.android.volley.AuthFailureError
 import com.example.androidapp.PasswordRequest
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
+import com.example.androidapp.services.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
@@ -39,7 +40,10 @@ class SettingsFragment : Fragment(), CoroutineScope {
         settingsViewModel =
             ViewModelProviders.of(this).get(SettingsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
-        root.connection_button.setOnClickListener { launch { submitNewPassword() } }
+        root.connection_button.setOnClickListener {
+            Utils.preventTwoClick(root.connection_button)
+            launch { submitNewPassword() }
+        }
 
         return root
     }

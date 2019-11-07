@@ -22,6 +22,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.androidapp.AccountTypes
+import com.example.androidapp.services.Utils
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        connection_button.setOnClickListener { launch { submitLogin() } }
+        connection_button.setOnClickListener {
+            Utils.preventTwoClick(connection_button)
+            launch { submitLogin() }
+        }
     }
 
     private suspend fun submitLogin() {

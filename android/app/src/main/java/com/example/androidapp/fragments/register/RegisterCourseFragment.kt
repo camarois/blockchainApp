@@ -25,6 +25,7 @@ import com.android.volley.AuthFailureError
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
+import com.example.androidapp.services.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import kotlinx.android.synthetic.main.bottom_button.*
@@ -114,7 +115,10 @@ class RegisterCourseFragment : Fragment() {
         })
 
         val createStudentButton: ImageButton = view.findViewById(R.id.createStudentButton)
-        createStudentButton.setOnClickListener { createStudent() }
+        createStudentButton.setOnClickListener {
+            Utils.preventTwoClick(createStudentButton)
+            createStudent()
+        }
         return view
     }
 

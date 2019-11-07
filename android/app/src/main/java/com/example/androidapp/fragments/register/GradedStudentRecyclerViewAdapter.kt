@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.example.androidapp.R
 import com.example.androidapp.fragments.register.RegisterCourseFragment.OnListFragmentInteractionListener
 import com.example.androidapp.StudentItem
+import com.example.androidapp.services.Utils
 import kotlinx.android.synthetic.main.fragment_graded_student.view.*
 import kotlinx.android.synthetic.main.bottom_button.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -78,8 +79,14 @@ class GradedStudentRecyclerViewAdapter(
 
         fun bind(mView: View) {
             job = Job()
-            mPDFButton.setOnClickListener { mFragment.uploadPDF() }
-            mSubmitButton.setOnClickListener { launch { submit(mView) } }
+            mPDFButton.setOnClickListener {
+                Utils.preventTwoClick(mPDFButton)
+                mFragment.uploadPDF()
+            }
+            mSubmitButton.setOnClickListener {
+                Utils.preventTwoClick(mSubmitButton)
+                launch { submit(mView) }
+            }
         }
 
         private suspend fun submit(view: View) {
