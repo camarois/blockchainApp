@@ -22,7 +22,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.androidapp.services.AccountTypes
+import com.example.androidapp.AccountTypes
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job

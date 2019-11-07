@@ -27,11 +27,6 @@ class GetCourseInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
-        course_info_fragment.visibility = View.VISIBLE
-    }
-
     private fun submit() {
         if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
             Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()

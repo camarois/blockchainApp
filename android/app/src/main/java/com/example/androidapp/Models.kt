@@ -60,3 +60,7 @@ data class PdfFileRequest(
     @SerializedName("sigle") val acronym: String,
     @SerializedName("trimestre") val trimester: Int
 )
+
+enum class AccountTypes {
+    CONSULTATION, EDITION
+}
