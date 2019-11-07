@@ -75,7 +75,7 @@ class DetailedCourseFragment(
 
     private suspend fun viewPdf() {
         try {
-            val response = restService.postPdfFileAsync(PdfFileRequest("inf3995", 1))
+            val response = restService.postPdfFileAsync(PdfFileRequest(course.code, course.trimester.toInt()))
             val os = FileOutputStream(getReportPath(course.code + "_" + course.trimester), false)
             os.write(response)
             os.flush()
