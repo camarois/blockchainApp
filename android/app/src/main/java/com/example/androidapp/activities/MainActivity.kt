@@ -22,13 +22,15 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
+import com.example.androidapp.services.Utils
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
     private val READ_STORAGE_PERMISSION_CODE: Int = 123
-    private val WRITE_STORAGE_PERMISSION_CODE: Int = 124
+    private val WRITE_STORAGE_PERMISSION_CODE: Int = 125
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -41,7 +43,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
         setContentView(R.layout.activity_main)
 
-        connection_button.setOnClickListener { launch { submitLogin() } }
+        connection_button.setOnClickListener {
+            Utils.debounce(connection_button)
+            launch { submitLogin() }
+        }
     }
 
     private suspend fun submitLogin() {
@@ -64,6 +69,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         } catch (e: AuthFailureError) {
             password_edit_text.setText("")
             Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
+                Toast.LENGTH_LONG).show()
+        } catch (e: TimeoutError) {
+            Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
                 Toast.LENGTH_LONG).show()
         }
     }

@@ -22,9 +22,11 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import android.widget.Toast
 import com.android.volley.AuthFailureError
+import com.android.volley.TimeoutError
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
+import com.example.androidapp.services.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.add_student_bottom_panel.*
 import kotlinx.android.synthetic.main.bottom_button.*
@@ -63,7 +65,10 @@ class RegisterCourseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
         viewCreated.adapter = GradedStudentRecyclerViewAdapter(this@RegisterCourseFragment, registeredStudents, listener)
-        addStudentButton.setOnClickListener { openBottomSheet() }
+        addStudentButton.setOnClickListener {
+            Utils.debounce(addStudentButton)
+            openBottomSheet()
+        }
         val bundle = this.arguments!!
         class_name.text = bundle["code"].toString()
         super.onViewCreated(view, savedInstanceState)
@@ -114,7 +119,10 @@ class RegisterCourseFragment : Fragment() {
         })
 
         val createStudentButton: ImageButton = view.findViewById(R.id.createStudentButton)
-        createStudentButton.setOnClickListener { createStudent() }
+        createStudentButton.setOnClickListener {
+            Utils.debounce(createStudentButton)
+            createStudent()
+        }
         return view
     }
 
@@ -158,6 +166,7 @@ class RegisterCourseFragment : Fragment() {
                 } else {
                     pdfFilePath = getFilePath(data.data!!)
                     uploadPDFBtn.text = pdfFilePath.split("/").last()
+                    uploadPDFBtn.setBackgroundColor(activity!!.resources.getColor(R.color.colorAccent))
                 }
             }
         }
@@ -203,15 +212,16 @@ class RegisterCourseFragment : Fragment() {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
-            Toast.makeText(activity, "Classe ajoutée", Toast.LENGTH_LONG).show()
+
+            Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
             register_fragment.visibility = View.GONE
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
-        } catch (e: Error) {
-            Toast.makeText(activity, "Une erreur est survenue lors du traitement de la requête", Toast.LENGTH_LONG).show()
+        } catch (e: TimeoutError) {
+            Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
         }
     }
 

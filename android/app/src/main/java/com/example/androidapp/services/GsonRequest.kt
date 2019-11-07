@@ -2,10 +2,7 @@ package com.example.androidapp.services
 
 import android.content.Context
 import android.util.Base64
-import com.android.volley.NetworkResponse
-import com.android.volley.ParseError
-import com.android.volley.Request
-import com.android.volley.Response
+import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -54,5 +51,6 @@ class GsonRequest <T> (
         } catch (e: JsonSyntaxException) {
             Response.error(ParseError(e))
         }
+        // todo - catch timeout error globally
     }
 }

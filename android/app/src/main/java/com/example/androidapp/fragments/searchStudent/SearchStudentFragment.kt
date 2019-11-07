@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.android.volley.TimeoutError
 import com.example.androidapp.R
 import com.example.androidapp.StudentItem
 import com.example.androidapp.services.RestRequestService
@@ -44,15 +46,21 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewCreated = view.list
-
         launch {
-            val newStudents = restService.getStudentListAsync()
-            for (element in newStudents.listeEtudiant) {
-                students.add(element)
-                list.adapter?.notifyItemInserted(students.size - 1)
+            try {
+                val newStudents = restService.getStudentListAsync()
+                for (element in newStudents.listeEtudiant) {
+                    students.add(element)
+                    list.adapter?.notifyItemInserted(students.size - 1)
+                }
+            } catch (e: TimeoutError) {
+                Toast.makeText(
+                    context,
+                    "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-
         viewCreated.adapter =
             StudentRecyclerViewAdapter(students, listener)
         super.onViewCreated(view, savedInstanceState)

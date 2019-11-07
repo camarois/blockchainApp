@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 
 import com.example.androidapp.R
+import com.example.androidapp.services.Utils
 import kotlinx.android.synthetic.main.fragment_get_course_info.*
 
 class GetCourseInfoFragment : Fragment() {
@@ -23,7 +24,10 @@ class GetCourseInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        submitButton.setOnClickListener { submit() }
+        submitButton.setOnClickListener {
+            Utils.debounce(submitButton)
+            submit()
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 

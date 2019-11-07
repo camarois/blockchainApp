@@ -10,6 +10,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.CourseRequest
 import com.example.androidapp.CourseItem
@@ -36,23 +38,39 @@ import kotlin.coroutines.CoroutineContext
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
-            val transaction = supportFragmentManager.beginTransaction()
-            val response = restService.postCourseInfoAsync(CourseRequest(course.code, course.trimester.toInt()))
-            val frag = DetailedCourseFragment(course, response.students)
-            transaction.replace(R.id.course_list_fragment, frag)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            try {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response = restService.postCourseInfoAsync(
+                    CourseRequest(
+                        course.code,
+                        course.trimester.toInt()
+                    )
+                )
+                val frag = DetailedCourseFragment(course, response.students)
+                transaction.replace(R.id.course_list_fragment, frag)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            } catch (e: TimeoutError) {
+                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     override fun onListFragmentInteraction(student: StudentItem) {
         launch {
-            val transaction = supportFragmentManager.beginTransaction()
-            val response = restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
-            val frag = DetailedStudentFragment(student, response.results)
-            transaction.replace(R.id.student_list_fragment, frag)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            try {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response =
+                    restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
+                val frag = DetailedStudentFragment(student, response.results)
+                transaction.replace(R.id.student_list_fragment, frag)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            } catch (e: TimeoutError) {
+                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
+                    Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -114,9 +132,14 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
     private suspend fun logout() {
-        restService.postLogoutAsync()
-        val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
-        startActivity(intent)
+        try {
+            restService.postLogoutAsync()
+            val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
+            startActivity(intent)
+        } catch (e: TimeoutError) {
+        Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
+            Toast.LENGTH_LONG).show()
+    }
     }
 
     override fun onSupportNavigateUp(): Boolean {
