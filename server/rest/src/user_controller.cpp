@@ -51,7 +51,9 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
   auto salt = db.getSalt(loginRequest.username);
   if (salt && db.containsUser(loginRequest, salt.value())) {
-    db.setUserPassword(loginRequest.username, passwordRequest, salt.value());
+    // db.setUserPassword(loginRequest.username, passwordRequest, salt.value());
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword,
+                               {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.value()}});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);

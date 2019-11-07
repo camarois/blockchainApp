@@ -44,8 +44,6 @@ class Database {
 
   Common::Models::SqlResponse get(const Common::Models::SqlRequest& sql);
 
-  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
-                       const std::string& salt, bool isAdmin = false);
   bool containsUser(const Common::Models::LoginRequest& loginRequest, const std::string& salt, bool isAdmin = false);
   std::optional<std::string> getSalt(const std::string& username);
 
@@ -70,6 +68,8 @@ class Database {
   void close();
   
   void addUser(const Common::Models::LoginRequest& user, bool isAdmin = false);
+  void setUserPassword(const std::string& username, const Common::Models::PasswordRequest& passwordRequest,
+                       const std::string& salt, bool isAdmin = false);
 
   std::shared_ptr<sqlite3> db_;
 };

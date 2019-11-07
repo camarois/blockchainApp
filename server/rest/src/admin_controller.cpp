@@ -8,7 +8,11 @@ DECLARE_string(db);
 
 namespace Rest {
 
-AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
+AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router,
+                                 const std::shared_ptr<ZMQWorker>& zmqWorker)
+    : zmqWorker_(zmqWorker) {
+  setupRoutes(router);
+}
 
 void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this), false);
@@ -51,7 +55,9 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 
   auto salt = db.getSalt(loginRequest.username);
   if (salt && db.containsUser(loginRequest, salt.value(), true)) {
-    db.setUserPassword(loginRequest.username, passwordRequest, salt.value(), true);
+    // db.setUserPassword(loginRequest.username, passwordRequest, salt.value(), true);
+    zmqWorker_->updateRequest({Common::Functions::setUserPassword,
+                               {loginRequest.username, passwordRequest.oldPwd, passwordRequest.newPwd, salt.value()}});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
