@@ -217,11 +217,11 @@ class RegisterCourseFragment : Fragment() {
             restService.postTransactionAsync(
                 TransactionRequest(code, name, trimester, values, pdf)
             )
-
             Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.replace(R.id.curr_fragment, homeFragment)
             register_fragment.visibility = View.GONE
+            view!!.clearFocus()
             transaction.commit()
         } catch (e: AuthFailureError) {
             Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
