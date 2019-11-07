@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             var accountType = if (response.edition) {
                 AccountTypes.EDITION
             } else {
-                AccountTypes.CONSULTATION
+                AccountTypes.EDITION
             }
 
             val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
