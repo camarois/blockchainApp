@@ -1,6 +1,5 @@
 package com.example.androidapp.fragments.settings
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.AuthFailureError
-import com.android.volley.TimeoutError
 import com.example.androidapp.PasswordRequest
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
@@ -50,26 +48,25 @@ class SettingsFragment : Fragment(), CoroutineScope {
     }
 
     private suspend fun submitNewPassword() {
-        val pd = ProgressDialog(context)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
-        try {
-            val oldPassword = old_password_edit_text.text.toString()
-            val newPassword = new_password_edit_text.text.toString()
-            restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
-            Toast.makeText(context, "Le mot de passe a été changé avec succès.",
-                Toast.LENGTH_LONG).show()
-        } catch (e: AuthFailureError) {
-            Toast.makeText(context, "L'ancien mot de passe est invalide",
-                Toast.LENGTH_LONG).show()
-        } catch (e: TimeoutError) {
-            Toast.makeText(context, "Petit problème de connexion au serveur, veuillez réessayer!",
-                Toast.LENGTH_LONG).show()
-        } finally {
-                old_password_edit_text.setText("")
-                new_password_edit_text.setText("")
+        val oldPassword = old_password_edit_text.text.toString()
+        val newPassword = new_password_edit_text.text.toString()
+
+        Utils.processRequest(context!!) {
+            try {
+                restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
+                Toast.makeText(
+                    context, "Le mot de passe a été changé avec succès.",
+                    Toast.LENGTH_LONG
+                ).show()
+            } catch (e: AuthFailureError) {
+                Toast.makeText(
+                    context, "L'ancien mot de passe est invalide",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-        pd.dismiss()
+
+        old_password_edit_text.setText("")
+        new_password_edit_text.setText("")
     }
 }

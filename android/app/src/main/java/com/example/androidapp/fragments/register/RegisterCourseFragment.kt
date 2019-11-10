@@ -1,7 +1,6 @@
 package com.example.androidapp.fragments.register
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import android.widget.Toast
 import com.android.volley.AuthFailureError
-import com.android.volley.TimeoutError
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
@@ -210,29 +208,27 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        val pd = ProgressDialog(context)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
-
-        try {
-            restService.postTransactionAsync(
-                TransactionRequest(code, name, trimester, values, pdf)
-            )
-            Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
-            val transaction = activity!!.supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.curr_fragment, homeFragment)
-            register_fragment.visibility = View.GONE
-            val im = view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            im.hideSoftInputFromWindow(view!!.windowToken, 0)
-            transaction.commit()
-        } catch (e: AuthFailureError) {
-            Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
-        } catch (e: TimeoutError) {
-            Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
+        Utils.processRequest(context!!) {
+            try {
+                restService.postTransactionAsync(
+                    TransactionRequest(code, name, trimester, values, pdf)
+                )
+                Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
+                val transaction = activity!!.supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.curr_fragment, homeFragment)
+                register_fragment.visibility = View.GONE
+                val im =
+                    view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                im.hideSoftInputFromWindow(view!!.windowToken, 0)
+                transaction.commit()
+            } catch (e: AuthFailureError) {
+                Toast.makeText(
+                    activity,
+                    "Vous n'avez pas les permissions requises",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-
-        pd.dismiss()
     }
 
     override fun onAttach(context: Context) {

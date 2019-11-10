@@ -20,10 +20,8 @@ import kotlin.coroutines.CoroutineContext
 import android.content.pm.PackageManager
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.ProgressDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.services.Utils
 
@@ -51,37 +49,31 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private suspend fun submitLogin() {
-        val pd = ProgressDialog(this)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
+        Utils.processRequest(this@MainActivity) {
+            try {
+                val username = username_edit_text.text.toString()
+                // restService.initServerUrl(username) // Activate this while developping
+                val password = password_edit_text.text.toString()
 
-        try {
-            val username = username_edit_text.text.toString()
-            // restService.initServerUrl(username) // Activate this while developping
-            val password = password_edit_text.text.toString()
-            val response = restService.postLoginAsync(LoginRequest(username, password))
-            var accountType = if (response.edition) {
-                AccountTypes.EDITION
-            } else {
-                AccountTypes.CONSULTATION
-            }
+                val response = restService.postLoginAsync(LoginRequest(username, password))
+                val accountType = if (response.edition) {
+                    AccountTypes.EDITION
+                } else {
+                    AccountTypes.CONSULTATION
+                }
 
-            val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                putExtra("username", username)
-                putExtra("type", accountType)
+                val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
+                    putExtra("username", username)
+                    putExtra("type", accountType)
+                }
+                startActivity(intent)
+
+            } catch (e: AuthFailureError) {
+                password_edit_text.setText("")
+                Toast.makeText(this@MainActivity, "Le nom d'usager et/ou le mot de passe est invalide",
+                    Toast.LENGTH_LONG).show()
             }
-            startActivity(intent)
-        } catch (e: AuthFailureError) {
-            password_edit_text.setText("")
-            Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
-                Toast.LENGTH_LONG).show()
-        } catch (e: TimeoutError) {
-            Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
-                Toast.LENGTH_LONG).show()
         }
-
-        pd.dismiss()
     }
 
     private fun requestReadStoragePermission() {

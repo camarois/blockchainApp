@@ -1,6 +1,5 @@
 package com.example.androidapp.fragments.searchCourse
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,13 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.android.volley.TimeoutError
 import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
+import com.example.androidapp.services.Utils
 import kotlinx.android.synthetic.main.fragment_register_list.*
-import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,30 +39,17 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
         get() = job + Dispatchers.Main
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val viewCreated = view.list
+        list.adapter = CourseRecyclerViewAdapter(courses, listener)
 
         launch {
-            val pd = ProgressDialog(context)
-            pd.setMessage("En attente d'une réponse des mineurs...")
-            pd.setCancelable(false)
-            pd.show()
-            try {
+            Utils.processRequest(context!!){
                 val newCourses = restService.getClassListAsync()
                 for (element in newCourses.listeClasses) {
                     courses.add(element)
                     list.adapter?.notifyItemInserted(courses.size - 1)
                 }
-            } catch (e: TimeoutError) {
-                Toast.makeText(
-                    context,
-                    "Petit problème de connexion au serveur, veuillez réessayer!",
-                    Toast.LENGTH_LONG
-                ).show()
             }
-            pd.dismiss()
         }
-
-        viewCreated.adapter = CourseRecyclerViewAdapter(courses, listener)
 
         super.onViewCreated(view, savedInstanceState)
     }
