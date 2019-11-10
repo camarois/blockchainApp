@@ -1,6 +1,5 @@
 package com.example.androidapp.services
 
-import android.app.ProgressDialog
 import android.content.Context
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.DefaultRetryPolicy.DEFAULT_BACKOFF_MULT

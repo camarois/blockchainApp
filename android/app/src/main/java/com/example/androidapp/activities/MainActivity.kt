@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     putExtra("type", accountType)
                 }
                 startActivity(intent)
-
             } catch (e: AuthFailureError) {
                 password_edit_text.setText("")
                 Toast.makeText(this@MainActivity, "Le nom d'usager et/ou le mot de passe est invalide",

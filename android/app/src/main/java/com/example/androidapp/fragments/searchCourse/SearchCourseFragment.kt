@@ -42,7 +42,7 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
         list.adapter = CourseRecyclerViewAdapter(courses, listener)
 
         launch {
-            Utils.processRequest(context!!){
+            Utils.processRequest(context!!) {
                 val newCourses = restService.getClassListAsync()
                 for (element in newCourses.listeClasses) {
                     courses.add(element)
