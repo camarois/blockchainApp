@@ -43,7 +43,7 @@ inline void from_json(const nlohmann::json& j, SqlRequest& obj) {
 }
 
 struct SqlResponse {
-  bool found;
+  bool found = false;
   std::string data;
 };
 
@@ -75,8 +75,8 @@ inline void from_json(const nlohmann::json& j, ZMQMessage& obj) {
 }
 
 struct BlockMined {
-  unsigned int id;
-  unsigned int nonce;
+  unsigned int id = 0;
+  unsigned int nonce = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

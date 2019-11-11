@@ -40,6 +40,7 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 }
 
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
+  std::cout << __func__ << std::endl;
   switch (sql.function) {
     case Functions::AddUser: {
       addUser(nlohmann::json::parse(sql.params));
