@@ -23,7 +23,7 @@ class RestRequestService(private val httpClient: HTTPRestClient, private val con
         val baseUrl = "https://us-central1-projet3-46f1b.cloudfunctions.net/getServerURL?user=$user"
         val request = StringRequest(
             Request.Method.GET, baseUrl, {
-                serverUrl = "https://10.200.7.255:8080"
+                serverUrl = "https://$it:8080"
                 httpClient.initHttps()
             }, {
                 serverUrl = it.toString()
