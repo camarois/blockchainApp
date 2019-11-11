@@ -91,7 +91,7 @@ class GradedStudentRecyclerViewAdapter(
 
         private suspend fun submit(view: View) {
             if (mValues.isEmpty()) {
-                Toast.makeText(view.context, "Il n'y a aucun élève dans le cours!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context, view.context.getString(R.string.info_students_empty), Toast.LENGTH_SHORT).show()
                 return
             }
             mFragment.submit(mValues)

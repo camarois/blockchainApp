@@ -86,7 +86,7 @@ class DetailedCourseFragment(
             os.flush()
             os.close()
 
-            Toast.makeText(context, "Les résultats de ce cours ont été téléversés dans vos dossiers.",
+            Toast.makeText(context, getString(R.string.info_pdf_success),
                 Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(context, "${getString(R.string.error_message_unknown)}: ${e.message}",

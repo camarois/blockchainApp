@@ -33,7 +33,7 @@ class GetCourseInfoFragment : Fragment() {
 
     private fun submit() {
         if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
-            Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         } else {
             val bundle = Bundle()
             bundle.putString("code", sigle.text.toString())

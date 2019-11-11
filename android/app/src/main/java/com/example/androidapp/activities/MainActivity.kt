@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         Utils.processRequest(this@MainActivity) {
             try {
                 val username = username_edit_text.text.toString()
-                restService.initServerUrl(username) // Activate this while developping
+                // restService.initServerUrl(username) // Activate this while developping
                 val password = password_edit_text.text.toString()
 
                 val response = restService.postLoginAsync(LoginRequest(username, password))
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 startActivity(intent)
             } catch (e: AuthFailureError) {
                 password_edit_text.setText("")
-                Toast.makeText(this@MainActivity, "Le nom d'usager et/ou le mot de passe est invalide",
+                Toast.makeText(this@MainActivity, getString(R.string.error_auth),
                     Toast.LENGTH_LONG).show()
             }
         }
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             return
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE))
-            Toast.makeText(this, "L'application utilise cette permission afin de lire et d'enregistrer des fichiers PDFs sur votre appareil.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.info_storage), Toast.LENGTH_LONG).show()
         ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
     }
 }

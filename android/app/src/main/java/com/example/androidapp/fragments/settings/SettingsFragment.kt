@@ -55,12 +55,12 @@ class SettingsFragment : Fragment(), CoroutineScope {
             try {
                 restService.postChangePasswordAsync(PasswordRequest(oldPassword, newPassword))
                 Toast.makeText(
-                    context, "Le mot de passe a été changé avec succès.",
+                    context, getString(R.string.info_change_success),
                     Toast.LENGTH_LONG
                 ).show()
             } catch (e: AuthFailureError) {
                 Toast.makeText(
-                    context, "L'ancien mot de passe est invalide",
+                    context, getString(R.string.error_change_fail),
                     Toast.LENGTH_LONG
                 ).show()
             }

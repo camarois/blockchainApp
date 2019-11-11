@@ -138,7 +138,7 @@ class RegisterCourseFragment : Fragment() {
             list.smoothScrollToPosition(registeredStudents.size - 1)
             resetView()
         } else {
-            Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -162,7 +162,7 @@ class RegisterCourseFragment : Fragment() {
             if (requestCode == PDF_UPLOAD_CODE) {
                 if (data == null) { return }
                 if (data.data.path == "") {
-                    Toast.makeText(activity, "Le fichier sélectionné est invalide.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, getString(R.string.error_invalid_file), Toast.LENGTH_SHORT).show()
                 } else {
                     pdfFilePath = getFilePath(data.data!!)
                     uploadPDFBtn.text = pdfFilePath.split("/").last()
@@ -189,13 +189,13 @@ class RegisterCourseFragment : Fragment() {
 
     suspend fun submit(values: List<StudentItem>) {
         if (pdfFilePath == "") {
-            Toast.makeText(activity, "Veuillez choisir un fichier PDF valide!", Toast.LENGTH_SHORT)
+            Toast.makeText(activity, getString(R.string.error_invalid_pdf), Toast.LENGTH_SHORT)
                 .show()
             return
         }
 
         if (class_name.text.isEmpty()) {
-            Toast.makeText(activity, "Veuillez entrer un sigle valide!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_invalid_code), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -213,7 +213,7 @@ class RegisterCourseFragment : Fragment() {
                 restService.postTransactionAsync(
                     TransactionRequest(code, name, trimester, values, pdf)
                 )
-                Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, getString(R.string.info_course_success), Toast.LENGTH_LONG).show()
                 val transaction = activity!!.supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.curr_fragment, homeFragment)
                 register_fragment.visibility = View.GONE
@@ -224,7 +224,7 @@ class RegisterCourseFragment : Fragment() {
             } catch (e: AuthFailureError) {
                 Toast.makeText(
                     activity,
-                    "Vous n'avez pas les permissions requises",
+                    getString(R.string.error_invalid_permissions),
                     Toast.LENGTH_LONG
                 ).show()
             }

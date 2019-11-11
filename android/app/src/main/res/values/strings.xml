@@ -55,4 +55,18 @@
     <string name="edition_description">Vous avez un compte d\'édition. Ouvrez le menu sur le côté pour commencer!</string>
     <string name="consultation_description">Vous avez un compte de consultation. Ouvrez le menu sur le côté pour commencer!</string>
     <string name="consultation">Consultation</string>
+    <string name="error_timeout">Petit problème de connexion au serveur, veuillez réessayer!</string>
+    <string name="status_waiting">En attente d\'une réponse des mineurs...</string>
+    <string name="error_auth">Le nom d\'usager et/ou le mot de passe est invalide</string>
+    <string name="info_storage">L\'application utilise cette permission afin de lire et d\'enregistrer des fichiers PDFs sur votre appareil.</string>
+    <string name="info_change_success">Le mot de passe a été changé avec succès.</string>
+    <string name="error_change_fail">L\'ancien mot de passe est invalide</string>
+    <string name="info_students_empty">Il n\'y a aucun élève dans le cours!</string>
+    <string name="info_missing_data">Il manque des informations!</string>
+    <string name="error_invalid_file">Le fichier sélectionné est invalide.</string>
+    <string name="error_invalid_pdf">Veuillez choisir un fichier PDF valide!</string>
+    <string name="error_invalid_code">Veuillez entrer un sigle valide!</string>
+    <string name="info_course_success">Cours ajouté</string>
+    <string name="error_invalid_permissions">Vous n\'avez pas les permissions requises</string>
+    <string name="info_pdf_success">Les résultats de ce cours ont été téléversés dans vos dossiers.</string>
 </resources>
