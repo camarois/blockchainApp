@@ -5,8 +5,7 @@
 
 namespace Rest {
 
-InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router,
-                               std::shared_ptr<ZMQWorker> zmqWorker)
+InfoController::InfoController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker)
     : zmqWorker_(std::move(zmqWorker)) {
   setupRoutes(router);
 }

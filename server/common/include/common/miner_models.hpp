@@ -27,7 +27,7 @@ const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
 
 struct SqlRequest {
-  int function;
+  int function = 0;
   std::string params;
 };
 

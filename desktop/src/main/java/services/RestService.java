@@ -138,7 +138,8 @@ public class RestService {
                     .uri(URI.create(urls.getFirebase() + "server"))
                     .build();
 
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
             baseUrl = "https://" + response.body() + ":8080/";
             System.out.println("Connected to: " + baseUrl);
 

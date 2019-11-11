@@ -8,8 +8,7 @@
 
 namespace Rest {
 
-UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router,
-                               std::shared_ptr<ZMQWorker> zmqWorker)
+UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker)
     : zmqWorker_(std::move(zmqWorker)) {
   setupRoutes(router);
 }

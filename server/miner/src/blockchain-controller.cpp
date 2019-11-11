@@ -17,7 +17,7 @@ std::optional<Block> BlockChainController::addTransaction(const std::string& tra
   currentBlock_ = blockchain_->lastBlock();
 
   // TODO(gabriel): use better random generator
-  // NOLINTNEXTLINE(cert-msc30-c,cert-msc50-cpp) 
+  // NOLINTNEXTLINE(cert-msc30-c,cert-msc50-cpp)
   receivedBlockMined(currentBlock_->get().id(), rand());
   receivedNonce_ = false;
 
