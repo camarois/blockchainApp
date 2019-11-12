@@ -28,7 +28,7 @@ build-server:
     before_script:
         - mkdir -p server/build
     script:
-        - cd server/build && cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .. && ninja
+        - cd server/build && ./build.sh
     only:
         changes:
             - server/**/*
