@@ -117,10 +117,8 @@ void ZMQWorker::handleSubServer() {
 }
 
 void ZMQWorker::printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql) {
-  // std::cout << message << magic_enum::enum_name(sql.function) << " with params:" << std::endl
-  //           << nlohmann::json::parse(sql.params).dump(Common::Models::kDumpTab) << std::endl;
   std::cout << message << magic_enum::enum_name(sql.function) << " with params:" << std::endl
-            << sql.params << std::endl;
+            << nlohmann::json::parse(sql.params).dump(Common::Models::kDumpTab) << std::endl;
 }
 
 void ZMQWorker::handleSubBlockchain() {
