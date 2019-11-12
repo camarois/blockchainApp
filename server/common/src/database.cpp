@@ -20,12 +20,88 @@ Database::Database(const std::string& dbPath) {
                         nullptr),
         "Cannot connect to database");
     db_.reset(dbPtr, sqlite3_close_v2);
+    initFunctions();
 
     addUser({{"admin", "equipe01"}, true});
   } catch (...) {
     close();
     throw;
   }
+}
+
+void Database::initFunctions() {
+  functions_ = {
+      {Functions::AddUser,
+       [&](const nlohmann::json& json) {
+         addUser(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::SetUserPassword,
+       [&](const nlohmann::json& json) {
+         setUserPassword(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::ContainsUser,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{containsUser(json), ""};
+       }},
+      {Functions::ContainsAdmin,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{containsAdmin(json), ""};
+       }},
+      {Functions::GetRole,
+       [&](const nlohmann::json& json) {
+         auto edition = getRole(json);
+         return Common::Models::SqlResponse{
+             edition.has_value(), edition.has_value() ? std::to_string(static_cast<int>(edition.value())) : ""};
+       }},
+      {Functions::GetSalt,
+       [&](const nlohmann::json& json) {
+         auto salt = getSalt(json);
+         return Common::Models::SqlResponse{salt.has_value(), salt.has_value() ? salt.value() : ""};
+       }},
+      {Functions::CheckForExistingClass,
+       [&](const nlohmann::json& json) {
+         auto classId = checkForExistingClass(json);
+         return Common::Models::SqlResponse{classId.has_value(),
+                                            classId.has_value() ? std::to_string(classId.value()) : ""};
+       }},
+      {Functions::DeleteExistingClass,
+       [&](const nlohmann::json& json) {
+         deleteExistingClass(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::DeleteExistingResults,
+       [&](const nlohmann::json& json) {
+         deleteExistingResults(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::AddNewClass,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, std::to_string(addNewClass(json))};
+       }},
+      {Functions::AddNewResult,
+       [&](const nlohmann::json& json) {
+         addNewResult(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::GetClassResult,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getClassResult(json))};
+       }},
+      {Functions::GetStudentResult,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudentResult(json))};
+       }},
+      {Functions::GetClasses,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getClasses())};
+       }},
+      {Functions::GetStudents,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
+       }},
+  };
 }
 
 void Database::close() {
@@ -40,60 +116,9 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 }
 
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
-  switch (sql.function) {
-    case Functions::AddUser: {
-      addUser(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::SetUserPassword: {
-      setUserPassword(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::ContainsUser: {
-      return {containsUser(nlohmann::json::parse(sql.params)), ""};
-    }
-    case Functions::ContainsAdmin: {
-      return {containsAdmin(nlohmann::json::parse(sql.params)), ""};
-    }
-    case Functions::GetRole: {
-      auto edition = getRole(nlohmann::json::parse(sql.params));
-      return {edition.has_value(), edition.has_value() ? std::to_string(static_cast<int>(edition.value())) : ""};
-    }
-    case Functions::GetSalt: {
-      auto salt = getSalt(sql.params);
-      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
-    }
-    case Functions::CheckForExistingClass: {
-      auto classId = checkForExistingClass(nlohmann::json::parse(sql.params));
-      return {classId.has_value(), classId.has_value() ? std::to_string(classId.value()) : ""};
-    }
-    case Functions::DeleteExistingClass: {
-      deleteExistingClass(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::DeleteExistingResults: {
-      deleteExistingResults(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::AddNewClass: {
-      return {true, std::to_string(addNewClass(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::AddNewResult: {
-      addNewResult(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::GetClassResult: {
-      return {true, Common::Models::toStr(getClassResult(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::GetStudentResult: {
-      return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::GetClasses: {
-      return {true, Common::Models::toStr(getClasses())};
-    }
-    case Functions::GetStudents: {
-      return {true, Common::Models::toStr(getStudents())};
-    }
+  auto it = functions_.find(sql.function);
+  if (it != functions_.end()) {
+    return it->second(nlohmann::json::parse(sql.params));
   }
   throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
 }

@@ -109,6 +109,8 @@ void ZMQWorker::handleSubServer() {
         }
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
+        auto lol = db.get(sql);
+        std::cout << Common::Models::toStr(lol) << std::endl;
         sendResponse(request.token, Common::Models::toStr(db.get(sql)));
       } else {
         std::cerr << "Type not found: " << received.type << std::endl;

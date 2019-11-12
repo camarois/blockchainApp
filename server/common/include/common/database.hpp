@@ -1,18 +1,18 @@
 #ifndef COMMON_DATABASE_HPP
 #define COMMON_DATABASE_HPP
 
-#include <cstddef>
-#include <memory>
-#include <nlohmann/json.hpp>
-#include <sqlite3.h>
-#include <string>
-
 #include <common/database_models.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
 #include <common/query.hpp>
 #include <common/sqlite_err.hpp>
 #include <common/statement.hpp>
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <nlohmann/json.hpp>
+#include <sqlite3.h>
+#include <string>
 
 namespace Common {
 
@@ -53,8 +53,10 @@ class Database {
 
  private:
   void close();
+  void initFunctions();
 
   std::shared_ptr<sqlite3> db_;
+  std::unordered_map<Common::Functions, std::function<Common::Models::SqlResponse(nlohmann::json)>> functions_;
 };
 
 }  // namespace Common
