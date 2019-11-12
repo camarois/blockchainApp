@@ -16,6 +16,9 @@ class ZMQWorker {
   explicit ZMQWorker(const std::string& serverHostname);
   ~ZMQWorker();
 
+  static std::shared_ptr<ZMQWorker> get();
+  static void init(const std::string& serverHostname);
+
   bool start();
   void join();
   Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
@@ -28,6 +31,8 @@ class ZMQWorker {
   void receivedResponse(const std::string& token, const std::string& response);
   std::future<std::string> createRequest(const std::string& sql, const std::string& type);
 
+  static std::shared_ptr<ZMQWorker> instance;
+  
   bool running_;
   const std::string serverHostname_;
   zmq::context_t context_;

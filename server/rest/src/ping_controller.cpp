@@ -4,8 +4,7 @@
 
 namespace Rest {
 
-PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker)
-    : zmqWorker_(std::move(zmqWorker)) {
+PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router) {
   setupRoutes(router);
 }
 

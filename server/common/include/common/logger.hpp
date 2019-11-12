@@ -15,9 +15,8 @@ enum Severity { ERROR, ATTENTION, INFO };
 
 class Logger {
  public:
-  explicit Logger(int logSessionId, const std::string& dbPath);
+  explicit Logger(int logSessionId);
   static std::shared_ptr<Logger> get();
-  static void init(const std::string& dbPath);
   void error(int provenance, const std::string& message);
   void attention(int provenance, const std::string& message);
   void info(int provenance, const std::string& message);
@@ -29,7 +28,6 @@ class Logger {
 
   std::mutex mutex_;
   const int logSessionId_;
-  const std::string dbPath_;
   std::atomic<int> logCount_;
 };
 

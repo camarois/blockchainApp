@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include <rest/zmq.hpp>
 
 DEFINE_string(user, "server", "Developper using the service");            // NOLINT
 DEFINE_string(cert, "server.crt", "Path to server cert");                 // NOLINT
@@ -21,6 +22,8 @@ int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);
 
   try {
+    Common::Database::init(FLAGS_db);
+    Rest::ZMQWorker::init("tcp://*");
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
     Common::ScriptsHelper::createCert(selfIpAddress, FLAGS_db);
@@ -30,6 +33,7 @@ int main(int argc, char* argv[]) {
 
     Rest::MainController mainController(addr, FLAGS_threads);
     Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
+    Rest::ZMQWorker::get()->start();
     mainController.start();
 
     return 0;

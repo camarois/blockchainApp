@@ -12,8 +12,7 @@ namespace Rest {
 
 class AdminController {
  public:
-  explicit AdminController(const std::shared_ptr<Rest::CustomRouter>& router,
-                           std::shared_ptr<ZMQWorker> zmqWorker);
+  explicit AdminController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
@@ -25,7 +24,6 @@ class AdminController {
   void handleCreateAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleDeleteAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  std::shared_ptr<ZMQWorker> zmqWorker_;
   const std::string kBasePath_ = "/admin/";
   const std::string kId_ = ":id";
 };

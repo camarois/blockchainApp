@@ -8,6 +8,8 @@
 
 namespace Common {
 
+std::shared_ptr<Database> Database::instance;
+
 Database::Database(const std::string& dbPath) {
   Common::ScriptsHelper::createDb(dbPath);
   assertSqlite(sqlite3_initialize(), "Unable to initialize SQLite");
@@ -26,6 +28,21 @@ Database::Database(const std::string& dbPath) {
   } catch (...) {
     close();
     throw;
+  }
+}
+
+std::shared_ptr<Database> Database::get() {
+  if (instance) {
+    return instance;
+  } else {
+    throw std::runtime_error("Database not created, you should initilize it first");
+  }
+}
+
+void Database::init(const std::string& dbPath) {
+  if (!instance) {
+    instance = std::make_shared<Database>(dbPath);
+    std::cout << "Database created" << std::endl;
   }
 }
 
@@ -115,7 +132,7 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
+Common::Models::SqlResponse Database::executeRequest(const Common::Models::SqlRequest& sql) {
   auto it = functions_.find(sql.function);
   if (it != functions_.end()) {
     return it->second(nlohmann::json::parse(sql.params));
@@ -123,11 +140,11 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
   throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
 }
 
-std::optional<std::string> Database::getSalt(const std::string& username) {
+std::optional<std::string> Database::getSalt(const Common::Models::GetSaltRequest& request) {
   Query query = Query(
       "SELECT salt FROM users "
       "WHERE username = '%q';",
-      username.c_str());
+      request.username.c_str());
   Statement statement = Statement(db_, query);
   if (statement.step()) {
     return statement.getColumnText(0);

@@ -12,11 +12,10 @@ namespace Common {
 namespace ScriptsHelper {
 
 inline void createCert(const std::string& ip, const std::string& dbPath) {
-  Common::Database db(dbPath);
-  if (!db.containsIp(ip)) {
+  if (!Common::Database::get()->containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
-    db.addIp(ip);
-    auto ips = db.getIps();
+    Common::Database::get()->addIp(ip);
+    auto ips = Common::Database::get()->getIps();
 
     std::stringstream ss;
     ss << "./createCert.sh server '";
