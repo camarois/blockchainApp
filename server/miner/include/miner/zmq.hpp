@@ -2,11 +2,11 @@
 #define MINER_ZMQ_HPP
 
 #include <chrono>
+#include <common/miner_models.hpp>
 #include <memory>
+#include <miner/blockchain-controller.hpp>
 #include <thread>
 #include <zmq.hpp>
-#include <common/miner_models.hpp>
-#include <miner/blockchain-controller.hpp>
 
 namespace Miner {
 

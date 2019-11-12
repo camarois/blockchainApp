@@ -10,7 +10,7 @@ namespace Rest {
 
 class CustomRouter : public Pistache::Rest::Router {
  public:
-  CustomRouter();
+  CustomRouter() = default;
 
   void addRoute(Pistache::Http::Method method, const std::string& url, const Pistache::Rest::Route::Handler& handler,
                 bool requiresAuth = true);

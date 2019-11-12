@@ -14,12 +14,11 @@ Logger::Logger(int logSessionId) : logSessionId_(logSessionId) { logCount_ = 1; 
 std::shared_ptr<Logger> Logger::get() {
   if (instance) {
     return instance;
-  } else {
-    auto logSessionId = Common::Database::get()->addLogSession();
-    instance = std::make_shared<Logger>(logSessionId);
-    std::cout << "Logger created" << std::endl;
-    return instance;
   }
+  auto logSessionId = Common::Database::get()->addLogSession();
+  instance = std::make_shared<Logger>(logSessionId);
+  std::cout << "Logger created" << std::endl;
+  return instance;
 }
 
 void Logger::error(int provenance, const std::string& message) { log(Severity::ERROR, provenance, message, std::cerr); }

@@ -34,9 +34,8 @@ ZMQWorker::~ZMQWorker() {
 std::shared_ptr<ZMQWorker> ZMQWorker::get() {
   if (instance) {
     return instance;
-  } else {
-    throw std::runtime_error("ZMQWorker not created, you should initilize it first");
   }
+  throw std::runtime_error("ZMQWorker not created, you should initilize it first");
 }
 
 void ZMQWorker::init(const std::string& serverHostname) {

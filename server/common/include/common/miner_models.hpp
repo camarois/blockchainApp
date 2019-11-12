@@ -8,6 +8,7 @@
 namespace Common {
 
 enum Functions {
+  Unknown,
   AddUser,
   SetUserPassword,
   ContainsUser,
@@ -47,7 +48,7 @@ const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
 
 struct SqlRequest {
-  Functions function;
+  Functions function = Functions::Unknown;
   std::string params;
 };
 

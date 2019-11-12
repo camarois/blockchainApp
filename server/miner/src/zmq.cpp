@@ -111,7 +111,7 @@ void ZMQWorker::handleSubServer() {
         std::cerr << "Type not found: " << received.type << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain error in: " << __func__ << " for " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain error in: handleSubServer for " << e.what() << std::endl;
     }
   }
 }
@@ -147,7 +147,7 @@ void ZMQWorker::handleSubBlockchain() {
                   << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain error in: " << __func__ << " for " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain error in: handleSubBlockchain for " << e.what() << std::endl;
     }
   }
 }

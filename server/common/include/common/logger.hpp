@@ -2,12 +2,12 @@
 #ifndef COMMON_LOGGER_HPP
 #define COMMON_LOGGER_HPP
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <ostream>
 #include <string>
 #include <vector>
-#include <atomic>
 
 namespace Common {
 

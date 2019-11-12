@@ -11,8 +11,6 @@
 
 namespace Rest {
 
-CustomRouter::CustomRouter() {}
-
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             const Pistache::Rest::Route::Handler& handler, bool requiresAuth) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
