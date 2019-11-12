@@ -26,7 +26,7 @@ cache:
 build-server:
     stage: build
     script:
-        - ./build.sh
+        - cd server/ && ./build.sh
     only:
         changes:
             - server/**/*
