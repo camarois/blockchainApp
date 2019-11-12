@@ -16,7 +16,6 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -24,10 +23,7 @@ class HomeFragment : Fragment() {
         username.text = (activity!! as SidePanelActivity).username
         val type = (activity!! as SidePanelActivity).type
 
-        if (type == AccountTypes.EDITION)
-            description.text = resources.getString(R.string.edition_description)
-        else
-            description.text = resources.getString(R.string.consultation_description)
+        description.text = if (type == AccountTypes.EDITION) resources.getString(R.string.edition_description) else resources.getString(R.string.consultation_description)
         super.onViewCreated(view, savedInstanceState)
     }
 }

@@ -19,10 +19,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-/**
- * [RecyclerView.Adapter] that can display a [StudentItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- */
 class GradedStudentRecyclerViewAdapter(
     private val mFragment: RegisterCourseFragment,
     private val mValues: List<StudentItem>,
@@ -35,8 +31,6 @@ class GradedStudentRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as StudentItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
             mListener?.onListFragmentInteraction(item)
         }
     }
@@ -47,7 +41,7 @@ class GradedStudentRecyclerViewAdapter(
             GradedStudentViewHolder(view)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.bottom_button, parent, false)
-            return ButtonsViewHolder(view)
+            ButtonsViewHolder(view)
         }
     }
 

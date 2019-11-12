@@ -35,6 +35,15 @@ import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
+    private lateinit var job: Job
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private var restService: RestRequestService = get()
+    var username: String = ""
+    lateinit var type: AccountTypes
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     override fun onListFragmentInteraction(course: CourseItem) {
         launch {
             Utils.processRequest(this@SidePanelActivity) {
@@ -60,6 +69,7 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 val response =
                     restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
                 val frag = DetailedStudentFragment(student, response.results)
+
                 transaction.replace(R.id.student_list_fragment, frag)
                 transaction.addToBackStack(null)
                 transaction.commit()
@@ -67,32 +77,21 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
 
-    private lateinit var job: Job
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private var restService: RestRequestService = get()
-    var username: String = ""
-    lateinit var type: AccountTypes
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
         setContentView(R.layout.activity_side_panel)
         setSupportActionBar(sidePanelToolbar)
 
+        username = intent.getStringExtra("username")
+        type = intent!!.getSerializableExtra("type") as AccountTypes
+
         val navController = findNavController(R.id.sidePanelFragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_search, R.id.nav_course_search, R.id.nav_settings, R.id.nav_register
             ), sidePanelDrawerLayout
         )
-
-        username = intent.getStringExtra("username")
-        type = intent!!.getSerializableExtra("type") as AccountTypes
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)

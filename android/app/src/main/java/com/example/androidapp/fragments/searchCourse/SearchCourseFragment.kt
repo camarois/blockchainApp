@@ -22,11 +22,6 @@ import org.koin.android.ext.android.get
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [SearchCourseFragment.OnListFragmentInteractionListener] interface.
- */
 class SearchCourseFragment : Fragment(), CoroutineScope {
 
     private var columnCount = 1
@@ -89,34 +84,7 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onListFragmentInteraction(course: CourseItem)
-    }
-
-    companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            SearchCourseFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
     }
 }

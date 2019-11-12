@@ -81,7 +81,6 @@ class RegisterCourseFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_register_list, container, false)
 
-        // Set the adapter
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
@@ -102,8 +101,6 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                // this part hides the button immediately and waits bottom sheet
-                // to collapse to show
                 if (BottomSheetBehavior.STATE_EXPANDED == newState) {
                     addStudentButton.visibility = View.GONE
                 } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
