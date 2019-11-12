@@ -130,6 +130,7 @@ ExternalProject_Add(libmagic_enum
     GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
     BUILD_BYPRODUCTS ${EXTERNAL_LIBS_DIR}/libmagic_enum.a
     CMAKE_ARGS ${COMMON_DEFINES}
+    CMAKE_ARGS -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
     PREFIX libmagic_enum
     UPDATE_DISCONNECTED ON
 )
