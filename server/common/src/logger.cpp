@@ -1,4 +1,5 @@
 #include "common/logger.hpp"
+
 #include <common/database.hpp>
 #include <common/format_helper.hpp>
 

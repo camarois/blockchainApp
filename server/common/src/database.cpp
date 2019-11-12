@@ -1,4 +1,5 @@
 #include "common/database.hpp"
+
 #include "common/miner_models.hpp"
 #include <common/format_helper.hpp>
 #include <common/scripts_helper.hpp>
@@ -40,62 +41,62 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
   switch (sql.function) {
-    case Functions::addUser: {
+    case Functions::AddUser: {
       addUser(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
-    case Functions::setUserPassword: {
+    case Functions::SetUserPassword: {
       setUserPassword(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
-    case Functions::containsUser: {
+    case Functions::ContainsUser: {
       return {containsUser(nlohmann::json::parse(sql.params)), ""};
     }
-    case Functions::containsAdmin: {
+    case Functions::ContainsAdmin: {
       return {containsAdmin(nlohmann::json::parse(sql.params)), ""};
     }
-    case Functions::getRole: {
+    case Functions::GetRole: {
       auto edition = getRole(nlohmann::json::parse(sql.params));
-      return {edition.has_value(), edition.has_value() ? std::to_string(edition.value()) : ""};
+      return {edition.has_value(), edition.has_value() ? std::to_string(static_cast<int>(edition.value())) : ""};
     }
-    case Functions::getSalt: {
+    case Functions::GetSalt: {
       auto salt = getSalt(sql.params);
       return {salt.has_value(), salt.has_value() ? salt.value() : ""};
     }
-    case Functions::checkForExistingClass: {
+    case Functions::CheckForExistingClass: {
       auto classId = checkForExistingClass(nlohmann::json::parse(sql.params));
       return {classId.has_value(), classId.has_value() ? std::to_string(classId.value()) : ""};
     }
-    case Functions::deleteExistingClass: {
+    case Functions::DeleteExistingClass: {
       deleteExistingClass(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
-    case Functions::deleteExistingResults: {
+    case Functions::DeleteExistingResults: {
       deleteExistingResults(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
-    case Functions::addNewClass: {
+    case Functions::AddNewClass: {
       return {true, std::to_string(addNewClass(nlohmann::json::parse(sql.params)))};
     }
-    case Functions::addNewResult: {
+    case Functions::AddNewResult: {
       addNewResult(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
-    case Functions::getClassResult: {
+    case Functions::GetClassResult: {
       return {true, Common::Models::toStr(getClassResult(nlohmann::json::parse(sql.params)))};
     }
-    case Functions::getStudentResult: {
+    case Functions::GetStudentResult: {
       return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
     }
-    case Functions::getClasses: {
+    case Functions::GetClasses: {
       return {true, Common::Models::toStr(getClasses())};
     }
-    case Functions::getStudents: {
+    case Functions::GetStudents: {
       return {true, Common::Models::toStr(getStudents())};
     }
 
     default:
-      throw std::runtime_error("Function not allowed:" + sql.function);
+      throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
   }
   return {};
 }
@@ -126,7 +127,8 @@ bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request
   Query query = Query(
       "SELECT username FROM users "
       "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
-      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
+      request.loginRequest.username.c_str(),
+      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str(),
       std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   return statement.step();
@@ -136,7 +138,8 @@ std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& requ
   Query query = Query(
       "SELECT isAdmin FROM users "
       "WHERE username = '%q' AND password = '%q';",
-      request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
+      request.loginRequest.username.c_str(),
+      Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
   Statement statement = Statement(db_, query);
   if (statement.step()) {
     return std::stoi(statement.getColumnText(0));

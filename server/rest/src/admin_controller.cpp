@@ -9,8 +9,8 @@ DECLARE_string(db);
 namespace Rest {
 
 AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router,
-                                 const std::shared_ptr<ZMQWorker>& zmqWorker)
-    : zmqWorker_(zmqWorker) {
+                                 std::shared_ptr<ZMQWorker> zmqWorker)
+    : zmqWorker_(std::move(zmqWorker)) {
   setupRoutes(router);
 }
 
@@ -28,10 +28,10 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, loginRequest.username});
+  auto salt = zmqWorker_->getRequest({Common::Functions::GetSalt, loginRequest.username});
   Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::containsAdmin, Common::Models::toStr(containsAdminRequest)}).found) {
+      zmqWorker_->getRequest({Common::Functions::ContainsAdmin, Common::Models::toStr(containsAdminRequest)}).found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     response.send(Pistache::Http::Code::Ok);
@@ -40,6 +40,8 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
   }
 }
 
+// TODO(gabriel): faire dequoi d'utile avec cette fonction
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleLogout(const Pistache::Rest::Request& /*request*/,
                                    Pistache::Http::ResponseWriter response) {
   // TODO(camarois) jwt db verification
@@ -52,19 +54,21 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
 
-  auto salt = zmqWorker_->getRequest({Common::Functions::getSalt, {loginRequest.username}});
+  auto salt = zmqWorker_->getRequest({Common::Functions::GetSalt, {loginRequest.username}});
   Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::containsUser, Common::Models::toStr(containsAdminRequest)}).found) {
+      zmqWorker_->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsAdminRequest)}).found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      true};
-    zmqWorker_->updateRequest({Common::Functions::setUserPassword, Common::Models::toStr(containsAdminRequest)});
+    zmqWorker_->updateRequest({Common::Functions::SetUserPassword, Common::Models::toStr(containsAdminRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
   }
 }
 
+// TODO(gabriel): faire dequoi d'utile avec cette fonction
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<int>();
   // Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
@@ -83,12 +87,16 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 
+// TODO(gabriel): faire dequoi d'utile avec cette fonction
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
   Common::Models::CreateAccountRequest logsRequest = nlohmann::json::parse(request.body());
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 
+// TODO(gabriel): faire dequoi d'utile avec cette fonction
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
   Common::Models::DeleteAccountRequest logsRequest = nlohmann::json::parse(request.body());

@@ -1,12 +1,12 @@
 #include <common/base64.hpp>
 #include <common/format_helper.hpp>
 #include <common/models.hpp>
+#include <experimental/filesystem>
 #include <fstream>
 #include <gflags/gflags.h>
 #include <rest/file_controller.hpp>
 #include <streambuf>
 #include <string>
-#include <experimental/filesystem>
 
 DECLARE_string(transactions);
 
@@ -15,7 +15,7 @@ namespace Rest {
 FileController::FileController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
 void FileController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
-  router->post(kBasePath_ + "notes", Pistache::Rest::Routes::bind(&FileController::handleGrades, this));
+  router->post(kBasePath_ + "notes", Pistache::Rest::Routes::bind(&FileController::handleGrades));
 }
 
 void FileController::handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

@@ -2,7 +2,7 @@
 #define MINER_ZMQ_HPP
 
 #include <chrono>
-#include <set>
+#include <memory>
 #include <thread>
 #include <zmq.hpp>
 
@@ -13,7 +13,7 @@ namespace Miner {
 class ZMQWorker {
  public:
   // NOLINTNEXTLINE(google-runtime-references)
-  explicit ZMQWorker(const std::string& serverHostname, BlockChain& blockchain);
+  explicit ZMQWorker(const std::string& serverHostname, std::unique_ptr<BlockChain> blockchain);
   ~ZMQWorker();
 
   bool start();
