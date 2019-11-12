@@ -1,5 +1,6 @@
 #include "common/firebase_helper.hpp"
 #include "common/gflags_helper.hpp"
+#include "common/logger.hpp"
 #include "common/message_helper.hpp"
 #include <iostream>
 #include <memory>
@@ -17,12 +18,13 @@ DEFINE_int32(difficulty, 3, "Hashing difficulty");                      // NOLIN
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Blockchain miner service", argc, argv);
+  Common::Logger::init(FLAGS_db);
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user);
   }
-  std::cout << "Server ip address: " << addr << std::endl;
+  Common::Logger::get()->info(0, "Server ip address: " + addr + "\n");
 
   std::optional<Miner::BlockChain> maybeBlockchain =
       Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));

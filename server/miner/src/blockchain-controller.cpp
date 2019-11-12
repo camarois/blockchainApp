@@ -1,5 +1,6 @@
 #include "miner/blockchain-controller.hpp"
 
+#include "common/logger.hpp"
 #include <cstdlib>
 #include <iostream>
 
@@ -26,13 +27,14 @@ std::optional<Block> BlockChainController::addTransaction(const std::string& tra
   blockchain_->nextBlock();
   blockchain_->saveAll();
   if (receivedNonce_) {
-    std::cout << "mining aborted of block #" << currentBlock_->get().id() << " by external nonce "
-              << currentBlock_->get().nonce() << std::endl;
+    Common::Logger::get()->attention(0, "Mining aborted of block #" + std::to_string(currentBlock_->get().id()) +
+                                            " by external nonce " + std::to_string(currentBlock_->get().nonce()) +
+                                            "\n");
     return {};
   }
 
-  std::cout << "mining of block #" << currentBlock_->get().id() << " finished with nonce "
-            << currentBlock_->get().nonce() << std::endl;
+  Common::Logger::get()->info(0, "Mining of block #" + std::to_string(currentBlock_->get().id()) +
+                                     " finished with nonce " + std::to_string(currentBlock_->get().nonce()) + "\n");
   return currentBlock_->get();
 }
 
