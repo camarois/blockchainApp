@@ -16,24 +16,6 @@
 
 namespace Common {
 
-enum Functions {
-  AddUser,
-  SetUserPassword,
-  ContainsUser,
-  ContainsAdmin,
-  GetRole,
-  GetSalt,
-  CheckForExistingClass,
-  DeleteExistingClass,
-  DeleteExistingResults,
-  AddNewClass,
-  AddNewResult,
-  GetClassResult,
-  GetStudentResult,
-  GetClasses,
-  GetStudents
-};
-
 class Database {
  public:
   explicit Database();

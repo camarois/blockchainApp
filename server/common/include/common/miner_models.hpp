@@ -6,6 +6,25 @@
 #include <vector>
 
 namespace Common {
+
+enum Functions {
+  AddUser,
+  SetUserPassword,
+  ContainsUser,
+  ContainsAdmin,
+  GetRole,
+  GetSalt,
+  CheckForExistingClass,
+  DeleteExistingClass,
+  DeleteExistingResults,
+  AddNewClass,
+  AddNewResult,
+  GetClassResult,
+  GetStudentResult,
+  GetClasses,
+  GetStudents
+};
+
 namespace Models {
 
 const std::string kBlockID = "block-id";
@@ -20,6 +39,7 @@ const std::string kToken = "token";
 const std::string kType = "type";
 const std::string kFunction = "function";
 const std::string kParams = "params";
+
 const std::string kTypeBlockMined = "block-mined";
 const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
@@ -27,7 +47,7 @@ const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
 
 struct SqlRequest {
-  int function = 0;
+  Functions function;
   std::string params;
 };
 
@@ -48,9 +68,7 @@ struct SqlResponse {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const SqlResponse& obj) {
-  j = {{kFound, obj.found}, {kData, obj.data}};
-}
+inline void to_json(nlohmann::json& j, const SqlResponse& obj) { j = {{kFound, obj.found}, {kData, obj.data}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, SqlResponse& obj) {
@@ -64,9 +82,7 @@ struct ZMQMessage {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ZMQMessage& obj) {
-  j = {{kType, obj.type}, {kData, obj.data}};
-}
+inline void to_json(nlohmann::json& j, const ZMQMessage& obj) { j = {{kType, obj.type}, {kData, obj.data}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ZMQMessage& obj) {
@@ -80,9 +96,7 @@ struct BlockMined {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const BlockMined& obj) {
-  j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}};
-}
+inline void to_json(nlohmann::json& j, const BlockMined& obj) { j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockMined& obj) {
@@ -96,9 +110,7 @@ struct ServerRequest {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ServerRequest& obj) {
-  j = {{kToken, obj.token}, {kCommand, obj.command}};
-}
+inline void to_json(nlohmann::json& j, const ServerRequest& obj) { j = {{kToken, obj.token}, {kCommand, obj.command}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ServerRequest& obj) {
@@ -112,9 +124,7 @@ struct ServerResponse {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ServerResponse& obj) {
-  j = {{kToken, obj.token}, {kResult, obj.result}};
-}
+inline void to_json(nlohmann::json& j, const ServerResponse& obj) { j = {{kToken, obj.token}, {kResult, obj.result}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ServerResponse& obj) {

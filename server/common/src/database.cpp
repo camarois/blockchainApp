@@ -40,7 +40,6 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 }
 
 Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
-  std::cout << __func__ << std::endl;
   switch (sql.function) {
     case Functions::AddUser: {
       addUser(nlohmann::json::parse(sql.params));
@@ -95,11 +94,8 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
     case Functions::GetStudents: {
       return {true, Common::Models::toStr(getStudents())};
     }
-
-    default:
-      throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
   }
-  return {};
+  throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
 }
 
 std::optional<std::string> Database::getSalt(const std::string& username) {
