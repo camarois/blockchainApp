@@ -27,13 +27,13 @@ std::optional<Block> BlockChainController::addTransaction(const std::string& tra
   blockchain_->nextBlock();
   blockchain_->saveAll();
   if (receivedNonce_) {
-    Common::Logger::get()->attention(0, "Mining aborted of block #" + std::to_string(currentBlock_->get().id()) +
+    Common::Logger::get()->attention(1, "Mining aborted of block #" + std::to_string(currentBlock_->get().id()) +
                                             " by external nonce " + std::to_string(currentBlock_->get().nonce()) +
                                             "\n");
     return {};
   }
 
-  Common::Logger::get()->info(0, "Mining of block #" + std::to_string(currentBlock_->get().id()) +
+  Common::Logger::get()->info(1, "Mining of block #" + std::to_string(currentBlock_->get().id()) +
                                      " finished with nonce " + std::to_string(currentBlock_->get().nonce()) + "\n");
   return currentBlock_->get();
 }

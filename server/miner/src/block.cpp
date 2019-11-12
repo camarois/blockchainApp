@@ -25,7 +25,7 @@ Block::Block(unsigned int id, const std::string& previous) : Block() {
 std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
   std::ifstream blockFile(blockDir, std::ifstream::in);
   if (blockFile.fail()) {
-    Common::Logger::get()->error(0, "Couldn't open `" + blockDir.string() + "`\n");
+    Common::Logger::get()->error(1, "Couldn't open `" + blockDir.string() + "`\n");
     return {};
   }
 

@@ -104,12 +104,12 @@ Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
 
   std::optional<Block> block = Block::fromBlockFile(blockPath);
   if (!block) {
-    Common::Logger::get()->error(0, "Block #" + std::to_string(id) + " doesn't exist\n");
+    Common::Logger::get()->error(1, "Block #" + std::to_string(id) + " doesn't exist\n");
     return {};
   }
 
   if (block->id() != id) {
-    Common::Logger::get()->error(0, "Mismatch ID in block #" + std::to_string(id) + "\n");
+    Common::Logger::get()->error(1, "Mismatch ID in block #" + std::to_string(id) + "\n");
     return {};
   }
 
@@ -121,7 +121,7 @@ Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
 bool BlockChain::saveMetadata() const {
   std::ofstream metadataFile(blockDir_ / BlockChain::kMetadataFilename, std::ofstream::out);
   if (metadataFile.fail()) {
-    Common::Logger::get()->error(0, "Blockchain: failed to open metadata in `" + std::string(blockDir_) + "`\n");
+    Common::Logger::get()->error(1, "Blockchain: failed to open metadata in `" + std::string(blockDir_) + "`\n");
     return false;
   }
 
@@ -135,7 +135,7 @@ bool BlockChain::saveMetadata() const {
 std::optional<BlockChain> BlockChain::loadMetadataBlockChain(const std::filesystem::path& blockDir) {
   std::ifstream metadataFile(blockDir / BlockChain::kMetadataFilename, std::ifstream::in);
   if (metadataFile.fail()) {
-    Common::Logger::get()->error(0, "Blockchain: failed to open metadata in `" + std::string(blockDir) + "`\n");
+    Common::Logger::get()->error(1, "Blockchain: failed to open metadata in `" + std::string(blockDir) + "`\n");
     return {};
   }
 

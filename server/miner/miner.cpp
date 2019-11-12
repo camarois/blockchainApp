@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user);
   }
-  Common::Logger::get()->info(0, "Server ip address: " + addr + "\n");
+  Common::Logger::get()->info(1, "Server ip address: " + addr + "\n");
 
   std::optional<Miner::BlockChain> maybeBlockchain =
       Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
