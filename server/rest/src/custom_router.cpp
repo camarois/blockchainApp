@@ -29,7 +29,8 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
             auto username = Common::TokenHelper::decodeUsername(token).value_or("");
             auto password = Common::TokenHelper::decodePassword(token).value_or("");
             Common::Models::GetSaltRequest getSaltRequest = {username};
-            auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+            auto salt =
+                Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
             Common::Models::ContainsUserRequest containsUserRequest = {{username, password}, salt.data};
             if (salt.found &&
                 Rest::ZMQWorker::get()

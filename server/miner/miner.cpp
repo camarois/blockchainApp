@@ -1,6 +1,7 @@
 #include "common/firebase_helper.hpp"
 #include "common/gflags_helper.hpp"
 #include "common/message_helper.hpp"
+#include <common/database.hpp>
 #include <iostream>
 #include <memory>
 #include <miner/blockchain.hpp>
@@ -8,7 +9,6 @@
 #include <string>
 #include <unistd.h>
 #include <zmq.hpp>
-#include <common/database.hpp>
 
 DEFINE_string(addr, "", "REST service address");                        // NOLINT
 DEFINE_string(user, "server", "Developper using the service");          // NOLINT
