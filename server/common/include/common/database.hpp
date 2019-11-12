@@ -10,10 +10,10 @@
 #include <cstddef>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <sqlite3.h>
 #include <string>
-#include <mutex>
 
 namespace Common {
 

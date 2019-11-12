@@ -11,7 +11,7 @@
 namespace Common {
 namespace ScriptsHelper {
 
-inline void createCert(const std::string& ip, const std::string& dbPath) {
+inline void createCert(const std::string& ip) {
   if (!Common::Database::get()->containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
     Common::Database::get()->addIp(ip);

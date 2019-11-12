@@ -111,11 +111,11 @@ void Database::initFunctions() {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudentResult(json))};
        }},
       {Functions::GetClasses,
-       [&](const nlohmann::json& json) {
+       [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getClasses())};
        }},
       {Functions::GetStudents,
-       [&](const nlohmann::json& json) {
+       [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
        }},
   };
