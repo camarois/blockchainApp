@@ -5,6 +5,7 @@
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
 #include <iostream>
+#include <magic_enum.hpp>
 
 namespace Common {
 
@@ -34,9 +35,8 @@ Database::Database(const std::string& dbPath) {
 std::shared_ptr<Database> Database::get() {
   if (instance) {
     return instance;
-  } else {
-    throw std::runtime_error("Database not created, you should initilize it first");
   }
+  throw std::runtime_error("Database not created, you should initilize it first");
 }
 
 void Database::init(const std::string& dbPath) {
@@ -137,7 +137,7 @@ Common::Models::SqlResponse Database::executeRequest(const Common::Models::SqlRe
   if (it != functions_.end()) {
     return it->second(nlohmann::json::parse(sql.params));
   }
-  throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
+  throw std::runtime_error("Function not allowed: " + std::string(magic_enum::enum_name(sql.function)));
 }
 
 std::optional<std::string> Database::getSalt(const Common::Models::GetSaltRequest& request) {
