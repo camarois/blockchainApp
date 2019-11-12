@@ -4,15 +4,14 @@
 
 namespace Rest {
 
-PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router,
-                               const std::shared_ptr<ZMQWorker>& zmqWorker)
-    : zmqWorker_(zmqWorker) {
+PingController::PingController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker)
+    : zmqWorker_(std::move(zmqWorker)) {
   setupRoutes(router);
 }
 
 void PingController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
-  router->get("/ping", Pistache::Rest::Routes::bind(&PingController::handlePing, this), false);
-  router->get("/sping", Pistache::Rest::Routes::bind(&PingController::handlePing, this));
+  router->get("/ping", Pistache::Rest::Routes::bind(&PingController::handlePing), false);
+  router->get("/sping", Pistache::Rest::Routes::bind(&PingController::handlePing));
 }
 
 void PingController::handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response) {

@@ -2,8 +2,8 @@
 
 #include <exception>
 #include <fstream>
-#include <iostream>
 #include <gflags/gflags.h>
+#include <iostream>
 
 DECLARE_int32(difficulty);
 

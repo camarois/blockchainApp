@@ -1,17 +1,14 @@
 package controllers;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.*;
-
-import javafx.scene.layout.GridPane;
-import models.LoginRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import models.LoginRequest;
 import models.LoginResponse;
 import models.PasswordRequest;
 import services.RestService;
@@ -19,7 +16,6 @@ import services.RestService;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class LoginController {
     @FXML private TextField usernameTextField;

@@ -1,5 +1,5 @@
-#ifndef DATABASE_MODELS_HPP
-#define DATABASE_MODELS_HPP
+#ifndef COMMON_DATABASE_MODELS_HPP
+#define COMMON_DATABASE_MODELS_HPP
 
 #include <common/models.hpp>
 #include <nlohmann/json.hpp>
@@ -18,7 +18,7 @@ const std::string kClassId = "classId";
 
 struct AddUserRequest {
   Common::Models::LoginRequest loginRequest;
-  bool isAdmin;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -36,7 +36,7 @@ struct SetUserPasswordRequest {
   std::string username;
   Common::Models::PasswordRequest passwordRequest;
   std::string salt;
-  bool isAdmin;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -70,7 +70,7 @@ inline void from_json(const nlohmann::json& j, ContainsUserRequest& obj) {
 
 struct CheckForExistingClassRequest {
   std::string acronym;
-  int trimester;
+  int trimester = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -86,7 +86,7 @@ inline void from_json(const nlohmann::json& j, CheckForExistingClassRequest& obj
 
 struct AddNewResultRequest {
   Common::Models::TransactionRequest transactionRequest;
-  int classId;
+  int classId = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -103,7 +103,7 @@ inline void from_json(const nlohmann::json& j, AddNewResultRequest& obj) {
 struct ContainsAdminRequest {
   Common::Models::LoginRequest loginRequest;
   std::string salt;
-  bool isAdmin;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -137,4 +137,4 @@ inline void from_json(const nlohmann::json& j, GetRoleRequest& obj) {
 }  // namespace Models
 }  // namespace Common
 
-#endif  // DATABASE_MODELS_HPP
+#endif  // COMMON_DATABASE_MODELS_HPP

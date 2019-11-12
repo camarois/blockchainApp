@@ -38,7 +38,7 @@ inline std::string randomStr(size_t size = kDefaultRandomSize) {
   std::string result;
   for (size_t i = 0; i < size; i++) {
     auto randomChar = static_cast<unsigned char>(dist(rng));
-    if (std::isalnum(randomChar)) {
+    if (std::isalnum(randomChar) != 0) {
       result += randomChar;  // Creates a random alpha num value
     } else {
       --i;

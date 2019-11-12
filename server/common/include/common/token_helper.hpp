@@ -32,7 +32,7 @@ inline std::string encode(const std::string& username, const std::string& passwo
   return token.signature();
 }
 
-inline std::optional<std::string> decode(const std::string& token, const std::string& dbPath) {
+inline std::optional<std::string> decode(const std::string& token, const std::string& /*dbPath*/) {
   std::error_code errCode;
   auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
   if (!decodedObj.payload().has_claim(kUsername) || !decodedObj.payload().has_claim(kPassword)) {
