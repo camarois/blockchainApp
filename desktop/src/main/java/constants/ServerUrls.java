@@ -10,6 +10,7 @@ public class ServerUrls {
     private String logs;
     private String createUser;
     private String deleteUser;
+    private String allUser;
 
     public String getFirebase() {
         return firebase;
@@ -37,6 +38,10 @@ public class ServerUrls {
 
     public String getDeleteUser() {
         return deleteUser;
+    }
+
+    public String getAllUsers() {
+        return allUser;
     }
 
     public String getChain() {

@@ -20,6 +20,7 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
   router->post(kBasePath_ + "motdepasse", Pistache::Rest::Routes::bind(&AdminController::handlePassword, this));
   router->post(kBasePath_ + "chaine/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleChain, this));
   router->post(kBasePath_ + "logs/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleLogs, this));
+  router->get(kBasePath_ + "allUsers", Pistache::Rest::Routes::bind(&AdminController::handleAllUsers, this));
   router->post(kBasePath_ + "creationcompte",
                Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
   router->post(kBasePath_ + "suppressioncompte",
@@ -87,7 +88,14 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+void AdminController::handleAllUsers(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
+  auto result = zmqWorker_->getRequest({Common::Functions::GetAllUsers, ""});
+  std::vector<Common::Models::User> users = nlohmann::json::parse(result.data);
+  Common::Models::AllUsersResponse allUsersResponse = {users};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(allUsersResponse));
+}
+
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
@@ -96,7 +104,6 @@ void AdminController::handleCreateAccount(const Pistache::Rest::Request& request
   response.send(Pistache::Http::Code::Ok);
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {

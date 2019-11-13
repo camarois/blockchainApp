@@ -6,6 +6,7 @@
     "changePassword": "/admin/motdepasse/",
     "createUser": "/admin/creationcompte",
     "deleteUser": "/admin/suppressioncompte",
+    "allUser": "/admin/allUsers",
     "chain": "/admin/chaine/",
     "logs": "/admin/logs/"
 }

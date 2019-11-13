@@ -22,6 +22,7 @@ class AdminController {
   void handlePassword(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  void handleAllUsers(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleCreateAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleDeleteAccount(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 

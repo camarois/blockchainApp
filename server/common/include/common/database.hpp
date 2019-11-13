@@ -32,7 +32,8 @@ enum Functions {
   GetClassResult,
   GetStudentResult,
   GetClasses,
-  GetStudents
+  GetStudents,
+  GetAllUsers
 };
 
 class Database {
@@ -70,6 +71,7 @@ class Database {
   std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
+  std::vector<Common::Models::User> getAllUsers();
 
  private:
   void close();

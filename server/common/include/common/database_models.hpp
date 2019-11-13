@@ -16,6 +16,35 @@ const std::string kPasswordRequest = "passwordRequest";
 const std::string kSalt = "salt";
 const std::string kTransactionRequest = "transactionRequest";
 const std::string kClassId = "classId";
+const std::string kUsers = "utilisateurs";
+
+struct User {
+  std::string username;
+  std::string isEditor;
+  std::string isAdmin;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const User& obj) {
+  j = {{kUsername, obj.username}, {kIsEditor, obj.isEditor}, {kIsAdmin, obj.isAdmin}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, User& obj) {
+  j.at(kUsername).get_to(obj.username);
+  j.at(kIsAdmin).get_to(obj.isAdmin);
+  j.at(kIsEditor).get_to(obj.isEditor);
+}
+
+struct AllUsersResponse {
+  std::vector<User> users;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const AllUsersResponse& obj) { j = {{kUsers, obj.users}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, AllUsersResponse& obj) { j.at(kUsers).get_to(obj.users); }
 
 struct AddUserRequest {
   Common::Models::LoginRequest loginRequest;

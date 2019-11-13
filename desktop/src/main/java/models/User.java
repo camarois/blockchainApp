@@ -2,7 +2,7 @@ package models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CreateUserRequest {
+public class User {
     @SerializedName("loginRequest")
     private LoginRequest loginRequest;
     @SerializedName("isEditor")
@@ -10,7 +10,7 @@ public class CreateUserRequest {
     @SerializedName("isAdmin")
     private boolean isAdmin;
 
-    public CreateUserRequest(LoginRequest loginRequest, boolean isEditor, boolean isAdmin) {
+    public User(LoginRequest loginRequest, boolean isEditor, boolean isAdmin) {
         this.loginRequest = loginRequest;
         this.isEditor = isEditor;
         this.isAdmin = isAdmin;

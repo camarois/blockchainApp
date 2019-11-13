@@ -98,6 +98,9 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
     case Functions::GetStudents: {
       return {true, Common::Models::toStr(getStudents())};
     }
+    case Functions::GetAllUsers: {
+      return {true, Common::Models::toStr(getAllUsers())};
+    }
 
     default:
       throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
@@ -377,6 +380,23 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
                       .id = getStudentStatement.getColumnText(2)});
   }
 
+  return result;
+}
+
+std::vector<Common::Models::User> Database::getAllUsers() {
+  Query query = Query(
+    "SELECT username, isEditor, isAdmin "
+    "FROM users;"
+  );
+  std::cout << query.val() <<std::endl;
+  Statement statement = Statement(db_, query);
+  std::vector<Common::Models::User> result;
+  while(statement.step()) {
+    result.push_back({
+        .username = statement.getColumnText(0),
+        .isEditor = statement.getColumnText(1),
+        .isAdmin = statement.getColumnText(2)});
+  }
   return result;
 }
 

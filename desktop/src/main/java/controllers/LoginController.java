@@ -1,5 +1,7 @@
 package controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import models.*;
 import services.RestService;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -54,7 +56,7 @@ public class LoginController {
 
         MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
         createSupervisorMenuItem.setOnAction(actionEvent -> {
-            Optional<CreateUserRequest> request = showCreateUserDialog();
+            Optional<User> request = showCreateUserDialog();
             RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
         });
 
@@ -92,10 +94,10 @@ public class LoginController {
         return menuBar;
     }
 
-    private Optional<CreateUserRequest> showCreateUserDialog() {
-        Dialog<CreateUserRequest> dialog = new Dialog<>();
+    private Optional<User> showCreateUserDialog() {
+        Dialog<User> dialog = new Dialog<>();
         dialog.setHeaderText(
-                "Pour concevoir un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
+                "Pour créer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
         dialog.setResizable(true);
 
         Label username = new Label("Nom d'utilisateur: ");
@@ -106,7 +108,7 @@ public class LoginController {
         TextField textUsername = new TextField();
         PasswordField textPassword = new PasswordField();
         CheckBox isEditor = new CheckBox("Pour uploader des cours sur l'application android");
-        CheckBox isAdmin = new CheckBox("Pour accèder a ce logiciel");
+        CheckBox isAdmin = new CheckBox("Pour accéder à ce logiciel");
 
         GridPane grid = new GridPane();
         grid.add(username, 1, 1);
@@ -123,7 +125,7 @@ public class LoginController {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return new CreateUserRequest(
+                return new User(
                         new LoginRequest(
                                 textUsername.getText(),
                                 textPassword.getText()),
@@ -149,6 +151,14 @@ public class LoginController {
         grid.add(textUsername, 2, 1);
         dialog.getDialogPane().setContent(grid);
 
+        BorderPane root = new BorderPane();
+        root.setBottom(grid);
+        TableView tblUsers = new TableView();
+        root.setCenter(tblUsers);
+
+        ObservableList<User> usersList = FXCollections.observableArrayList();
+        var a = RestService.getRequestAsync(RestService.urls.getCreateUser());
+        System.out.println(a);
         ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.setResultConverter(b -> {

@@ -68,6 +68,8 @@
         "iomanip": "cpp",
         "cinttypes": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "gsl_util": "cpp",
+        "span": "cpp"
     }
 }
