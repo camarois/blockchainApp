@@ -1,25 +1,31 @@
 package controllers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Window;
+import javafx.util.Callback;
 import models.*;
 import services.RestService;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
 public class LoginController {
-    @FXML private TextField usernameTextField;
-    @FXML private TextField passwordTextField;
+    @FXML
+    private TextField usernameTextField;
+    @FXML
+    private TextField passwordTextField;
 
     public void onClickLogin(ActionEvent event) {
         String username = usernameTextField.getText();
@@ -49,14 +55,15 @@ public class LoginController {
         MenuItem changePasswordMenuItem = new MenuItem("Changer mot de passe");
         changePasswordMenuItem.setOnAction(actionEvent -> {
             Optional<PasswordRequest> request = showChangePasswordDialog();
-            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {}, (e) -> {
-                showErrorDialog("L'ancien mot de passe est invalide.");
-            });
+            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {
+            }, (e) -> {
+                    showErrorDialog("L'ancien mot de passe est invalide.");
+                });
         });
 
         MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
         createSupervisorMenuItem.setOnAction(actionEvent -> {
-            Optional<User> request = showCreateUserDialog();
+            Optional<CreateUserRequest> request = showCreateUserDialog();
             RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
         });
 
@@ -94,8 +101,8 @@ public class LoginController {
         return menuBar;
     }
 
-    private Optional<User> showCreateUserDialog() {
-        Dialog<User> dialog = new Dialog<>();
+    private Optional<CreateUserRequest> showCreateUserDialog() {
+        Dialog<CreateUserRequest> dialog = new Dialog<>();
         dialog.setHeaderText(
                 "Pour créer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
         dialog.setResizable(true);
@@ -125,7 +132,7 @@ public class LoginController {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return new User(
+                return new CreateUserRequest(
                         new LoginRequest(
                                 textUsername.getText(),
                                 textPassword.getText()),
@@ -140,37 +147,81 @@ public class LoginController {
 
     private Optional<DeleteUserRequest> showDeleteUserDialog() {
         Dialog<DeleteUserRequest> dialog = new Dialog<>();
-        dialog.setHeaderText("Entrer le nom d'utilisateur du compte a supprimer");
+        dialog.setHeaderText("Attention! Les suppressions sont permanentes.");
         dialog.setResizable(true);
 
-        Label username = new Label("Nom d'utilisateur: ");
-        TextField textUsername = new TextField();
-
-        GridPane grid = new GridPane();
-        grid.add(username, 1, 1);
-        grid.add(textUsername, 2, 1);
-        dialog.getDialogPane().setContent(grid);
-
         BorderPane root = new BorderPane();
-        root.setBottom(grid);
+        dialog.getDialogPane().setContent(root);
         TableView tblUsers = new TableView();
-        root.setCenter(tblUsers);
 
-        ObservableList<User> usersList = FXCollections.observableArrayList();
-        var a = RestService.getRequestAsync(RestService.urls.getCreateUser());
-        System.out.println(a);
-        ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk) {
-                return new DeleteUserRequest(textUsername.getText());
-            }
-            return null;
-        });
+        TableColumn<String, User> colUsername = new TableColumn<>("Nom d'utilisateur");
+        colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+        tblUsers.getColumns().add(colUsername);
+        TableColumn<String, User> colAdmin = new TableColumn<>("Est admin");
+        colAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
+        tblUsers.getColumns().add(colAdmin);
+        TableColumn<String, User> colEditor = new TableColumn<>("Est editeur");
+        colEditor.setCellValueFactory(new PropertyValueFactory<>("isEditor"));
+        tblUsers.getColumns().add(colEditor);
+        TableColumn<User, Boolean> colDelete = new TableColumn<>("Supprimer");
+        tblUsers.getColumns().add(colDelete);
+
+        colDelete.setCellValueFactory(
+                new Callback<>() {
+                    @Override
+                    public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<User, Boolean> param) {
+                        return new SimpleBooleanProperty(param.getValue() != null);
+                    }
+                }
+        );
+
+        Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>> cellFactory
+                = new Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>>() {
+                    @Override
+                    public TableCell call(final TableColumn<User, Boolean> param) {
+                        final TableCell<User, Boolean> cell = new TableCell<User, Boolean>() {
+                            final Button btn = new Button("Delete");
+
+                            @Override
+                            public void updateItem(Boolean item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event -> {
+                                        User user = getTableView().getItems().get(getIndex());
+                                        RestService.postRequestAsync(
+                                                RestService.urls.getDeleteUser(),
+                                                new DeleteUserRequest(user.getUsername()));
+                                        tblUsers.getItems().remove(user);
+                                    });
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                };
+
+        colDelete.setCellFactory(cellFactory);
+        root.setCenter(tblUsers);
+        Window window = dialog.getDialogPane().getScene().getWindow();
+        window.setOnCloseRequest(event -> window.hide());
+
+        try {
+            RestService.getRequestAsync(RestService.urls.getAllUsers(), AllUsersRequest.class, (allUsersRequest) -> {
+                for (User user : allUsersRequest.getUsers()) {
+                    tblUsers.getItems().add(user);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
         return dialog.showAndWait();
     }
-
 
     private Optional<PasswordRequest> showChangePasswordDialog() {
         Dialog<PasswordRequest> dialog = new Dialog<>();

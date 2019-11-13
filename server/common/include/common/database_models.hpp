@@ -10,8 +10,8 @@ namespace Common {
 namespace Models {
 
 const std::string kLoginRequest = "loginRequest";
-const std::string kIsAdmin = "isAdmin";
-const std::string kIsEditor = "isEditor";
+const std::string kIsAdmin = "estAdmin";
+const std::string kIsEditor = "estEditeur";
 const std::string kPasswordRequest = "passwordRequest";
 const std::string kSalt = "salt";
 const std::string kTransactionRequest = "transactionRequest";
@@ -20,8 +20,8 @@ const std::string kUsers = "utilisateurs";
 
 struct User {
   std::string username;
-  std::string isEditor;
-  std::string isAdmin;
+  bool isEditor;
+  bool isAdmin;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

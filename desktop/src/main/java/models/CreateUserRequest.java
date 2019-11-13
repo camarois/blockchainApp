@@ -2,22 +2,22 @@ package models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
-    @SerializedName("usager")
-    private String username;
+public class CreateUserRequest {
+    @SerializedName("loginRequest")
+    private LoginRequest loginRequest;
     @SerializedName("estEditeur")
     private boolean isEditor;
     @SerializedName("estAdmin")
     private boolean isAdmin;
 
-    public User(String username, boolean isEditor, boolean isAdmin) {
-        this.username = username;
+    public CreateUserRequest(LoginRequest loginRequest, boolean isEditor, boolean isAdmin) {
+        this.loginRequest = loginRequest;
         this.isEditor = isEditor;
         this.isAdmin = isAdmin;
     }
 
-    public String getUsername() {
-        return username;
+    public LoginRequest getLoginRequest() {
+        return loginRequest;
     }
 
     public boolean getIsEditor() {
@@ -27,5 +27,4 @@ public class User {
     public boolean getIsAdmin() {
         return isAdmin;
     }
-
 }

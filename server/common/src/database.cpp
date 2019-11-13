@@ -394,8 +394,8 @@ std::vector<Common::Models::User> Database::getAllUsers() {
   while(statement.step()) {
     result.push_back({
         .username = statement.getColumnText(0),
-        .isEditor = statement.getColumnText(1),
-        .isAdmin = statement.getColumnText(2)});
+        .isEditor = (statement.getColumnText(1) == "1"),
+        .isAdmin = (statement.getColumnText(2) == "1")});
   }
   return result;
 }
