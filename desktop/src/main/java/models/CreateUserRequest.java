@@ -10,21 +10,21 @@ public class CreateUserRequest {
     @SerializedName("isAdmin")
     private boolean isAdmin;
 
-    public CreateUserRequest(LoginRequest loginRequest, boolean isEditor) {
+    public CreateUserRequest(LoginRequest loginRequest, boolean isEditor, boolean isAdmin) {
         this.loginRequest = loginRequest;
         this.isEditor = isEditor;
-        this.isAdmin = false;
+        this.isAdmin = isAdmin;
     }
 
     public LoginRequest getLoginRequest() {
         return loginRequest;
     }
 
-    public boolean getisEditor() {
+    public boolean getIsEditor() {
         return isEditor;
     }
 
-    public boolean getisAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 }

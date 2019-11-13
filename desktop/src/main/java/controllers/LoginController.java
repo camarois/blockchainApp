@@ -8,10 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import models.CreateUserRequest;
-import models.LoginRequest;
-import models.LoginResponse;
-import models.PasswordRequest;
+import models.*;
 import services.RestService;
 
 import java.io.IOException;
@@ -63,8 +60,8 @@ public class LoginController {
 
         MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
         deleteSupervisorMenuItem.setOnAction(actionEvent -> {
-            Optional<CreateUserRequest> request = showCreateUserDialog();
-            RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
+            Optional<DeleteUserRequest> request = showDeleteUserDialog();
+            RestService.postRequestAsync(RestService.urls.getDeleteUser(), request.get());
         });
 
         MenuItem logoutMenuItem = new MenuItem("Deconnexion");
@@ -104,10 +101,12 @@ public class LoginController {
         Label username = new Label("Nom d'utilisateur: ");
         Label password = new Label("Mot de passe: ");
         Label editor = new Label("Compte éditeur: ");
+        Label admin = new Label("Compte administrateur: ");
 
         TextField textUsername = new TextField();
         PasswordField textPassword = new PasswordField();
-        CheckBox isEditor = new CheckBox("");
+        CheckBox isEditor = new CheckBox("Pour uploader des cours sur l'application android");
+        CheckBox isAdmin = new CheckBox("Pour accèder a ce logiciel");
 
         GridPane grid = new GridPane();
         grid.add(username, 1, 1);
@@ -116,6 +115,8 @@ public class LoginController {
         grid.add(textPassword, 2, 3);
         grid.add(editor, 1, 5);
         grid.add(isEditor, 2, 5);
+        grid.add(admin, 1, 7);
+        grid.add(isAdmin, 2, 7);
         dialog.getDialogPane().setContent(grid);
 
         ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
@@ -126,13 +127,40 @@ public class LoginController {
                         new LoginRequest(
                                 textUsername.getText(),
                                 textPassword.getText()),
-                        isEditor.isSelected());
+                        isEditor.isSelected(),
+                        isAdmin.isSelected());
             }
             return null;
         });
 
         return dialog.showAndWait();
     }
+
+    private Optional<DeleteUserRequest> showDeleteUserDialog() {
+        Dialog<DeleteUserRequest> dialog = new Dialog<>();
+        dialog.setHeaderText("Entrer le nom d'utilisateur du compte a supprimer");
+        dialog.setResizable(true);
+
+        Label username = new Label("Nom d'utilisateur: ");
+        TextField textUsername = new TextField();
+
+        GridPane grid = new GridPane();
+        grid.add(username, 1, 1);
+        grid.add(textUsername, 2, 1);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return new DeleteUserRequest(textUsername.getText());
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
+    }
+
 
     private Optional<PasswordRequest> showChangePasswordDialog() {
         Dialog<PasswordRequest> dialog = new Dialog<>();
