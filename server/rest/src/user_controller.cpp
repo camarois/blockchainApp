@@ -5,6 +5,7 @@
 #include <common/token_helper.hpp>
 #include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
+#include <iostream>
 
 namespace Rest {
 
@@ -64,11 +65,9 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 }
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::LoginRequest registerRequest = nlohmann::json::parse(request.body());
-  Common::Models::AddUserRequest addUserRequest = {registerRequest, false};
+  Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
   zmqWorker_->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
-  Common::Models::LoginResponse registerResponse = {};
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
+  response.send(Pistache::Http::Code::Ok);
 }
 
 }  // namespace Rest

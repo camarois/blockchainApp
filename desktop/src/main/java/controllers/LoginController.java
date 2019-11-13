@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import models.CreateUserRequest;
 import models.LoginRequest;
 import models.LoginResponse;
 import models.PasswordRequest;
@@ -46,12 +47,7 @@ public class LoginController {
     }
 
     private MenuBar createMenuBar() {
-        Menu generalMenu = new Menu("Options");
         MenuItem changePasswordMenuItem = new MenuItem("Changer mot de passe");
-        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
-        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
-        MenuItem logoutMenuItem = new MenuItem("Deconnexion");
-
         changePasswordMenuItem.setOnAction(actionEvent -> {
             Optional<PasswordRequest> request = showChangePasswordDialog();
             RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {}, (e) -> {
@@ -59,6 +55,19 @@ public class LoginController {
             });
         });
 
+        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
+        createSupervisorMenuItem.setOnAction(actionEvent -> {
+            Optional<CreateUserRequest> request = showCreateUserDialog();
+            RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
+        });
+
+        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
+        deleteSupervisorMenuItem.setOnAction(actionEvent -> {
+            Optional<CreateUserRequest> request = showCreateUserDialog();
+            RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
+        });
+
+        MenuItem logoutMenuItem = new MenuItem("Deconnexion");
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
                 RestService.postRequestAsync(RestService.urls.getLogout(), null);
@@ -76,6 +85,7 @@ public class LoginController {
             }
         });
 
+        Menu generalMenu = new Menu("Options");
         generalMenu.getItems().addAll(changePasswordMenuItem, createSupervisorMenuItem, deleteSupervisorMenuItem,
                 new SeparatorMenuItem(), logoutMenuItem);
 
@@ -83,6 +93,45 @@ public class LoginController {
         menuBar.getMenus().addAll(generalMenu);
 
         return menuBar;
+    }
+
+    private Optional<CreateUserRequest> showCreateUserDialog() {
+        Dialog<CreateUserRequest> dialog = new Dialog<>();
+        dialog.setHeaderText(
+                "Pour concevoir un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
+        dialog.setResizable(true);
+
+        Label username = new Label("Nom d'utilisateur: ");
+        Label password = new Label("Mot de passe: ");
+        Label editor = new Label("Compte éditeur: ");
+
+        TextField textUsername = new TextField();
+        PasswordField textPassword = new PasswordField();
+        CheckBox isEditor = new CheckBox("");
+
+        GridPane grid = new GridPane();
+        grid.add(username, 1, 1);
+        grid.add(textUsername, 2, 1);
+        grid.add(password, 1, 3);
+        grid.add(textPassword, 2, 3);
+        grid.add(editor, 1, 5);
+        grid.add(isEditor, 2, 5);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return new CreateUserRequest(
+                        new LoginRequest(
+                                textUsername.getText(),
+                                textPassword.getText()),
+                        isEditor.isSelected());
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
     }
 
     private Optional<PasswordRequest> showChangePasswordDialog() {

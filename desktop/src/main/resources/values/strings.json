@@ -4,6 +4,8 @@
     "login": "/admin/login/",
     "logout": "/admin/logout/",
     "changePassword": "/admin/motdepasse/",
+    "createUser": "/admin/creationcompte",
+    "deleteUser": "/admin/suppressioncompte",
     "chain": "/admin/chaine/",
     "logs": "/admin/logs/"
 }

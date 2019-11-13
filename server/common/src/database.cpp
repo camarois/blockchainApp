@@ -21,7 +21,7 @@ Database::Database(const std::string& dbPath) {
         "Cannot connect to database");
     db_.reset(dbPtr, sqlite3_close_v2);
 
-    addUser({{"admin", "equipe01"}, true});
+    addUser({{"admin", "equipe01"}, true, true});
   } catch (...) {
     close();
     throw;
@@ -43,6 +43,10 @@ Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql)
   switch (sql.function) {
     case Functions::AddUser: {
       addUser(nlohmann::json::parse(sql.params));
+      return {false, ""};
+    }
+    case Functions::DeleteUser: {
+      deleteUser(nlohmann::json::parse(sql.params));
       return {false, ""};
     }
     case Functions::SetUserPassword: {
@@ -136,7 +140,7 @@ bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request
 
 std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& request) {
   Query query = Query(
-      "SELECT isAdmin FROM users "
+      "SELECT isEditor FROM users "
       "WHERE username = '%q' AND password = '%q';",
       request.loginRequest.username.c_str(),
       Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
@@ -152,10 +156,19 @@ void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
-      "(username, password, salt, isAdmin) "
-      "VALUES ('%q', '%q', '%q', '%q');",
+      "(username, password, salt, isAdmin, isEditor) "
+      "VALUES ('%q', '%q', '%q', '%q', '%q');",
       request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
-      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+void Database::deleteUser(const Common::Models::DeleteAccountRequest& request) {
+  Query query = Query(
+    "DELETE FROM users "
+    "WHERE username = '%q';",
+    request.username.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -164,10 +177,10 @@ void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& req
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      "WHERE username = '%q' AND password = '%q' AND isEditor = '%q';",
       Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
       Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
-      std::to_string(int(request.isAdmin)).c_str());
+      std::to_string(int(request.isEditor)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
