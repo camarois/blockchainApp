@@ -60,7 +60,7 @@ public class LoginController {
                 });
         });
 
-        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
+        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte utilisateur");
         createSupervisorMenuItem.setOnAction(actionEvent -> {
             Optional<CreateUserRequest> request = showCreateUserDialog();
             RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
