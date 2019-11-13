@@ -169,9 +169,9 @@ void Database::addUser(const Common::Models::AddUserRequest& request) {
 
 void Database::deleteUser(const Common::Models::DeleteAccountRequest& request) {
   Query query = Query(
-    "DELETE FROM users "
-    "WHERE username = '%q';",
-    request.username.c_str());
+      "DELETE FROM users "
+      "WHERE username = '%q';",
+      request.username.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -385,17 +385,15 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
 
 std::vector<Common::Models::User> Database::getAllUsers() {
   Query query = Query(
-    "SELECT username, isEditor, isAdmin "
-    "FROM users;"
-  );
-  std::cout << query.val() <<std::endl;
+      "SELECT username, isEditor, isAdmin "
+      "FROM users;");
+  std::cout << query.val() << std::endl;
   Statement statement = Statement(db_, query);
   std::vector<Common::Models::User> result;
-  while(statement.step()) {
-    result.push_back({
-        .username = statement.getColumnText(0),
-        .isEditor = (statement.getColumnText(1) == "1"),
-        .isAdmin = (statement.getColumnText(2) == "1")});
+  while (statement.step()) {
+    result.push_back({.username = statement.getColumnText(0),
+                      .isEditor = (statement.getColumnText(1) == "1"),
+                      .isAdmin = (statement.getColumnText(2) == "1")});
   }
   return result;
 }

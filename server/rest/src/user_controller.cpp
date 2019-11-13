@@ -5,7 +5,6 @@
 #include <common/token_helper.hpp>
 #include <gflags/gflags.h>
 #include <rest/user_controller.hpp>
-#include <iostream>
 
 namespace Rest {
 

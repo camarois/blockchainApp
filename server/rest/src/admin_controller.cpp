@@ -89,7 +89,8 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-void AdminController::handleAllUsers(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
+void AdminController::handleAllUsers(const Pistache::Rest::Request& /*request*/,
+                                     Pistache::Http::ResponseWriter response) {
   auto result = zmqWorker_->getRequest({Common::Functions::GetAllUsers, ""});
   std::vector<Common::Models::User> users = nlohmann::json::parse(result.data);
   Common::Models::AllUsersResponse allUsersResponse = {users};
