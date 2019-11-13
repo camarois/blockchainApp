@@ -20,8 +20,8 @@ const std::string kUsers = "utilisateurs";
 
 struct User {
   std::string username;
-  bool isEditor;
-  bool isAdmin;
+  bool isEditor = false;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
