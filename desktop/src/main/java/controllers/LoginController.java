@@ -179,7 +179,7 @@ public class LoginController {
                     @Override
                     public TableCell call(final TableColumn<User, Boolean> param) {
                         final TableCell<User, Boolean> cell = new TableCell<User, Boolean>() {
-                            final Button btn = new Button("Delete");
+                            final Button btn = new Button("Supprimer");
 
                             @Override
                             public void updateItem(Boolean item, boolean empty) {
