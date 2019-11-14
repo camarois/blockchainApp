@@ -28,11 +28,13 @@ if(NOT BUILD_ARMV7)
     # add_subdirectory(tests)
 endif()
 
-install(FILES
-    ${CMAKE_BINARY_DIR}/rest/rest
-    ${CMAKE_BINARY_DIR}/miner/miner
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/rest
+          ${CMAKE_BINARY_DIR}/miner/miner
     DESTINATION usr/bin
-    PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
 )
 
 install(FILES
