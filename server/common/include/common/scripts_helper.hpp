@@ -37,6 +37,12 @@ inline bool createCert(const std::string& ip) {
       return false;
     }
 
+    std::optional<std::filesystem::path> script = getSharedFile("createCert.sh");
+    if (!script) {
+      std::cerr << "Could not find createCert.sh" << std::endl;
+      return false;
+    }
+
     std::stringstream ss;
     ss << script->string() + " server '";
     for (size_t i = 0; i < ips.size(); ++i) {
