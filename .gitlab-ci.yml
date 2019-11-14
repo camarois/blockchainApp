@@ -18,6 +18,19 @@ cache:
         - server/build/libsqlite3/**/*
         - server/build/libstduuid/**/*
         - server/build/libzmq/**/*
+        - server/build-arm/libcppjwt/**/*
+        - server/build-arm/libcppzmq/**/*
+        - server/build-arm/libcurlpp/**/*
+        - server/build-arm/libgflags/**/*
+        - server/build-arm/libgtest/**/*
+        - server/build-arm/libjson/**/*
+        - server/build-arm/libpicosha2/**/*
+        - server/build-arm/libpistache/**/*
+        - server/build-arm/libsqlite3/**/*
+        - server/build-arm/libstduuid/**/*
+        - server/build-arm/libzmq/**/*
+        - server/build-arm/sysroot/**/*
+        - server/build-arm/toolchain/**/*
 
 ################
 # Build Stages #
@@ -35,21 +48,21 @@ build-server:
         paths:
             - server/build
 
-#build-server:armv7:
-#    stage: build
-#    before_script:
-#        - mkdir -p server/build
-#    script:
-#        - cd server/build && cmake .. -DBUILD_ARMV7=on && make
-#    only:
-#        changes:
-#            - server/**/*
-#            - .gitlab-ci.yml
-#    artifacts:
-#        paths:
-#            - server/build/miner/miner
-#            - server/build/rest/rest
-#    allow_failure: true
+build-server:armv7:
+    stage: build
+    before_script:
+        - mkdir -p server/build-arm
+    script:
+        - cd server/build-arm && cmake -GNinja -DBUILD_ARMV7=on .. && ninja -j 2
+    only:
+        changes:
+            - server/**/*
+            - .gitlab-ci.yml
+    artifacts:
+        paths:
+            - server/build-arm/miner/miner
+            - server/build-arm/rest/rest
+    allow_failure: true
 
 build-desktop:
     stage: build
