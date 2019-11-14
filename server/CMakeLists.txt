@@ -32,6 +32,7 @@ install(FILES
     ${CMAKE_BINARY_DIR}/rest/rest
     ${CMAKE_BINARY_DIR}/miner/miner
     DESTINATION usr/bin
+    PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
 )
 
 install(FILES
