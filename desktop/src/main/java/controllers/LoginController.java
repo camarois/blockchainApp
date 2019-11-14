@@ -66,7 +66,7 @@ public class LoginController {
             RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
         });
 
-        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
+        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte utilisateur");
         deleteSupervisorMenuItem.setOnAction(actionEvent -> {
             Optional<DeleteUserRequest> request = showDeleteUserDialog();
             RestService.postRequestAsync(RestService.urls.getDeleteUser(), request.get());
@@ -103,18 +103,18 @@ public class LoginController {
     private Optional<CreateUserRequest> showCreateUserDialog() {
         Dialog<CreateUserRequest> dialog = new Dialog<>();
         dialog.setHeaderText(
-                "Pour créer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
+                "Pour creer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
         dialog.setResizable(true);
 
         Label username = new Label("Nom d'utilisateur: ");
         Label password = new Label("Mot de passe: ");
-        Label editor = new Label("Compte éditeur: ");
+        Label editor = new Label("Compte editeur: ");
         Label admin = new Label("Compte administrateur: ");
 
         TextField textUsername = new TextField();
         PasswordField textPassword = new PasswordField();
         CheckBox isEditor = new CheckBox("Pour uploader des cours sur l'application android");
-        CheckBox isAdmin = new CheckBox("Pour accéder à ce logiciel");
+        CheckBox isAdmin = new CheckBox("Pour acceder a ce logiciel");
 
         GridPane grid = new GridPane();
         grid.add(username, 1, 1);
@@ -131,6 +131,9 @@ public class LoginController {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
+                if (textUsername.getText().isEmpty() || textPassword.getText().isEmpty()) {
+                    return null;
+                }
                 return new CreateUserRequest(
                         new LoginRequest(
                                 textUsername.getText(),
@@ -154,15 +157,19 @@ public class LoginController {
         TableView tblUsers = new TableView();
 
         TableColumn<String, User> colUsername = new TableColumn<>("Nom d'utilisateur");
+        colUsername.setStyle("-fx-alignment: CENTER-LEFT;");
         colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         tblUsers.getColumns().add(colUsername);
         TableColumn<String, User> colAdmin = new TableColumn<>("Est admin");
+        colAdmin.setStyle("-fx-alignment: CENTER-LEFT;");
         colAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
         tblUsers.getColumns().add(colAdmin);
         TableColumn<String, User> colEditor = new TableColumn<>("Est editeur");
+        colEditor.setStyle("-fx-alignment: CENTER-LEFT;");
         colEditor.setCellValueFactory(new PropertyValueFactory<>("isEditor"));
         tblUsers.getColumns().add(colEditor);
         TableColumn<User, Boolean> colDelete = new TableColumn<>("Supprimer");
+        colDelete.setStyle("-fx-alignment: CENTER;");
         tblUsers.getColumns().add(colDelete);
 
         colDelete.setCellValueFactory(

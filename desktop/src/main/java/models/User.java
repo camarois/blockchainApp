@@ -20,12 +20,12 @@ public class User {
         return username;
     }
 
-    public boolean getIsEditor() {
-        return isEditor;
+    public String getIsEditor() {
+        return isEditor ? "Oui" : "";
     }
 
-    public boolean getIsAdmin() {
-        return isAdmin;
+    public String getIsAdmin() {
+        return isAdmin ? "Oui" : "";
     }
 
 }
