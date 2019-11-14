@@ -1,0 +1,11 @@
+[Unit]
+Description=INF3995 Miner Application
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/srv/inf3995/miner/
+ExecStart=/usr/bin/miner
+
+[Install]
+WantedBy=multi-user.target

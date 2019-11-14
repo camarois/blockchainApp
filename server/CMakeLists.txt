@@ -50,3 +50,9 @@ install(
     FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
     DESTINATION usr/share/inf3995
 )
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-miner.service
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-rest.service
+    DESTINATION usr/lib/systemd/system
+)
