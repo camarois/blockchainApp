@@ -84,7 +84,7 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
   int provenance = request.param(kId_).as<std::string>() != "serveurweb" ? request.param(kId_).as<int>() : 0;
   std::vector<Common::Models::Information> logs;
   logs = db.getLogs(logsRequest.last, provenance);
-  Common::Models::LogsResponse logsResponse = {{{logs}}};
+  Common::Models::LogsResponse logsResponse = {logs};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 

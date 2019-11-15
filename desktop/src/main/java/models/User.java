@@ -21,11 +21,11 @@ public class User {
     }
 
     public String getIsEditor() {
-        return isEditor ? "Oui" : "";
+        return isEditor ? "X" : "";
     }
 
     public String getIsAdmin() {
-        return isAdmin ? "Oui" : "";
+        return isAdmin ? "X" : "";
     }
 
 }

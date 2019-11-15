@@ -60,7 +60,7 @@ public class LoginController {
                 });
         });
 
-        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte utilisateur");
+        MenuItem createSupervisorMenuItem = new MenuItem("Créer un compte utilisateur");
         createSupervisorMenuItem.setOnAction(actionEvent -> {
             Optional<CreateUserRequest> request = showCreateUserDialog();
             RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
@@ -103,7 +103,7 @@ public class LoginController {
     private Optional<CreateUserRequest> showCreateUserDialog() {
         Dialog<CreateUserRequest> dialog = new Dialog<>();
         dialog.setHeaderText(
-                "Pour creer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
+                "Pour créer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
         dialog.setResizable(true);
 
         Label username = new Label("Nom d'utilisateur: ");
@@ -114,7 +114,7 @@ public class LoginController {
         TextField textUsername = new TextField();
         PasswordField textPassword = new PasswordField();
         CheckBox isEditor = new CheckBox("Pour uploader des cours sur l'application android");
-        CheckBox isAdmin = new CheckBox("Pour acceder a ce logiciel");
+        CheckBox isAdmin = new CheckBox("Pour accéder à ce logiciel");
 
         GridPane grid = new GridPane();
         grid.add(username, 1, 1);
@@ -161,11 +161,11 @@ public class LoginController {
         colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         tblUsers.getColumns().add(colUsername);
         TableColumn<String, User> colAdmin = new TableColumn<>("Est admin");
-        colAdmin.setStyle("-fx-alignment: CENTER-LEFT;");
+        colAdmin.setStyle("-fx-alignment: CENTER;");
         colAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
         tblUsers.getColumns().add(colAdmin);
-        TableColumn<String, User> colEditor = new TableColumn<>("Est editeur");
-        colEditor.setStyle("-fx-alignment: CENTER-LEFT;");
+        TableColumn<String, User> colEditor = new TableColumn<>("Est éditeur");
+        colEditor.setStyle("-fx-alignment: CENTER;");
         colEditor.setCellValueFactory(new PropertyValueFactory<>("isEditor"));
         tblUsers.getColumns().add(colEditor);
         TableColumn<User, Boolean> colDelete = new TableColumn<>("Supprimer");
