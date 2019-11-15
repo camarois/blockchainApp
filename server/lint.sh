@@ -2,16 +2,15 @@
 # ./lint.sh [--tidy] [--format] [--fix] [--include-tests] [FILES]
 
 function get_source_files() {
-    local without_tests=$1
-    local without_build_files=('-not' '-path' './build/*')
+    local with_tests=$1
 
-    if [[ $without_tests -eq 1 ]]; then
-        without_tests=('-not' '-path' './tests/*')
+    if [[ $with_tests -eq 1 ]]; then
+        with_tests=('tests')
     else
-        without_tests=()
+        with_tests=()
     fi
 
-    find . -name '*.cpp' "${without_tests[@]}" "${without_build_files[@]}" | grep -v ccls-cache
+    find miner rest common "${with_tests[@]}" -name '*.cpp' | grep -v ccls-cache
 }
 
 function array_as_lines() {
@@ -68,7 +67,7 @@ function is_positive_number() {
 DO_TIDY=0
 DO_FORMAT=0
 DO_FIX=0
-DO_EXCLUDE_TESTS=1
+DO_INCLUDE_TESTS=0
 THREAD_COUNT=$(grep -c ^processor /proc/cpuinfo)
 FILES=()
 
@@ -87,7 +86,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --include-tests)
-            DO_EXCLUDE_TESTS=0
+            DO_INCLUDE_TESTS=1
             shift
             ;;
         --threads)
@@ -110,7 +109,7 @@ if [[ $DO_TIDY -eq 0 && $DO_FORMAT -eq 0 ]]; then
 fi
 
 if [[ ${#FILES[@]} -eq 0 ]]; then
-    FILENAMES=$(get_source_files $DO_EXCLUDE_TESTS)
+    FILENAMES=$(get_source_files $DO_INCLUDE_TESTS)
 else
     FILENAMES=$(array_as_lines "${FILES[@]}")
 fi
@@ -119,6 +118,7 @@ if [[ $DO_TIDY -eq 1 ]]; then
     if ! printf "%s" "$FILENAMES" | lint_files $DO_FIX; then
         exit 1
     fi
+    exit
 fi
 
 if [[ $DO_FORMAT -eq 1 ]]; then
