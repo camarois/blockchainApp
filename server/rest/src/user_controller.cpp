@@ -8,10 +8,7 @@
 
 namespace Rest {
 
-UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router, std::shared_ptr<ZMQWorker> zmqWorker)
-    : zmqWorker_(std::move(zmqWorker)) {
-  setupRoutes(router);
-}
+UserController::UserController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
 void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&UserController::handleLogin, this), false);
@@ -22,14 +19,17 @@ void UserController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rout
 
 void UserController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LoginRequest loginRequest = nlohmann::json::parse(request.body());
-  auto salt = zmqWorker_->getRequest({Common::Functions::GetSalt, loginRequest.username});
+  Common::Models::GetSaltRequest getSaltRequest = {loginRequest.username};
+  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data};
-  if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)}).found) {
+  if (salt.found && Rest::ZMQWorker::get()
+                        ->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)})
+                        .found) {
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     Common::Models::GetRoleRequest getRoleRequest = {loginRequest, salt.data};
-    auto edition = zmqWorker_->getRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
+    auto edition =
+        Rest::ZMQWorker::get()->getRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
     Common::Models::LoginResponse loginResponse = {edition.data == "1"};
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
   } else {
@@ -49,14 +49,16 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
-
-  auto salt = zmqWorker_->getRequest({Common::Functions::GetSalt, loginRequest.username});
+  Common::Models::GetSaltRequest getSaltRequest = {loginRequest.username};
+  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   Common::Models::ContainsUserRequest containsUserRequest = {loginRequest, salt.data};
-  if (salt.found &&
-      zmqWorker_->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)}).found) {
+  if (salt.found && Rest::ZMQWorker::get()
+                        ->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)})
+                        .found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      false};
-    zmqWorker_->updateRequest({Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
+    Rest::ZMQWorker::get()->updateRequest(
+        {Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
@@ -65,8 +67,9 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
 
 void UserController::handleRegister(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
-  zmqWorker_->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
-  response.send(Pistache::Http::Code::Ok);
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
+  Common::Models::LoginResponse registerResponse = {};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
 }  // namespace Rest

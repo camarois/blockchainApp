@@ -8,6 +8,7 @@
 #include <string>
 #include <unistd.h>
 #include <zmq.hpp>
+#include <common/database.hpp>
 
 DEFINE_string(addr, "", "REST service address");                        // NOLINT
 DEFINE_string(user, "server", "Developper using the service");          // NOLINT
@@ -17,6 +18,7 @@ DEFINE_int32(difficulty, 3, "Hashing difficulty");                      // NOLIN
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Blockchain miner service", argc, argv);
+  Common::Database::init(FLAGS_db);
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {

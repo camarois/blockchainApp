@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 #include <sqlite3.h>
 #include <string>
+#include <mutex>
 
 namespace Common {
 
@@ -38,12 +39,13 @@ enum Functions {
 
 class Database {
  public:
-  explicit Database();
   explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
+  static std::shared_ptr<Database> get();
+  static void init(const std::string& dbPath);
 
-  Common::Models::SqlResponse get(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse executeRequest(const Common::Models::SqlRequest& sql);
 
   void addUser(const Common::Models::AddUserRequest& request);
   void deleteUser(const Common::Models::DeleteAccountRequest& request);
@@ -51,7 +53,7 @@ class Database {
   bool containsUser(const Common::Models::ContainsUserRequest& request);
   bool containsAdmin(const Common::Models::ContainsAdminRequest& request);
   std::optional<bool> getRole(const Common::Models::GetRoleRequest& request);
-  std::optional<std::string> getSalt(const std::string& username);
+  std::optional<std::string> getSalt(const Common::Models::GetSaltRequest& request);
 
   std::vector<std::string> getIps();
   void addIp(const std::string& ip);
@@ -76,6 +78,8 @@ class Database {
  private:
   void close();
   void initFunctions();
+
+  static std::shared_ptr<Database> instance;
 
   std::shared_ptr<sqlite3> db_;
   std::unordered_map<Common::Functions, std::function<Common::Models::SqlResponse(nlohmann::json)>> functions_;

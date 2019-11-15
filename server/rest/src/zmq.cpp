@@ -9,6 +9,8 @@
 
 namespace Rest {
 
+std::shared_ptr<ZMQWorker> ZMQWorker::instance;
+
 // NOLINTNEXTLINE(modernize-pass-by-value)
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
@@ -27,6 +29,21 @@ ZMQWorker::~ZMQWorker() {
   socketXSubBlockchain_.close();
   context_.close();
   join();
+}
+
+std::shared_ptr<ZMQWorker> ZMQWorker::get() {
+  if (instance) {
+    return instance;
+  } else {
+    throw std::runtime_error("ZMQWorker not created, you should initilize it first");
+  }
+}
+
+void ZMQWorker::init(const std::string& serverHostname) {
+  if (!instance) {
+    instance = std::make_shared<ZMQWorker>(serverHostname);
+    std::cout << "ZMQWorker created" << std::endl;
+  }
 }
 
 bool ZMQWorker::start() {

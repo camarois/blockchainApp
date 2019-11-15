@@ -12,9 +12,7 @@ DECLARE_string(transactions);
 
 namespace Rest {
 
-TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router,
-                                             std::shared_ptr<ZMQWorker> zmqWorker)
-    : zmqWorker_(std::move(zmqWorker)) {
+TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router) {
   setupRoutes(router);
 }
 
@@ -36,16 +34,16 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
 
   Common::Models::CheckForExistingClassRequest checkForExistingClass = {transactionRequest.acronym,
                                                                         transactionRequest.trimester};
-  auto classId =
-      zmqWorker_->getRequest({Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
+  auto classId = Rest::ZMQWorker::get()->getRequest(
+      {Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
   if (classId.found) {
-    zmqWorker_->updateRequest({Common::Functions::DeleteExistingClass, classId.data});
-    zmqWorker_->updateRequest({Common::Functions::DeleteExistingResults, classId.data});
+    Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteExistingClass, classId.data});
+    Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteExistingResults, classId.data});
   }
-  auto newClassId =
-      zmqWorker_->updateRequest({Common::Functions::AddNewClass, Common::Models::toStr(transactionRequest)});
+  auto newClassId = Rest::ZMQWorker::get()->updateRequest(
+      {Common::Functions::AddNewClass, Common::Models::toStr(transactionRequest)});
   Common::Models::AddNewResultRequest addNewResultRequest = {transactionRequest, std::stoi(newClassId.data)};
-  zmqWorker_->updateRequest({Common::Functions::AddNewResult, Common::Models::toStr(addNewResultRequest)});
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddNewResult, Common::Models::toStr(addNewResultRequest)});
 
   response.send(Pistache::Http::Code::Ok);
 }

@@ -9,18 +9,18 @@ namespace Common {
 std::shared_ptr<Logger> Logger::instance;
 
 // NOLINTNEXTLINE
-Logger::Logger(int logSessionId, const std::string& dbPath) : logSessionId_(logSessionId), dbPath_(dbPath) {
+Logger::Logger(int logSessionId) : logSessionId_(logSessionId) {
   logCount_ = 1;
 }
 
-std::shared_ptr<Logger> Logger::get() { return instance; }
-
-void Logger::init(const std::string& dbPath) {
-  if (!Logger::instance) {
-    Common::Database db(dbPath);
-    auto logSessionId = db.addLogSession();
-    instance = std::make_shared<Logger>(logSessionId, dbPath);
+std::shared_ptr<Logger> Logger::get() {
+  if (instance) {
+    return instance;
+  } else {
+    auto logSessionId = Common::Database::get()->addLogSession();
+    instance = std::make_shared<Logger>(logSessionId);
     std::cout << "Logger created" << std::endl;
+    return instance;
   }
 }
 
@@ -34,12 +34,11 @@ void Logger::info(int provenance, const std::string& message) { log(Severity::IN
 
 void Logger::log(Severity severity, int provenance, const std::string& message, std::ostream& stream) {
   std::lock_guard<std::mutex> lock(mutex_);
-  Common::Database db(dbPath_);
   auto nowStr = Common::FormatHelper::nowStr();
   stream << std::endl
-         << logCount_ << ": " << magic_enum::enum_name(severity) << ": " << nowStr << ": " << provenance << ": " << message
-         << std::endl;
-  db.addLog(logCount_, severity, provenance, nowStr, message, logSessionId_);
+         << logCount_ << ": " << magic_enum::enum_name(severity) << ": " << nowStr << ": " << provenance << ": "
+         << message << std::endl;
+  Common::Database::get()->addLog(logCount_, severity, provenance, nowStr, message, logSessionId_);
   ++logCount_;
 }
 
