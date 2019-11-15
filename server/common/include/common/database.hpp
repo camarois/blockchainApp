@@ -17,26 +17,6 @@
 
 namespace Common {
 
-enum Functions {
-  AddUser,
-  DeleteUser,
-  SetUserPassword,
-  ContainsUser,
-  ContainsAdmin,
-  GetRole,
-  GetSalt,
-  CheckForExistingClass,
-  DeleteExistingClass,
-  DeleteExistingResults,
-  AddNewClass,
-  AddNewResult,
-  GetClassResult,
-  GetStudentResult,
-  GetClasses,
-  GetStudents,
-  GetAllUsers
-};
-
 class Database {
  public:
   explicit Database(const std::string& dbPath);
