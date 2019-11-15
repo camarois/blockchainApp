@@ -1,0 +1,51 @@
+_pkgname='inf3995'
+pkgname="${_pkgname}-git"
+pkgver=r823.9acce7d
+pkgrel=1
+pkgdesc='Rest/Miner applications'
+arch=('i686' 'x86_64' 'armv7h')
+url='https://gitlab.com/frankilepro/inf3995'
+license=('GPL3')
+depends=('curl')
+makedepends=('cmake' 'ninja' 'git')
+options=(!buildflags)
+source=()
+sha256sums=()
+
+prepare() {
+    if [[ -d "${srcdir}/${_pkgname}" ]]; then
+        cd "${srcdir}/${_pkgname}"
+        git pull origin gpollo/systemd
+    else
+        cd "${srcdir}"
+        git clone --branch gpollo/systemd "${CI_REPOSITORY_URL}" "${_pkgname}"
+    fi
+}
+
+pkgver() {
+    cd "${srcdir}/${_pkgname}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    mkdir -p "${srcdir}/${_pkgname}/server/build"
+    cd "${srcdir}/${_pkgname}/server/build"
+
+    unset CXXFLAGS
+    unset CFLAGS
+    unset LDFLAGS
+
+    if [[ "$CARCH" == "armv7h" ]]; then
+        cmake -GNinja -DBUILD_ARMV7=on -DCMAKE_INSTALL_PREFIX=${pkgdir} ..
+    else
+        cmake -GNinja -DCMAKE_INSTALL_PREFIX=${pkgdir} ..
+    fi
+
+    ninja -j $(/usr/bin/getconf _NPROCESSORS_ONLN)
+}
+
+package() {
+    cd "${srcdir}/${_pkgname}/server/build"
+
+    ninja install
+}
