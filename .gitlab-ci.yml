@@ -4,6 +4,7 @@ stages:
     - build
     - test
     - lint
+    - package
 
 cache:
     paths:
@@ -31,6 +32,7 @@ cache:
         - server/build-arm/libzmq/**/*
         - server/build-arm/sysroot/**/*
         - server/build-arm/toolchain/**/*
+        - server/package/src/**/*
 
 ################
 # Build Stages #
@@ -156,3 +158,20 @@ lint-server:
         changes:
             - server/**/*
             - .gitlab-ci.yml
+
+##################
+# Package Stages #
+##################
+
+package-server:
+    stage: package
+    image: gpol/inf3995:package
+    script:
+        - cd server/package && CARCH=armv7h makepkg
+    only:
+        refs:
+            - merge_requests
+            - master
+    artifacts:
+        paths:
+            - server/package/inf3995-git-*.tar.xz
