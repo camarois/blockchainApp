@@ -7,6 +7,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <atomic>
 
 namespace Common {
 
@@ -29,7 +30,7 @@ class Logger {
   std::mutex mutex_;
   const int logSessionId_;
   const std::string dbPath_;
-  int logCount_;
+  std::atomic<int> logCount_;
 };
 
 }  // namespace Common
