@@ -42,6 +42,7 @@ download_and_unpack(
     ${SYSROOT_DIR}
 )
 
+
 set(sqlite_file sqlite-3.30.1-1-armv7h.pkg.tar.xz)
 set(sqlite_md5 6e4f940daae448eec9b31ae62d4829ef)
 set(sqlite_url http://tardis.tiny-vps.com/aarm/packages/s/sqlite/${sqlite_file})
@@ -66,3 +67,9 @@ download_and_unpack(
 message(STATUS "Setting ARMv7 toolchain")
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/armv7_toolchain.cmake)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+
+set(CMAKE_SYSROOT_DEFINES
+    -DCURL_LIBRARY=${SYSROOT_DIR}/usr/lib/libcurl.so
+    -DCURL_INCLUDE_DIR=${SYSROOT_DIR}/usr/include
+)
+
