@@ -1,11 +1,10 @@
 #include <cerrno>
-#include <gflags/gflags.h>
-#include <iostream>
-
 #include <common/database.hpp>
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
+#include <iostream>
 #include <miner/zmq.hpp>
 
 DECLARE_string(db);
