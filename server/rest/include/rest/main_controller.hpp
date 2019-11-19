@@ -25,7 +25,6 @@ class MainController {
  private:
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
-  std::shared_ptr<ZMQWorker> zmqWorker_;
   Rest::UserController userController_;
   Rest::PingController pingController_;
   Rest::TransactionController transactionController_;

@@ -134,6 +134,20 @@ inline void from_json(const nlohmann::json& j, GetRoleRequest& obj) {
   j.at(kSalt).get_to(obj.salt);
 }
 
+struct GetSaltRequest {
+  std::string username;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const GetSaltRequest& obj) {
+  j = {{kUsername, obj.username}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, GetSaltRequest& obj) {
+  j.at(kUsername).get_to(obj.username);
+}
+
 }  // namespace Models
 }  // namespace Common
 
