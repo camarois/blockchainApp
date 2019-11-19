@@ -135,7 +135,7 @@ void Database::assertSqlite(int errCode, const std::string& message) {
 Common::Models::SqlResponse Database::executeRequest(const Common::Models::SqlRequest& sql) {
   auto it = functions_.find(sql.function);
   if (it != functions_.end()) {
-    return it->second(nlohmann::json::parse(sql.params));
+    return it->second(sql.params.empty() ? "" : nlohmann::json::parse(sql.params));
   }
   throw std::runtime_error("Function not allowed: " + std::string(magic_enum::enum_name(sql.function)));
 }
