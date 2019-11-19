@@ -3,10 +3,9 @@
 
 #include <chrono>
 #include <memory>
+#include <miner/blockchain-controller.hpp>
 #include <thread>
 #include <zmq.hpp>
-
-#include <miner/blockchain-controller.hpp>
 
 namespace Miner {
 
@@ -25,6 +24,7 @@ class ZMQWorker {
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
   void handleSubServer();
   void handleSubBlockchain();
+  void sendReady();
   void sendResponse(const std::string& token, const std::string& result);
 
   bool running_;

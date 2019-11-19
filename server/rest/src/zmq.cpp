@@ -13,6 +13,7 @@ namespace Rest {
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
+      miners_(0),
       context_(1),
       socketPubToMiner_(context_, zmq::socket_type::pub),
       socketPullFromMiner_(context_, zmq::socket_type::pull),
@@ -88,7 +89,9 @@ void ZMQWorker::handlePullFromMiner() {
 
       auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
 
-      if (message.type == Common::Models::kTypeServerResponse) {
+      if (message.type == Common::Models::kTypeMinerReady) {
+        sendId();
+      } else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
         receivedResponse(response.token, response.result);
       }
@@ -106,6 +109,21 @@ void ZMQWorker::handleProxyBlockchain() {
   } catch (const zmq::error_t& e) {
     std::cerr << "ZMQ/proxy: failed to create proxy: " << e.what() << std::endl;
   }
+}
+
+bool ZMQWorker::sendId() {
+  miners_++;
+
+  Common::Models::ServerRequest request;
+  request.command = std::to_string(miners_);
+  nlohmann::json requestJSON = request;
+
+  Common::Models::ZMQMessage message;
+  message.type = Common::Models::kTypeMinerId;
+  message.data = requestJSON.dump();
+  nlohmann::json messageJSON = message;
+
+  return sendRequest(messageJSON.dump());
 }
 
 bool ZMQWorker::sendRequest(const std::string& json) {

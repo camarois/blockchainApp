@@ -14,6 +14,7 @@ DEFINE_string(addr, "", "REST service address");                        // NOLIN
 DEFINE_string(user, "server", "Developper using the service");          // NOLINT
 DEFINE_string(db, "blockchain.db", "Path to sqlite db file");           // NOLINT
 DEFINE_string(blockchain, "blockchain/", "Path to blockchain folder");  // NOLINT
+DEFINE_int32(id, -1, "Miner id");                                       // NOLINT
 DEFINE_int32(difficulty, 3, "Hashing difficulty");                      // NOLINT
 
 int main(int argc, char* argv[]) {
@@ -24,7 +25,7 @@ int main(int argc, char* argv[]) {
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user);
   }
-  Common::Logger::get()->info(1, "Server ip address: " + addr + "\n");
+  Common::Logger::get()->info(FLAGS_id, "Server ip address: " + addr + "\n");
 
   std::optional<Miner::BlockChain> maybeBlockchain =
       Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
