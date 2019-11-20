@@ -106,9 +106,9 @@ void ZMQWorker::handleSubServer() {
         printSqlRequest("ZMQ/blockchain: executing get transaction: ", sql);
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else if (received.type == Common::Models::kTypeTransaction) {
-        std::optional<Block> block = blockchainController_.addTransaction(received.data);
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
+        std::optional<Block> block = blockchainController_.addTransaction(received.data);
         if (block) {
           sendBlockMined(block->id(), block->nonce());
         }
