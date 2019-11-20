@@ -17,7 +17,7 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
     auto body = request.body().empty() ? kDefaultBody_ : request.body();
     body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
     try {
-      Common::Logger::get()->info(0, url + "\n" + body);
+      Common::Logger::get()->info(url + "\n" + body);
       if (requiresAuth) {
         std::string authHeader = request.headers().getRaw("Authorization").value();
         std::optional<std::string> optToken = Common::TokenHelper::decode(authHeader);
@@ -36,14 +36,14 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
                     .found) {
               token = Common::TokenHelper::encode(username, password);
             } else {
-              Common::Logger::get()->attention(0, url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
+              Common::Logger::get()->attention(url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
               response.send(Pistache::Http::Code::Forbidden);
             }
           }
           response.headers().add<Pistache::Http::Header::Authorization>(token);
           handler(request, std::move(response));
         } else {
-          Common::Logger::get()->attention(0, url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
+          Common::Logger::get()->attention(url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
           response.send(Pistache::Http::Code::Forbidden);
         }
       } else {
@@ -52,12 +52,12 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
 
       return Pistache::Rest::Route::Result::Ok;
     } catch (const nlohmann::json::exception& e) {
-      Common::Logger::get()->error(0, url + "\n" + body + "\n" + e.what());
+      Common::Logger::get()->error(url + "\n" + body + "\n" + e.what());
       response.send(Pistache::Http::Code::Bad_Request, e.what());
 
       return Pistache::Rest::Route::Result::Failure;
     } catch (const std::exception& e) {
-      Common::Logger::get()->error(0, url + "\n" + body + "\n" + e.what());
+      Common::Logger::get()->error(url + "\n" + body + "\n" + e.what());
       response.send(Pistache::Http::Code::Internal_Server_Error, e.what());
 
       return Pistache::Rest::Route::Result::Failure;

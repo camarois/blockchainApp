@@ -118,6 +118,10 @@ void Database::initFunctions() {
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
        }},
+      {Functions::GetLogs,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getLogs(json))};
+       }},
   };
 }
 
@@ -260,19 +264,20 @@ void Database::addLog(int logId, int severity, int provenance, const std::string
   statement.step();
 }
 
-std::vector<Common::Models::Information> Database::getLogs(int lastLogId, int provenance) {
-  Query query = lastLogId != 0 ? Query(
-                                     "SELECT logId, severity, logTime, log FROM logs "
-                                     "WHERE logId > '%q' AND provenance = '%q'"
-                                     "ORDER BY logTime ASC;",
-                                     std::to_string(lastLogId).c_str(), std::to_string(provenance).c_str())
-                               : Query(
-                                     "SELECT * FROM ("
-                                     "SELECT logId, severity, logTime, log FROM logs "
-                                     "WHERE provenance = '%q' "
-                                     "ORDER BY logId DESC LIMIT 20) "
-                                     "ORDER BY logTime ASC;",
-                                     std::to_string(provenance).c_str());
+std::vector<Common::Models::Information> Database::getLogs(const Common::Models::GetLogsRequest& request) {
+  Query query = request.lastLogId != 0
+                    ? Query(
+                          "SELECT logId, severity, logTime, log FROM logs "
+                          "WHERE logId > '%q' AND provenance = '%q'"
+                          "ORDER BY logTime ASC;",
+                          std::to_string(request.lastLogId).c_str(), std::to_string(request.provenance).c_str())
+                    : Query(
+                          "SELECT * FROM ("
+                          "SELECT logId, severity, logTime, log FROM logs "
+                          "WHERE provenance = '%q' "
+                          "ORDER BY logId DESC LIMIT 20) "
+                          "ORDER BY logTime ASC;",
+                          std::to_string(request.provenance).c_str());
   Statement statement = Statement(db_, query);
 
   std::vector<Common::Models::Information> logs;

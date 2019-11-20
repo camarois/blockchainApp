@@ -23,7 +23,8 @@ enum Functions {
   GetClassResult,
   GetStudentResult,
   GetClasses,
-  GetStudents
+  GetStudents,
+  GetLogs
 };
 
 namespace Models {
@@ -40,7 +41,7 @@ const std::string kToken = "token";
 const std::string kType = "type";
 const std::string kFunction = "function";
 const std::string kParams = "params";
-
+const std::string kTypeMinerId = "miner-id";
 const std::string kTypeBlockMined = "block-mined";
 const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
