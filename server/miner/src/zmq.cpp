@@ -89,10 +89,13 @@ void ZMQWorker::handleSubServer() {
         std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
         continue;
       }
-
-      while (syncing_) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+      if (syncing_) {
+        std::cout << "Can't accept message, in syncing state." << std::endl;
+        continue;
       }
+      // while (syncing_) {
+      //   std::this_thread::sleep_for(std::chrono::seconds(1));
+      // }
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
@@ -156,7 +159,13 @@ void ZMQWorker::handleSubBlockchain() {
         }
       } else if (received.type == Common::Models::kTypeBlockSyncResponse) {
         Common::Models::BlockSyncResponse response = nlohmann::json::parse(received.data);
-
+        for (auto block : response.blocks) {
+          std::cout << "Syncing block #" << block.id << std::endl;
+          blockchainController_.addTransaction(block.data);
+          Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
+          Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+          Common::Models::toStr(Common::Database::get()->executeRequest(sql));
+        }
         syncing_ = false;
       } else {
         std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
