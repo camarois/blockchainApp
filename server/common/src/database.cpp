@@ -118,6 +118,10 @@ void Database::initFunctions() {
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
        }},
+       {Functions::GetStudents,
+       [&](const nlohmann::json& /*json*/) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
+       }},
   };
 }
 
