@@ -4,6 +4,7 @@
 #include <common/scripts_helper.hpp>
 #include <iostream>
 #include <rest/main_controller.hpp>
+#include <rest/zmq.hpp>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
@@ -21,15 +22,18 @@ int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);
 
   try {
+    Common::Database::init(FLAGS_db);
+    Rest::ZMQWorker::init("tcp://*");
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
     std::cout << "Running on: " << selfIpAddress << std::endl;
-    Common::ScriptsHelper::createCert(selfIpAddress, FLAGS_db);
+    Common::ScriptsHelper::createCert(selfIpAddress);
 
     Pistache::Port port(FLAGS_port);
     Pistache::Address addr(Pistache::Ipv4::any(), port);
 
     Rest::MainController mainController(addr, FLAGS_threads);
     Common::FirebaseHelper::setIpAddressAsync(selfIpAddress, FLAGS_user);
+    Rest::ZMQWorker::get()->start();
     mainController.start();
 
     return 0;

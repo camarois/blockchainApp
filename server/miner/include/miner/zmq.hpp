@@ -2,6 +2,7 @@
 #define MINER_ZMQ_HPP
 
 #include <chrono>
+#include <common/miner_models.hpp>
 #include <memory>
 #include <miner/blockchain-controller.hpp>
 #include <thread>
@@ -26,6 +27,7 @@ class ZMQWorker {
   void handleSubBlockchain();
   void sendReady();
   void sendResponse(const std::string& token, const std::string& result);
+  void printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql);
 
   bool running_;
   const std::string serverHostname_;

@@ -2,6 +2,7 @@
 #include "common/gflags_helper.hpp"
 #include "common/logger.hpp"
 #include "common/message_helper.hpp"
+#include <common/database.hpp>
 #include <iostream>
 #include <memory>
 #include <miner/blockchain.hpp>
@@ -19,6 +20,7 @@ DEFINE_int32(difficulty, 3, "Hashing difficulty");                      // NOLIN
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Blockchain miner service", argc, argv);
+  Common::Database::init(FLAGS_db);
   Common::Logger::init(FLAGS_db);
 
   std::string addr = FLAGS_addr;
