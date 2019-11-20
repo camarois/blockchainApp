@@ -120,7 +120,7 @@ void Database::initFunctions() {
        }},
        {Functions::GetStudents,
        [&](const nlohmann::json& /*json*/) {
-         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
        }},
   };
 }
@@ -409,5 +409,19 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
 
   return result;
 }
+
+std::vector<Common::Models::User> Database::getAllUsers() {
+  Query query = Query(
+      "SELECT username, isEditor, isAdmin "
+      "FROM users;");
+  std::cout << query.val() << std::endl;
+  Statement statement = Statement(db_, query);
+  std::vector<Common::Models::User> result;
+  while (statement.step()) {
+    result.push_back({.username = statement.getColumnText(0),
+                      .isEditor = (statement.getColumnText(1) == "1"),
+                      .isAdmin = (statement.getColumnText(2) == "1")});
+  }
+  return result;
 
 }  // namespace Common
