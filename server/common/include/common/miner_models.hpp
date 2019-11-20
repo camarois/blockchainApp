@@ -23,7 +23,8 @@ enum Functions {
   GetClassResult,
   GetStudentResult,
   GetClasses,
-  GetStudents
+  GetStudents,
+  GetLogs
 };
 
 namespace Models {
