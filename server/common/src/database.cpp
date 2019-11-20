@@ -26,7 +26,8 @@ Database::Database(const std::string& dbPath) {
     initFunctions();
 
     addUser({{"admin", "equipe01"}, true});
-  } catch (...) {
+  }
+  catch (...) {
     close();
     throw;
   }

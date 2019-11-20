@@ -58,7 +58,8 @@ bool ZMQWorker::start() {
     socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port_));
     socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port_));
     socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port_));
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error(std::string("ZMQ: failed to bind socket: ") + e.what() + "\n");
     return false;
   }
@@ -108,11 +109,13 @@ void ZMQWorker::handlePullFromMiner() {
       if (message.type == Common::Models::kTypeMinerReady) {
         Common::Models::ServerResponse response = nlohmann::json::parse(message.data);
         sendId(response.token);
-      } else if (message.type == Common::Models::kTypeServerResponse) {
+      }
+      else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
         receivedResponse(response.token, response.result);
       }
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e) {
       Common::Logger::get()->error(std::string("ZMQ/miners: ") + e.what() + "\n");
     }
   }
@@ -123,7 +126,8 @@ void ZMQWorker::handleProxyBlockchain() {
 
   try {
     zmq::proxy(socketXSubBlockchain_, socketXPubBlockchain_);
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error(std::string("ZMQ/proxy: failed to create proxy: ") + e.what() + "\n");
   }
 }
@@ -143,7 +147,8 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 
   try {
     socketPubToMiner_.send(data, zmq::send_flags::none);
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error("ZMQ/miners: failed to send request\n");
     return false;
   }

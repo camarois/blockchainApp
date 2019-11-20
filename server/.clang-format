@@ -8,3 +8,7 @@ ColumnLimit: 120
 IncludeCategories:
   - Regex: ".*"
     Priority: 1
+BraceWrapping:
+  BeforeCatch: true
+  BeforeElse: true
+BreakBeforeBraces: Custom

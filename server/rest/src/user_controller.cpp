@@ -32,7 +32,8 @@ void UserController::handleLogin(const Pistache::Rest::Request& request, Pistach
         Rest::ZMQWorker::get()->getRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
     Common::Models::LoginResponse loginResponse = {edition.data == "1"};
     response.send(Pistache::Http::Code::Ok, Common::Models::toStr(loginResponse));
-  } else {
+  }
+  else {
     response.send(Pistache::Http::Code::Forbidden);
   }
 }
@@ -60,7 +61,8 @@ void UserController::handlePassword(const Pistache::Rest::Request& request, Pist
     Rest::ZMQWorker::get()->updateRequest(
         {Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
-  } else {
+  }
+  else {
     response.send(Pistache::Http::Code::Forbidden);
   }
 }

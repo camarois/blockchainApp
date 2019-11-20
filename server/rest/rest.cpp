@@ -37,7 +37,8 @@ int main(int argc, char* argv[]) {
     mainController.start();
 
     return 0;
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e) {
     Common::Logger::get()->error(e.what());
 
     return 1;
