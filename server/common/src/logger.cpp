@@ -9,7 +9,10 @@ namespace Common {
 std::shared_ptr<Logger> Logger::instance;
 
 // NOLINTNEXTLINE
-Logger::Logger(int logSessionId) : logSessionId_(logSessionId) { logCount_ = 1; }
+Logger::Logger(int logSessionId) : logSessionId_(logSessionId) {
+  logCount_ = 1;
+  provenance_ = 0;
+}
 
 std::shared_ptr<Logger> Logger::get() {
   if (instance) {
@@ -21,21 +24,21 @@ std::shared_ptr<Logger> Logger::get() {
   return instance;
 }
 
-void Logger::error(int provenance, const std::string& message) { log(Severity::ERROR, provenance, message, std::cerr); }
+void Logger::setProvenance(int provenance) { provenance_ = provenance; }
 
-void Logger::attention(int provenance, const std::string& message) {
-  log(Severity::ATTENTION, provenance, message, std::cout);
-}
+void Logger::error(const std::string& message) { log(Severity::ERROR, message, std::cerr); }
 
-void Logger::info(int provenance, const std::string& message) { log(Severity::INFO, provenance, message, std::cout); }
+void Logger::attention(const std::string& message) { log(Severity::ATTENTION, message, std::cout); }
 
-void Logger::log(Severity severity, int provenance, const std::string& message, std::ostream& stream) {
+void Logger::info(const std::string& message) { log(Severity::INFO, message, std::cout); }
+
+void Logger::log(Severity severity, const std::string& message, std::ostream& stream) {
   std::lock_guard<std::mutex> lock(mutex_);
   auto nowStr = Common::FormatHelper::nowStr();
   stream << std::endl
-         << logCount_ << ": " << magic_enum::enum_name(severity) << ": " << nowStr << ": " << provenance << ": "
+         << logCount_ << ": " << magic_enum::enum_name(severity) << ": " << nowStr << ": " << provenance_ << ": "
          << message << std::endl;
-  Common::Database::get()->addLog(logCount_, severity, provenance, nowStr, message, logSessionId_);
+  Common::Database::get()->addLog(logCount_, severity, provenance_, nowStr, message, logSessionId_);
   ++logCount_;
 }
 

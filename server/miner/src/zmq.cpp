@@ -1,8 +1,7 @@
-#include <cerrno>
 #include <common/database.hpp>
+#include <common/logger.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
-#include <gflags/gflags.h>
 #include <iostream>
 #include <magic_enum.hpp>
 #include <miner/zmq.hpp>
@@ -41,7 +40,7 @@ bool ZMQWorker::start() {
     socketSubServer_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     socketSubBlockchain_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
   } catch (const zmq::error_t& e) {
-    std::cerr << "ZMQ/setsockopt: " << e.what() << std::endl;
+    Common::Logger::get()->error(std::string("ZMQ/setsockopt: ") + e.what() + "\n");
     return false;
   }
 
@@ -69,24 +68,25 @@ void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const s
       socket->connect(address);
       return;
     } catch (const zmq::error_t& e) {
-      std::cerr << "ZMQ: failed to connect to " << address << ": " << e.what() << std::endl;
+      Common::Logger::get()->error(std::string("ZMQ: failed to connect to ") + address + e.what() + "\n");
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
   }
 }
 
 void ZMQWorker::handleSubServer() {
-  std::cout << "ZMQ/server: thread started" << std::endl;
+  Common::Logger::get()->info("ZMQ/server: thread started\n");
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
-  std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
+  Common::Logger::get()->info("ZMQ/server: connected to server sub/push sockets\n");
+  sendReady();
 
   while (running_) {
     try {
       zmq::message_t msg;
       std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
       if (!len) {
-        std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
+        Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
       if (syncing_) {
@@ -100,44 +100,48 @@ void ZMQWorker::handleSubServer() {
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-      if (received.type == Common::Models::kTypeServerRequest) {
+      if (received.type == Common::Models::kTypeMinerId) {
+        Common::Logger::get()->setProvenance(std::stoi(request.command));
+        Common::Logger::get()->info(std::string("Miner" + request.command + " is connected to server") + "\n");
+      } else if (received.type == Common::Models::kTypeServerRequest) {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing get transaction: ", sql);
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else if (received.type == Common::Models::kTypeTransaction) {
+        Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+        printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
         std::optional<Block> block = blockchainController_.addTransaction(received.data);
         if (block) {
           sendBlockMined(block->id(), block->nonce());
         }
-        Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
-        printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else {
-        std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
+        Common::Logger::get()->error("Type not found: " + received.type + "\n");
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain error in: handleSubServer for " << e.what() << std::endl;
+      Common::Logger::get()->error(std::string("ZMQ/blockchain handleSubServer: \n") + e.what());
     }
   }
 }
 
 void ZMQWorker::printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql) {
   std::string params = sql.params.empty() ? "NULL" : nlohmann::json::parse(sql.params).dump(Common::Models::kDumpTab);
-  std::cout << message << magic_enum::enum_name(sql.function) << " with params:" << std::endl << params << std::endl;
+  Common::Logger::get()->info(message + std::string(magic_enum::enum_name(sql.function)) + " with params:\n" + params +
+                              "\n");
 }
 
 void ZMQWorker::handleSubBlockchain() {
-  std::cout << "ZMQ/blockchain: thread started" << std::endl;
+  Common::Logger::get()->info("ZMQ/blockchain: thread started\n");
   tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port_));
   tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port_));
-  std::cout << "ZMQ/blockchain: connected to sub/pub sockets" << std::endl;
+  Common::Logger::get()->info("ZMQ/blockchain: connected to sub/pub sockets\n");
 
   while (running_) {
     try {
       zmq::message_t msg;
       std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
       if (!len) {
-        std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
+        Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
 
@@ -146,8 +150,9 @@ void ZMQWorker::handleSubBlockchain() {
       if (received.type == Common::Models::kTypeBlockMined) {
         Common::Models::BlockMined blockMined = nlohmann::json::parse(received.data);
         if (blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce)) {
-          std::cout << "ZMQ/blockchain: received nonce " << blockMined.nonce << " for block #" << blockMined.id
-                    << std::endl;
+          Common::Logger::get()->info(std::string("ZMQ/blockchain: received nonce ") +
+                                      std::to_string(blockMined.nonce) + std::string(" for block #") +
+                                      std::to_string(blockMined.id) + "\n");
         } else {
           sendBlockSyncRequest(blockchainController_.getLastBlockId());
         }
@@ -171,7 +176,7 @@ void ZMQWorker::handleSubBlockchain() {
         std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain error in: handleSubBlockchain for " << e.what() << std::endl;
+      Common::Logger::get()->error(std::string("ZMQ/blockchain handleSubBlockchain: \n") + e.what() + "\n");
     }
   }
 }
@@ -181,8 +186,16 @@ void ZMQWorker::sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const
   try {
     socket->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    std::cerr << "ZMQ/blockchain: failed to send message" << std::endl;
+    Common::Logger::get()->error("ZMQ/blockchain: failed to send message\n");
   }
+}
+
+void ZMQWorker::sendReady() {
+  Common::Models::ZMQMessage message = {
+      .type = Common::Models::kTypeMinerReady,
+      .data = Common::Models::toStr("READY"),
+  };
+  sendToSocket(socketPushServer_, message);
 }
 
 void ZMQWorker::sendResponse(const std::string& token, const std::string& result) {
@@ -207,11 +220,20 @@ void ZMQWorker::sendBlockSyncRequest(unsigned int lastId) {
   sendToSocket(socketPubBlockchain_, message);
 }
 
+<<<<<<< HEAD
 void ZMQWorker::sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks) {
   Common::Models::BlockSyncResponse sync = {.blocks = blocks};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncResponse,
                                         .data = Common::Models::toStr(sync)};
   sendToSocket(socketPubBlockchain_, message);
+=======
+zmq::message_t msg = Common::MessageHelper::fromModel(message);
+try {
+  socketPubBlockchain_->send(msg, zmq::send_flags::none);
+} catch (const zmq::error_t& e) {
+  Common::Logger::get()->error("ZMQ/blockchain: failed to publish message\n");
 }
+>>>>>>> ccbb2526a0cb6c8b34ced28e530be12e7b5eecdd
+}  // namespace Miner
 
 }  // namespace Miner

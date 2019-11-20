@@ -1,5 +1,6 @@
 #include "common/firebase_helper.hpp"
 #include "common/gflags_helper.hpp"
+#include "common/logger.hpp"
 #include "common/message_helper.hpp"
 #include <common/database.hpp>
 #include <iostream>
@@ -24,7 +25,7 @@ int main(int argc, char* argv[]) {
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user);
   }
-  std::cout << "Server ip address: " << addr << std::endl;
+  Common::Logger::get()->info("Server ip address: " + addr + "\n");
 
   Miner::ZMQWorker miner(addr);
   miner.start();

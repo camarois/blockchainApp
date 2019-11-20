@@ -41,7 +41,7 @@ class Database {
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
               int logSessionId);
-  std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
+  std::vector<Common::Models::Information> getLogs(const Common::Models::GetLogsRequest& request);
 
   std::optional<int> checkForExistingClass(const Common::Models::CheckForExistingClassRequest& request);
   void deleteExistingClass(int classId);

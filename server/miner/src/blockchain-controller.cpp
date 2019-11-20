@@ -1,4 +1,5 @@
 #include "miner/blockchain-controller.hpp"
+#include "common/logger.hpp"
 #include <cstdlib>
 #include <gflags/gflags.h>
 #include <iostream>
@@ -27,15 +28,13 @@ bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonc
   blockchain_->lastBlock()->get().queueNonce(nonce);
   auto minedBlock = blockchain_->getBlock(id);
   if (minedBlock) {
-  minedBlock->get().increaseVerification();
-  minedBlock->get().save();
+    minedBlock->get().increaseVerification();
+    minedBlock->get().save();
   }
   return minedBlock.has_value();
 }
 
-unsigned int BlockChainController::getLastBlockId() {
-  return blockchain_->lastBlockID();
-}
+unsigned int BlockChainController::getLastBlockId() { return blockchain_->lastBlockID(); }
 
 std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(unsigned int lastId) {
   std::vector<Common::Models::BlockMined> lastBlocks;
