@@ -25,7 +25,7 @@ Database::Database(const std::string& dbPath) {
     db_.reset(dbPtr, sqlite3_close_v2);
     initFunctions();
 
-    addUser({{"admin", "equipe01"}, true});
+    addUser({{"admin", "equipe01"}, true, true});
   } catch (...) {
     close();
     throw;
@@ -51,6 +51,11 @@ void Database::initFunctions() {
       {Functions::AddUser,
        [&](const nlohmann::json& json) {
          addUser(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+       {Functions::DeleteUser,
+       [&](const nlohmann::json& json) {
+         deleteUser(json);
          return Common::Models::SqlResponse{false, ""};
        }},
       {Functions::SetUserPassword,
@@ -195,10 +200,19 @@ void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
-      "(username, password, salt, isAdmin) "
-      "VALUES ('%q', '%q', '%q', '%q');",
+      "(username, password, salt, isAdmin, isEditor) "
+      "VALUES ('%q', '%q', '%q', '%q', '%q');",
       request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
-      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+void Database::deleteUser(const Common::Models::DeleteAccountRequest& request) {
+  Query query = Query(
+      "DELETE FROM users "
+      "WHERE username = '%q';",
+      request.username.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

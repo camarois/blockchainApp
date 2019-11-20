@@ -10,6 +10,7 @@ namespace Common {
 enum Functions {
   Unknown,
   AddUser,
+  DeleteUser,
   SetUserPassword,
   ContainsUser,
   ContainsAdmin,
