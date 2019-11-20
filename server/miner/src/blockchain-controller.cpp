@@ -38,7 +38,7 @@ std::optional<Block> BlockChainController::addTransaction(const std::string& tra
 
   Common::Logger::get()->info(FLAGS_id, "Mining of block #" + std::to_string(currentBlock_->get().id()) +
                                             " finished with nonce " + std::to_string(currentBlock_->get().nonce()) +
-                                            "\n");
+                                            " and hash " + currentBlock_->get().hash() + "\n");
   return currentBlock_->get();
 }
 

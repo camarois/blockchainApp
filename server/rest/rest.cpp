@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     Common::Database::init(FLAGS_db);
     Rest::ZMQWorker::init("tcp://*");
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
-    std::cout << "Running on: " << selfIpAddress << std::endl;
+    Common::Logger::get()->info(0, "Running on: " + selfIpAddress + "\n");
     Common::ScriptsHelper::createCert(selfIpAddress);
 
     Pistache::Port port(FLAGS_port);

@@ -40,7 +40,6 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleLogout(const Pistache::Rest::Request& /*request*/,
                                    Pistache::Http::ResponseWriter response) {
-  // TODO(camarois) jwt db verification
   response.send(Pistache::Http::Code::Ok);
 }
 
@@ -65,7 +64,6 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   }
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<int>();
@@ -83,7 +81,6 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
@@ -91,7 +88,6 @@ void AdminController::handleCreateAccount(const Pistache::Rest::Request& request
   response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
