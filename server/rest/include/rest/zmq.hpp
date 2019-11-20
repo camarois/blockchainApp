@@ -26,7 +26,7 @@ class ZMQWorker {
  private:
   void handlePullFromMiner();
   void handleProxyBlockchain();
-  bool sendId();
+  bool sendId(const std::string& token);
   bool sendRequest(const std::string& json);
   void receivedResponse(const std::string& token, const std::string& response);
   std::future<std::string> createRequest(const std::string& sql, const std::string& type);

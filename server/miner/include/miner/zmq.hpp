@@ -8,6 +8,7 @@
 #include <miner/blockchain-controller.hpp>
 #include <thread>
 #include <zmq.hpp>
+#include <uuid.h>
 
 namespace Miner {
 
@@ -44,6 +45,7 @@ class ZMQWorker {
   std::thread threadBlockchain_;
   BlockChainController blockchainController_;
 
+  const std::string token_ = uuids::to_string(uuids::uuid_system_generator{}());
   const int kMiner1Port_ = 5555;
   const int kMiner2Port_ = 5556;
   const int kMiner3Port_ = 5557;

@@ -106,7 +106,8 @@ void ZMQWorker::handlePullFromMiner() {
       auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
 
       if (message.type == Common::Models::kTypeMinerReady) {
-        sendId();
+        Common::Models::ServerResponse response = nlohmann::json::parse(message.data);
+        sendId(response.token);
       } else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
         receivedResponse(response.token, response.result);
@@ -127,10 +128,11 @@ void ZMQWorker::handleProxyBlockchain() {
   }
 }
 
-bool ZMQWorker::sendId() {
+bool ZMQWorker::sendId(const std::string& token) {
   minersCount_++;
 
   Common::Models::ServerRequest request;
+  request.token = token;
   request.command = std::to_string(minersCount_);
   nlohmann::json requestJSON = request;
 
