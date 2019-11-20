@@ -28,7 +28,9 @@ enum Functions {
 
 namespace Models {
 
+const std::string kBlocks = "blocks";
 const std::string kBlockID = "block-id";
+const std::string kLastID = "last-id";
 const std::string kBlockNonce = "block-nonce";
 const std::string kCommand = "command";
 const std::string kContent = "content";
@@ -41,6 +43,8 @@ const std::string kType = "type";
 const std::string kFunction = "function";
 const std::string kParams = "params";
 
+const std::string kTypeBlockSyncRequest = "block-sync-request";
+const std::string kTypeBlockSyncResponse = "block-sync-response";
 const std::string kTypeBlockMined = "block-mined";
 const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
@@ -91,18 +95,44 @@ inline void from_json(const nlohmann::json& j, ZMQMessage& obj) {
   j.at(kData).get_to(obj.data);
 }
 
-struct BlockMined {
-  unsigned int id = 0;
-  unsigned int nonce = 0;
+struct BlockSyncRequest {
+  unsigned int lastId = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const BlockMined& obj) { j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}}; }
+inline void to_json(nlohmann::json& j, const BlockSyncRequest& obj) { j = {{kLastID, obj.lastId}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) {
+  j.at(kLastID).get_to(obj.lastId);
+}
+
+struct BlockMined {
+  unsigned int id = 0;
+  unsigned int nonce = 0;
+  std::string data;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const BlockMined& obj) { j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}, {kData, obj.data}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockMined& obj) {
   j.at(kBlockID).get_to(obj.id);
   j.at(kBlockNonce).get_to(obj.nonce);
+  j.at(kData).get_to(obj.data);
+}
+
+struct BlockSyncResponse {
+  std::vector<BlockMined> blocks;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const BlockSyncResponse& obj) { j = {{kBlocks, obj.blocks}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, BlockSyncResponse& obj) {
+  j.at(kBlocks).get_to(obj.blocks);
 }
 
 struct ServerRequest {

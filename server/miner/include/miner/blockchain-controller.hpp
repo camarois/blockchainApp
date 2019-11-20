@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <random>
+#include <common/miner_models.hpp>
 
 #include "miner/blockchain.hpp"
 
@@ -15,7 +16,9 @@ class BlockChainController {
   explicit BlockChainController();
 
   std::optional<Block> addTransaction(const std::string& transaction);
-  void receivedBlockMined(unsigned int id, unsigned int nonce);
+  bool receivedBlockMined(unsigned int id, unsigned int nonce);
+  unsigned int getLastBlockId();
+  std::vector<Common::Models::BlockMined> getLastBlocks(unsigned int lastId);
 
  private:
   std::random_device dev_;

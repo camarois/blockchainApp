@@ -27,7 +27,7 @@ class Block {
   unsigned int numberOfVerifications() const;
   std::string hash();
   std::string previousHash() const;
-  const std::vector<std::string>& data() const;
+  std::string data() const;
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const Block& obj);
@@ -42,7 +42,7 @@ class Block {
   unsigned int numberOfVerifications_;
   std::string hash_;
   std::string previousHash_;
-  std::vector<std::string> data_;
+  std::string data_;
   std::queue<unsigned int> receivedNonces_;
   std::filesystem::path blockDir_;
 

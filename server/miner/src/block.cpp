@@ -42,7 +42,7 @@ std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir)
 
 void Block::append(const std::string& data) {
   dirty_ = true;
-  data_.push_back(data);
+  data_ = data;
 }
 
 void Block::mine(unsigned int difficulty) {
@@ -107,7 +107,7 @@ std::string Block::hash() {
 
 std::string Block::previousHash() const { return previousHash_; }
 
-const std::vector<std::string>& Block::data() const { return data_; }
+std::string Block::data() const { return data_; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const Block& obj) {

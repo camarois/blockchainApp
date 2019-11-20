@@ -1,6 +1,7 @@
 #ifndef MINER_ZMQ_HPP
 #define MINER_ZMQ_HPP
 
+#include <atomic>
 #include <chrono>
 #include <common/miner_models.hpp>
 #include <memory>
@@ -19,16 +20,19 @@ class ZMQWorker {
   bool start();
   void join();
 
-  void sendBlockMined(unsigned int id, unsigned int nonce);
-
  private:
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
   void handleSubServer();
   void handleSubBlockchain();
-  void sendResponse(const std::string& token, const std::string& result);
   void printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql);
+  void sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const Common::Models::ZMQMessage& message);
+  void sendResponse(const std::string& token, const std::string& result);
+  void sendBlockMined(unsigned int id, unsigned int nonce);
+  void sendBlockSyncRequest(unsigned int lastId);
+  void sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks);
 
   bool running_;
+  std::atomic<bool> syncing_;
   const std::string serverHostname_;
   zmq::context_t context_;
   std::unique_ptr<zmq::socket_t> socketSubServer_;

@@ -23,16 +23,28 @@ std::optional<Block> BlockChainController::addTransaction(const std::string& tra
   return lastBlock;
 }
 
-void BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
+bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
   blockchain_->lastBlock()->get().queueNonce(nonce);
   auto minedBlock = blockchain_->getBlock(id);
-  while (!minedBlock) {
-    std::cout << "Waiting for block to be mined" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    minedBlock = blockchain_->getBlock(id);
-  }
+  if (minedBlock) {
   minedBlock->get().increaseVerification();
   minedBlock->get().save();
+  }
+  return minedBlock.has_value();
+}
+
+unsigned int BlockChainController::getLastBlockId() {
+  return blockchain_->lastBlockID();
+}
+
+std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(unsigned int lastId) {
+  std::vector<Common::Models::BlockMined> lastBlocks;
+  for (unsigned int i = lastId + 1; i < blockchain_->lastBlockID(); ++i) {
+    auto block = blockchain_->getBlock(i);
+    Common::Models::BlockMined blockMined = {.id = i, .nonce = block->get().nonce(), .data = block->get().data()};
+    lastBlocks.push_back(blockMined);
+  }
+  return lastBlocks;
 }
 
 }  // namespace Miner
