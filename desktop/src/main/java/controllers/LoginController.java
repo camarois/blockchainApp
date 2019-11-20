@@ -1,16 +1,19 @@
 package controllers;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import models.LoginRequest;
-import models.LoginResponse;
-import models.PasswordRequest;
+import javafx.stage.Window;
+import javafx.util.Callback;
+import models.*;
 import services.RestService;
 
 import java.io.IOException;
@@ -18,8 +21,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class LoginController {
-    @FXML private TextField usernameTextField;
-    @FXML private TextField passwordTextField;
+    @FXML
+    private TextField usernameTextField;
+    @FXML
+    private TextField passwordTextField;
 
     public void onClickLogin(ActionEvent event) {
         String username = usernameTextField.getText();
@@ -46,19 +51,28 @@ public class LoginController {
     }
 
     private MenuBar createMenuBar() {
-        Menu generalMenu = new Menu("Options");
         MenuItem changePasswordMenuItem = new MenuItem("Changer mot de passe");
-        MenuItem createSupervisorMenuItem = new MenuItem("Creer un compte superviseur");
-        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte superviseur");
-        MenuItem logoutMenuItem = new MenuItem("Deconnexion");
-
         changePasswordMenuItem.setOnAction(actionEvent -> {
             Optional<PasswordRequest> request = showChangePasswordDialog();
-            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {}, (e) -> {
-                showErrorDialog("L'ancien mot de passe est invalide.");
-            });
+            RestService.postRequestAsync(RestService.urls.getChangePassword(), request.get(), null, (e) -> {
+            }, (e) -> {
+                    showErrorDialog("L'ancien mot de passe est invalide.");
+                });
         });
 
+        MenuItem createSupervisorMenuItem = new MenuItem("Créer un compte utilisateur");
+        createSupervisorMenuItem.setOnAction(actionEvent -> {
+            Optional<CreateUserRequest> request = showCreateUserDialog();
+            RestService.postRequestAsync(RestService.urls.getCreateUser(), request.get());
+        });
+
+        MenuItem deleteSupervisorMenuItem = new MenuItem("Supprimer un compte utilisateur");
+        deleteSupervisorMenuItem.setOnAction(actionEvent -> {
+            Optional<DeleteUserRequest> request = showDeleteUserDialog();
+            RestService.postRequestAsync(RestService.urls.getDeleteUser(), request.get());
+        });
+
+        MenuItem logoutMenuItem = new MenuItem("Deconnexion");
         logoutMenuItem.setOnAction(actionEvent -> {
             try {
                 RestService.postRequestAsync(RestService.urls.getLogout(), null);
@@ -76,6 +90,7 @@ public class LoginController {
             }
         });
 
+        Menu generalMenu = new Menu("Options");
         generalMenu.getItems().addAll(changePasswordMenuItem, createSupervisorMenuItem, deleteSupervisorMenuItem,
                 new SeparatorMenuItem(), logoutMenuItem);
 
@@ -83,6 +98,130 @@ public class LoginController {
         menuBar.getMenus().addAll(generalMenu);
 
         return menuBar;
+    }
+
+    private Optional<CreateUserRequest> showCreateUserDialog() {
+        Dialog<CreateUserRequest> dialog = new Dialog<>();
+        dialog.setHeaderText(
+                "Pour créer un compte utilisateur, veuillez rentrer les informations correspondantes ci-dessous.");
+        dialog.setResizable(true);
+
+        Label username = new Label("Nom d'utilisateur: ");
+        Label password = new Label("Mot de passe: ");
+        Label editor = new Label("Compte editeur: ");
+        Label admin = new Label("Compte administrateur: ");
+
+        TextField textUsername = new TextField();
+        PasswordField textPassword = new PasswordField();
+        CheckBox isEditor = new CheckBox("Pour uploader des cours sur l'application android");
+        CheckBox isAdmin = new CheckBox("Pour accéder à ce logiciel");
+
+        GridPane grid = new GridPane();
+        grid.add(username, 1, 1);
+        grid.add(textUsername, 2, 1);
+        grid.add(password, 1, 3);
+        grid.add(textPassword, 2, 3);
+        grid.add(editor, 1, 5);
+        grid.add(isEditor, 2, 5);
+        grid.add(admin, 1, 7);
+        grid.add(isAdmin, 2, 7);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Envoyer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                if (textUsername.getText().isEmpty() || textPassword.getText().isEmpty()) {
+                    return null;
+                }
+                return new CreateUserRequest(
+                        new LoginRequest(
+                                textUsername.getText(),
+                                textPassword.getText()),
+                        isEditor.isSelected(),
+                        isAdmin.isSelected());
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
+    }
+
+    private Optional<DeleteUserRequest> showDeleteUserDialog() {
+        Dialog<DeleteUserRequest> dialog = new Dialog<>();
+        dialog.setHeaderText("Attention! Les suppressions sont permanentes.");
+        dialog.setResizable(true);
+
+        BorderPane root = new BorderPane();
+        dialog.getDialogPane().setContent(root);
+        TableView tblUsers = new TableView();
+
+        TableColumn<String, User> colUsername = new TableColumn<>("Nom d'utilisateur");
+        colUsername.setStyle("-fx-alignment: CENTER-LEFT;");
+        colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+        tblUsers.getColumns().add(colUsername);
+        TableColumn<String, User> colAdmin = new TableColumn<>("Est admin");
+        colAdmin.setStyle("-fx-alignment: CENTER;");
+        colAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
+        tblUsers.getColumns().add(colAdmin);
+        TableColumn<String, User> colEditor = new TableColumn<>("Est éditeur");
+        colEditor.setStyle("-fx-alignment: CENTER;");
+        colEditor.setCellValueFactory(new PropertyValueFactory<>("isEditor"));
+        tblUsers.getColumns().add(colEditor);
+        TableColumn<User, Boolean> colDelete = new TableColumn<>("Supprimer");
+        colDelete.setStyle("-fx-alignment: CENTER;");
+        tblUsers.getColumns().add(colDelete);
+
+        colDelete.setCellValueFactory(
+            param -> new SimpleBooleanProperty(param.getValue() != null)
+        );
+
+        Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>> cellFactory
+            = new Callback<>() {
+                @Override
+                public TableCell call(final TableColumn<User, Boolean> param) {
+                    final TableCell<User, Boolean> cell = new TableCell<>() {
+                        final Button btn = new Button("Supprimer");
+
+                        @Override
+                        public void updateItem(Boolean item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty) {
+                                setGraphic(null);
+                                setText(null);
+                            } else {
+                                btn.setOnAction(event -> {
+                                    User user = getTableView().getItems().get(getIndex());
+                                    RestService.postRequestAsync(
+                                            RestService.urls.getDeleteUser(),
+                                            new DeleteUserRequest(user.getUsername()));
+                                    tblUsers.getItems().remove(user);
+                                });
+                                setGraphic(btn);
+                                setText(null);
+                            }
+                        }
+                    };
+                    return cell;
+                }
+            };
+
+        colDelete.setCellFactory(cellFactory);
+        root.setCenter(tblUsers);
+        Window window = dialog.getDialogPane().getScene().getWindow();
+        window.setOnCloseRequest(event -> window.hide());
+
+        try {
+            RestService.getRequestAsync(RestService.urls.getAllUsers(), AllUsersRequest.class, (allUsersRequest) -> {
+                for (User user : allUsersRequest.getUsers()) {
+                    tblUsers.getItems().add(user);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return dialog.showAndWait();
     }
 
     private Optional<PasswordRequest> showChangePasswordDialog() {
