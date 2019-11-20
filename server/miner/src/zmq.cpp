@@ -3,12 +3,9 @@
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
-#include <gflags/gflags.h>
 #include <iostream>
 #include <magic_enum.hpp>
 #include <miner/zmq.hpp>
-
-DECLARE_int32(id);
 
 namespace Miner {
 
@@ -44,7 +41,7 @@ bool ZMQWorker::start() {
     socketSubServer_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     socketSubBlockchain_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(FLAGS_id, std::string("ZMQ/setsockopt: ") + e.what() + "\n");
+    Common::Logger::get()->error(std::string("ZMQ/setsockopt: ") + e.what() + "\n");
     return false;
   }
 
@@ -69,7 +66,7 @@ void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const s
     try {
       socket->connect(address);
     } catch (const zmq::error_t& e) {
-      Common::Logger::get()->error(FLAGS_id, std::string("ZMQ: failed to connect to ") + address + e.what() + "\n");
+      Common::Logger::get()->error(std::string("ZMQ: failed to connect to ") + address + e.what() + "\n");
       std::this_thread::sleep_for(std::chrono::seconds(1));
       continue;
     }
@@ -79,10 +76,10 @@ void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const s
 }
 
 void ZMQWorker::handleSubServer() {
-  Common::Logger::get()->info(FLAGS_id, "ZMQ/server: thread started\n");
+  Common::Logger::get()->info("ZMQ/server: thread started\n");
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
-  Common::Logger::get()->info(FLAGS_id, "ZMQ/server: connected to server sub/push sockets\n");
+  Common::Logger::get()->info("ZMQ/server: connected to server sub/push sockets\n");
   sendReady();
 
   while (running_) {
@@ -90,7 +87,7 @@ void ZMQWorker::handleSubServer() {
       zmq::message_t msg;
       std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
       if (!len) {
-        Common::Logger::get()->error(FLAGS_id, "ZMQ/blockchain: failed to receive message\n");
+        Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
 
@@ -98,9 +95,8 @@ void ZMQWorker::handleSubServer() {
 
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
       if (received.type == Common::Models::kTypeMinerId) {
-        FLAGS_id = std::stoi(request.command);
-        Common::Logger::get()->info(FLAGS_id,
-                                    std::string("Miner" + std::to_string(FLAGS_id) + " is connected to server") + "\n");
+        Common::Logger::get()->setProvenance(std::stoi(request.command));
+        Common::Logger::get()->info(std::string("Miner" + request.command + " is connected to server") + "\n");
       } else if (received.type == Common::Models::kTypeServerRequest) {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing get transaction: ", sql);
@@ -114,32 +110,32 @@ void ZMQWorker::handleSubServer() {
         }
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else {
-        Common::Logger::get()->error(FLAGS_id, "Type not found: " + received.type + "\n");
+        Common::Logger::get()->error("Type not found: " + received.type + "\n");
       }
     } catch (const std::exception& e) {
-      Common::Logger::get()->error(FLAGS_id, std::string("ZMQ/blockchain handleSubServer: \n") + e.what());
+      Common::Logger::get()->error(std::string("ZMQ/blockchain handleSubServer: \n") + e.what());
     }
   }
 }
 
 void ZMQWorker::printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql) {
   std::string params = sql.params.empty() ? "NULL" : nlohmann::json::parse(sql.params).dump(Common::Models::kDumpTab);
-  Common::Logger::get()->info(
-      FLAGS_id, message + std::string(magic_enum::enum_name(sql.function)) + " with params:\n" + params + "\n");
+  Common::Logger::get()->info(message + std::string(magic_enum::enum_name(sql.function)) + " with params:\n" + params +
+                              "\n");
 }
 
 void ZMQWorker::handleSubBlockchain() {
-  Common::Logger::get()->info(FLAGS_id, "ZMQ/blockchain: thread started\n");
+  Common::Logger::get()->info("ZMQ/blockchain: thread started\n");
   tryConnect(socketSubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner3Port_));
   tryConnect(socketPubBlockchain_, serverHostname_ + ":" + std::to_string(kMiner4Port_));
-  Common::Logger::get()->info(FLAGS_id, "ZMQ/blockchain: connected to sub/pub sockets\n");
+  Common::Logger::get()->info("ZMQ/blockchain: connected to sub/pub sockets\n");
 
   while (running_) {
     try {
       zmq::message_t msg;
       std::optional<size_t> len = socketSubBlockchain_->recv(msg, zmq::recv_flags::none);
       if (!len) {
-        Common::Logger::get()->error(FLAGS_id, "ZMQ/blockchain: failed to receive message\n");
+        Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
 
@@ -148,12 +144,11 @@ void ZMQWorker::handleSubBlockchain() {
       if (received.type == Common::Models::kTypeBlockMined) {
         Common::Models::BlockMined blockMined = nlohmann::json::parse(received.data);
         blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce);
-        Common::Logger::get()->info(FLAGS_id, std::string("ZMQ/blockchain: received nonce ") +
-                                                  std::to_string(blockMined.nonce) + std::string(" for block #") +
-                                                  std::to_string(blockMined.id) + "\n");
+        Common::Logger::get()->info(std::string("ZMQ/blockchain: received nonce ") + std::to_string(blockMined.nonce) +
+                                    std::string(" for block #") + std::to_string(blockMined.id) + "\n");
       }
     } catch (const std::exception& e) {
-      Common::Logger::get()->error(FLAGS_id, std::string("ZMQ/blockchain handleSubBlockchain: \n") + e.what() + "\n");
+      Common::Logger::get()->error(std::string("ZMQ/blockchain handleSubBlockchain: \n") + e.what() + "\n");
     }
   }
 }
@@ -168,7 +163,7 @@ void ZMQWorker::sendReady() {
   try {
     socketPushServer_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(FLAGS_id, "ZMQ/server: failed to send ready message\n");
+    Common::Logger::get()->error("ZMQ/server: failed to send ready message\n");
   }
 }
 
@@ -187,7 +182,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
   try {
     socketPushServer_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(FLAGS_id, "ZMQ/blockchain: failed to send message\n");
+    Common::Logger::get()->error("ZMQ/blockchain: failed to send message\n");
   }
 }
 
@@ -206,7 +201,7 @@ void ZMQWorker::sendBlockMined(unsigned int id, unsigned int nonce) {
   try {
     socketPubBlockchain_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(FLAGS_id, "ZMQ/blockchain: failed to publish message\n");
+    Common::Logger::get()->error("ZMQ/blockchain: failed to publish message\n");
   }
 }
 

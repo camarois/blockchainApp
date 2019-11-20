@@ -32,10 +32,10 @@ class ZMQWorker {
   std::future<std::string> createRequest(const std::string& sql, const std::string& type);
 
   static std::shared_ptr<ZMQWorker> instance;
-  
-  bool running_;
+
+  std::atomic<bool> running_;
   const std::string serverHostname_;
-  int miners_;
+  std::atomic<int> minersCount_;
   zmq::context_t context_;
   zmq::socket_t socketPubToMiner_;
   zmq::socket_t socketPullFromMiner_;

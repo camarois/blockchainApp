@@ -15,7 +15,7 @@ std::shared_ptr<ZMQWorker> ZMQWorker::instance;
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
-      miners_(0),
+      minersCount_(0),
       context_(1),
       socketPubToMiner_(context_, zmq::socket_type::pub),
       socketPullFromMiner_(context_, zmq::socket_type::pull),
@@ -42,7 +42,7 @@ std::shared_ptr<ZMQWorker> ZMQWorker::get() {
 void ZMQWorker::init(const std::string& serverHostname) {
   if (!instance) {
     instance = std::make_shared<ZMQWorker>(serverHostname);
-    Common::Logger::get()->info(0, "ZMQWorker created\n");
+    Common::Logger::get()->info("ZMQWorker created\n");
   }
 }
 
@@ -59,7 +59,7 @@ bool ZMQWorker::start() {
     socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port_));
     socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port_));
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(0, std::string("ZMQ: failed to bind socket: ") + e.what() + "\n");
+    Common::Logger::get()->error(std::string("ZMQ: failed to bind socket: ") + e.what() + "\n");
     return false;
   }
 
@@ -92,14 +92,14 @@ Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRe
 }
 
 void ZMQWorker::handlePullFromMiner() {
-  Common::Logger::get()->info(0, "ZMQ/miners: thread started\n");
+  Common::Logger::get()->info("ZMQ/miners: thread started\n");
 
   while (running_) {
     try {
       zmq::message_t msg;
       std::optional<size_t> len = socketPullFromMiner_.recv(msg, zmq::recv_flags::none);
       if (!len) {
-        Common::Logger::get()->error(0, "ZMQ/miners: failed to pull message\n");
+        Common::Logger::get()->error("ZMQ/miners: failed to pull message\n");
         continue;
       }
 
@@ -112,26 +112,26 @@ void ZMQWorker::handlePullFromMiner() {
         receivedResponse(response.token, response.result);
       }
     } catch (const std::exception& e) {
-      Common::Logger::get()->error(0, std::string("ZMQ/miners: ") + e.what() + "\n");
+      Common::Logger::get()->error(std::string("ZMQ/miners: ") + e.what() + "\n");
     }
   }
 }
 
 void ZMQWorker::handleProxyBlockchain() {
-  Common::Logger::get()->info(0, "ZMQ/proxy: thread started\n");
+  Common::Logger::get()->info("ZMQ/proxy: thread started\n");
 
   try {
     zmq::proxy(socketXSubBlockchain_, socketXPubBlockchain_);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(0, std::string("ZMQ/proxy: failed to create proxy: ") + e.what() + "\n");
+    Common::Logger::get()->error(std::string("ZMQ/proxy: failed to create proxy: ") + e.what() + "\n");
   }
 }
 
 bool ZMQWorker::sendId() {
-  miners_++;
+  minersCount_++;
 
   Common::Models::ServerRequest request;
-  request.command = std::to_string(miners_);
+  request.command = std::to_string(minersCount_);
   nlohmann::json requestJSON = request;
 
   Common::Models::ZMQMessage message;
@@ -148,7 +148,7 @@ bool ZMQWorker::sendRequest(const std::string& json) {
   try {
     socketPubToMiner_.send(data, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    Common::Logger::get()->error(0, "ZMQ/miners: failed to send request\n");
+    Common::Logger::get()->error("ZMQ/miners: failed to send request\n");
     return false;
   }
 

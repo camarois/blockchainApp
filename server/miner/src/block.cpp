@@ -3,14 +3,11 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
-#include <gflags/gflags.h>
 #include <iostream>
 #include <miner/block.hpp>
 #include <nlohmann/json.hpp>
 #include <picosha2.h>
 #include <sstream>
-
-DECLARE_int32(id);
 
 namespace Miner {
 
@@ -28,7 +25,7 @@ Block::Block(unsigned int id, const std::string& previous) : Block() {
 std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
   std::ifstream blockFile(blockDir, std::ifstream::in);
   if (blockFile.fail()) {
-    Common::Logger::get()->error(FLAGS_id, "Couldn't open `" + blockDir.string() + "`\n");
+    Common::Logger::get()->error("Couldn't open `" + blockDir.string() + "`\n");
     return {};
   }
 
