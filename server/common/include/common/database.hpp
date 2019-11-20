@@ -52,7 +52,7 @@ class Database {
   std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
-  std::vector<Common::Models::User> getAllUsers();
+  Common::Models::AllUsersResponse getAllUsers();
   
 
  private:

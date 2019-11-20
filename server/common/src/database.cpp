@@ -410,18 +410,19 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   return result;
 }
 
-std::vector<Common::Models::User> Database::getAllUsers() {
+Common::Models::AllUsersResponse Database::getAllUsers() {
   Query query = Query(
       "SELECT username, isEditor, isAdmin "
       "FROM users;");
   std::cout << query.val() << std::endl;
   Statement statement = Statement(db_, query);
-  std::vector<Common::Models::User> result;
+  std::vector<Common::Models::UserResponse> result;
   while (statement.step()) {
     result.push_back({.username = statement.getColumnText(0),
                       .isEditor = (statement.getColumnText(1) == "1"),
                       .isAdmin = (statement.getColumnText(2) == "1")});
   }
-  return result;
+
+  return Common::Models::AllUsersResponse{result};
 
 }  // namespace Common

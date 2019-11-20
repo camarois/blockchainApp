@@ -87,8 +87,10 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
-  Common::Models::CreateAccountRequest logsRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
+  Common::Models::LoginResponse registerResponse = {};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
 // TODO(gabriel): faire dequoi d'utile avec cette fonction
