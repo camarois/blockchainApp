@@ -13,7 +13,7 @@ namespace Miner {
 class ZMQWorker {
  public:
   // NOLINTNEXTLINE(google-runtime-references)
-  explicit ZMQWorker(const std::string& serverHostname, std::unique_ptr<BlockChain> blockchain);
+  explicit ZMQWorker(const std::string& serverHostname);
   ~ZMQWorker();
 
   bool start();

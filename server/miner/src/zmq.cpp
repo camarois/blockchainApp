@@ -11,7 +11,7 @@
 namespace Miner {
 
 // NOLINTNEXTLINE(modernize-pass-by-value)
-ZMQWorker::ZMQWorker(const std::string& serverHostname, std::unique_ptr<BlockChain> blockchain)
+ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
       serverHostname_(serverHostname),  // NOLINT
       context_(1),
@@ -19,7 +19,7 @@ ZMQWorker::ZMQWorker(const std::string& serverHostname, std::unique_ptr<BlockCha
       socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
       socketPubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::pub)),
       socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
-      blockchainController_(std::move(blockchain)) {}
+      blockchainController_() {}
 
 ZMQWorker::~ZMQWorker() {
   running_ = false;
@@ -66,13 +66,11 @@ void ZMQWorker::tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const s
   while (running_) {
     try {
       socket->connect(address);
+      return;
     } catch (const zmq::error_t& e) {
       std::cerr << "ZMQ: failed to connect to " << address << ": " << e.what() << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
-      continue;
     }
-
-    return;
   }
 }
 
@@ -107,7 +105,7 @@ void ZMQWorker::handleSubServer() {
         printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else {
-        std::cerr << "Type not found: " << received.type << std::endl;
+        std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
       }
     } catch (const std::exception& e) {
       std::cerr << "ZMQ/blockchain error in: handleSubServer for " << e.what() << std::endl;
@@ -142,6 +140,8 @@ void ZMQWorker::handleSubBlockchain() {
         blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce);
         std::cout << "ZMQ/blockchain: received nonce " << blockMined.nonce << " for block #" << blockMined.id
                   << std::endl;
+      } else {
+        std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
       }
     } catch (const std::exception& e) {
       std::cerr << "ZMQ/blockchain error in: handleSubBlockchain for " << e.what() << std::endl;
@@ -150,15 +150,10 @@ void ZMQWorker::handleSubBlockchain() {
 }
 
 void ZMQWorker::sendResponse(const std::string& token, const std::string& result) {
-  Common::Models::ServerResponse response = {
-      .token = token,
-      .result = result,
-  };
+  Common::Models::ServerResponse response = {.token = token, .result = result};
 
-  Common::Models::ZMQMessage message = {
-      .type = Common::Models::kTypeServerResponse,
-      .data = Common::Models::toStr(response),
-  };
+  Common::Models::ZMQMessage message = {.type = Common::Models::kTypeServerResponse,
+                                        .data = Common::Models::toStr(response)};
 
   zmq::message_t msg = Common::MessageHelper::fromModel(message);
   try {
@@ -169,15 +164,10 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
 }
 
 void ZMQWorker::sendBlockMined(unsigned int id, unsigned int nonce) {
-  Common::Models::BlockMined response = {
-      .id = id,
-      .nonce = nonce,
-  };
+  Common::Models::BlockMined response = {.id = id, .nonce = nonce};
 
-  Common::Models::ZMQMessage message = {
-      .type = Common::Models::kTypeBlockMined,
-      .data = Common::Models::toStr(response),
-  };
+  Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockMined,
+                                        .data = Common::Models::toStr(response)};
 
   zmq::message_t msg = Common::MessageHelper::fromModel(message);
   try {

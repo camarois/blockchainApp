@@ -1,52 +1,38 @@
 #include "miner/blockchain-controller.hpp"
-
 #include <cstdlib>
+#include <gflags/gflags.h>
 #include <iostream>
+#include <thread>
+
+DECLARE_string(blockchain);
 
 namespace Miner {
 
-BlockChainController::BlockChainController(std::unique_ptr<BlockChain> blockchain)
-    : blockchain_(std::move(blockchain)), receivedNonce_(false) {
-  // TODO(gabriel): use better random generator
-  // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp)
-  srand(time(nullptr));
+BlockChainController::BlockChainController() : dev_(), rng_(dev_()), dist_() {
+  std::optional<Miner::BlockChain> maybeBlockchain =
+      Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
+  blockchain_ = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
 }
 
 std::optional<Block> BlockChainController::addTransaction(const std::string& transaction) {
   blockchain_->appendTransaction(transaction);
-  currentBlock_ = blockchain_->lastBlock();
-
-  // TODO(gabriel): use better random generator
-  // NOLINTNEXTLINE(cert-msc30-c,cert-msc50-cpp)
-  receivedBlockMined(currentBlock_->get().id(), rand());
-  receivedNonce_ = false;
-
-  // TODO(gabriel): va nous falloir une meilleure politique de vérification
-
+  auto lastBlock = blockchain_->lastBlock();
+  lastBlock->get().queueNonce(dist_(rng_));
   blockchain_->nextBlock();
   blockchain_->saveAll();
-  if (receivedNonce_) {
-    std::cout << "mining aborted of block #" << currentBlock_->get().id() << " by external nonce "
-              << currentBlock_->get().nonce() << std::endl;
-    return {};
-  }
-
-  std::cout << "mining of block #" << currentBlock_->get().id() << " finished with nonce "
-            << currentBlock_->get().nonce() << std::endl;
-  return currentBlock_->get();
+  return lastBlock;
 }
 
 void BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
-  if (!currentBlock_) {
-    return;
+  blockchain_->lastBlock()->get().queueNonce(nonce);
+  auto minedBlock = blockchain_->getBlock(id);
+  while (!minedBlock) {
+    std::cout << "Waiting for block to be mined" << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    minedBlock = blockchain_->getBlock(id);
   }
-
-  if (currentBlock_->get().id() != id) {
-    return;
-  }
-
-  receivedNonce_ = true;
-  currentBlock_->get().queueNonce(nonce);
+  minedBlock->get().increaseVerification();
+  minedBlock->get().save();
 }
 
 }  // namespace Miner

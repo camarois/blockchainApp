@@ -13,6 +13,7 @@ const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
   difficulty_ = FLAGS_difficulty;
+  std::cout << "Starting blockchain with difficulty " << difficulty_ << std::endl;
   createBlock();
 }
 
@@ -47,7 +48,7 @@ void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()
 void BlockChain::saveAll() {
   Common::optional_ref<Block> last = lastBlock();
   if (last) {
-    lastBlock()->get().save(blockDir_);
+    lastBlock()->get().save();
   }
   saveMetadata();
 }
@@ -56,7 +57,7 @@ void BlockChain::clearAll() { blocks_.clear(); }
 
 Block& BlockChain::nextBlock() {
   lastBlock()->get().mine(difficulty_);
-  lastBlock()->get().save(blockDir_);
+  lastBlock()->get().save();
 
   return createBlock();
 }

@@ -2,11 +2,14 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <gflags/gflags.h>
 #include <iostream>
 #include <miner/block.hpp>
 #include <nlohmann/json.hpp>
 #include <picosha2.h>
 #include <sstream>
+
+DECLARE_string(blockchain);
 
 namespace Miner {
 
@@ -14,6 +17,8 @@ Block::Block() {
   id_ = 0;
   dirty_ = true;
   nonce_ = 0;
+  numberOfVerifications_ = 0;
+  blockDir_ = std::filesystem::path(FLAGS_blockchain);
 }
 
 Block::Block(unsigned int id, const std::string& previous) : Block() {
@@ -43,7 +48,7 @@ void Block::append(const std::string& data) {
 void Block::mine(unsigned int difficulty) {
   bool invalid = true;
   while (invalid) {
-    if (receivedNonces_.empty()) {
+    if (!receivedNonces_.empty()) {
       nonce_ = receivedNonces_.front();
       receivedNonces_.pop();
     }
@@ -65,12 +70,17 @@ void Block::mine(unsigned int difficulty) {
   }
 }
 
-void Block::save(const std::filesystem::path& blockDir) const {
-  std::filesystem::path path(blockDir / std::to_string(id_));
+void Block::save() const {
+  std::filesystem::path path(blockDir_ / std::to_string(id_));
   std::ofstream file(path, std::ofstream::out);
   std::string json = static_cast<nlohmann::json>(*this).dump();
   file << json;
   file.close();
+}
+
+void Block::increaseVerification() {
+  ++numberOfVerifications_;
+  std::cout << "Block #" << id_ << " is now verified by " << numberOfVerifications_ << " miners." << std::endl;
 }
 
 void Block::queueNonce(unsigned int nonce) { receivedNonces_.push(nonce); }
@@ -78,6 +88,8 @@ void Block::queueNonce(unsigned int nonce) { receivedNonces_.push(nonce); }
 unsigned int Block::id() const { return id_; }
 
 unsigned int Block::nonce() const { return nonce_; }
+
+unsigned int Block::numberOfVerifications() const { return numberOfVerifications_; }
 
 std::string Block::hash() {
   if (!dirty_) {
@@ -102,6 +114,7 @@ inline void to_json(nlohmann::json& j, const Block& obj) {
   j = {
       {obj.kId_, obj.id()},
       {obj.kNonce_, obj.nonce()},
+      {obj.kNumberOfVerifications_, obj.numberOfVerifications()},
       {obj.kPreviousHash_, obj.previousHash()},
       {obj.kData_, obj.data()},
   };
@@ -112,6 +125,7 @@ inline void from_json(const nlohmann::json& j, Block& obj) {
   obj.dirty_ = true;
   j.at(obj.kId_).get_to(obj.id_);
   j.at(obj.kNonce_).get_to(obj.nonce_);
+  j.at(obj.kNumberOfVerifications_).get_to(obj.numberOfVerifications_);
   j.at(obj.kPreviousHash_).get_to(obj.previousHash_);
   j.at(obj.kData_).get_to(obj.data_);
 }

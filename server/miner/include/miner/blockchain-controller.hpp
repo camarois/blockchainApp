@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <memory>
 #include <optional>
+#include <random>
 
 #include "miner/blockchain.hpp"
 
@@ -11,15 +12,17 @@ namespace Miner {
 
 class BlockChainController {
  public:
-  explicit BlockChainController(std::unique_ptr<BlockChain> blockchain);
+  explicit BlockChainController();
 
   std::optional<Block> addTransaction(const std::string& transaction);
   void receivedBlockMined(unsigned int id, unsigned int nonce);
 
  private:
+  std::random_device dev_;
+  std::mt19937 rng_;
+  std::uniform_int_distribution<std::mt19937::result_type> dist_;
+
   std::unique_ptr<BlockChain> blockchain_;
-  Common::optional_ref<Block> currentBlock_;
-  bool receivedNonce_;
 };
 
 } // namespace Miner

@@ -149,14 +149,10 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
 std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
-  Common::Models::ServerRequest request;
-  request.token = token;
-  request.command = sql;
+  Common::Models::ServerRequest request = {.token = token, .command = sql};
   nlohmann::json requestJSON = request;
 
-  Common::Models::ZMQMessage message;
-  message.type = type;
-  message.data = requestJSON.dump();
+  Common::Models::ZMQMessage message = {.type = type, .data = requestJSON.dump()};
   nlohmann::json messageJSON = message;
 
   getRequests_.emplace(token, std::promise<std::string>{});
