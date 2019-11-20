@@ -103,9 +103,9 @@ void ZMQWorker::handleSubServer() {
       if (received.type == Common::Models::kTypeMinerId) {
         if (request.token == token_) {
           Common::Logger::get()->setProvenance(std::stoi(request.command));
-          Common::Logger::get()->info(std::string("This is miner #" + request.command + ", connected to server") + "\n");
-        }
-        else {
+          Common::Logger::get()->info(std::string("This is miner #" + request.command + ", connected to server") +
+                                      "\n");
+        } else {
           Common::Logger::get()->info(std::string("Miner #" + request.command + " is connected to server") + "\n");
         }
       } else if (received.type == Common::Models::kTypeServerRequest) {
@@ -197,10 +197,8 @@ void ZMQWorker::sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const
 
 void ZMQWorker::sendReady() {
   Common::Models::ServerResponse response = {.token = token_};
-  Common::Models::ZMQMessage message = {
-      .type = Common::Models::kTypeMinerReady,
-      .data = Common::Models::toStr(response),
-  };
+  Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerReady,
+                                        .data = Common::Models::toStr(response)};
   sendToSocket(socketPushServer_, message);
 }
 

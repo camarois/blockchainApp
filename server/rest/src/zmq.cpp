@@ -129,19 +129,13 @@ void ZMQWorker::handleProxyBlockchain() {
 }
 
 bool ZMQWorker::sendId(const std::string& token) {
+  // TODO(frgraf): handle what happens if server crashes or closes.
   minersCount_++;
 
-  Common::Models::ServerRequest request;
-  request.token = token;
-  request.command = std::to_string(minersCount_);
-  nlohmann::json requestJSON = request;
+  Common::Models::ServerRequest request = {.token = token, .command = std::to_string(minersCount_)};
+  Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerId, .data = Common::Models::toStr(request)};
 
-  Common::Models::ZMQMessage message;
-  message.type = Common::Models::kTypeMinerId;
-  message.data = requestJSON.dump();
-  nlohmann::json messageJSON = message;
-
-  return sendRequest(messageJSON.dump());
+  return sendRequest(Common::Models::toStr(message));
 }
 
 bool ZMQWorker::sendRequest(const std::string& json) {
@@ -158,26 +152,23 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 }
 
 void ZMQWorker::receivedResponse(const std::string& token, const std::string& response) {
-  if (getRequests_.find(token) == getRequests_.end()) {
+  if (requests_.find(token) == requests_.end()) {
     return;
   }
 
-  getRequests_.at(token).set_value(response);
-  getRequests_.erase(token);
+  requests_.at(token).set_value(response);
+  requests_.erase(token);
 }
 
 std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
   Common::Models::ServerRequest request = {.token = token, .command = sql};
-  nlohmann::json requestJSON = request;
+  Common::Models::ZMQMessage message = {.type = type, .data = Common::Models::toStr(request)};
 
-  Common::Models::ZMQMessage message = {.type = type, .data = requestJSON.dump()};
-  nlohmann::json messageJSON = message;
-
-  getRequests_.emplace(token, std::promise<std::string>{});
-  sendRequest(messageJSON.dump());
-  return getRequests_.at(token).get_future();
+  requests_.emplace(token, std::promise<std::string>{});
+  sendRequest(Common::Models::toStr(message));
+  return requests_.at(token).get_future();
 }
 
 }  // namespace Rest

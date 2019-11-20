@@ -43,7 +43,7 @@ class ZMQWorker {
   zmq::socket_t socketXSubBlockchain_;
   std::thread threadPullFromMiner_;
   std::thread threadProxyBlockchain_;
-  std::unordered_map<std::string, std::promise<std::string>> getRequests_;
+  std::unordered_map<std::string, std::promise<std::string>> requests_;
 
   const int kMiner1Port_ = 5555;
   const int kMiner2Port_ = 5556;
