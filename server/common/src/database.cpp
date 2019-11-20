@@ -123,7 +123,7 @@ void Database::initFunctions() {
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
        }},
-       {Functions::GetStudents,
+       {Functions::GetAllUsers,
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
        }},
@@ -221,10 +221,10 @@ void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& req
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q' AND isEditor = '%q';",
       Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
       Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
-      std::to_string(int(request.isAdmin)).c_str());
+      std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -436,7 +436,8 @@ Common::Models::AllUsersResponse Database::getAllUsers() {
                       .isEditor = (statement.getColumnText(1) == "1"),
                       .isAdmin = (statement.getColumnText(2) == "1")});
   }
-
-  return Common::Models::AllUsersResponse{result};
+  Common::Models::AllUsersResponse response = {result};
+  return response;
+}
 
 }  // namespace Common

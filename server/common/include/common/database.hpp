@@ -28,6 +28,7 @@ class Database {
   Common::Models::SqlResponse executeRequest(const Common::Models::SqlRequest& sql);
 
   void addUser(const Common::Models::AddUserRequest& request);
+  void deleteUser(const Common::Models::DeleteAccountRequest& request);
   void setUserPassword(const Common::Models::SetUserPasswordRequest& request);
   bool containsUser(const Common::Models::ContainsUserRequest& request);
   bool containsAdmin(const Common::Models::ContainsAdminRequest& request);
