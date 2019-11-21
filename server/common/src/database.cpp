@@ -428,7 +428,6 @@ Common::Models::AllUsersResponse Database::getAllUsers() {
   Query query = Query(
       "SELECT username, isEditor, isAdmin "
       "FROM users;");
-  std::cout << query.val() << std::endl;
   Statement statement = Statement(db_, query);
   std::vector<Common::Models::UserResponse> result;
   while (statement.step()) {
