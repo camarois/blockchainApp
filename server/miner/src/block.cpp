@@ -72,6 +72,7 @@ void Block::mine(unsigned int difficulty) {
 }
 
 void Block::save() const {
+  std::cout << "SAVING " << std::to_string(id_) << std::endl;
   std::filesystem::path path(blockDir_ / std::to_string(id_));
   std::ofstream file(path, std::ofstream::out);
   std::string json = static_cast<nlohmann::json>(*this).dump();

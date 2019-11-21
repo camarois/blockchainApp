@@ -43,6 +43,7 @@ const std::string kToken = "token";
 const std::string kType = "type";
 const std::string kFunction = "function";
 const std::string kParams = "params";
+const std::string kNumberOfVerifications = "number-of-verifications";
 
 const std::string kTypeBlockSyncRequest = "block-sync-request";
 const std::string kTypeBlockSyncResponse = "block-sync-response";
@@ -110,18 +111,23 @@ inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) { j.at(kLa
 struct BlockMined {
   unsigned int id = 0;
   unsigned int nonce = 0;
+  unsigned int numberOfVerifications = 0;
   std::string data;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const BlockMined& obj) {
-  j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}, {kData, obj.data}};
+  j = {{kBlockID, obj.id},
+       {kBlockNonce, obj.nonce},
+       {kNumberOfVerifications, obj.numberOfVerifications},
+       {kData, obj.data}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockMined& obj) {
   j.at(kBlockID).get_to(obj.id);
   j.at(kBlockNonce).get_to(obj.nonce);
+  j.at(kNumberOfVerifications).get_to(obj.numberOfVerifications);
   j.at(kData).get_to(obj.data);
 }
 

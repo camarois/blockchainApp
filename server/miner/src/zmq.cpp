@@ -46,7 +46,6 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
-  std::cout << "loool " << blockchainController_.getLastBlockId() << std::endl;
   threadServer_ = std::thread(&ZMQWorker::handleSubServer, this);
   threadBlockchain_ = std::thread(&ZMQWorker::handleSubBlockchain, this);
 
@@ -176,7 +175,7 @@ void ZMQWorker::handleSubBlockchain() {
       else if (received.type == Common::Models::kTypeBlockSyncRequest) {
         if (!syncing_) {
           Common::Models::BlockSyncRequest request = nlohmann::json::parse(received.data);
-          std::cout << "Get last blocks from id " << request.lastId << " to " << blockchainController_.getLastBlockId()
+          std::cout << "Get last blocks from id " << request.lastId + 1 << " to " << blockchainController_.getLastBlockId()
                     << std::endl;
           auto lastBlocks = blockchainController_.getLastBlocks(request.lastId);
           if (!lastBlocks.empty()) {
@@ -189,13 +188,18 @@ void ZMQWorker::handleSubBlockchain() {
           Common::Models::BlockSyncResponse response = nlohmann::json::parse(received.data);
           std::cout << "Syncing " << response.blocks.size() << " blocks" << std::endl;
           for (auto block : response.blocks) {
-            std::cout << "Syncing block #" << block.id << std::endl;
-            blockchainController_.addTransaction(block.data);
-            std::cout << "allo " << block.data << std::endl;
-            Common::Models::ServerRequest request = nlohmann::json::parse(block.data);
-            Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
-            Common::Models::toStr(Common::Database::get()->executeRequest(sql));
-            std::cout << "Syncing block #" << block.id << " done" << std::endl;
+            if (block.id > blockchainController_.getLastBlockId() || block.id == 0) {
+              std::cout << "Syncing block #" << block.id << std::endl;
+              auto b = blockchainController_.addTransaction(block.data);
+              for (int i = 0; i < block.numberOfVerifications; ++i) {
+                b->increaseVerification();
+              }
+              Common::Models::ServerRequest request = nlohmann::json::parse(block.data);
+              Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+              Common::Models::toStr(Common::Database::get()->executeRequest(sql));
+              sendBlockMined(block.id, block.nonce);
+              std::cout << "Syncing block #" << block.id << " done" << std::endl;
+            }
           }
           std::cout << "Syncing blocks done" << std::endl;
           syncing_ = false;

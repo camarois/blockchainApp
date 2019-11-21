@@ -17,11 +17,11 @@ BlockChainController::BlockChainController() : dev_(), rng_(dev_()), dist_() {
 
 std::optional<Block> BlockChainController::addTransaction(const std::string& transaction) {
   blockchain_->appendTransaction(transaction);
-  auto lastBlock = blockchain_->lastBlock();
-  lastBlock->get().queueNonce(dist_(rng_));
-  blockchain_->nextBlock();
+  // auto lastBlock = blockchain_->lastBlock();
+  // lastBlock->get().queueNonce(dist_(rng_));
   blockchain_->saveAll();
-  return lastBlock;
+  blockchain_->nextBlock();
+  return blockchain_->lastBlock();
 }
 
 bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
@@ -42,9 +42,12 @@ unsigned int BlockChainController::getLastBlockId() { return blockchain_->lastBl
 
 std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(unsigned int lastId) {
   std::vector<Common::Models::BlockMined> lastBlocks;
-  for (unsigned int i = lastId + 1; i <= blockchain_->lastBlockID(); ++i) {
+  for (unsigned int i = lastId; i < blockchain_->lastBlockID(); ++i) {
     auto block = blockchain_->getBlock(i);
-    Common::Models::BlockMined blockMined = {.id = i, .nonce = block->get().nonce(), .data = block->get().data()};
+    Common::Models::BlockMined blockMined = {.id = i,
+                                             .nonce = block->get().nonce(),
+                                             .numberOfVerifications = block->get().numberOfVerifications(),
+                                             .data = block->get().data()};
     lastBlocks.push_back(blockMined);
   }
   return lastBlocks;
