@@ -6,9 +6,8 @@
 #include <common/message_helper.hpp>
 #include <common/miner_models.hpp>
 #include <common/models.hpp>
+#include <magic_enum.hpp>
 #include <miner/zmq.hpp>
-
-DECLARE_string(db);
 
 namespace Miner {
 
@@ -83,35 +82,43 @@ void ZMQWorker::handleSubServer() {
   tryConnect(socketSubServer_, serverHostname_ + ":" + std::to_string(kMiner1Port_));
   tryConnect(socketPushServer_, serverHostname_ + ":" + std::to_string(kMiner2Port_));
   std::cout << "ZMQ/server: connected to server sub/push sockets" << std::endl;
-  Common::Database db(FLAGS_db);
 
   while (running_) {
     try {
       zmq::message_t msg;
       std::optional<size_t> len = socketSubServer_->recv(msg, zmq::recv_flags::none);
       if (!len) {
-        std::cerr << "ZMQ/server: failed to receive message" << std::endl;
+        std::cerr << "ZMQ/blockchain: failed to receive message" << std::endl;
         continue;
       }
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
 
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-      std::cout << "Received from server: " << request.command << std::endl;
       if (received.type == Common::Models::kTypeServerRequest) {
-        sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
+        Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+        printSqlRequest("ZMQ/blockchain: executing get transaction: ", sql);
+        sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       } else if (received.type == Common::Models::kTypeTransaction) {
-        std::cout << "ZMQ/blockchain: received data" << std::endl << "--> " << received.data << std::endl;
         std::optional<Block> block = blockchainController_.addTransaction(received.data);
         if (block) {
           sendBlockMined(block->id(), block->nonce());
         }
-        sendResponse(request.token, Common::Models::toStr(db.get(nlohmann::json::parse(request.command))));
+        Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+        printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
+        sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
+      } else {
+        std::cerr << "Type not found: " << received.type << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain handleSubServer: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain error in: handleSubServer for " << e.what() << std::endl;
     }
   }
+}
+
+void ZMQWorker::printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql) {
+  std::cout << message << magic_enum::enum_name(sql.function) << " with params:" << std::endl
+            << nlohmann::json::parse(sql.params).dump(Common::Models::kDumpTab) << std::endl;
 }
 
 void ZMQWorker::handleSubBlockchain() {
@@ -138,7 +145,7 @@ void ZMQWorker::handleSubBlockchain() {
                   << std::endl;
       }
     } catch (const std::exception& e) {
-      std::cerr << "ZMQ/blockchain handleSubBlockchain: " << e.what() << std::endl;
+      std::cerr << "ZMQ/blockchain error in: handleSubBlockchain for " << e.what() << std::endl;
     }
   }
 }
@@ -158,7 +165,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
   try {
     socketPushServer_->send(msg, zmq::send_flags::none);
   } catch (const zmq::error_t& e) {
-    std::cerr << "ZMQ/server: failed to send message" << std::endl;
+    std::cerr << "ZMQ/blockchain: failed to send message" << std::endl;
   }
 }
 

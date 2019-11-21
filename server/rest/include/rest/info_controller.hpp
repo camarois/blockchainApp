@@ -12,8 +12,7 @@ namespace Rest {
 
 class InfoController {
  public:
-  explicit InfoController(const std::shared_ptr<Rest::CustomRouter>& router,
-                          std::shared_ptr<ZMQWorker> zmqWorker);
+  explicit InfoController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
@@ -22,7 +21,6 @@ class InfoController {
   void handleListStudents(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
   void handleListClasses(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-  std::shared_ptr<ZMQWorker> zmqWorker_;
   const std::string kBasePath_ = "/info/";
 };
 

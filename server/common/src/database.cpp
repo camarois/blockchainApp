@@ -5,8 +5,11 @@
 #include <common/scripts_helper.hpp>
 #include <gflags/gflags.h>
 #include <iostream>
+#include <magic_enum.hpp>
 
 namespace Common {
+
+std::shared_ptr<Database> Database::instance;
 
 Database::Database(const std::string& dbPath) {
   Common::ScriptsHelper::createDb(dbPath);
@@ -20,12 +23,106 @@ Database::Database(const std::string& dbPath) {
                         nullptr),
         "Cannot connect to database");
     db_.reset(dbPtr, sqlite3_close_v2);
+    initFunctions();
 
-    addUser({{"admin", "equipe01"}, true, true});
+    addUser({{"admin", "equipe01"}, true});
   } catch (...) {
     close();
     throw;
   }
+}
+
+std::shared_ptr<Database> Database::get() {
+  if (instance) {
+    return instance;
+  }
+  throw std::runtime_error("Database not created, you should initilize it first");
+}
+
+void Database::init(const std::string& dbPath) {
+  if (!instance) {
+    instance = std::make_shared<Database>(dbPath);
+    std::cout << "Database created" << std::endl;
+  }
+}
+
+void Database::initFunctions() {
+  functions_ = {
+      {Functions::AddUser,
+       [&](const nlohmann::json& json) {
+         addUser(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::SetUserPassword,
+       [&](const nlohmann::json& json) {
+         setUserPassword(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::ContainsUser,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{containsUser(json), ""};
+       }},
+      {Functions::ContainsAdmin,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{containsAdmin(json), ""};
+       }},
+      {Functions::GetRole,
+       [&](const nlohmann::json& json) {
+         auto edition = getRole(json);
+         return Common::Models::SqlResponse{
+             edition.has_value(), edition.has_value() ? std::to_string(static_cast<int>(edition.value())) : ""};
+       }},
+      {Functions::GetSalt,
+       [&](const nlohmann::json& json) {
+         auto salt = getSalt(json);
+         return Common::Models::SqlResponse{salt.has_value(), salt.has_value() ? salt.value() : ""};
+       }},
+      {Functions::CheckForExistingClass,
+       [&](const nlohmann::json& json) {
+         auto classId = checkForExistingClass(json);
+         return Common::Models::SqlResponse{classId.has_value(),
+                                            classId.has_value() ? std::to_string(classId.value()) : ""};
+       }},
+      {Functions::DeleteExistingClass,
+       [&](const nlohmann::json& json) {
+         deleteExistingClass(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::DeleteExistingResults,
+       [&](const nlohmann::json& json) {
+         deleteExistingResults(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::AddNewClass,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, std::to_string(addNewClass(json))};
+       }},
+      {Functions::AddNewResult,
+       [&](const nlohmann::json& json) {
+         addNewResult(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::GetClassResult,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getClassResult(json))};
+       }},
+      {Functions::GetStudentResult,
+       [&](const nlohmann::json& json) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudentResult(json))};
+       }},
+      {Functions::GetClasses,
+       [&](const nlohmann::json& /*json*/) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getClasses())};
+       }},
+      {Functions::GetStudents,
+       [&](const nlohmann::json& /*json*/) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
+       }},
+      {Functions::GetStudents,
+       [&](const nlohmann::json& /*json*/) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
+       }},
+  };
 }
 
 void Database::close() {
@@ -39,80 +136,19 @@ void Database::assertSqlite(int errCode, const std::string& message) {
   }
 }
 
-Common::Models::SqlResponse Database::get(const Common::Models::SqlRequest& sql) {
-  switch (sql.function) {
-    case Functions::AddUser: {
-      addUser(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::DeleteUser: {
-      deleteUser(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::SetUserPassword: {
-      setUserPassword(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::ContainsUser: {
-      return {containsUser(nlohmann::json::parse(sql.params)), ""};
-    }
-    case Functions::ContainsAdmin: {
-      return {containsAdmin(nlohmann::json::parse(sql.params)), ""};
-    }
-    case Functions::GetRole: {
-      auto edition = getRole(nlohmann::json::parse(sql.params));
-      return {edition.has_value(), edition.has_value() ? std::to_string(static_cast<int>(edition.value())) : ""};
-    }
-    case Functions::GetSalt: {
-      auto salt = getSalt(sql.params);
-      return {salt.has_value(), salt.has_value() ? salt.value() : ""};
-    }
-    case Functions::CheckForExistingClass: {
-      auto classId = checkForExistingClass(nlohmann::json::parse(sql.params));
-      return {classId.has_value(), classId.has_value() ? std::to_string(classId.value()) : ""};
-    }
-    case Functions::DeleteExistingClass: {
-      deleteExistingClass(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::DeleteExistingResults: {
-      deleteExistingResults(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::AddNewClass: {
-      return {true, std::to_string(addNewClass(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::AddNewResult: {
-      addNewResult(nlohmann::json::parse(sql.params));
-      return {false, ""};
-    }
-    case Functions::GetClassResult: {
-      return {true, Common::Models::toStr(getClassResult(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::GetStudentResult: {
-      return {true, Common::Models::toStr(getStudentResult(nlohmann::json::parse(sql.params)))};
-    }
-    case Functions::GetClasses: {
-      return {true, Common::Models::toStr(getClasses())};
-    }
-    case Functions::GetStudents: {
-      return {true, Common::Models::toStr(getStudents())};
-    }
-    case Functions::GetAllUsers: {
-      return {true, Common::Models::toStr(getAllUsers())};
-    }
-
-    default:
-      throw std::runtime_error("Function not allowed:" + std::to_string(sql.function));
+Common::Models::SqlResponse Database::executeRequest(const Common::Models::SqlRequest& sql) {
+  auto it = functions_.find(sql.function);
+  if (it != functions_.end()) {
+    return it->second(nlohmann::json::parse(sql.params));
   }
-  return {};
+  throw std::runtime_error("Function not allowed: " + std::string(magic_enum::enum_name(sql.function)));
 }
 
-std::optional<std::string> Database::getSalt(const std::string& username) {
+std::optional<std::string> Database::getSalt(const Common::Models::GetSaltRequest& request) {
   Query query = Query(
       "SELECT salt FROM users "
       "WHERE username = '%q';",
-      username.c_str());
+      request.username.c_str());
   Statement statement = Statement(db_, query);
   if (statement.step()) {
     return statement.getColumnText(0);
@@ -143,7 +179,7 @@ bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request
 
 std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& request) {
   Query query = Query(
-      "SELECT isEditor FROM users "
+      "SELECT isAdmin FROM users "
       "WHERE username = '%q' AND password = '%q';",
       request.loginRequest.username.c_str(),
       Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());
@@ -159,19 +195,10 @@ void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
-      "(username, password, salt, isAdmin, isEditor) "
-      "VALUES ('%q', '%q', '%q', '%q', '%q');",
+      "(username, password, salt, isAdmin) "
+      "VALUES ('%q', '%q', '%q', '%q');",
       request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
-      salt.c_str(), std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
-  Statement statement = Statement(db_, query);
-  statement.step();
-}
-
-void Database::deleteUser(const Common::Models::DeleteAccountRequest& request) {
-  Query query = Query(
-      "DELETE FROM users "
-      "WHERE username = '%q';",
-      request.username.c_str());
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -180,10 +207,10 @@ void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& req
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
-      "WHERE username = '%q' AND password = '%q' AND isEditor = '%q';",
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
       Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
       Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
-      std::to_string(int(request.isEditor)).c_str());
+      std::to_string(int(request.isAdmin)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -380,21 +407,6 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
                       .id = getStudentStatement.getColumnText(2)});
   }
 
-  return result;
-}
-
-std::vector<Common::Models::User> Database::getAllUsers() {
-  Query query = Query(
-      "SELECT username, isEditor, isAdmin "
-      "FROM users;");
-  std::cout << query.val() << std::endl;
-  Statement statement = Statement(db_, query);
-  std::vector<Common::Models::User> result;
-  while (statement.step()) {
-    result.push_back({.username = statement.getColumnText(0),
-                      .isEditor = (statement.getColumnText(1) == "1"),
-                      .isAdmin = (statement.getColumnText(2) == "1")});
-  }
   return result;
 }
 
