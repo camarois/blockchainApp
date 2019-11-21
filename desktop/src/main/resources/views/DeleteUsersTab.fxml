@@ -37,7 +37,7 @@
       </HBox>
       <TableView fx:id="usersTableView">
          <columns>
-            <TableColumn fx:id="colUsername" editable="false" text="Nom d'utilisateur" style="-fx-alignment: CENTER-LEFT;">
+            <TableColumn fx:id="colUsername" editable="false" style="-fx-alignment: CENTER-LEFT;" text="Nom d'utilisateur">
                <cellValueFactory>
                   <PropertyValueFactory property="username" />
                </cellValueFactory>
@@ -63,4 +63,10 @@
          </VBox.margin>
       </TableView>
    </children>
+   <opaqueInsets>
+      <Insets bottom="10.0" />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="35.0" />
+   </padding>
 </VBox>
