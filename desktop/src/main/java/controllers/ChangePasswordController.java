@@ -25,7 +25,7 @@ public class ChangePasswordController {
         String newPwdValue = newPwd.getText();
         String confPwdValue = confPwd.getText();
         if (oldPwdValue.equals("") || newPwdValue.equals("") || confPwdValue.equals("")) {
-            showErrorDialog("Les mots de passe sont invalide.");
+            showErrorDialog("Les mots de passe sont invalides.");
         } else if (!newPwdValue.equals(confPwdValue)) {
             showErrorDialog("Les nouveaux mots de passe ne sont pas identiques");
         } else {

@@ -32,7 +32,7 @@ public class CreateUserController {
         if (username.equals("") || password.equals("") || conformPassword.equals("")) {
             showWarningDialog("Le nom d'utilisateur ou le mot de passe est invalide");
         } else if (!password.equals(conformPassword)) {
-            showWarningDialog("Les mots de passe ne sont pas identique");
+            showWarningDialog("Les mots de passe ne sont pas identiques");
         } else {
             RestService.postRequestAsync(RestService.urls.getCreateUser(),
                     new CreateUserRequest(
@@ -43,7 +43,7 @@ public class CreateUserController {
                             isAdmin),
                     RegisterResponse.class,
                 registerResponse -> {
-                    showConfirmationDialog("Creaton du compte reussie.");
+                    showConfirmationDialog("Creation du compte reussie.");
                 },
                 (e) -> showErrorDialog("Erreur dans la creation du compte")
             );
