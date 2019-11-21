@@ -126,7 +126,7 @@ void Database::initFunctions() {
       {Functions::GetAllUsers,
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
-         }},
+       }},
       {Functions::GetLogs,
        [&](const nlohmann::json& json) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getLogs(json))};
