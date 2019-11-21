@@ -55,8 +55,8 @@ download_and_unpack(
 
 set(TOOLCHAIN_DIR ${CMAKE_BINARY_DIR}/toolchain)
 set(toolchain_file x-tools7h.tar.xz)
-set(toolchain_md5 856aa3e81afda734deff8fb2848d5760)
-set(toolchain_url https://archlinuxarm.org/builder/xtools/${toolchain_file})
+set(toolchain_md5 c5ee7c40fb3a31202ec660adba696fe2)
+set(toolchain_url http://shaft.quebec/${toolchain_file})
 download_and_unpack(
     ${toolchain_url}
     ${toolchain_md5}
