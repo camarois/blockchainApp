@@ -1,4 +1,4 @@
-#connectBtn{
+Button{
     -fx-color: #ffffff;
     -fx-background-color: linear-gradient(to bottom, #ffe49e 0%,#ffb700 3%,#ffad00 35%,#ff9000 97%,#e27f00 100%);
     -fx-font-size: 12px;
@@ -7,7 +7,7 @@
     -fx-opacity: 1;
 }
 
-#connectBtn:hover{
+Button:hover{
     -fx-cursor: hand;
     -fx-opacity: 0.5;
 }
