@@ -3,8 +3,6 @@ package controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import models.PasswordRequest;
 import services.RestService;
@@ -24,7 +22,7 @@ public class ChangePasswordController {
         String oldPwdValue = oldPwd.getText();
         String newPwdValue = newPwd.getText();
         String confPwdValue = confPwd.getText();
-        if (oldPwdValue.equals("") || newPwdValue.equals("") || confPwdValue.equals("")) {
+        if (oldPwdValue.isEmpty() || newPwdValue.isEmpty() || confPwdValue.isEmpty()) {
             showErrorDialog("Les mots de passe sont invalides.");
         } else if (!newPwdValue.equals(confPwdValue)) {
             showErrorDialog("Les nouveaux mots de passe ne sont pas identiques");

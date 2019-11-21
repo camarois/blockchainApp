@@ -29,7 +29,7 @@ public class CreateUserController {
         Boolean isEditor = isEditorCheckBox.isSelected();
         Boolean isAdmin = isAdminCheckBox.isSelected();
 
-        if (username.equals("") || password.equals("") || conformPassword.equals("")) {
+        if (username.isEmpty() || password.isEmpty() || conformPassword.isEmpty()) {
             showWarningDialog("Le nom d'utilisateur ou le mot de passe est invalide");
         } else if (!password.equals(conformPassword)) {
             showWarningDialog("Les mots de passe ne sont pas identiques");

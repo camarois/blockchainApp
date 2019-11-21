@@ -1,7 +1,6 @@
 package controllers;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,14 +14,12 @@ import models.DeleteUserRequest;
 import models.User;
 import services.RestService;
 
-
 public class DeleteUserController {
     @FXML
     public VBox vboxDeleteUser;
 
     @FXML
     private TableView<User> usersTableView;
-
 
     @FXML
     public void initialize() {
@@ -37,7 +34,6 @@ public class DeleteUserController {
                     public TableCell call(final TableColumn<User, Boolean> param) {
                         final TableCell<User, Boolean> cell = new TableCell<>() {
                             Button btn = new Button("Supprimer");
-
 
                             @Override
                             public void updateItem(Boolean item, boolean empty) {
