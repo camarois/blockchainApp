@@ -14,7 +14,7 @@
    <children>
       <HBox alignment="CENTER">
          <children>
-            <Label text="Les suppressions sont définitive!">
+            <Label text="Les suppressions sont définitives!">
                <font>
                   <Font size="24.0" />
                </font>
