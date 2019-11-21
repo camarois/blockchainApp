@@ -24,7 +24,7 @@ endfunction()
 set(SYSROOT_DIR ${CMAKE_BINARY_DIR}/sysroot)
 set(sysroot_file ArchLinuxARM-zedboard-latest.tar.gz)
 set(sysroot_md5 87e6df9003b5fb4394503b36b46f2584)
-set(sysroot_url http://mirror.archlinuxarm.org/os/${sysroot_file})
+set(sysroot_url http://os.archlinuxarm.org/os/${sysroot_file})
 download_and_unpack(
     ${sysroot_url}
     ${sysroot_md5}

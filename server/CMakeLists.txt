@@ -27,3 +27,26 @@ if(NOT BUILD_ARMV7)
     enable_testing()
     # add_subdirectory(tests)
 endif()
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/rest
+          ${CMAKE_BINARY_DIR}/miner/miner
+    DESTINATION usr/bin
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
+)
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/createCert.sh
+          ${CMAKE_BINARY_DIR}/rest/createDb.sh
+    DESTINATION usr/share/inf3995
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
+)
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
+    DESTINATION usr/share/inf3995
+)
