@@ -53,6 +53,9 @@ class Database {
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
 
+  unsigned int getLastLogId();
+  void setLastLogId(unsigned int lastLogId);
+
  private:
   void close();
   void initFunctions();

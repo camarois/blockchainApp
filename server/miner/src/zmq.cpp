@@ -46,10 +46,9 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
+  std::cout << "loool " << blockchainController_.getLastBlockId() << std::endl;
   threadServer_ = std::thread(&ZMQWorker::handleSubServer, this);
   threadBlockchain_ = std::thread(&ZMQWorker::handleSubBlockchain, this);
-  std::this_thread::sleep_for(std::chrono::seconds(1));
-  sendBlockSyncRequest(blockchainController_.getLastBlockId());
 
   return true;
 }
@@ -91,17 +90,22 @@ void ZMQWorker::handleSubServer() {
         Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
-      // if (syncing_) {
-      //   std::cout << "Can't accept message, in syncing state." << std::endl;
-      //   continue;
-      // }
+      if (syncing_) {
+        std::cout << "Can't accept message, in syncing state." << std::endl;
+        continue;
+      }
       // while (syncing_) {
       //   std::this_thread::sleep_for(std::chrono::seconds(1));
       // }
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
-
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
+      std::cout << "Last block id " << request.lastBlockId << " vs our last id "
+                << blockchainController_.getLastBlockId() << std::endl;
+      if (request.lastBlockId > blockchainController_.getLastBlockId()) {
+        sendBlockSyncRequest();
+      }
+
       if (received.type == Common::Models::kTypeMinerId) {
         if (request.token == token_) {
           Common::Logger::get()->setProvenance(std::stoi(request.command));
@@ -162,31 +166,40 @@ void ZMQWorker::handleSubBlockchain() {
       if (received.type == Common::Models::kTypeBlockMined) {
         Common::Models::BlockMined blockMined = nlohmann::json::parse(received.data);
         if (blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce)) {
-          Common::Logger::get()->info(std::string("ZMQ/blockchain: received nonce ") +
-                                      std::to_string(blockMined.nonce) + std::string(" for block #") +
-                                      std::to_string(blockMined.id) + "\n");
+          Common::Logger::get()->info("ZMQ/blockchain: received nonce " + std::to_string(blockMined.nonce) +
+                                      " for block #" + std::to_string(blockMined.id) + "\n");
         }
         else {
-          sendBlockSyncRequest(blockchainController_.getLastBlockId());
+          sendBlockSyncRequest();
         }
       }
       else if (received.type == Common::Models::kTypeBlockSyncRequest) {
-        Common::Models::BlockSyncRequest request = nlohmann::json::parse(received.data);
-        auto lastBlocks = blockchainController_.getLastBlocks(request.lastId);
-        if (!lastBlocks.empty()) {
-          sendBlockSyncResponse(lastBlocks);
+        if (!syncing_) {
+          Common::Models::BlockSyncRequest request = nlohmann::json::parse(received.data);
+          std::cout << "Get last blocks from id " << request.lastId << " to " << blockchainController_.getLastBlockId()
+                    << std::endl;
+          auto lastBlocks = blockchainController_.getLastBlocks(request.lastId);
+          if (!lastBlocks.empty()) {
+            sendBlockSyncResponse(lastBlocks);
+          }
         }
       }
       else if (received.type == Common::Models::kTypeBlockSyncResponse) {
-        Common::Models::BlockSyncResponse response = nlohmann::json::parse(received.data);
-        for (auto block : response.blocks) {
-          std::cout << "Syncing block #" << block.id << std::endl;
-          blockchainController_.addTransaction(block.data);
-          Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
-          Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
-          Common::Models::toStr(Common::Database::get()->executeRequest(sql));
+        if (syncing_) {
+          Common::Models::BlockSyncResponse response = nlohmann::json::parse(received.data);
+          std::cout << "Syncing " << response.blocks.size() << " blocks" << std::endl;
+          for (auto block : response.blocks) {
+            std::cout << "Syncing block #" << block.id << std::endl;
+            blockchainController_.addTransaction(block.data);
+            std::cout << "allo " << block.data << std::endl;
+            Common::Models::ServerRequest request = nlohmann::json::parse(block.data);
+            Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+            Common::Models::toStr(Common::Database::get()->executeRequest(sql));
+            std::cout << "Syncing block #" << block.id << " done" << std::endl;
+          }
+          std::cout << "Syncing blocks done" << std::endl;
+          syncing_ = false;
         }
-        syncing_ = false;
       }
       else {
         std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
@@ -209,14 +222,16 @@ void ZMQWorker::sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const
 }
 
 void ZMQWorker::sendReady() {
-  Common::Models::ServerResponse response = {.token = token_};
+  Common::Models::ServerResponse response = {
+      .token = token_, .result = "", .lastBlockId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerReady,
                                         .data = Common::Models::toStr(response)};
   sendToSocket(socketPushServer_, message);
 }
 
 void ZMQWorker::sendResponse(const std::string& token, const std::string& result) {
-  Common::Models::ServerResponse response = {.token = token, .result = result};
+  Common::Models::ServerResponse response = {
+      .token = token, .result = result, .lastBlockId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeServerResponse,
                                         .data = Common::Models::toStr(response)};
   sendToSocket(socketPushServer_, message);
@@ -229,15 +244,18 @@ void ZMQWorker::sendBlockMined(unsigned int id, unsigned int nonce) {
   sendToSocket(socketPubBlockchain_, message);
 }
 
-void ZMQWorker::sendBlockSyncRequest(unsigned int lastId) {
+void ZMQWorker::sendBlockSyncRequest() {
+  std::cout << "Trying to sync" << std::endl;
   syncing_ = true;
-  Common::Models::BlockSyncRequest sync = {.lastId = lastId};
+  Common::Models::BlockSyncRequest sync = {.lastId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncRequest,
                                         .data = Common::Models::toStr(sync)};
   sendToSocket(socketPubBlockchain_, message);
 }
 
 void ZMQWorker::sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks) {
+  std::cout << "Sending " << blocks.size() << " syncing blocks, from id " << blocks.front().id << " to "
+            << blocks.back().id << std::endl;
   Common::Models::BlockSyncResponse sync = {.blocks = blocks};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncResponse,
                                         .data = Common::Models::toStr(sync)};

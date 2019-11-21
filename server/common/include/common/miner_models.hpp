@@ -105,9 +105,7 @@ struct BlockSyncRequest {
 inline void to_json(nlohmann::json& j, const BlockSyncRequest& obj) { j = {{kLastID, obj.lastId}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) {
-  j.at(kLastID).get_to(obj.lastId);
-}
+inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) { j.at(kLastID).get_to(obj.lastId); }
 
 struct BlockMined {
   unsigned int id = 0;
@@ -116,7 +114,9 @@ struct BlockMined {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const BlockMined& obj) { j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}, {kData, obj.data}}; }
+inline void to_json(nlohmann::json& j, const BlockMined& obj) {
+  j = {{kBlockID, obj.id}, {kBlockNonce, obj.nonce}, {kData, obj.data}};
+}
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockMined& obj) {
@@ -133,36 +133,42 @@ struct BlockSyncResponse {
 inline void to_json(nlohmann::json& j, const BlockSyncResponse& obj) { j = {{kBlocks, obj.blocks}}; }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, BlockSyncResponse& obj) {
-  j.at(kBlocks).get_to(obj.blocks);
-}
+inline void from_json(const nlohmann::json& j, BlockSyncResponse& obj) { j.at(kBlocks).get_to(obj.blocks); }
 
 struct ServerRequest {
   std::string token;
   std::string command;
+  unsigned int lastBlockId = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ServerRequest& obj) { j = {{kToken, obj.token}, {kCommand, obj.command}}; }
+inline void to_json(nlohmann::json& j, const ServerRequest& obj) {
+  j = {{kToken, obj.token}, {kCommand, obj.command}, {kLastID, obj.lastBlockId}};
+}
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ServerRequest& obj) {
   j.at(kToken).get_to(obj.token);
   j.at(kCommand).get_to(obj.command);
+  j.at(kLastID).get_to(obj.lastBlockId);
 }
 
 struct ServerResponse {
   std::string token;
   std::string result;
+  unsigned int lastBlockId = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const ServerResponse& obj) { j = {{kToken, obj.token}, {kResult, obj.result}}; }
+inline void to_json(nlohmann::json& j, const ServerResponse& obj) {
+  j = {{kToken, obj.token}, {kResult, obj.result}, {kLastID, obj.lastBlockId}};
+}
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, ServerResponse& obj) {
   j.at(kToken).get_to(obj.token);
   j.at(kResult).get_to(obj.result);
+  j.at(kLastID).get_to(obj.lastBlockId);
 }
 
 }  // namespace Models

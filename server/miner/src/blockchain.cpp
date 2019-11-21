@@ -16,6 +16,8 @@ BlockChain::BlockChain() {
   difficulty_ = FLAGS_difficulty;
   std::cout << "Starting blockchain with difficulty " << difficulty_ << std::endl;
   createBlock();
+  saveAll();
+  std::cout << "Saved genesys block" << std::endl;
 }
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }

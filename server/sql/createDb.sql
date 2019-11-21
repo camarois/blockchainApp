@@ -49,4 +49,9 @@ CREATE TABLE results (
 	FOREIGN KEY (classId) REFERENCES classes(classId)
 );
 
+CREATE TABLE lastBlockId (
+    key TEXT NOT NULL PRIMARY KEY,
+    value INTEGER NOT NULL
+);
+
 COMMIT;

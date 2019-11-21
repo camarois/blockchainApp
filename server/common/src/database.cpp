@@ -412,4 +412,25 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   return result;
 }
 
+unsigned int Database::getLastLogId() {
+  Query query = Query(
+      "SELECT value FROM lastBlockId "
+      "WHERE key = 'lastBlockId';");
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return std::stoi(statement.getColumnText(0));
+  }
+  return 0;
+}
+
+void Database::setLastLogId(unsigned int lastLogId) {
+  Query query = Query(
+      "INSERT OR REPLACE INTO lastBlockId "
+      "(key, value) "
+      "VALUES ('lastBlockId', '%q');",
+      std::to_string(lastLogId).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
 }  // namespace Common

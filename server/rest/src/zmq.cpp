@@ -1,4 +1,5 @@
 #include <chrono>
+#include <common/database.hpp>
 #include <common/logger.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
@@ -112,6 +113,8 @@ void ZMQWorker::handlePullFromMiner() {
       }
       else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
+        std::cout << "Setting last block id " << response.lastBlockId << std::endl;
+        Common::Database::get()->setLastLogId(response.lastBlockId);
         receivedResponse(response.token, response.result);
       }
     }
@@ -136,7 +139,8 @@ bool ZMQWorker::sendId(const std::string& token) {
   // TODO(frgraf): handle what happens if server crashes or closes.
   minersCount_++;
 
-  Common::Models::ServerRequest request = {.token = token, .command = std::to_string(minersCount_)};
+  Common::Models::ServerRequest request = {
+      .token = token, .command = std::to_string(minersCount_), .lastBlockId = Common::Database::get()->getLastLogId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerId, .data = Common::Models::toStr(request)};
 
   return sendRequest(Common::Models::toStr(message));
@@ -168,7 +172,8 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
 std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
-  Common::Models::ServerRequest request = {.token = token, .command = sql};
+  Common::Models::ServerRequest request = {
+      .token = token, .command = sql, .lastBlockId = Common::Database::get()->getLastLogId()};
   Common::Models::ZMQMessage message = {.type = type, .data = Common::Models::toStr(request)};
 
   requests_.emplace(token, std::promise<std::string>{});
