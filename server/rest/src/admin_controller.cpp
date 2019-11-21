@@ -19,7 +19,6 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
   router->post(kBasePath_ + "suppressioncompte",
                Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
   router->get(kBasePath_ + "listeUsagers", Pistache::Rest::Routes::bind(&AdminController::handleListeUsagers, this));
-
 }
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -105,7 +104,7 @@ void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request
 }
 
 void AdminController::handleListeUsagers(const Pistache::Rest::Request& /*request*/,
-                                          Pistache::Http::ResponseWriter response) {
+                                         Pistache::Http::ResponseWriter response) {
   auto users = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetAllUsers, ""});
   Common::Models::AllUsersResponse allUsersResponse = nlohmann::json::parse(users.data);
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(allUsersResponse));

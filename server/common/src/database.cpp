@@ -53,7 +53,7 @@ void Database::initFunctions() {
          addUser(json);
          return Common::Models::SqlResponse{false, ""};
        }},
-       {Functions::DeleteUser,
+      {Functions::DeleteUser,
        [&](const nlohmann::json& json) {
          deleteUser(json);
          return Common::Models::SqlResponse{false, ""};
@@ -123,7 +123,7 @@ void Database::initFunctions() {
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
        }},
-       {Functions::GetAllUsers,
+      {Functions::GetAllUsers,
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
        }},
