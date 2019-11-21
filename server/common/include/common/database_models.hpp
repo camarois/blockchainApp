@@ -17,6 +17,7 @@ const std::string kSalt = "salt";
 const std::string kTransactionRequest = "transactionRequest";
 const std::string kClassId = "classId";
 const std::string kUsers = "utilisateurs";
+const std::string kProvenance = "provenance";
 
 struct UserResponse {
   std::string username;
@@ -174,13 +175,25 @@ struct GetSaltRequest {
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void to_json(nlohmann::json& j, const GetSaltRequest& obj) {
-  j = {{kUsername, obj.username}};
+inline void to_json(nlohmann::json& j, const GetSaltRequest& obj) { j = {{kUsername, obj.username}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, GetSaltRequest& obj) { j.at(kUsername).get_to(obj.username); }
+
+struct GetLogsRequest {
+  int lastLogId;
+  int provenance;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const GetLogsRequest& obj) {
+  j = {{kLast, obj.lastLogId}, {kProvenance, obj.provenance}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, GetSaltRequest& obj) {
-  j.at(kUsername).get_to(obj.username);
+inline void from_json(const nlohmann::json& j, GetLogsRequest& obj) {
+  j.at(kLast).get_to(obj.lastLogId);
+  j.at(kProvenance).get_to(obj.provenance);
 }
 
 }  // namespace Models

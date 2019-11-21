@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     Common::Database::init(FLAGS_db);
     Rest::ZMQWorker::init("tcp://*");
     auto selfIpAddress = Common::FirebaseHelper::getSelfIpAddress();
-    std::cout << "Running on: " << selfIpAddress << std::endl;
+    Common::Logger::get()->info("Running on: " + selfIpAddress + "\n");
     Common::ScriptsHelper::createCert(selfIpAddress);
 
     Pistache::Port port(FLAGS_port);
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     return 0;
   } catch (const std::exception& e) {
-    Common::Logger::get()->error(0, e.what());
+    Common::Logger::get()->error(e.what());
 
     return 1;
   }

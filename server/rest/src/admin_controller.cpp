@@ -41,7 +41,6 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleLogout(const Pistache::Rest::Request& /*request*/,
                                    Pistache::Http::ResponseWriter response) {
-  // TODO(camarois) jwt db verification
   response.send(Pistache::Http::Code::Ok);
 }
 
@@ -66,7 +65,6 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   }
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<int>();
@@ -77,14 +75,21 @@ void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pi
 
 void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::LogsRequest logsRequest = nlohmann::json::parse(request.body());
-  int provenance = request.param(kId_).as<std::string>() != "serveurweb" ? request.param(kId_).as<int>() : 0;
-  std::vector<Common::Models::Information> logs;
-  logs = Common::Database::get()->getLogs(logsRequest.last, provenance);
-  Common::Models::LogsResponse logsResponse = {logs};
+  Common::Models::LogsResponse logsResponse;
+  if (request.param(kId_).as<std::string>() != "serveurweb") {
+    int provenance = request.param(kId_).as<int>();
+    Common::Models::GetLogsRequest getLogsRequest = {logsRequest.last, provenance};
+    auto logsResults =
+        Rest::ZMQWorker::get()->getRequest({Common::Functions::GetLogs, Common::Models::toStr(getLogsRequest)});
+    logsResponse = {nlohmann::json::parse(logsResults.data)};
+  } else {
+    int provenance = 0;
+    Common::Models::GetLogsRequest getLogsRequest = {logsRequest.last, provenance};
+    logsResponse = {Common::Database::get()->getLogs(getLogsRequest)};
+  }
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(logsResponse));
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
@@ -94,7 +99,6 @@ void AdminController::handleCreateAccount(const Pistache::Rest::Request& request
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
-// TODO(gabriel): faire dequoi d'utile avec cette fonction
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {

@@ -25,10 +25,11 @@ class ZMQWorker {
   void tryConnect(const std::unique_ptr<zmq::socket_t>& socket, const std::string& address);
   void handleSubServer();
   void handleSubBlockchain();
+  void sendReady();
   void sendResponse(const std::string& token, const std::string& result);
   void printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql);
 
-  bool running_;
+  std::atomic<bool> running_;
   const std::string serverHostname_;
   zmq::context_t context_;
   std::unique_ptr<zmq::socket_t> socketSubServer_;
