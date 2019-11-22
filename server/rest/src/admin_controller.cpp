@@ -18,6 +18,7 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
                Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
   router->post(kBasePath_ + "suppressioncompte",
                Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
+  router->get(kBasePath_ + "listeUsagers", Pistache::Rest::Routes::bind(&AdminController::handleListeUsagers, this));
 }
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -92,15 +93,24 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
-  Common::Models::CreateAccountRequest logsRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
+  Common::Models::LoginResponse registerResponse = {};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
-  Common::Models::DeleteAccountRequest logsRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::DeleteAccountRequest deleteAccountRequest = nlohmann::json::parse(request.body());
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)});
+  response.send(Pistache::Http::Code::Ok);
 }
 
+void AdminController::handleListeUsagers(const Pistache::Rest::Request& /*request*/,
+                                         Pistache::Http::ResponseWriter response) {
+  auto users = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetAllUsers, ""});
+  Common::Models::AllUsersResponse allUsersResponse = nlohmann::json::parse(users.data);
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(allUsersResponse));
+}
 }  // namespace Rest

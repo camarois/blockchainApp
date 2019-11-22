@@ -25,7 +25,7 @@ Database::Database(const std::string& dbPath) {
     db_.reset(dbPtr, sqlite3_close_v2);
     initFunctions();
 
-    addUser({{"admin", "equipe01"}, true});
+    addUser({{"admin", "equipe01"}, true, true});
   } catch (...) {
     close();
     throw;
@@ -51,6 +51,11 @@ void Database::initFunctions() {
       {Functions::AddUser,
        [&](const nlohmann::json& json) {
          addUser(json);
+         return Common::Models::SqlResponse{false, ""};
+       }},
+      {Functions::DeleteUser,
+       [&](const nlohmann::json& json) {
+         deleteUser(json);
          return Common::Models::SqlResponse{false, ""};
        }},
       {Functions::SetUserPassword,
@@ -117,6 +122,10 @@ void Database::initFunctions() {
       {Functions::GetStudents,
        [&](const nlohmann::json& /*json*/) {
          return Common::Models::SqlResponse{true, Common::Models::toStr(getStudents())};
+       }},
+      {Functions::GetAllUsers,
+       [&](const nlohmann::json& /*json*/) {
+         return Common::Models::SqlResponse{true, Common::Models::toStr(getAllUsers())};
        }},
       {Functions::GetLogs,
        [&](const nlohmann::json& json) {
@@ -195,10 +204,19 @@ void Database::addUser(const Common::Models::AddUserRequest& request) {
   auto salt = Common::FormatHelper::randomStr();
   Query query = Query(
       "INSERT OR REPLACE INTO users "
-      "(username, password, salt, isAdmin) "
-      "VALUES ('%q', '%q', '%q', '%q');",
+      "(username, password, salt, isAdmin, isEditor) "
+      "VALUES ('%q', '%q', '%q', '%q', '%q');",
       request.loginRequest.username.c_str(), Common::FormatHelper::hash(request.loginRequest.password + salt).c_str(),
-      salt.c_str(), std::to_string(int(request.isAdmin)).c_str());
+      salt.c_str(), std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+void Database::deleteUser(const Common::Models::DeleteAccountRequest& request) {
+  Query query = Query(
+      "DELETE FROM users "
+      "WHERE username = '%q';",
+      request.username.c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -207,10 +225,10 @@ void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& req
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q';",
+      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q' AND isEditor = '%q';",
       Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
       Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
-      std::to_string(int(request.isAdmin)).c_str());
+      std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }
@@ -409,6 +427,21 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   }
 
   return result;
+}
+
+Common::Models::AllUsersResponse Database::getAllUsers() {
+  Query query = Query(
+      "SELECT username, isEditor, isAdmin "
+      "FROM users;");
+  Statement statement = Statement(db_, query);
+  std::vector<Common::Models::UserResponse> result;
+  while (statement.step()) {
+    result.push_back({.username = statement.getColumnText(0),
+                      .isEditor = (statement.getColumnText(1) == "1"),
+                      .isAdmin = (statement.getColumnText(2) == "1")});
+  }
+  Common::Models::AllUsersResponse response = {result};
+  return response;
 }
 
 }  // namespace Common
