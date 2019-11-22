@@ -53,9 +53,6 @@
                </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="colDetete" editable="false" sortable="false" style="-fx-alignment: CENTER;" text="Supprimer">
-               <cellValueFactory>
-                  <PropertyValueFactory property="delete" />
-               </cellValueFactory>
             </TableColumn>
          </columns>
          <VBox.margin>

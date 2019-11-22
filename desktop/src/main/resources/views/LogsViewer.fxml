@@ -3,33 +3,73 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
 
-<TableView fx:id="logTableView" prefHeight="342.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
-   <columns>
-      <TableColumn text="Heure">
-         <cellValueFactory>
-            <PropertyValueFactory property="hour" />
-         </cellValueFactory>
-      </TableColumn>
-      <TableColumn text="Numéro">
-         <cellValueFactory>
-            <PropertyValueFactory property="number" />
-         </cellValueFactory>
-      </TableColumn>
-      <TableColumn text="Sévérité">
-         <cellValueFactory>
-            <PropertyValueFactory property="severity" />
-         </cellValueFactory>
-      </TableColumn>
-      <TableColumn text="Provenance">
-         <cellValueFactory>
-            <PropertyValueFactory property="provenance" />
-         </cellValueFactory>
-      </TableColumn>
-      <TableColumn sortable="false" text="Message">
-         <cellValueFactory>
-            <PropertyValueFactory property="message" />
-         </cellValueFactory>
-      </TableColumn>
-   </columns>
-</TableView>
+<VBox fx:id="vboxLogs" prefHeight="465.0" prefWidth="1460.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
+<children>
+   <HBox alignment="CENTER">
+      <children>
+         <Label text="Logs du serveur et des miners">
+            <font>
+               <Font size="24.0" />
+            </font>
+            <HBox.margin>
+               <Insets />
+            </HBox.margin>
+         </Label>
+         <Button fx:id="RefreshBtn" alignment="CENTER" mnemonicParsing="false" onAction="#onClickRefresh" stylesheets="@../styles/buttonStyle.css" text="Rafraichir" textAlignment="CENTER">
+            <font>
+               <Font size="6.0" />
+            </font>
+            <HBox.margin>
+               <Insets left="20.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+      <VBox.margin>
+         <Insets bottom="15.0" left="50.0" right="15.0" top="15.0" />
+      </VBox.margin>
+   </HBox>
+   <TableView fx:id="logTableView" prefHeight="1000.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      <columns>
+         <TableColumn text="Heure">
+            <cellValueFactory>
+               <PropertyValueFactory property="hour" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn text="Numéro">
+            <cellValueFactory>
+               <PropertyValueFactory property="number" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn text="Sévérité">
+            <cellValueFactory>
+               <PropertyValueFactory property="severity" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn text="Provenance">
+            <cellValueFactory>
+               <PropertyValueFactory property="provenance" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn sortable="false" text="Message">
+            <cellValueFactory>
+               <PropertyValueFactory property="message" />
+            </cellValueFactory>
+         </TableColumn>
+      </columns>
+   </TableView>
+</children>
+<opaqueInsets>
+   <Insets bottom="10.0" />
+</opaqueInsets>
+<padding>
+   <Insets bottom="35.0" />
+</padding>
+</VBox>
+
