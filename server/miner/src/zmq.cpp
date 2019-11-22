@@ -94,6 +94,7 @@ void ZMQWorker::handleSubServer() {
         continue;
       }
       // while (syncing_) {
+      // std::cout << "Can't accept message, in syncing state." << std::endl;
       //   std::this_thread::sleep_for(std::chrono::seconds(1));
       // }
 
@@ -123,12 +124,9 @@ void ZMQWorker::handleSubServer() {
       else if (received.type == Common::Models::kTypeTransaction) {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing update transaction: ", sql);
-        std::optional<Block> block = blockchainController_.addTransaction(received.data);
+        auto block = blockchainController_.addTransaction(received.data);
         if (block) {
-          sendBlockMined(block->id(), block->nonce());
-        }
-        else {
-          std::cout << "wtf" << std::endl;
+          sendBlockMined(block->get().id(), block->get().nonce());
         }
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       }
@@ -188,14 +186,18 @@ void ZMQWorker::handleSubBlockchain() {
       else if (received.type == Common::Models::kTypeBlockSyncResponse) {
         if (syncing_) {
           Common::Models::BlockSyncResponse response = nlohmann::json::parse(received.data);
-          std::cout << "Syncing " << response.blocks.size() << " blocks" << std::endl;
+          std::sort(response.blocks.begin(), response.blocks.end(),
+                    [](const auto& lhs, const auto& rhs) { return lhs.id < rhs.id; });
+          std::cout << "Syncing blocks from " << response.blocks.front().id << " to " << response.blocks.back().id
+                    << std::endl;
           for (auto block : response.blocks) {
-            if (block.id > blockchainController_.getLastBlockId() || block.id == 0) {
+            if (block.id >= blockchainController_.getLastBlockId()) {
               std::cout << "Syncing block #" << block.id << std::endl;
               auto b = blockchainController_.addTransaction(block.data);
               for (int i = 0; i < block.numberOfVerifications; ++i) {
-                b->increaseVerification();
+                b->get().increaseVerification();
               }
+              b->get().save();
               Common::Models::ServerRequest request = nlohmann::json::parse(block.data);
               Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
               Common::Models::toStr(Common::Database::get()->executeRequest(sql));

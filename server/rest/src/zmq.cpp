@@ -83,13 +83,19 @@ void ZMQWorker::join() {
 
 Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeServerRequest);
-  request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
   return nlohmann::json::parse(request.get());
 }
 
 Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
-  request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
   return nlohmann::json::parse(request.get());
 }
 

@@ -15,7 +15,7 @@ class BlockChainController {
  public:
   explicit BlockChainController();
 
-  std::optional<Block> addTransaction(const std::string& transaction);
+  Common::optional_ref<Block> addTransaction(const std::string& transaction);
   bool receivedBlockMined(unsigned int id, unsigned int nonce);
   unsigned int getLastBlockId();
   std::vector<Common::Models::BlockMined> getLastBlocks(unsigned int lastId);

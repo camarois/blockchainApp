@@ -15,13 +15,13 @@ BlockChainController::BlockChainController() : dev_(), rng_(dev_()), dist_() {
   blockchain_ = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
 }
 
-std::optional<Block> BlockChainController::addTransaction(const std::string& transaction) {
+Common::optional_ref<Block> BlockChainController::addTransaction(const std::string& transaction) {
+  auto lastBlock = blockchain_->lastBlock();
+  lastBlock->get().queueNonce(dist_(rng_));
   blockchain_->appendTransaction(transaction);
-  // auto lastBlock = blockchain_->lastBlock();
-  // lastBlock->get().queueNonce(dist_(rng_));
   blockchain_->saveAll();
   blockchain_->nextBlock();
-  return blockchain_->lastBlock();
+  return lastBlock;
 }
 
 bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
@@ -38,7 +38,9 @@ bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonc
   return minedBlock.has_value();
 }
 
-unsigned int BlockChainController::getLastBlockId() { return blockchain_->lastBlockID(); }
+unsigned int BlockChainController::getLastBlockId() {
+  return blockchain_->lastBlockID() == 0 ? 0 : blockchain_->lastBlockID() - 1;
+}
 
 std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(unsigned int lastId) {
   std::vector<Common::Models::BlockMined> lastBlocks;
