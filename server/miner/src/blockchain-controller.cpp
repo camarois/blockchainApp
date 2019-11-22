@@ -1,32 +1,41 @@
 #include "miner/blockchain-controller.hpp"
 
+#include "common/logger.hpp"
 #include <cstdlib>
 #include <iostream>
 
 namespace Miner {
 
-BlockChainController::BlockChainController(BlockChain& blockchain) : blockchain_(blockchain) { srand(time(NULL)); }
+BlockChainController::BlockChainController(std::unique_ptr<BlockChain> blockchain)
+    : blockchain_(std::move(blockchain)), receivedNonce_(false) {
+  // TODO(gabriel): use better random generator
+  // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp)
+  srand(time(nullptr));
+}
 
 std::optional<Block> BlockChainController::addTransaction(const std::string& transaction) {
-  blockchain_.appendTransaction(transaction);
-  currentBlock_ = blockchain_.lastBlock();
+  blockchain_->appendTransaction(transaction);
+  currentBlock_ = blockchain_->lastBlock();
 
+  // TODO(gabriel): use better random generator
+  // NOLINTNEXTLINE(cert-msc30-c,cert-msc50-cpp)
   receivedBlockMined(currentBlock_->get().id(), rand());
   receivedNonce_ = false;
 
   // TODO(gabriel): va nous falloir une meilleure politique de vérification
 
-  blockchain_.nextBlock();
-  blockchain_.saveAll();
+  blockchain_->nextBlock();
+  blockchain_->saveAll();
   if (receivedNonce_) {
-    std::cout << "mining aborted of block #" << currentBlock_->get().id() << " by external nonce "
-              << currentBlock_->get().nonce() << std::endl;
+    Common::Logger::get()->attention("Mining aborted of block #" + std::to_string(currentBlock_->get().id()) +
+                                     " by external nonce " + std::to_string(currentBlock_->get().nonce()) + "\n");
     return {};
-  } else {
-    std::cout << "mining of block #" << currentBlock_->get().id() << " finished with nonce "
-              << currentBlock_->get().nonce() << std::endl;
-    return currentBlock_->get();
   }
+
+  Common::Logger::get()->info("Mining of block #" + std::to_string(currentBlock_->get().id()) +
+                              " finished with nonce " + std::to_string(currentBlock_->get().nonce()) + " and hash " +
+                              currentBlock_->get().hash() + "\n");
+  return currentBlock_->get();
 }
 
 void BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {

@@ -8,6 +8,9 @@ public class ServerUrls {
     private String changePassword;
     private String chain;
     private String logs;
+    private String createUser;
+    private String deleteUser;
+    private String allUser;
 
     public String getFirebase() {
         return firebase;
@@ -27,6 +30,18 @@ public class ServerUrls {
 
     public String getChangePassword() {
         return changePassword;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public String getDeleteUser() {
+        return deleteUser;
+    }
+
+    public String getAllUsers() {
+        return allUser;
     }
 
     public String getChain() {

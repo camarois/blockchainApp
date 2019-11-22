@@ -11,15 +11,34 @@
 namespace Common {
 namespace ScriptsHelper {
 
-inline void createCert(const std::string& ip, const std::string& dbPath) {
-  Common::Database db(dbPath);
-  if (!db.containsIp(ip)) {
+inline std::optional<std::filesystem::path> getSharedFile(const std::string& file) {
+  std::filesystem::path local = std::filesystem::current_path() / file;
+  if (std::filesystem::exists(local)) {
+    return local;
+  }
+
+  std::filesystem::path system = std::filesystem::path("/usr/share") / file;
+  if (std::filesystem::exists(system)) {
+    return system;
+  }
+
+  return {};
+}
+
+inline bool createCert(const std::string& ip) {
+  if (!Common::Database::get()->containsIp(ip)) {
     std::cout << "Adding the ip in the database" << std::endl;
-    db.addIp(ip);
-    auto ips = db.getIps();
+    Common::Database::get()->addIp(ip);
+    auto ips = Common::Database::get()->getIps();
+
+    std::optional<std::filesystem::path> script = getSharedFile("createCert.sh");
+    if (!script) {
+      std::cerr << "Could not find createCert.sh" << std::endl;
+      return false;
+    }
 
     std::stringstream ss;
-    ss << "./createCert.sh server '";
+    ss << script->string() + " server '";
     for (size_t i = 0; i < ips.size(); ++i) {
       ss << "IP." << i + 1 << " = " << ips.at(i) << std::endl;
     }
@@ -29,21 +48,32 @@ inline void createCert(const std::string& ip, const std::string& dbPath) {
       std::cout << "Ip succesfully added" << std::endl;
     } else {
       std::cout << "createCert.sh exited with exit code: " << exitCode << std::endl;
+      return false;
     }
   }
+
+  return true;
 }
 
-inline void createDb(const std::string& dbPath) {
+inline bool createDb(const std::string& dbPath) {
   if (!std::filesystem::exists(dbPath)) {
     std::cout << "Creating the database at " << dbPath << std::endl;
+    std::optional<std::filesystem::path> script = getSharedFile("createDb.sh");
+    if (!script) {
+      std::cerr << "Could not find createDb.sh" << std::endl;
+      return false;
+    }
 
-    int exitCode = std::system(("./createDb.sh " + dbPath).c_str());  // NOLINT(cert-env33-c)
+    int exitCode = std::system((script->string() + " " + dbPath).c_str());  // NOLINT(cert-env33-c)
     if (exitCode == 0) {
       std::cout << "Database created succesfully" << std::endl;
     } else {
       std::cout << "createDb.sh exited with exit code: " << exitCode << std::endl;
+      return false;
     }
   }
+
+  return true;
 }
 
 }  // namespace ScriptsHelper

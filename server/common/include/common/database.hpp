@@ -1,54 +1,39 @@
-
 #ifndef COMMON_DATABASE_HPP
 #define COMMON_DATABASE_HPP
 
-#include "common/miner_models.hpp"
-#include "common/models.hpp"
-#include "common/query.hpp"
-#include "common/statement.hpp"
-#include "nlohmann/json.hpp"
-#include "sqlite_err.hpp"
+#include <common/database_models.hpp>
+#include <common/miner_models.hpp>
+#include <common/models.hpp>
+#include <common/query.hpp>
+#include <common/sqlite_err.hpp>
+#include <common/statement.hpp>
 #include <cstddef>
+#include <functional>
 #include <memory>
+#include <mutex>
+#include <nlohmann/json.hpp>
 #include <sqlite3.h>
 #include <string>
-#include <common/database_models.hpp>
 
 namespace Common {
 
-enum Functions {
-  addUser,
-  setUserPassword,
-  containsUser,
-  containsAdmin,
-  getRole,
-  getSalt,
-  checkForExistingClass,
-  deleteExistingClass,
-  deleteExistingResults,
-  addNewClass,
-  addNewResult,
-  getClassResult,
-  getStudentResult,
-  getClasses,
-  getStudents
-};
-
 class Database {
  public:
-  explicit Database();
   explicit Database(const std::string& dbPath);
 
   static void assertSqlite(int errCode, const std::string& message = "");
+  static std::shared_ptr<Database> get();
+  static void init(const std::string& dbPath);
 
-  Common::Models::SqlResponse get(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse executeRequest(const Common::Models::SqlRequest& sql);
 
   void addUser(const Common::Models::AddUserRequest& request);
+  void deleteUser(const Common::Models::DeleteAccountRequest& request);
   void setUserPassword(const Common::Models::SetUserPasswordRequest& request);
   bool containsUser(const Common::Models::ContainsUserRequest& request);
   bool containsAdmin(const Common::Models::ContainsAdminRequest& request);
   std::optional<bool> getRole(const Common::Models::GetRoleRequest& request);
-  std::optional<std::string> getSalt(const std::string& username);
+  std::optional<std::string> getSalt(const Common::Models::GetSaltRequest& request);
 
   std::vector<std::string> getIps();
   void addIp(const std::string& ip);
@@ -57,7 +42,7 @@ class Database {
   int addLogSession();
   void addLog(int logId, int severity, int provenance, const std::string& time, const std::string& log,
               int logSessionId);
-  std::vector<Common::Models::Information> getLogs(int lastLogId, int provenance);
+  std::vector<Common::Models::Information> getLogs(const Common::Models::GetLogsRequest& request);
 
   std::optional<int> checkForExistingClass(const Common::Models::CheckForExistingClassRequest& request);
   void deleteExistingClass(int classId);
@@ -68,11 +53,17 @@ class Database {
   std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
+  Common::Models::AllUsersResponse getAllUsers();
+  
 
  private:
   void close();
+  void initFunctions();
+
+  static std::shared_ptr<Database> instance;
 
   std::shared_ptr<sqlite3> db_;
+  std::unordered_map<Common::Functions, std::function<Common::Models::SqlResponse(nlohmann::json)>> functions_;
 };
 
 }  // namespace Common

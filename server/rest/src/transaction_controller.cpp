@@ -12,11 +12,7 @@ DECLARE_string(transactions);
 
 namespace Rest {
 
-TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router,
-                                             const std::shared_ptr<ZMQWorker>& zmqWorker)
-    : zmqWorker_(zmqWorker) {
-  setupRoutes(router);
-}
+TransactionController::TransactionController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
 
 void TransactionController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router) {
   router->post(kBasePath_, Pistache::Rest::Routes::bind(&TransactionController::handleTransaction, this));
@@ -36,16 +32,16 @@ void TransactionController::handleTransaction(const Pistache::Rest::Request& req
 
   Common::Models::CheckForExistingClassRequest checkForExistingClass = {transactionRequest.acronym,
                                                                         transactionRequest.trimester};
-  auto classId =
-      zmqWorker_->getRequest({Common::Functions::checkForExistingClass, Common::Models::toStr(checkForExistingClass)});
+  auto classId = Rest::ZMQWorker::get()->getRequest(
+      {Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
   if (classId.found) {
-    zmqWorker_->updateRequest({Common::Functions::deleteExistingClass, classId.data});
-    zmqWorker_->updateRequest({Common::Functions::deleteExistingResults, classId.data});
+    Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteExistingClass, classId.data});
+    Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteExistingResults, classId.data});
   }
-  auto newClassId =
-      zmqWorker_->updateRequest({Common::Functions::addNewClass, Common::Models::toStr(transactionRequest)});
+  auto newClassId = Rest::ZMQWorker::get()->updateRequest(
+      {Common::Functions::AddNewClass, Common::Models::toStr(transactionRequest)});
   Common::Models::AddNewResultRequest addNewResultRequest = {transactionRequest, std::stoi(newClassId.data)};
-  zmqWorker_->updateRequest({Common::Functions::addNewResult, Common::Models::toStr(addNewResultRequest)});
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddNewResult, Common::Models::toStr(addNewResultRequest)});
 
   response.send(Pistache::Http::Code::Ok);
 }

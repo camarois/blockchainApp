@@ -1,7 +1,10 @@
 #include "common/firebase_helper.hpp"
 #include "common/gflags_helper.hpp"
+#include "common/logger.hpp"
 #include "common/message_helper.hpp"
+#include <common/database.hpp>
 #include <iostream>
+#include <memory>
 #include <miner/blockchain.hpp>
 #include <miner/zmq.hpp>
 #include <string>
@@ -12,21 +15,23 @@ DEFINE_string(addr, "", "REST service address");                        // NOLIN
 DEFINE_string(user, "server", "Developper using the service");          // NOLINT
 DEFINE_string(db, "blockchain.db", "Path to sqlite db file");           // NOLINT
 DEFINE_string(blockchain, "blockchain/", "Path to blockchain folder");  // NOLINT
-DEFINE_int32(difficulty, 3, "Hashing difficulty");                        // NOLINT
+DEFINE_int32(difficulty, 3, "Hashing difficulty");                      // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Blockchain miner service", argc, argv);
+  Common::Database::init(FLAGS_db);
 
   std::string addr = FLAGS_addr;
   if (addr.empty()) {
     addr = "tcp://" + Common::FirebaseHelper::getServerIpAddress(FLAGS_user);
   }
-  std::cout << "Server ip address: " << addr << std::endl;
+  Common::Logger::get()->info("Server ip address: " + addr + "\n");
 
-  std::optional<Miner::BlockChain> blockchain =
+  std::optional<Miner::BlockChain> maybeBlockchain =
       Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
+  std::unique_ptr<Miner::BlockChain> blockchain = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
 
-  Miner::ZMQWorker miner(addr, blockchain.value());
+  Miner::ZMQWorker miner(addr, std::move(blockchain));
   miner.start();
   miner.join();
 

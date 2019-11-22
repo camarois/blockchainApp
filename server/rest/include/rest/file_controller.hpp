@@ -15,7 +15,7 @@ class FileController {
 
  private:
   void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
-  void handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+  static void handleGrades(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
   const std::string kBasePath_ = "/fichier/";
 };

@@ -6,7 +6,6 @@
 #include <map>
 #include <thread>
 #include <vector>
-
 #include <zmq.hpp>
 
 namespace Rest {
@@ -16,6 +15,9 @@ class ZMQWorker {
   explicit ZMQWorker(const std::string& serverHostname);
   ~ZMQWorker();
 
+  static std::shared_ptr<ZMQWorker> get();
+  static void init(const std::string& serverHostname);
+
   bool start();
   void join();
   Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
@@ -24,12 +26,16 @@ class ZMQWorker {
  private:
   void handlePullFromMiner();
   void handleProxyBlockchain();
+  bool sendId();
   bool sendRequest(const std::string& json);
   void receivedResponse(const std::string& token, const std::string& response);
   std::future<std::string> createRequest(const std::string& sql, const std::string& type);
 
-  bool running_;
+  static std::shared_ptr<ZMQWorker> instance;
+
+  std::atomic<bool> running_;
   const std::string serverHostname_;
+  std::atomic<int> minersCount_;
   zmq::context_t context_;
   zmq::socket_t socketPubToMiner_;
   zmq::socket_t socketPullFromMiner_;

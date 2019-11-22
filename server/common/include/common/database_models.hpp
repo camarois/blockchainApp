@@ -1,5 +1,5 @@
-#ifndef DATABASE_MODELS_HPP
-#define DATABASE_MODELS_HPP
+#ifndef COMMON_DATABASE_MODELS_HPP
+#define COMMON_DATABASE_MODELS_HPP
 
 #include <common/models.hpp>
 #include <nlohmann/json.hpp>
@@ -10,38 +10,73 @@ namespace Common {
 namespace Models {
 
 const std::string kLoginRequest = "loginRequest";
-const std::string kIsAdmin = "isAdmin";
+const std::string kIsAdmin = "estAdmin";
+const std::string kIsEditor = "estEditeur";
 const std::string kPasswordRequest = "passwordRequest";
 const std::string kSalt = "salt";
 const std::string kTransactionRequest = "transactionRequest";
 const std::string kClassId = "classId";
+const std::string kUsers = "utilisateurs";
+const std::string kProvenance = "provenance";
+
+struct UserResponse {
+  std::string username;
+  bool isEditor = false;
+  bool isAdmin = false;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const UserResponse& obj) {
+  j = {{kUsername, obj.username}, {kIsEditor, obj.isEditor}, {kIsAdmin, obj.isAdmin}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, UserResponse& obj) {
+  j.at(kUsername).get_to(obj.username);
+  j.at(kIsAdmin).get_to(obj.isAdmin);
+  j.at(kIsEditor).get_to(obj.isEditor);
+}
+
+struct AllUsersResponse {
+  std::vector<UserResponse> users;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const AllUsersResponse& obj) { j = {{kUsers, obj.users}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, AllUsersResponse& obj) { j.at(kUsers).get_to(obj.users); }
+
 
 struct AddUserRequest {
   Common::Models::LoginRequest loginRequest;
-  bool isAdmin;
+  bool isAdmin = false;
+  bool isEditor = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const AddUserRequest& obj) {
-  j = {{kLoginRequest, obj.loginRequest}, {kIsAdmin, obj.isAdmin}};
+  j = {{kLoginRequest, obj.loginRequest}, {kIsAdmin, obj.isAdmin}, {kIsEditor, obj.isEditor}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, AddUserRequest& obj) {
   j.at(kLoginRequest).get_to(obj.loginRequest);
   j.at(kIsAdmin).get_to(obj.isAdmin);
+  j.at(kIsEditor).get_to(obj.isEditor);
 }
 
 struct SetUserPasswordRequest {
   std::string username;
   Common::Models::PasswordRequest passwordRequest;
   std::string salt;
-  bool isAdmin;
+  bool isEditor = false;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const SetUserPasswordRequest& obj) {
-  j = {{kUsername, obj.username}, {kPasswordRequest, obj.passwordRequest}, {kSalt, obj.salt}, {kIsAdmin, obj.isAdmin}};
+  j = {{kUsername, obj.username}, {kPasswordRequest, obj.passwordRequest}, {kSalt, obj.salt}, {kIsEditor, obj.isEditor}, {kIsAdmin, obj.isAdmin}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -49,6 +84,7 @@ inline void from_json(const nlohmann::json& j, SetUserPasswordRequest& obj) {
   j.at(kUsername).get_to(obj.username);
   j.at(kPasswordRequest).get_to(obj.passwordRequest);
   j.at(kSalt).get_to(obj.salt);
+  j.at(kIsEditor).get_to(obj.isEditor);
   j.at(kIsAdmin).get_to(obj.isAdmin);
 }
 
@@ -70,7 +106,7 @@ inline void from_json(const nlohmann::json& j, ContainsUserRequest& obj) {
 
 struct CheckForExistingClassRequest {
   std::string acronym;
-  int trimester;
+  int trimester = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -86,7 +122,7 @@ inline void from_json(const nlohmann::json& j, CheckForExistingClassRequest& obj
 
 struct AddNewResultRequest {
   Common::Models::TransactionRequest transactionRequest;
-  int classId;
+  int classId = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -103,7 +139,7 @@ inline void from_json(const nlohmann::json& j, AddNewResultRequest& obj) {
 struct ContainsAdminRequest {
   Common::Models::LoginRequest loginRequest;
   std::string salt;
-  bool isAdmin;
+  bool isAdmin = false;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -134,7 +170,33 @@ inline void from_json(const nlohmann::json& j, GetRoleRequest& obj) {
   j.at(kSalt).get_to(obj.salt);
 }
 
+struct GetSaltRequest {
+  std::string username;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const GetSaltRequest& obj) { j = {{kUsername, obj.username}}; }
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, GetSaltRequest& obj) { j.at(kUsername).get_to(obj.username); }
+
+struct GetLogsRequest {
+  int lastLogId;
+  int provenance;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const GetLogsRequest& obj) {
+  j = {{kLast, obj.lastLogId}, {kProvenance, obj.provenance}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, GetLogsRequest& obj) {
+  j.at(kLast).get_to(obj.lastLogId);
+  j.at(kProvenance).get_to(obj.provenance);
+}
+
 }  // namespace Models
 }  // namespace Common
 
-#endif  // DATABASE_MODELS_HPP
+#endif  // COMMON_DATABASE_MODELS_HPP

@@ -12,13 +12,11 @@ namespace Rest {
 
 class PingController {
  public:
-  explicit PingController(const std::shared_ptr<Rest::CustomRouter>& router, const std::shared_ptr<ZMQWorker>& zmqWorker);
+  explicit PingController(const std::shared_ptr<Rest::CustomRouter>& router);
 
  private:
-  void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
-  void handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
-
-  std::shared_ptr<ZMQWorker> zmqWorker_;
+  static void setupRoutes(const std::shared_ptr<Rest::CustomRouter>& router);
+  static void handlePing(const Pistache::Rest::Request& /*unused*/, Pistache::Http::ResponseWriter response);
 };
 
 }  // namespace Rest

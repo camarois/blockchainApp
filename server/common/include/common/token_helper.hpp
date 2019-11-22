@@ -32,23 +32,21 @@ inline std::string encode(const std::string& username, const std::string& passwo
   return token.signature();
 }
 
-inline std::optional<std::string> decode(const std::string& token, const std::string& dbPath) {
+inline std::optional<std::string> decode(const std::string& token) {
   std::error_code errCode;
   auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
   if (!decodedObj.payload().has_claim(kUsername) || !decodedObj.payload().has_claim(kPassword)) {
     return {};
   }
-  std::string username = decodedObj.payload().get_claim_value<std::string>(kUsername);
-  std::string password = decodedObj.payload().get_claim_value<std::string>(kPassword);
-
-  // TODO(frank): enable re-encoding on timeout.
-  // Common::Database db(dbPath);
-  // auto salt = db.getSalt(username);
-  // if (errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired) && salt &&
-  //     db.containsUser({username, password}, salt.value())) {
-  //   return encode(username, password);
-  // }
+  
   return token;
+}
+
+inline bool timedOut(const std::string& token) {
+  std::error_code errCode;
+  jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
+
+  return errCode.value() == static_cast<int>(jwt::VerificationErrc::TokenExpired);
 }
 
 inline std::optional<std::string> decodeUsername(const std::string& token) {
@@ -58,6 +56,15 @@ inline std::optional<std::string> decodeUsername(const std::string& token) {
     return {};
   }
   return decodedObj.payload().get_claim_value<std::string>(kUsername);
+}
+
+inline std::optional<std::string> decodePassword(const std::string& token) {
+  std::error_code errCode;
+  auto decodedObj = jwt::decode(token, jwt::params::algorithms({kAlgorithm}), errCode, jwt::params::secret(kSecret));
+  if (!decodedObj.payload().has_claim(kPassword)) {
+    return {};
+  }
+  return decodedObj.payload().get_claim_value<std::string>(kPassword);
 }
 
 }  // namespace TokenHelper

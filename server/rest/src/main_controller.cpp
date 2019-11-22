@@ -11,20 +11,18 @@ namespace Rest {
 MainController::MainController(Pistache::Address addr, size_t thr)
     : httpEndpoint_(addr),
       router_(std::make_shared<Rest::CustomRouter>()),
-      zmqWorker_(std::make_shared<ZMQWorker>("tcp://*")),
       // List of controllers:
-      userController_(router_, zmqWorker_),
-      pingController_(router_, zmqWorker_),
-      transactionController_(router_, zmqWorker_),
-      infoController_(router_, zmqWorker_),
+      userController_(router_),
+      pingController_(router_),
+      transactionController_(router_),
+      infoController_(router_),
       fileController_(router_),
-      adminController_(router_, zmqWorker_) {
+      adminController_(router_) {
   auto opts = Pistache::Http::Endpoint::options().maxRequestSize(FLAGS_buffer_size).threads(thr);
   httpEndpoint_.init(opts);
 }
 
 void MainController::start() {
-  zmqWorker_->start();
   httpEndpoint_.setHandler(router_->handler());
   httpEndpoint_.useSSL(FLAGS_cert, FLAGS_key);
   httpEndpoint_.serve();
