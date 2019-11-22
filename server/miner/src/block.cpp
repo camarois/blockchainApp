@@ -41,8 +41,7 @@ std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir)
   return json.get<Block>();
 }
 
-// TODO(frgraf) set
-void Block::append(const std::string& data) {
+void Block::setData(const std::string& data) {
   dirty_ = true;
   data_ = data;
 }

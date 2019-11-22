@@ -31,8 +31,8 @@ inline std::string hash(const std::string& password) {
 }
 
 inline std::string randomStr(size_t size = kDefaultRandomSize) {
-  std::random_device dev;
-  std::mt19937 rng(dev());
+  // std::random_device dev;
+  std::mt19937 rng;
   std::uniform_int_distribution<std::mt19937::result_type> dist(0, kAsciiNumber);
 
   std::string result;

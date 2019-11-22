@@ -412,7 +412,7 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   return result;
 }
 
-unsigned int Database::getLastLogId() {
+int Database::getLastLogId() {
   Query query = Query(
       "SELECT value FROM lastBlockId "
       "WHERE key = 'lastBlockId';");
@@ -420,10 +420,10 @@ unsigned int Database::getLastLogId() {
   if (statement.step()) {
     return std::stoi(statement.getColumnText(0));
   }
-  return 0;
+  return -1;
 }
 
-void Database::setLastLogId(unsigned int lastLogId) {
+void Database::setLastLogId(int lastLogId) {
   Query query = Query(
       "INSERT OR REPLACE INTO lastBlockId "
       "(key, value) "

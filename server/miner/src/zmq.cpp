@@ -46,6 +46,7 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
+  syncing_ = false;
   threadServer_ = std::thread(&ZMQWorker::handleSubServer, this);
   threadBlockchain_ = std::thread(&ZMQWorker::handleSubBlockchain, this);
 
@@ -191,7 +192,7 @@ void ZMQWorker::handleSubBlockchain() {
           std::cout << "Syncing blocks from " << response.blocks.front().id << " to " << response.blocks.back().id
                     << std::endl;
           for (auto block : response.blocks) {
-            if (block.id >= blockchainController_.getLastBlockId()) {
+            if (block.id > blockchainController_.getLastBlockId()) {
               std::cout << "Syncing block #" << block.id << std::endl;
               auto b = blockchainController_.addTransaction(block.data);
               for (int i = 0; i < block.numberOfVerifications; ++i) {
@@ -245,7 +246,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
   sendToSocket(socketPushServer_, message);
 }
 
-void ZMQWorker::sendBlockMined(unsigned int id, unsigned int nonce) {
+void ZMQWorker::sendBlockMined(int id, unsigned int nonce) {
   std::cout << "Sending mined block " << id << std::endl;
   Common::Models::BlockMined response = {.id = id, .nonce = nonce};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockMined,
@@ -263,7 +264,7 @@ void ZMQWorker::sendBlockSyncRequest() {
 }
 
 void ZMQWorker::sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks) {
-  std::cout << "Sending " << blocks.size() << " syncing blocks, from id " << blocks.front().id << " to "
+  std::cout << "Sending syncing blocks, from id " << blocks.front().id << " to "
             << blocks.back().id << std::endl;
   Common::Models::BlockSyncResponse sync = {.blocks = blocks};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncResponse,

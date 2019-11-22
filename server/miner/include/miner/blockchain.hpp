@@ -17,13 +17,13 @@ class BlockChain {
   explicit BlockChain(const std::filesystem::path& blockDir);
   static std::optional<BlockChain> fromDirectory(const std::filesystem::path& blockDir);
 
-  void appendTransaction(const std::string& transaction);
+  void addTransaction(const std::string& transaction);
   void saveAll();
   void clearAll();
-  Block& nextBlock();
+  // Block& nextBlock();
   Common::optional_ref<Block> lastBlock();
   Common::optional_ref<Block> getBlock(unsigned int id);
-  unsigned int lastBlockID() const;
+  int lastBlockID() const;
   unsigned int difficulty() const;
   const std::map<unsigned int, Block>& blocks();
 
@@ -36,7 +36,7 @@ class BlockChain {
   static const std::string kMetadataFilename;
 
  private:
-  Block& createBlock();
+  void createBlock(const std::string& data);
   Common::optional_ref<Block> loadBlock(unsigned int id);
   bool saveMetadata() const;
   static std::optional<BlockChain> loadMetadataBlockChain(const std::filesystem::path& blockDir);

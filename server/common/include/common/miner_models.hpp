@@ -99,7 +99,7 @@ inline void from_json(const nlohmann::json& j, ZMQMessage& obj) {
 }
 
 struct BlockSyncRequest {
-  unsigned int lastId = 0;
+  int lastId = -1;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -109,7 +109,7 @@ inline void to_json(nlohmann::json& j, const BlockSyncRequest& obj) { j = {{kLas
 inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) { j.at(kLastID).get_to(obj.lastId); }
 
 struct BlockMined {
-  unsigned int id = 0;
+  int id = -1;
   unsigned int nonce = 0;
   unsigned int numberOfVerifications = 0;
   std::string data;
@@ -144,7 +144,7 @@ inline void from_json(const nlohmann::json& j, BlockSyncResponse& obj) { j.at(kB
 struct ServerRequest {
   std::string token;
   std::string command;
-  unsigned int lastBlockId = 0;
+  int lastBlockId = -1;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -162,7 +162,7 @@ inline void from_json(const nlohmann::json& j, ServerRequest& obj) {
 struct ServerResponse {
   std::string token;
   std::string result;
-  unsigned int lastBlockId = 0;
+  int lastBlockId = -1;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)

@@ -15,7 +15,7 @@ const std::string BlockChain::kMetadataFilename = "metadata";
 BlockChain::BlockChain() {
   difficulty_ = FLAGS_difficulty;
   std::cout << "Starting blockchain with difficulty " << difficulty_ << std::endl;
-  createBlock();
+  // createBlock();
 }
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
@@ -35,7 +35,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
     return {};
   }
 
-  unsigned int lastBlockID = blockchain->lastBlockID();
+  int lastBlockID = blockchain->lastBlockID();
   blockchain->clearAll();
   if (!blockchain->getBlock(lastBlockID)) {
     return {};
@@ -44,7 +44,12 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
   return blockchain;
 }
 
-void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->get().append(transaction); }
+void BlockChain::addTransaction(const std::string& transaction) {
+  createBlock(transaction);
+  lastBlock()->get().mine(difficulty_);
+  lastBlock()->get().save();
+  // lastBlock()->get().append(transaction);
+}
 
 void BlockChain::saveAll() {
   Common::optional_ref<Block> last = lastBlock();
@@ -56,12 +61,12 @@ void BlockChain::saveAll() {
 
 void BlockChain::clearAll() { blocks_.clear(); }
 
-Block& BlockChain::nextBlock() {
-  lastBlock()->get().mine(difficulty_);
-  lastBlock()->get().save();
+// Block& BlockChain::nextBlock() {
+//   lastBlock()->get().mine(difficulty_);
+//   lastBlock()->get().save();
 
-  return createBlock();
-}
+//   return createBlock();
+// }
 
 Common::optional_ref<Block> BlockChain::lastBlock() {
   if (blocks_.empty()) {
@@ -80,13 +85,14 @@ Common::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
   return it->second;
 }
 
-unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
+int BlockChain::lastBlockID() const { return blocks_.empty() ? -1 : blocks_.rbegin()->first; }
 
 const std::map<unsigned int, Block>& BlockChain::blocks() { return blocks_; }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
-Block& BlockChain::createBlock() {
+// TODO(frgraf): remove ref
+void BlockChain::createBlock(const std::string& data) {
   unsigned int nextID = 0;
   std::string previousHash;
 
@@ -96,8 +102,10 @@ Block& BlockChain::createBlock() {
     previousHash = last->get().hash();
   }
 
-  blocks_.emplace(std::piecewise_construct, std::forward_as_tuple(nextID), std::forward_as_tuple(nextID, previousHash));
-  return blocks_.at(nextID);
+  // blocks_.emplace(std::piecewise_construct, std::forward_as_tuple(nextID), std::forward_as_tuple(nextID, previousHash));
+  Block block(nextID, previousHash);
+  block.setData(data);
+  blocks_.emplace(nextID, block);
 }
 
 Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {

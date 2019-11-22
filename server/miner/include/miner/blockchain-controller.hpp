@@ -17,11 +17,11 @@ class BlockChainController {
 
   Common::optional_ref<Block> addTransaction(const std::string& transaction);
   bool receivedBlockMined(unsigned int id, unsigned int nonce);
-  unsigned int getLastBlockId();
-  std::vector<Common::Models::BlockMined> getLastBlocks(unsigned int lastId);
+  int getLastBlockId();
+  std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
 
  private:
-  std::random_device dev_;
+  // std::random_device dev_;
   std::mt19937 rng_;
   std::uniform_int_distribution<std::mt19937::result_type> dist_;
 

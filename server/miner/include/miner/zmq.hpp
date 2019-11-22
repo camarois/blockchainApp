@@ -29,7 +29,7 @@ class ZMQWorker {
   void printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql);
   void sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const Common::Models::ZMQMessage& message);
   void sendResponse(const std::string& token, const std::string& result);
-  void sendBlockMined(unsigned int id, unsigned int nonce);
+  void sendBlockMined(int id, unsigned int nonce);
   void sendBlockSyncRequest();
   void sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks);
 

@@ -16,7 +16,7 @@ class Block {
   explicit Block(unsigned int id, const std::string& previous);
   static std::optional<Block> fromBlockFile(const std::filesystem::path& blockDir);
 
-  void append(const std::string& data);
+  void setData(const std::string& data);
   void mine(unsigned int difficulty);
   void save() const;
   void queueNonce(unsigned int nonce);
