@@ -1,9 +1,11 @@
 package controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import models.AllUsersRequest;
@@ -19,12 +21,14 @@ public class LogsViewer {
     @FXML
     public VBox vboxLogs;
     @FXML
+    public TableColumn messageCol;
+    @FXML
     private TableView<LogsResponse.Log> logTableView;
 
     @FXML
     public void initialize() {
         logsList = FXCollections.observableArrayList();
-        logTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        messageCol.getStyleClass().add("left");
         logTableView.setItems(logsList);
         updateTbl();
     }

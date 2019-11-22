@@ -35,34 +35,37 @@
          <Insets bottom="15.0" left="50.0" right="15.0" top="15.0" />
       </VBox.margin>
    </HBox>
-   <TableView fx:id="logTableView" prefHeight="1000.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <TableView fx:id="logTableView" prefHeight="1000.0">
       <columns>
-         <TableColumn text="Heure">
+         <TableColumn text="Heure" prefWidth="200.0" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="hour" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Numéro">
+         <TableColumn text="Numéro" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="number" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Sévérité">
+         <TableColumn text="Sévérité" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="severity" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Provenance">
+         <TableColumn text="Provenance" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="provenance" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn sortable="false" text="Message">
+         <TableColumn fx:id="messageCol" sortable="false" text="Message">
             <cellValueFactory>
                <PropertyValueFactory property="message" />
             </cellValueFactory>
          </TableColumn>
       </columns>
+      <VBox.margin>
+         <Insets left="50.0" right="50.0" />
+      </VBox.margin>
    </TableView>
 </children>
 <opaqueInsets>
