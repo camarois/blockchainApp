@@ -37,22 +37,22 @@
    </HBox>
    <TableView fx:id="logTableView" prefHeight="1000.0">
       <columns>
-         <TableColumn text="Heure" prefWidth="200.0" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="hourCol" text="Heure" prefWidth="200.0" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="hour" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Numéro" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="noCol" text="Numéro" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="number" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Sévérité" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="severityCol" text="Sévérité" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="severity" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn text="Provenance" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="provenanceCol" text="Provenance" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="provenance" />
             </cellValueFactory>

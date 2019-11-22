@@ -18,17 +18,24 @@ import java.util.*;
 public class LogsViewer {
     private List<String> provenance = List.of("serveurweb", "1", "2", "3");
     private ObservableList<LogsResponse.Log> logsList;
-    @FXML
-    public VBox vboxLogs;
-    @FXML
-    public TableColumn messageCol;
-    @FXML
-    private TableView<LogsResponse.Log> logTableView;
+    @FXML public VBox vboxLogs;
+    @FXML public TableColumn hourCol;
+    @FXML public TableColumn noCol;
+    @FXML public TableColumn severityCol;
+    @FXML public TableColumn provenanceCol;
+    @FXML public TableColumn messageCol;
+    @FXML private TableView<LogsResponse.Log> logTableView;
 
     @FXML
     public void initialize() {
         logsList = FXCollections.observableArrayList();
-        messageCol.getStyleClass().add("left");
+        messageCol.prefWidthProperty().bind(
+                logTableView.widthProperty()
+                        .subtract(hourCol.widthProperty())
+                        .subtract(noCol.widthProperty())
+                        .subtract(severityCol.widthProperty())
+                        .subtract(provenanceCol.widthProperty())
+        );
         logTableView.setItems(logsList);
         updateTbl();
     }
