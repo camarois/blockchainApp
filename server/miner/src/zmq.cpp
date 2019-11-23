@@ -90,14 +90,6 @@ void ZMQWorker::handleSubServer() {
         Common::Logger::get()->error("ZMQ/blockchain: failed to receive message\n");
         continue;
       }
-      if (syncing_) {
-        std::cout << "Can't accept message, in syncing state." << std::endl;
-        continue;
-      }
-      // while (syncing_) {
-      // std::cout << "Can't accept message, in syncing state." << std::endl;
-      //   std::this_thread::sleep_for(std::chrono::seconds(1));
-      // }
 
       Common::Models::ZMQMessage received = Common::MessageHelper::toJSON(msg);
       Common::Models::ServerRequest request = nlohmann::json::parse(received.data);
@@ -106,6 +98,15 @@ void ZMQWorker::handleSubServer() {
       if (request.lastBlockId > blockchainController_.getLastBlockId()) {
         sendBlockSyncRequest();
       }
+
+      if (syncing_) {
+        std::cout << "Can't accept message, in syncing state." << std::endl;
+        continue;
+      }
+      // while (syncing_) {
+      // std::cout << "Can't accept message, in syncing state." << std::endl;
+      //   std::this_thread::sleep_for(std::chrono::seconds(1));
+      // }
 
       if (received.type == Common::Models::kTypeMinerId) {
         if (request.token == token_) {
@@ -264,8 +265,7 @@ void ZMQWorker::sendBlockSyncRequest() {
 }
 
 void ZMQWorker::sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks) {
-  std::cout << "Sending syncing blocks, from id " << blocks.front().id << " to "
-            << blocks.back().id << std::endl;
+  std::cout << "Sending syncing blocks, from id " << blocks.front().id << " to " << blocks.back().id << std::endl;
   Common::Models::BlockSyncResponse sync = {.blocks = blocks};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncResponse,
                                         .data = Common::Models::toStr(sync)};

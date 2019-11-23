@@ -47,7 +47,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
 void BlockChain::addTransaction(const std::string& transaction) {
   createBlock(transaction);
   lastBlock()->get().mine(difficulty_);
-  lastBlock()->get().save();
+  saveAll();
   // lastBlock()->get().append(transaction);
 }
 
