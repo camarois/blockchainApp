@@ -9,9 +9,7 @@ namespace Common {
 std::shared_ptr<Logger> Logger::instance;
 
 // NOLINTNEXTLINE
-Logger::Logger(int logSessionId) : logSessionId_(logSessionId) {
-  logCount_ = 1;
-}
+Logger::Logger(int logSessionId) : logSessionId_(logSessionId) { logCount_ = 1; }
 
 std::shared_ptr<Logger> Logger::get() {
   if (instance) {
