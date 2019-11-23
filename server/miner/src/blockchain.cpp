@@ -48,7 +48,6 @@ void BlockChain::addTransaction(const std::string& transaction) {
   createBlock(transaction);
   lastBlock()->get().mine(difficulty_);
   saveAll();
-  // lastBlock()->get().append(transaction);
 }
 
 void BlockChain::saveAll() {
@@ -60,13 +59,6 @@ void BlockChain::saveAll() {
 }
 
 void BlockChain::clearAll() { blocks_.clear(); }
-
-// Block& BlockChain::nextBlock() {
-//   lastBlock()->get().mine(difficulty_);
-//   lastBlock()->get().save();
-
-//   return createBlock();
-// }
 
 Common::optional_ref<Block> BlockChain::lastBlock() {
   if (blocks_.empty()) {
@@ -91,7 +83,6 @@ const std::map<unsigned int, Block>& BlockChain::blocks() { return blocks_; }
 
 unsigned int BlockChain::difficulty() const { return difficulty_; }
 
-// TODO(frgraf): remove ref
 void BlockChain::createBlock(const std::string& data) {
   unsigned int nextID = 0;
   std::string previousHash;
@@ -102,7 +93,6 @@ void BlockChain::createBlock(const std::string& data) {
     previousHash = last->get().hash();
   }
 
-  // blocks_.emplace(std::piecewise_construct, std::forward_as_tuple(nextID), std::forward_as_tuple(nextID, previousHash));
   Block block(nextID, previousHash);
   block.setData(data);
   blocks_.emplace(nextID, block);

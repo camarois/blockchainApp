@@ -149,9 +149,8 @@ void ZMQWorker::handleProxyBlockchain() {
 }
 
 bool ZMQWorker::sendId(const std::string& token, int id) {
-  Common::Models::ServerRequest request = {.token = token,
-                                           .command = std::to_string(id),
-                                           .lastBlockId = Common::Database::get()->getLastBlockId()};
+  Common::Models::ServerRequest request = {
+      .token = token, .command = std::to_string(id), .lastBlockId = Common::Database::get()->getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerId, .data = Common::Models::toStr(request)};
 
   return sendRequest(Common::Models::toStr(message));

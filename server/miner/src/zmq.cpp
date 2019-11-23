@@ -234,8 +234,9 @@ void ZMQWorker::sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const
 }
 
 void ZMQWorker::sendReady() {
-  Common::Models::ReadyResponse response = {
-      .token = token_, .selfId = Common::Database::get()->getSelfId(), .lastBlockId = blockchainController_.getLastBlockId()};
+  Common::Models::ReadyResponse response = {.token = token_,
+                                            .selfId = Common::Database::get()->getSelfId(),
+                                            .lastBlockId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerReady,
                                         .data = Common::Models::toStr(response)};
   sendToSocket(socketPushServer_, message);
