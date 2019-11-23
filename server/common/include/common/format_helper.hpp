@@ -12,7 +12,7 @@ namespace Common {
 namespace FormatHelper {
 const size_t kDefaultRandomSize = 32;
 const int kAsciiNumber = 128;
-static std::mt19937 rng; // NOLINT
+static std::mt19937 rng;
 
 inline std::string nowStr() {
   auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());

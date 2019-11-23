@@ -3,11 +3,11 @@
 #include <common/logger.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <iostream>
 #include <rest/zmq.hpp>
 #include <set>
 #include <uuid.h>
-#include <gflags/gflags.h>
 
 DECLARE_int32(timeout);
 

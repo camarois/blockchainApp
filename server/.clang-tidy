@@ -16,6 +16,8 @@ Checks: >
   -clang-diagnostic-unused-result,
   -hicpp-special-member-functions,
   -cppcoreguidelines-special-member-functions,
+  -cert-msc32-c,
+  -cert-msc51-cpp,
 
 WarningsAsErrors: "*"
 
