@@ -16,11 +16,7 @@ BlockChainController::BlockChainController() {
 }
 
 Common::optional_ref<Block> BlockChainController::addTransaction(const std::string& transaction) {
-  // auto lastBlock = blockchain_->lastBlock();
   blockchain_->addTransaction(transaction);
-  // blockchain_->lastBlock()->get().queueNonce(dist_(rng_));
-  // blockchain_->saveAll();
-  // blockchain_->nextBlock();
   return blockchain_->lastBlock();
 }
 

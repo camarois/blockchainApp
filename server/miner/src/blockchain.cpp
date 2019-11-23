@@ -15,7 +15,6 @@ const std::string BlockChain::kMetadataFilename = "metadata";
 BlockChain::BlockChain() {
   difficulty_ = FLAGS_difficulty;
   std::cout << "Starting blockchain with difficulty " << difficulty_ << std::endl;
-  // createBlock();
 }
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }

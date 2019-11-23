@@ -20,7 +20,6 @@ class BlockChain {
   void addTransaction(const std::string& transaction);
   void saveAll();
   void clearAll();
-  // Block& nextBlock();
   Common::optional_ref<Block> lastBlock();
   Common::optional_ref<Block> getBlock(int id);
   int lastBlockID() const;

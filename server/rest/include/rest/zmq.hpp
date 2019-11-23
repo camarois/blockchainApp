@@ -49,7 +49,6 @@ class ZMQWorker {
   const int kMiner2Port_ = 5556;
   const int kMiner3Port_ = 5557;
   const int kMiner4Port_ = 5558;
-  const int kWaitTimeout_ = 5;
 };
 
 }  // namespace Rest

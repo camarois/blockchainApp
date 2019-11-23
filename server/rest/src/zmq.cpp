@@ -7,6 +7,9 @@
 #include <rest/zmq.hpp>
 #include <set>
 #include <uuid.h>
+#include <gflags/gflags.h>
+
+DECLARE_int32(timeout);
 
 namespace Rest {
 
@@ -83,7 +86,7 @@ void ZMQWorker::join() {
 
 Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeServerRequest);
-  auto status = request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
   if (status == std::future_status::timeout) {
     throw std::runtime_error("Timeout exceeded, miner not responding");
   }
@@ -92,7 +95,7 @@ Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlReque
 
 Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
-  auto status = request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
   if (status == std::future_status::timeout) {
     throw std::runtime_error("Timeout exceeded, miner not responding");
   }
