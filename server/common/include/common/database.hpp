@@ -53,8 +53,10 @@ class Database {
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
 
-  int getLastLogId();
-  void setLastLogId(int lastLogId);
+  int getLastBlockId();
+  void setLastBlockId(int lastLogId);
+  int getSelfId();
+  void setSelfId(int selfId);
 
  private:
   void close();

@@ -110,7 +110,9 @@ void ZMQWorker::handleSubServer() {
 
       if (received.type == Common::Models::kTypeMinerId) {
         if (request.token == token_) {
-          Common::Logger::get()->setProvenance(std::stoi(request.command));
+          auto selfId = std::stoi(request.command);
+          Common::Database::get()->setSelfId(selfId);
+          Common::Logger::get()->setProvenance(selfId);
           Common::Logger::get()->info(std::string("This is miner #" + request.command + ", connected to server") +
                                       "\n");
         }
@@ -232,8 +234,8 @@ void ZMQWorker::sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const
 }
 
 void ZMQWorker::sendReady() {
-  Common::Models::ServerResponse response = {
-      .token = token_, .result = "", .lastBlockId = blockchainController_.getLastBlockId()};
+  Common::Models::ReadyResponse response = {
+      .token = token_, .selfId = Common::Database::get()->getSelfId(), .lastBlockId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerReady,
                                         .data = Common::Models::toStr(response)};
   sendToSocket(socketPushServer_, message);

@@ -412,9 +412,9 @@ std::vector<Common::Models::StudentInfo> Database::getStudents() {
   return result;
 }
 
-int Database::getLastLogId() {
+int Database::getLastBlockId() {
   Query query = Query(
-      "SELECT value FROM lastBlockId "
+      "SELECT value FROM keyValuePairs "
       "WHERE key = 'lastBlockId';");
   Statement statement = Statement(db_, query);
   if (statement.step()) {
@@ -423,12 +423,33 @@ int Database::getLastLogId() {
   return -1;
 }
 
-void Database::setLastLogId(int lastLogId) {
+void Database::setLastBlockId(int lastBlockId) {
   Query query = Query(
-      "INSERT OR REPLACE INTO lastBlockId "
+      "INSERT OR REPLACE INTO keyValuePairs "
       "(key, value) "
       "VALUES ('lastBlockId', '%q');",
-      std::to_string(lastLogId).c_str());
+      std::to_string(lastBlockId).c_str());
+  Statement statement = Statement(db_, query);
+  statement.step();
+}
+
+int Database::getSelfId() {
+  Query query = Query(
+      "SELECT value FROM keyValuePairs "
+      "WHERE key = 'selfId';");
+  Statement statement = Statement(db_, query);
+  if (statement.step()) {
+    return std::stoi(statement.getColumnText(0));
+  }
+  return -1;
+}
+
+void Database::setSelfId(int selfId) {
+  Query query = Query(
+      "INSERT OR REPLACE INTO keyValuePairs "
+      "(key, value) "
+      "VALUES ('selfId', '%q');",
+      std::to_string(selfId).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

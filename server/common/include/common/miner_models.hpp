@@ -53,6 +53,7 @@ const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
 const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
+const std::string kSelfId = "self-id";
 
 struct SqlRequest {
   Functions function = Functions::Unknown;
@@ -174,6 +175,24 @@ inline void to_json(nlohmann::json& j, const ServerResponse& obj) {
 inline void from_json(const nlohmann::json& j, ServerResponse& obj) {
   j.at(kToken).get_to(obj.token);
   j.at(kResult).get_to(obj.result);
+  j.at(kLastID).get_to(obj.lastBlockId);
+}
+
+struct ReadyResponse {
+  std::string token;
+  int selfId = -1;
+  int lastBlockId = -1;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const ReadyResponse& obj) {
+  j = {{kToken, obj.token}, {kSelfId, obj.selfId}, {kLastID, obj.lastBlockId}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, ReadyResponse& obj) {
+  j.at(kToken).get_to(obj.token);
+  j.at(kSelfId).get_to(obj.selfId);
   j.at(kLastID).get_to(obj.lastBlockId);
 }
 

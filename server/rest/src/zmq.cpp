@@ -114,13 +114,20 @@ void ZMQWorker::handlePullFromMiner() {
       auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
 
       if (message.type == Common::Models::kTypeMinerReady) {
-        Common::Models::ServerResponse response = nlohmann::json::parse(message.data);
-        sendId(response.token);
+        Common::Models::ReadyResponse response = nlohmann::json::parse(message.data);
+        if (response.selfId == -1) {
+          sendId(response.token, ++minersCount_);
+        }
+        else {
+          sendId(response.token, response.selfId);
+        }
       }
       else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
         std::cout << "Setting last block id " << response.lastBlockId << std::endl;
-        Common::Database::get()->setLastLogId(response.lastBlockId);
+        if (response.lastBlockId > Common::Database::get()->getLastBlockId()) {
+          Common::Database::get()->setLastBlockId(response.lastBlockId);
+        }
         receivedResponse(response.token, response.result);
       }
     }
@@ -141,12 +148,10 @@ void ZMQWorker::handleProxyBlockchain() {
   }
 }
 
-bool ZMQWorker::sendId(const std::string& token) {
-  // TODO(frgraf): handle what happens if server crashes or closes.
-  minersCount_++;
-
-  Common::Models::ServerRequest request = {
-      .token = token, .command = std::to_string(minersCount_), .lastBlockId = Common::Database::get()->getLastLogId()};
+bool ZMQWorker::sendId(const std::string& token, int id) {
+  Common::Models::ServerRequest request = {.token = token,
+                                           .command = std::to_string(id),
+                                           .lastBlockId = Common::Database::get()->getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerId, .data = Common::Models::toStr(request)};
 
   return sendRequest(Common::Models::toStr(message));
@@ -179,7 +184,7 @@ std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const 
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
   Common::Models::ServerRequest request = {
-      .token = token, .command = sql, .lastBlockId = Common::Database::get()->getLastLogId()};
+      .token = token, .command = sql, .lastBlockId = Common::Database::get()->getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = type, .data = Common::Models::toStr(request)};
 
   requests_.emplace(token, std::promise<std::string>{});
