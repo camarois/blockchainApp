@@ -9,7 +9,7 @@ DECLARE_string(blockchain);
 
 namespace Miner {
 
-BlockChainController::BlockChainController() : rng_(), dist_() {
+BlockChainController::BlockChainController() {
   std::optional<Miner::BlockChain> maybeBlockchain =
       Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
   blockchain_ = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
@@ -24,7 +24,7 @@ Common::optional_ref<Block> BlockChainController::addTransaction(const std::stri
   return blockchain_->lastBlock();
 }
 
-bool BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
+bool BlockChainController::receivedBlockMined(int id, int nonce) {
   blockchain_->lastBlock()->get().queueNonce(nonce);
   auto minedBlock = blockchain_->getBlock(id);
   if (!minedBlock) {

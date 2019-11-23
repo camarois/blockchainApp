@@ -7,8 +7,8 @@
 #include <memory>
 #include <miner/blockchain-controller.hpp>
 #include <thread>
-#include <zmq.hpp>
 #include <uuid.h>
+#include <zmq.hpp>
 
 namespace Miner {
 
@@ -29,12 +29,12 @@ class ZMQWorker {
   void printSqlRequest(const std::string& message, const Common::Models::SqlRequest& sql);
   void sendToSocket(const std::unique_ptr<zmq::socket_t>& socket, const Common::Models::ZMQMessage& message);
   void sendResponse(const std::string& token, const std::string& result);
-  void sendBlockMined(int id, unsigned int nonce);
+  void sendBlockMined(int id, int nonce);
   void sendBlockSyncRequest();
   void sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks);
 
-  std::atomic<bool> syncing_;
   std::atomic<bool> running_;
+  std::atomic<bool> syncing_;
   const std::string serverHostname_;
   zmq::context_t context_;
   std::unique_ptr<zmq::socket_t> socketSubServer_;

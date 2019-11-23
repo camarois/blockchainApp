@@ -11,13 +11,13 @@ namespace Miner {
 // NOLINTNEXTLINE(modernize-pass-by-value)
 ZMQWorker::ZMQWorker(const std::string& serverHostname)
     : running_(false),
+      syncing_(false),
       serverHostname_(serverHostname),  // NOLINT
       context_(1),
       socketSubServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
       socketPushServer_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::push)),
       socketPubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::pub)),
-      socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)),
-      blockchainController_() {}
+      socketSubBlockchain_(std::make_unique<zmq::socket_t>(context_, zmq::socket_type::sub)) {}
 
 ZMQWorker::~ZMQWorker() {
   running_ = false;
@@ -46,7 +46,6 @@ bool ZMQWorker::start() {
   }
 
   running_ = true;
-  syncing_ = false;
   threadServer_ = std::thread(&ZMQWorker::handleSubServer, this);
   threadBlockchain_ = std::thread(&ZMQWorker::handleSubBlockchain, this);
 
@@ -194,11 +193,11 @@ void ZMQWorker::handleSubBlockchain() {
                     [](const auto& lhs, const auto& rhs) { return lhs.id < rhs.id; });
           std::cout << "Syncing blocks from " << response.blocks.front().id << " to " << response.blocks.back().id
                     << std::endl;
-          for (auto block : response.blocks) {
+          for (const auto& block : response.blocks) {
             if (block.id > blockchainController_.getLastBlockId()) {
               std::cout << "Syncing block #" << block.id << std::endl;
               auto b = blockchainController_.addTransaction(block.data);
-              for (int i = 0; i < block.numberOfVerifications; ++i) {
+              for (auto i = 0; i < block.numberOfVerifications; ++i) {
                 b->get().increaseVerification();
               }
               b->get().save();
@@ -250,7 +249,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
   sendToSocket(socketPushServer_, message);
 }
 
-void ZMQWorker::sendBlockMined(int id, unsigned int nonce) {
+void ZMQWorker::sendBlockMined(int id, int nonce) {
   std::cout << "Sending mined block " << id << std::endl;
   Common::Models::BlockMined response = {.id = id, .nonce = nonce};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockMined,

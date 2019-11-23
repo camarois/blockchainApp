@@ -111,8 +111,8 @@ inline void from_json(const nlohmann::json& j, BlockSyncRequest& obj) { j.at(kLa
 
 struct BlockMined {
   int id = -1;
-  unsigned int nonce = 0;
-  unsigned int numberOfVerifications = 0;
+  int nonce = 0;
+  int numberOfVerifications = 0;
   std::string data;
 };
 

@@ -13,18 +13,18 @@ namespace Miner {
 class Block {
  public:
   Block();
-  explicit Block(unsigned int id, const std::string& previous);
+  explicit Block(int id, const std::string& previous);
   static std::optional<Block> fromBlockFile(const std::filesystem::path& blockDir);
 
   void setData(const std::string& data);
-  void mine(unsigned int difficulty);
+  void mine(int difficulty);
   void save() const;
-  void queueNonce(unsigned int nonce);
+  void queueNonce(int nonce);
   void increaseVerification();
 
-  unsigned int id() const;
-  unsigned int nonce() const;
-  unsigned int numberOfVerifications() const;
+  int id() const;
+  int nonce() const;
+  int numberOfVerifications() const;
   std::string hash();
   std::string previousHash() const;
   std::string data() const;
@@ -37,13 +37,13 @@ class Block {
 
  private:
   bool dirty_;
-  unsigned int id_;
-  unsigned int nonce_;
-  unsigned int numberOfVerifications_;
+  int id_;
+  int nonce_;
+  int numberOfVerifications_;
   std::string hash_;
   std::string previousHash_;
   std::string data_;
-  std::queue<unsigned int> receivedNonces_;
+  std::queue<int> receivedNonces_;
   std::filesystem::path blockDir_;
 
   const std::string kId_ = "id";

@@ -22,7 +22,7 @@ Block::Block() {
   blockDir_ = std::filesystem::path(FLAGS_blockchain);
 }
 
-Block::Block(unsigned int id, const std::string& previous) : Block() {
+Block::Block(int id, const std::string& previous) : Block() {
   id_ = id;
   previousHash_ = previous;
 }
@@ -46,7 +46,7 @@ void Block::setData(const std::string& data) {
   data_ = data;
 }
 
-void Block::mine(unsigned int difficulty) {
+void Block::mine(int difficulty) {
   bool invalid = true;
   while (invalid) {
     if (!receivedNonces_.empty()) {
@@ -57,7 +57,7 @@ void Block::mine(unsigned int difficulty) {
     std::string blockHash = hash();
     invalid = false;
 
-    for (unsigned int i = 0; i < difficulty; i++) {
+    for (int i = 0; i < difficulty; i++) {
       if (blockHash.at(i) != '0') {
         nonce_++;
         dirty_ = true;
@@ -84,13 +84,13 @@ void Block::increaseVerification() {
   std::cout << "Block #" << id_ << " is now verified by " << numberOfVerifications_ << " miners." << std::endl;
 }
 
-void Block::queueNonce(unsigned int nonce) { receivedNonces_.push(nonce); }
+void Block::queueNonce(int nonce) { receivedNonces_.push(nonce); }
 
-unsigned int Block::id() const { return id_; }
+int Block::id() const { return id_; }
 
-unsigned int Block::nonce() const { return nonce_; }
+int Block::nonce() const { return nonce_; }
 
-unsigned int Block::numberOfVerifications() const { return numberOfVerifications_; }
+int Block::numberOfVerifications() const { return numberOfVerifications_; }
 
 std::string Block::hash() {
   if (!dirty_) {

@@ -1,11 +1,11 @@
 #ifndef MINER_BLOCKCHAIN_CONTROLLER_HPP
 #define MINER_BLOCKCHAIN_CONTROLLER_HPP
 
+#include <common/miner_models.hpp>
 #include <filesystem>
 #include <memory>
 #include <optional>
 #include <random>
-#include <common/miner_models.hpp>
 
 #include "miner/blockchain.hpp"
 
@@ -16,7 +16,7 @@ class BlockChainController {
   explicit BlockChainController();
 
   Common::optional_ref<Block> addTransaction(const std::string& transaction);
-  bool receivedBlockMined(unsigned int id, unsigned int nonce);
+  bool receivedBlockMined(int id, int nonce);
   int getLastBlockId();
   std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
 
@@ -28,6 +28,6 @@ class BlockChainController {
   std::unique_ptr<BlockChain> blockchain_;
 };
 
-} // namespace Miner
+}  // namespace Miner
 
-#endif // MINER_BLOCKCHAIN_CONTROLLER_HPP
+#endif  // MINER_BLOCKCHAIN_CONTROLLER_HPP
