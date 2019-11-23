@@ -21,8 +21,7 @@ class BlockChainController {
   std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
 
  private:
-  // std::random_device dev_;
-  std::mt19937 rng_;
+  std::mt19937 rng_; // NOLINT
   std::uniform_int_distribution<std::mt19937::result_type> dist_;
 
   std::unique_ptr<BlockChain> blockchain_;

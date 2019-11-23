@@ -115,7 +115,7 @@ void ZMQWorker::handlePullFromMiner() {
 
       if (message.type == Common::Models::kTypeMinerReady) {
         Common::Models::ReadyResponse response = nlohmann::json::parse(message.data);
-        if (response.selfId == -1) {
+        if (response.selfId == 0) {
           sendId(response.token, ++minersCount_);
         }
         else {

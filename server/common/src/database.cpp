@@ -441,7 +441,7 @@ int Database::getSelfId() {
   if (statement.step()) {
     return std::stoi(statement.getColumnText(0));
   }
-  return -1;
+  return 0;
 }
 
 void Database::setSelfId(int selfId) {

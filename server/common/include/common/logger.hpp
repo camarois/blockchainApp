@@ -17,7 +17,6 @@ class Logger {
  public:
   explicit Logger(int logSessionId);
   static std::shared_ptr<Logger> get();
-  void setProvenance(int provenance);
   void error(const std::string& message);
   void attention(const std::string& message);
   void info(const std::string& message);
@@ -30,7 +29,6 @@ class Logger {
   std::mutex mutex_;
   const int logSessionId_;
   std::atomic<int> logCount_;
-  int provenance_;
 };
 
 }  // namespace Common

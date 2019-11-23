@@ -111,7 +111,6 @@ void ZMQWorker::handleSubServer() {
         if (request.token == token_) {
           auto selfId = std::stoi(request.command);
           Common::Database::get()->setSelfId(selfId);
-          Common::Logger::get()->setProvenance(selfId);
           Common::Logger::get()->info(std::string("This is miner #" + request.command + ", connected to server") +
                                       "\n");
         }
