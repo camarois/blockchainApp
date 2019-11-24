@@ -5,6 +5,7 @@ stages:
     - test
     - lint
     - package
+    - deploy
 
 cache:
     paths:
@@ -167,10 +168,30 @@ package-server:
     stage: package
     image: gpol/inf3995:package
     script:
-        - cd server/package && CARCH=armv7h makepkg
+        - cd server/package && CARCH=armv7h makepkg && mv inf3995-git-*.tar.xz inf3995-git-latest.tar.xz
     only:
         refs:
             - master
     artifacts:
         paths:
-            - server/package/inf3995-git-*.tar.xz
+            - server/package/inf3995-git-latest.tar.xz
+
+#################
+# Deploy Stages #
+#################
+
+deploy-server:
+    stage: deploy
+    variables:
+        url: "http://gros.shaft.quebec:8090/upload"
+        arch: "armv7h"
+        repo: "inf3995"
+        dir: "server/package"
+        file: "inf3995-git-latest.tar.xz"
+    script:
+        - cd "$dir" && curl "$url" -F "file=@$file" -F "arch=$arch" -F "repo=$repo" -F "token=$REPO_UPLOAD_TOKEN"
+    only:
+        refs:
+            - master
+    dependencies:
+        - package-server
