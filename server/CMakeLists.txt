@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
+
 option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
 if(BUILD_ARMV7)
     include(${CMAKE_SOURCE_DIR}/cmake/armv7_setup.cmake)
@@ -49,4 +50,10 @@ install(
 install(
     FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
     DESTINATION usr/share/inf3995
+)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-miner.service
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-rest.service
+    DESTINATION usr/lib/systemd/system
 )
