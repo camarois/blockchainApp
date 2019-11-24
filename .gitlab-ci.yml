@@ -170,7 +170,6 @@ package-server:
         - cd server/package && CARCH=armv7h makepkg
     only:
         refs:
-            - merge_requests
             - master
     artifacts:
         paths:
