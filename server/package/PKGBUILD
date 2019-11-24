@@ -1,6 +1,6 @@
 _pkgname='inf3995'
 pkgname="${_pkgname}-git"
-pkgver=r823.9acce7d
+pkgver=r885.17f117f
 pkgrel=1
 pkgdesc='Rest/Miner applications'
 arch=('i686' 'x86_64' 'armv7h')
@@ -15,10 +15,10 @@ sha256sums=()
 prepare() {
     if [[ -d "${srcdir}/${_pkgname}" ]]; then
         cd "${srcdir}/${_pkgname}"
-        git pull origin gpollo/systemd
+        git pull origin master
     else
         cd "${srcdir}"
-        git clone --branch gpollo/systemd "${CI_REPOSITORY_URL}" "${_pkgname}"
+        git clone "${CI_REPOSITORY_URL}" "${_pkgname}"
     fi
 }
 
