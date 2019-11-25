@@ -69,4 +69,5 @@
     <string name="info_course_success">Cours ajouté</string>
     <string name="error_invalid_permissions">Vous n\'avez pas les permissions requises</string>
     <string name="info_pdf_success">Les résultats de ce cours ont été téléversés dans vos dossiers.</string>
+    <string name="error_invalid_grade">Veuillez entrer une note valide</string>
 </resources>

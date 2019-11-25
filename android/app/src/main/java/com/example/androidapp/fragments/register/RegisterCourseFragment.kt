@@ -43,6 +43,7 @@ class RegisterCourseFragment : Fragment() {
     private val PDF_UPLOAD_CODE = 111
     private var restService: RestRequestService = get()
     private val homeFragment: HomeFragment = HomeFragment()
+    private val acceptedGrades = arrayOf("A*", "A", "B+", "B", "C+", "C", "D+", "D", "E", "F", "IP", "IV", "S", "I", "J", "P", "R", "SE", "X", "Y", "Z")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,10 +131,22 @@ class RegisterCourseFragment : Fragment() {
         val studentGrade = grade.text.toString()
 
         if (studentLastName.isNotEmpty() && studentFirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
-            registeredStudents.add(registeredStudents.size, StudentItem(lastName.text.toString(), firstName.text.toString(), code.text.toString(), grade.text.toString()))
-            list.adapter?.notifyItemInserted(registeredStudents.size - 1)
-            list.smoothScrollToPosition(registeredStudents.size - 1)
-            resetView()
+            if(studentGrade in acceptedGrades) {
+                registeredStudents.add(
+                    registeredStudents.size,
+                    StudentItem(
+                        lastName.text.toString(),
+                        firstName.text.toString(),
+                        code.text.toString(),
+                        grade.text.toString()
+                    )
+                )
+                list.adapter?.notifyItemInserted(registeredStudents.size - 1)
+                list.smoothScrollToPosition(registeredStudents.size - 1)
+                resetView()
+            } else {
+                Toast.makeText(activity, getString(R.string.error_invalid_grade), Toast.LENGTH_SHORT).show()
+            }
         } else {
             Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         }

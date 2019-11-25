@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:maxLength="2"
-            android:digits="AaBbCcDdFfPpRr+*"
+            android:inputType="textCapCharacters"
             android:hint="@string/note_hint"/>
 
     </LinearLayout>
