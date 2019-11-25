@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <random>
+#include <vector>
 
 #include "miner/blockchain.hpp"
 
@@ -19,6 +20,7 @@ class BlockChainController {
   bool receivedBlockMined(int id, int nonce);
   int getLastBlockId();
   std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
+  std::vector<std::string> getBlocks(unsigned int blockCount);
 
  private:
   std::mt19937 rng_;

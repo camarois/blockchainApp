@@ -49,4 +49,24 @@ std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(int 
   return lastBlocks;
 }
 
+std::vector<std::string> BlockChainController::getBlocks(unsigned int blockCount) {
+  unsigned int lastBlockID = getLastBlockId();
+  if (blockCount == 0 || blockCount > lastBlockID) {
+    blockCount = lastBlockID;
+  }
+
+  std::vector<std::string> blocks;
+  for (unsigned int id = lastBlockID - blockCount; id < lastBlockID; id++) {
+    Common::optional_ref<Block> block = blockchain_->getBlock(id);
+    if (block) {
+      blocks.push_back(block->get().data());
+    } else {
+      Common::Logger::get()->info("Failed to get block #" + std::to_string(id) + "\n");
+      blocks.push_back("failed to get block data");
+    }
+  }
+
+  return blocks;
+}
+
 }  // namespace Miner
