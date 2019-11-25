@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import models.PasswordRequest;
+import models.RegisterResponse;
 import services.RestService;
 
 public class ChangePasswordController {
@@ -30,12 +31,21 @@ public class ChangePasswordController {
             RestService.postRequestAsync(
                 RestService.urls.getChangePassword(),
                 new PasswordRequest(oldPwdValue, newPwdValue),
-                null,
-                (e) -> {},
+                    String.class,
+                (s) -> {
+                    showConfirmationDialog("Changement du mot de passe reussie.");
+                },
                 (e) -> {
                     showErrorDialog("L'ancien mot de passe est invalide");
                 });
         }
+    }
+
+    private void showConfirmationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Attention!");
+        alert.setHeaderText(message);
+        alert.showAndWait();
     }
 
     private void showErrorDialog(String message) {

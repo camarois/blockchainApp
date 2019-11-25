@@ -49,16 +49,16 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
-
-  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, {loginRequest.username}});
+  Common::Models::GetSaltRequest getSaltRequest = {loginRequest.username};
+  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found && Rest::ZMQWorker::get()
-                        ->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsAdminRequest)})
+                        ->getRequest({Common::Functions::ContainsAdmin, Common::Models::toStr(containsAdminRequest)})
                         .found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      true};
     Rest::ZMQWorker::get()->updateRequest(
-        {Common::Functions::SetUserPassword, Common::Models::toStr(containsAdminRequest)});
+        {Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
   } else {
     response.send(Pistache::Http::Code::Forbidden);
