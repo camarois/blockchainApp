@@ -48,11 +48,12 @@ public class LogsViewer {
                         new LogsRequest(logsList.stream().filter(log ->
                                 log.getProvenance().equals(origin)
                         ).mapToInt(LogsResponse.Log::getNumber).max().getAsInt());
-                RestService.postRequestAsync(RestService.urls.getLogs() + origin, request, LogsResponse.class,
-                        logsResponse -> {
-                            logsResponse.logs.forEach((log) -> log.setProvenance(origin));
-                            logsList.addAll(logsResponse.logs);
-                        }, (e) -> showErrorDialog("Le journal de l'application n'a pu etre mis a jour."));
+                RestService.postRequestAsync(RestService.urls.getLogs() + origin, request,
+                        LogsResponse.class, logsResponse -> {
+                        logsResponse.logs.forEach((log) ->
+                                log.setProvenance(origin));
+                        logsList.addAll(logsResponse.logs); }, (e) ->
+                                showErrorDialog("Le journal de l'application n'a pu etre mis a jour."));
             }
         } catch (Exception e) {
             e.printStackTrace();
