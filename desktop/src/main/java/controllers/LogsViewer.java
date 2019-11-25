@@ -5,8 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import models.AllUsersRequest;
 import models.LogsRequest;
@@ -48,10 +48,11 @@ public class LogsViewer {
                         new LogsRequest(logsList.stream().filter(log ->
                                 log.getProvenance().equals(origin)
                         ).mapToInt(LogsResponse.Log::getNumber).max().getAsInt());
-                LogsResponse logsResponse = RestService.postRequest(RestService.urls.getLogs() + origin,
-                        request, LogsResponse.class);
-                logsResponse.logs.forEach((log) -> log.setProvenance(origin));
-                logsList.addAll(logsResponse.logs);
+                RestService.postRequestAsync(RestService.urls.getLogs() + origin, request, LogsResponse.class,
+                        logsResponse -> {
+                            logsResponse.logs.forEach((log) -> log.setProvenance(origin));
+                            logsList.addAll(logsResponse.logs);
+                        }, (e) -> showErrorDialog("Le journal de l'application n'a pu etre mis a jour."));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,5 +61,12 @@ public class LogsViewer {
 
     public void onClickRefresh(ActionEvent actionEvent) {
         updateTbl();
+    }
+
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Attention!");
+        alert.setHeaderText(message);
+        alert.showAndWait();
     }
 }

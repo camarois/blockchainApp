@@ -52,7 +52,7 @@
                <PropertyValueFactory property="severity" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="provenanceCol" text="Provenance" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="provenanceCol" text="Provenance" prefWidth="150.0" style="-fx-alignment: CENTER;">
             <cellValueFactory>
                <PropertyValueFactory property="provenance" />
             </cellValueFactory>
