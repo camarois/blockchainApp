@@ -28,6 +28,7 @@ class Database {
   Common::Models::SqlResponse executeRequest(const Common::Models::SqlRequest& sql);
 
   void addUser(const Common::Models::AddUserRequest& request);
+  void deleteUser(const Common::Models::DeleteAccountRequest& request);
   void setUserPassword(const Common::Models::SetUserPasswordRequest& request);
   bool containsUser(const Common::Models::ContainsUserRequest& request);
   bool containsAdmin(const Common::Models::ContainsAdminRequest& request);
@@ -52,6 +53,8 @@ class Database {
   std::vector<Common::Models::StudentResult> getStudentResult(const Common::Models::StudentRequest& studentRequest);
   std::vector<Common::Models::ClassInfo> getClasses();
   std::vector<Common::Models::StudentInfo> getStudents();
+  Common::Models::AllUsersResponse getAllUsers();
+  
 
   int getLastBlockId();
   void setLastBlockId(int lastBlockId);

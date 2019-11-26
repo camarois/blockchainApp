@@ -18,7 +18,9 @@ public class Main extends Application {
         );
         borderPane.setCenter(login);
         primaryStage.setTitle("Administration Classbook");
-        primaryStage.setScene(new Scene(borderPane, 600, 400));
+        primaryStage.setScene(new Scene(borderPane, 1300, 400));
+        primaryStage.setMinHeight(300);
+        primaryStage.setMinWidth(1100);
         primaryStage.show();
     }
 

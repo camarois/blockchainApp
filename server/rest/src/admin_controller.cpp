@@ -18,6 +18,7 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
                Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
   router->post(kBasePath_ + "suppressioncompte",
                Pistache::Rest::Routes::bind(&AdminController::handleDeleteAccount, this));
+  router->get(kBasePath_ + "listeUsagers", Pistache::Rest::Routes::bind(&AdminController::handleListeUsagers, this));
 }
 
 void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -49,16 +50,16 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
-
-  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, {loginRequest.username}});
+  Common::Models::GetSaltRequest getSaltRequest = {loginRequest.username};
+  auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   Common::Models::ContainsAdminRequest containsAdminRequest = {loginRequest, salt.data, true};
   if (salt.found && Rest::ZMQWorker::get()
-                        ->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsAdminRequest)})
+                        ->getRequest({Common::Functions::ContainsAdmin, Common::Models::toStr(containsAdminRequest)})
                         .found) {
     Common::Models::SetUserPasswordRequest setUserPasswordRequest = {loginRequest.username, passwordRequest, salt.data,
                                                                      true};
     Rest::ZMQWorker::get()->updateRequest(
-        {Common::Functions::SetUserPassword, Common::Models::toStr(containsAdminRequest)});
+        {Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
   }
   else {
@@ -95,15 +96,24 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleCreateAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
-  Common::Models::CreateAccountRequest logsRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
+  Common::Models::LoginResponse registerResponse = {};
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleDeleteAccount(const Pistache::Rest::Request& request,
                                           Pistache::Http::ResponseWriter response) {
-  Common::Models::DeleteAccountRequest logsRequest = nlohmann::json::parse(request.body());
-  response.send(Pistache::Http::Code::I_m_a_teapot, "TODO");
+  Common::Models::DeleteAccountRequest deleteAccountRequest = nlohmann::json::parse(request.body());
+  Rest::ZMQWorker::get()->updateRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)});
+  response.send(Pistache::Http::Code::Ok);
 }
 
+void AdminController::handleListeUsagers(const Pistache::Rest::Request& /*request*/,
+                                         Pistache::Http::ResponseWriter response) {
+  auto users = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetAllUsers, ""});
+  Common::Models::AllUsersResponse allUsersResponse = nlohmann::json::parse(users.data);
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(allUsersResponse));
+}
 }  // namespace Rest
