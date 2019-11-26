@@ -1,9 +1,11 @@
 #ifndef MINER_BLOCKCHAIN_CONTROLLER_HPP
 #define MINER_BLOCKCHAIN_CONTROLLER_HPP
 
+#include <common/miner_models.hpp>
 #include <filesystem>
 #include <memory>
 #include <optional>
+#include <random>
 
 #include "miner/blockchain.hpp"
 
@@ -11,17 +13,20 @@ namespace Miner {
 
 class BlockChainController {
  public:
-  explicit BlockChainController(std::unique_ptr<BlockChain> blockchain);
+  explicit BlockChainController();
 
-  std::optional<Block> addTransaction(const std::string& transaction);
-  void receivedBlockMined(unsigned int id, unsigned int nonce);
+  Common::optional_ref<Block> addTransaction(const std::string& transaction);
+  bool receivedBlockMined(int id, int nonce);
+  int getLastBlockId();
+  std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
 
  private:
+  std::mt19937 rng_;
+  std::uniform_int_distribution<std::mt19937::result_type> dist_;
+
   std::unique_ptr<BlockChain> blockchain_;
-  Common::optional_ref<Block> currentBlock_;
-  bool receivedNonce_;
 };
 
-} // namespace Miner
+}  // namespace Miner
 
-#endif // MINER_BLOCKCHAIN_CONTROLLER_HPP
+#endif  // MINER_BLOCKCHAIN_CONTROLLER_HPP

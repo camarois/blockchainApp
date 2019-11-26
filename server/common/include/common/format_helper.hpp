@@ -12,6 +12,7 @@ namespace Common {
 namespace FormatHelper {
 const size_t kDefaultRandomSize = 32;
 const int kAsciiNumber = 128;
+static std::mt19937 rng;
 
 inline std::string nowStr() {
   auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -31,8 +32,6 @@ inline std::string hash(const std::string& password) {
 }
 
 inline std::string randomStr(size_t size = kDefaultRandomSize) {
-  std::random_device dev;
-  std::mt19937 rng(dev());
   std::uniform_int_distribution<std::mt19937::result_type> dist(0, kAsciiNumber);
 
   std::string result;
@@ -40,7 +39,8 @@ inline std::string randomStr(size_t size = kDefaultRandomSize) {
     auto randomChar = static_cast<unsigned char>(dist(rng));
     if (std::isalnum(randomChar) != 0) {
       result += randomChar;  // Creates a random alpha num value
-    } else {
+    }
+    else {
       --i;
     }
   }

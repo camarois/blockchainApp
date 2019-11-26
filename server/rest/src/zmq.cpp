@@ -1,11 +1,15 @@
 #include <chrono>
+#include <common/database.hpp>
 #include <common/logger.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <iostream>
 #include <rest/zmq.hpp>
 #include <set>
 #include <uuid.h>
+
+DECLARE_int32(timeout);
 
 namespace Rest {
 
@@ -58,7 +62,8 @@ bool ZMQWorker::start() {
     socketPullFromMiner_.bind(serverHostname_ + ":" + std::to_string(kMiner2Port_));
     socketXPubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner3Port_));
     socketXSubBlockchain_.bind(serverHostname_ + ":" + std::to_string(kMiner4Port_));
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error(std::string("ZMQ: failed to bind socket: ") + e.what() + "\n");
     return false;
   }
@@ -81,13 +86,19 @@ void ZMQWorker::join() {
 
 Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeServerRequest);
-  request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
   return nlohmann::json::parse(request.get());
 }
 
 Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
-  request.wait_for(std::chrono::seconds(kWaitTimeout_));
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
   return nlohmann::json::parse(request.get());
 }
 
@@ -106,12 +117,24 @@ void ZMQWorker::handlePullFromMiner() {
       auto message = Common::MessageHelper::toModel<Common::Models::ZMQMessage>(msg);
 
       if (message.type == Common::Models::kTypeMinerReady) {
-        sendId();
-      } else if (message.type == Common::Models::kTypeServerResponse) {
+        Common::Models::ReadyResponse response = nlohmann::json::parse(message.data);
+        if (response.selfId == 0) {
+          sendId(response.token, ++minersCount_);
+        }
+        else {
+          sendId(response.token, response.selfId);
+        }
+      }
+      else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
+        std::cout << "Setting last block id " << response.lastBlockId << std::endl;
+        if (response.lastBlockId > Common::Database::get()->getLastBlockId()) {
+          Common::Database::get()->setLastBlockId(response.lastBlockId);
+        }
         receivedResponse(response.token, response.result);
       }
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e) {
       Common::Logger::get()->error(std::string("ZMQ/miners: ") + e.what() + "\n");
     }
   }
@@ -122,24 +145,18 @@ void ZMQWorker::handleProxyBlockchain() {
 
   try {
     zmq::proxy(socketXSubBlockchain_, socketXPubBlockchain_);
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error(std::string("ZMQ/proxy: failed to create proxy: ") + e.what() + "\n");
   }
 }
 
-bool ZMQWorker::sendId() {
-  minersCount_++;
+bool ZMQWorker::sendId(const std::string& token, int id) {
+  Common::Models::ServerRequest request = {
+      .token = token, .command = std::to_string(id), .lastBlockId = Common::Database::get()->getLastBlockId()};
+  Common::Models::ZMQMessage message = {.type = Common::Models::kTypeMinerId, .data = Common::Models::toStr(request)};
 
-  Common::Models::ServerRequest request;
-  request.command = std::to_string(minersCount_);
-  nlohmann::json requestJSON = request;
-
-  Common::Models::ZMQMessage message;
-  message.type = Common::Models::kTypeMinerId;
-  message.data = requestJSON.dump();
-  nlohmann::json messageJSON = message;
-
-  return sendRequest(messageJSON.dump());
+  return sendRequest(Common::Models::toStr(message));
 }
 
 bool ZMQWorker::sendRequest(const std::string& json) {
@@ -147,7 +164,8 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 
   try {
     socketPubToMiner_.send(data, zmq::send_flags::none);
-  } catch (const zmq::error_t& e) {
+  }
+  catch (const zmq::error_t& e) {
     Common::Logger::get()->error("ZMQ/miners: failed to send request\n");
     return false;
   }
@@ -156,30 +174,24 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 }
 
 void ZMQWorker::receivedResponse(const std::string& token, const std::string& response) {
-  if (getRequests_.find(token) == getRequests_.end()) {
+  if (requests_.find(token) == requests_.end()) {
     return;
   }
 
-  getRequests_.at(token).set_value(response);
-  getRequests_.erase(token);
+  requests_.at(token).set_value(response);
+  requests_.erase(token);
 }
 
 std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
-  Common::Models::ServerRequest request;
-  request.token = token;
-  request.command = sql;
-  nlohmann::json requestJSON = request;
+  Common::Models::ServerRequest request = {
+      .token = token, .command = sql, .lastBlockId = Common::Database::get()->getLastBlockId()};
+  Common::Models::ZMQMessage message = {.type = type, .data = Common::Models::toStr(request)};
 
-  Common::Models::ZMQMessage message;
-  message.type = type;
-  message.data = requestJSON.dump();
-  nlohmann::json messageJSON = message;
-
-  getRequests_.emplace(token, std::promise<std::string>{});
-  sendRequest(messageJSON.dump());
-  return getRequests_.at(token).get_future();
+  requests_.emplace(token, std::promise<std::string>{});
+  sendRequest(Common::Models::toStr(message));
+  return requests_.at(token).get_future();
 }
 
 }  // namespace Rest

@@ -32,7 +32,8 @@ void AdminController::handleLogin(const Pistache::Rest::Request& request, Pistac
     auto token = Common::TokenHelper::encode(loginRequest.username, loginRequest.password);
     response.headers().add<Pistache::Http::Header::Authorization>(token);
     response.send(Pistache::Http::Code::Ok);
-  } else {
+  }
+  else {
     response.send(Pistache::Http::Code::Forbidden);
   }
 }
@@ -60,7 +61,8 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
     Rest::ZMQWorker::get()->updateRequest(
         {Common::Functions::SetUserPassword, Common::Models::toStr(setUserPasswordRequest)});
     response.send(Pistache::Http::Code::Ok);
-  } else {
+  }
+  else {
     response.send(Pistache::Http::Code::Forbidden);
   }
 }
@@ -82,7 +84,8 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
     auto logsResults =
         Rest::ZMQWorker::get()->getRequest({Common::Functions::GetLogs, Common::Models::toStr(getLogsRequest)});
     logsResponse = {nlohmann::json::parse(logsResults.data)};
-  } else {
+  }
+  else {
     int provenance = 0;
     Common::Models::GetLogsRequest getLogsRequest = {logsRequest.last, provenance};
     logsResponse = {Common::Database::get()->getLogs(getLogsRequest)};

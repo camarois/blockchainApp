@@ -34,7 +34,8 @@ void FileController::handleGrades(const Pistache::Rest::Request& request, Pistac
     buffer.insert(buffer.begin(), std::istream_iterator<unsigned char>(file), std::istream_iterator<unsigned char>());
 
     response.send(Pistache::Http::Code::Ok, Common::Base64::encode(buffer));
-  } else {
+  }
+  else {
     response.send(Pistache::Http::Code::I_m_a_teapot, "File not found");
   }
 }

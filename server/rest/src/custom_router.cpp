@@ -35,28 +35,33 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
                     ->getRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)})
                     .found) {
               token = Common::TokenHelper::encode(username, password);
-            } else {
+            }
+            else {
               Common::Logger::get()->attention(url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
               response.send(Pistache::Http::Code::Forbidden);
             }
           }
           response.headers().add<Pistache::Http::Header::Authorization>(token);
           handler(request, std::move(response));
-        } else {
+        }
+        else {
           Common::Logger::get()->attention(url + "\n" + body + "\n" + authHeader + "\n" + "Invalid token.");
           response.send(Pistache::Http::Code::Forbidden);
         }
-      } else {
+      }
+      else {
         handler(request, std::move(response));
       }
 
       return Pistache::Rest::Route::Result::Ok;
-    } catch (const nlohmann::json::exception& e) {
+    }
+    catch (const nlohmann::json::exception& e) {
       Common::Logger::get()->error(url + "\n" + body + "\n" + e.what());
       response.send(Pistache::Http::Code::Bad_Request, e.what());
 
       return Pistache::Rest::Route::Result::Failure;
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e) {
       Common::Logger::get()->error(url + "\n" + body + "\n" + e.what());
       response.send(Pistache::Http::Code::Internal_Server_Error, e.what());
 

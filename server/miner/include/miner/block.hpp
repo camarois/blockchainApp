@@ -13,20 +13,21 @@ namespace Miner {
 class Block {
  public:
   Block();
-  explicit Block(unsigned int id, const std::string& previous);
-  explicit Block(const std::filesystem::path& blockDir);
+  explicit Block(int id, const std::string& previous);
   static std::optional<Block> fromBlockFile(const std::filesystem::path& blockDir);
 
-  void append(const std::string& data);
-  void mine(unsigned int difficulty);
-  void save(const std::filesystem::path& blockDir) const;
-  void queueNonce(unsigned int nonce);
+  void setData(const std::string& data);
+  void mine(int difficulty);
+  void save() const;
+  void queueNonce(int nonce);
+  void increaseVerification();
 
-  unsigned int id() const;
-  unsigned int nonce() const;
+  int id() const;
+  int nonce() const;
+  int numberOfVerifications() const;
   std::string hash();
   std::string previousHash() const;
-  const std::vector<std::string>& data() const;
+  std::string data() const;
 
   // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
   friend void to_json(nlohmann::json& j, const Block& obj);
@@ -36,17 +37,20 @@ class Block {
 
  private:
   bool dirty_;
-  unsigned int id_;
-  unsigned int nonce_;
+  int id_;
+  int nonce_;
+  int numberOfVerifications_;
   std::string hash_;
   std::string previousHash_;
-  std::vector<std::string> data_;
-  std::queue<unsigned int> receivedNonces_;
+  std::string data_;
+  std::queue<int> receivedNonces_;
+  std::filesystem::path blockDir_;
 
   const std::string kId_ = "id";
   const std::string kNonce_ = "nonce";
   const std::string kPreviousHash_ = "previous_hash";
   const std::string kData_ = "data";
+  const std::string kNumberOfVerifications_ = "number_of_verifications";
 };
 
 } // namespace Miner

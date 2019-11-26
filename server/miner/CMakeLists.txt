@@ -9,7 +9,7 @@ add_custom_target(deps_file_miner
 )
 
 add_executable(miner ${SOURCE_FILES})
-add_dependencies(miner common deps_file_miner)
+add_dependencies(miner common deps_file_miner libstduuid)
 
 target_include_directories(miner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -25,4 +25,5 @@ target_link_libraries(miner PRIVATE
     pthread
     stdc++fs
     sqlite3
+    uuid
 )

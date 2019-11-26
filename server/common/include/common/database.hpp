@@ -56,6 +56,11 @@ class Database {
   Common::Models::AllUsersResponse getAllUsers();
   
 
+  int getLastBlockId();
+  void setLastBlockId(int lastBlockId);
+  int getSelfId();
+  void setSelfId(int selfId);
+
  private:
   void close();
   void initFunctions();

@@ -14,7 +14,7 @@ const std::string BlockChain::kMetadataFilename = "metadata";
 
 BlockChain::BlockChain() {
   difficulty_ = FLAGS_difficulty;
-  createBlock();
+  std::cout << "Starting blockchain with difficulty " << difficulty_ << std::endl;
 }
 
 BlockChain::BlockChain(const std::filesystem::path& blockDir) : BlockChain() { blockDir_ = blockDir; }
@@ -34,7 +34,7 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
     return {};
   }
 
-  unsigned int lastBlockID = blockchain->lastBlockID();
+  int lastBlockID = blockchain->lastBlockID();
   blockchain->clearAll();
   if (!blockchain->getBlock(lastBlockID)) {
     return {};
@@ -43,24 +43,21 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
   return blockchain;
 }
 
-void BlockChain::appendTransaction(const std::string& transaction) { lastBlock()->get().append(transaction); }
+void BlockChain::addTransaction(const std::string& transaction) {
+  createBlock(transaction);
+  lastBlock()->get().mine(difficulty_);
+  saveAll();
+}
 
 void BlockChain::saveAll() {
   Common::optional_ref<Block> last = lastBlock();
   if (last) {
-    lastBlock()->get().save(blockDir_);
+    lastBlock()->get().save();
   }
   saveMetadata();
 }
 
 void BlockChain::clearAll() { blocks_.clear(); }
-
-Block& BlockChain::nextBlock() {
-  lastBlock()->get().mine(difficulty_);
-  lastBlock()->get().save(blockDir_);
-
-  return createBlock();
-}
 
 Common::optional_ref<Block> BlockChain::lastBlock() {
   if (blocks_.empty()) {
@@ -70,7 +67,7 @@ Common::optional_ref<Block> BlockChain::lastBlock() {
   return blocks_.rbegin()->second;
 }
 
-Common::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
+Common::optional_ref<Block> BlockChain::getBlock(int id) {
   auto it = blocks_.find(id);
   if (it == blocks_.end()) {
     return loadBlock(id);
@@ -79,14 +76,14 @@ Common::optional_ref<Block> BlockChain::getBlock(unsigned int id) {
   return it->second;
 }
 
-unsigned int BlockChain::lastBlockID() const { return blocks_.rbegin()->first; }
+int BlockChain::lastBlockID() const { return blocks_.empty() ? -1 : blocks_.rbegin()->first; }
 
-const std::map<unsigned int, Block>& BlockChain::blocks() { return blocks_; }
+const std::map<int, Block>& BlockChain::blocks() { return blocks_; }
 
-unsigned int BlockChain::difficulty() const { return difficulty_; }
+int BlockChain::difficulty() const { return difficulty_; }
 
-Block& BlockChain::createBlock() {
-  unsigned int nextID = 0;
+void BlockChain::createBlock(const std::string& data) {
+  int nextID = 0;
   std::string previousHash;
 
   Common::optional_ref<Block> last = lastBlock();
@@ -95,11 +92,12 @@ Block& BlockChain::createBlock() {
     previousHash = last->get().hash();
   }
 
-  blocks_.emplace(std::piecewise_construct, std::forward_as_tuple(nextID), std::forward_as_tuple(nextID, previousHash));
-  return blocks_.at(nextID);
+  Block block(nextID, previousHash);
+  block.setData(data);
+  blocks_.emplace(nextID, block);
 }
 
-Common::optional_ref<Block> BlockChain::loadBlock(unsigned int id) {
+Common::optional_ref<Block> BlockChain::loadBlock(int id) {
   std::filesystem::path blockPath(blockDir_ / std::to_string(id));
 
   std::optional<Block> block = Block::fromBlockFile(blockPath);
@@ -159,10 +157,10 @@ inline void to_json(nlohmann::json& j, const BlockChain& obj) {
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, BlockChain& obj) {
-  unsigned int lastBlock;
+  int lastBlock;
   j.at(obj.kLastBlock_).get_to(lastBlock);
   j.at(obj.kDifficulty_).get_to(obj.difficulty_);
-  obj.blocks_.insert(std::pair<unsigned int, Block>(lastBlock, Block()));
+  obj.blocks_.insert(std::pair<int, Block>(lastBlock, Block()));
 }
 
 }  // namespace Miner

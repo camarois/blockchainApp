@@ -27,11 +27,7 @@ int main(int argc, char* argv[]) {
   }
   Common::Logger::get()->info("Server ip address: " + addr + "\n");
 
-  std::optional<Miner::BlockChain> maybeBlockchain =
-      Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
-  std::unique_ptr<Miner::BlockChain> blockchain = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
-
-  Miner::ZMQWorker miner(addr, std::move(blockchain));
+  Miner::ZMQWorker miner(addr);
   miner.start();
   miner.join();
 

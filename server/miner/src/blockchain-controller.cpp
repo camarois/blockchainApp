@@ -1,54 +1,52 @@
 #include "miner/blockchain-controller.hpp"
-
 #include "common/logger.hpp"
 #include <cstdlib>
+#include <gflags/gflags.h>
 #include <iostream>
+#include <thread>
+
+DECLARE_string(blockchain);
 
 namespace Miner {
 
-BlockChainController::BlockChainController(std::unique_ptr<BlockChain> blockchain)
-    : blockchain_(std::move(blockchain)), receivedNonce_(false) {
-  // TODO(gabriel): use better random generator
-  // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp)
-  srand(time(nullptr));
+BlockChainController::BlockChainController() {
+  std::optional<Miner::BlockChain> maybeBlockchain =
+      Miner::BlockChain::fromDirectory(std::filesystem::path(FLAGS_blockchain));
+  blockchain_ = std::make_unique<Miner::BlockChain>(maybeBlockchain.value());
 }
 
-std::optional<Block> BlockChainController::addTransaction(const std::string& transaction) {
-  blockchain_->appendTransaction(transaction);
-  currentBlock_ = blockchain_->lastBlock();
-
-  // TODO(gabriel): use better random generator
-  // NOLINTNEXTLINE(cert-msc30-c,cert-msc50-cpp)
-  receivedBlockMined(currentBlock_->get().id(), rand());
-  receivedNonce_ = false;
-
-  // TODO(gabriel): va nous falloir une meilleure politique de vérification
-
-  blockchain_->nextBlock();
-  blockchain_->saveAll();
-  if (receivedNonce_) {
-    Common::Logger::get()->attention("Mining aborted of block #" + std::to_string(currentBlock_->get().id()) +
-                                     " by external nonce " + std::to_string(currentBlock_->get().nonce()) + "\n");
-    return {};
-  }
-
-  Common::Logger::get()->info("Mining of block #" + std::to_string(currentBlock_->get().id()) +
-                              " finished with nonce " + std::to_string(currentBlock_->get().nonce()) + " and hash " +
-                              currentBlock_->get().hash() + "\n");
-  return currentBlock_->get();
+Common::optional_ref<Block> BlockChainController::addTransaction(const std::string& transaction) {
+  blockchain_->addTransaction(transaction);
+  return blockchain_->lastBlock();
 }
 
-void BlockChainController::receivedBlockMined(unsigned int id, unsigned int nonce) {
-  if (!currentBlock_) {
-    return;
+bool BlockChainController::receivedBlockMined(int id, int nonce) {
+  blockchain_->lastBlock()->get().queueNonce(nonce);
+  auto minedBlock = blockchain_->getBlock(id);
+  if (!minedBlock) {
+    std::this_thread::sleep_for(std::chrono::seconds(1));  // Give miner a chance to mine it by itself
+    minedBlock = blockchain_->getBlock(id);
   }
-
-  if (currentBlock_->get().id() != id) {
-    return;
+  if (minedBlock) {
+    minedBlock->get().increaseVerification();
+    minedBlock->get().save();
   }
+  return minedBlock.has_value();
+}
 
-  receivedNonce_ = true;
-  currentBlock_->get().queueNonce(nonce);
+int BlockChainController::getLastBlockId() { return blockchain_->lastBlockID(); }
+
+std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(int lastId) {
+  std::vector<Common::Models::BlockMined> lastBlocks;
+  for (int i = lastId + 1; i <= blockchain_->lastBlockID(); ++i) {
+    auto block = blockchain_->getBlock(i);
+    Common::Models::BlockMined blockMined = {.id = i,
+                                             .nonce = block->get().nonce(),
+                                             .numberOfVerifications = block->get().numberOfVerifications(),
+                                             .data = block->get().data()};
+    lastBlocks.push_back(blockMined);
+  }
+  return lastBlocks;
 }
 
 }  // namespace Miner

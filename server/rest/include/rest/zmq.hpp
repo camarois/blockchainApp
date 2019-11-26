@@ -26,7 +26,7 @@ class ZMQWorker {
  private:
   void handlePullFromMiner();
   void handleProxyBlockchain();
-  bool sendId();
+  bool sendId(const std::string& token, int id);
   bool sendRequest(const std::string& json);
   void receivedResponse(const std::string& token, const std::string& response);
   std::future<std::string> createRequest(const std::string& sql, const std::string& type);
@@ -43,13 +43,12 @@ class ZMQWorker {
   zmq::socket_t socketXSubBlockchain_;
   std::thread threadPullFromMiner_;
   std::thread threadProxyBlockchain_;
-  std::unordered_map<std::string, std::promise<std::string>> getRequests_;
+  std::unordered_map<std::string, std::promise<std::string>> requests_;
 
   const int kMiner1Port_ = 5555;
   const int kMiner2Port_ = 5556;
   const int kMiner3Port_ = 5557;
   const int kMiner4Port_ = 5558;
-  const int kWaitTimeout_ = 5;
 };
 
 }  // namespace Rest
