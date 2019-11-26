@@ -287,14 +287,14 @@ std::vector<Common::Models::Information> Database::getLogs(const Common::Models:
                     ? Query(
                           "SELECT logId, severity, logTime, log FROM logs "
                           "WHERE logId > '%q' AND provenance = '%q'"
-                          "ORDER BY logTime ASC;",
+                          "ORDER BY logTime, logId;",
                           std::to_string(request.lastLogId).c_str(), std::to_string(request.provenance).c_str())
                     : Query(
                           "SELECT * FROM ("
                           "SELECT logId, severity, logTime, log FROM logs "
                           "WHERE provenance = '%q' "
                           "ORDER BY logId DESC LIMIT 20) "
-                          "ORDER BY logTime ASC;",
+                          "ORDER BY logTime, logId;",
                           std::to_string(request.provenance).c_str());
   Statement statement = Statement(db_, query);
 
