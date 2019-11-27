@@ -22,14 +22,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
-import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 import java.io.FileOutputStream
 import java.io.File
-import androidx.core.content.ContextCompat.startActivity
-import android.content.Intent
-import android.content.Context
-import android.net.Uri
 
 
 class DetailedCourseFragment(
@@ -99,40 +94,25 @@ class DetailedCourseFragment(
                 context, getString(R.string.info_pdf_success),
                 Toast.LENGTH_LONG
             ).show()
+
+            swapFragment(File(getReportPath(filename)))
         }
 
-        openFile(context!!, filename)
-    }
-
-    fun openFile(context: Context, localPath: String) {
-        // Create URI
-        try {
-            val file = File(localPath)
-
-            val uri = Uri.fromFile(file)
-            val intent = Intent(Intent.ACTION_VIEW)
-            // Check what kind of file you are trying to open, by comparing the url with extensions.
-            // When the if condition is matched, plugin sets the correct intent (mime) type,
-            // so Android knew what application to use to open the file
-            if (file.toString().contains(".pdf")) {
-                // PDF file
-                intent.setDataAndType(uri, "application/pdf")
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
-            }
-
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
     }
-
     private fun getReportPath(filename: String): String {
         val file = File(Environment.getExternalStorageDirectory().path, "Classbook")
         if (!file.exists()) {
             file.mkdirs()
         }
         return file.absolutePath + "/" + filename + ".pdf"
+    }
+
+    private fun swapFragment(file : File) {
+        val transaction = fragmentManager!!.beginTransaction()
+        val frag = PDFViewerFragment(file)
+        transaction.replace(R.id.detailed_course_fragment, frag)
+        transaction.addToBackStack("detailedCourseFragment")
+        transaction.commit()
     }
 }
