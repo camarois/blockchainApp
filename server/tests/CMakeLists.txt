@@ -1,5 +1,7 @@
 function(create_test test_name)
     add_executable(${test_name} ${ARGN})
+    add_code_coverage_all_targets(EXCLUDE tests/* build/*)
+    target_code_coverage(${test_name} ALL EXCLUDE tests/* build/*)
     add_test(${test_name} ${test_name})
 endfunction()
 
@@ -23,33 +25,33 @@ link_libraries(
 
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-create_test(sqlite3_tests database_test.cpp)
-add_custom_target(sqlite3_tests_database
+create_test(database_test database_test.cpp)
+add_custom_target(database_test_database
     # This will overrite the db
     COMMAND printf "O" | ${SQL_DIR}/createDb.sh test-blockchain.db
     BYPRODUCTS test-blockchain.db
 )
-add_dependencies(sqlite3_tests sqlite3_tests_database)
+add_dependencies(database_test database_test_database)
 
-create_test(block_tests 
-    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
-    block_test.cpp
-    utils.cpp
-)
+# create_test(block_tests 
+#     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+#     block_test.cpp
+#     utils.cpp
+# )
 
-create_test(blockchain_tests 
-    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
-    ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
-    blockchain_test.cpp
-    utils.cpp
-)
+# create_test(blockchain_tests 
+#     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+#     ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
+#     blockchain_test.cpp
+#     utils.cpp
+# )
 
-create_test(zmq_tests 
-    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
-    ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
-    ${CMAKE_SOURCE_DIR}/miner/src/blockchain-controller.cpp
-    ${CMAKE_SOURCE_DIR}/miner/src/zmq.cpp
-    ${CMAKE_SOURCE_DIR}/rest/src/zmq.cpp
-    zmq_test.cpp
-    utils.cpp
-)
+# create_test(zmq_tests 
+#     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+#     ${CMAKE_SOURCE_DIR}/miner/src/blockchain.cpp
+#     ${CMAKE_SOURCE_DIR}/miner/src/blockchain-controller.cpp
+#     ${CMAKE_SOURCE_DIR}/miner/src/zmq.cpp
+#     ${CMAKE_SOURCE_DIR}/rest/src/zmq.cpp
+#     zmq_test.cpp
+#     utils.cpp
+# )
