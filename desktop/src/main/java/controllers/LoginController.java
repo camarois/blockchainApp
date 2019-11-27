@@ -72,6 +72,14 @@ public class LoginController {
             Tab tabChangePwd = new Tab("Changer de mot de passe", changePwdBp);
             tabChangePwd.setClosable(false);
             tabPane.getTabs().add(tabChangePwd);
+
+            Parent displayChaine = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("views/ChainViewer.fxml"))
+            );
+            Tab tabDisplayChaine = new Tab("Afficher la chaine", displayChaine);
+            tabDisplayChaine.setClosable(false);
+            tabPane.getTabs().add(tabDisplayChaine);
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
