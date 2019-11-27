@@ -82,7 +82,7 @@ void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistach
     int provenance = request.param(kId_).as<int>();
     Common::Models::GetLogsRequest getLogsRequest = {logsRequest.last, provenance};
     auto logsResults =
-        Rest::ZMQWorker::get()->getRequest({Common::Functions::GetLogs, Common::Models::toStr(getLogsRequest)});
+        Rest::ZMQWorker::get()->getLogRequest({Common::Functions::GetLogs, Common::Models::toStr(getLogsRequest)});
     logsResponse = {nlohmann::json::parse(logsResults.data)};
   }
   else {

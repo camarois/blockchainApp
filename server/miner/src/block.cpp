@@ -81,7 +81,8 @@ void Block::save() const {
 
 void Block::increaseVerification() {
   ++numberOfVerifications_;
-  std::cout << "Block #" << id_ << " is now verified by " << numberOfVerifications_ << " miners." << std::endl;
+  Common::Logger::get()->info("Block #" + std::to_string(id_) + " is now verified by " +
+                              std::to_string(numberOfVerifications_) + " miners.\n");
 }
 
 void Block::queueNonce(int nonce) { receivedNonces_.push(nonce); }
