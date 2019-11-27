@@ -50,6 +50,8 @@ install(
 
 install(
     FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/cert/rootCA.crt
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/cert/rootCA.key
     DESTINATION usr/share/inf3995
 )
 
