@@ -17,7 +17,7 @@ inline std::optional<std::filesystem::path> getSharedFile(const std::string& fil
     return local;
   }
 
-  std::filesystem::path system = std::filesystem::path("/usr/share") / file;
+  std::filesystem::path system = std::filesystem::path("/usr/share/inf3995") / file;
   if (std::filesystem::exists(system)) {
     return system;
   }
