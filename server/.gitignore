@@ -62,3 +62,5 @@ _deps
 *.srl
 !rootCA.crt
 !rootCA.key
+package/*
+!package/PKGBUILD

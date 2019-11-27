@@ -1,16 +1,9 @@
 cmake_minimum_required(VERSION 3.10.0)
 
+
 option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
 if(BUILD_ARMV7)
     include(${CMAKE_SOURCE_DIR}/cmake/armv7_setup.cmake)
-    set(TOOLCHAIN_DEFINES
-        -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-    )
-else()
-    set(TOOLCHAIN_DEFINES
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-    )
 endif()
 
 project(inf3995)
@@ -35,3 +28,32 @@ if(NOT BUILD_ARMV7)
     enable_testing()
     # add_subdirectory(tests)
 endif()
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/rest
+          ${CMAKE_BINARY_DIR}/miner/miner
+    DESTINATION usr/bin
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
+)
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/createCert.sh
+          ${CMAKE_BINARY_DIR}/rest/createDb.sh
+    DESTINATION usr/share/inf3995
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
+)
+
+install(
+    FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
+    DESTINATION usr/share/inf3995
+)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-miner.service
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-rest.service
+    DESTINATION usr/lib/systemd/system
+)

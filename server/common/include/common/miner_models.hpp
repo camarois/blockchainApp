@@ -10,6 +10,7 @@ namespace Common {
 enum Functions {
   Unknown,
   AddUser,
+  DeleteUser,
   SetUserPassword,
   ContainsUser,
   ContainsAdmin,
@@ -24,6 +25,7 @@ enum Functions {
   GetStudentResult,
   GetClasses,
   GetStudents,
+  GetAllUsers,
   GetLogs
 };
 
