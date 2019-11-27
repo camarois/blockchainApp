@@ -57,7 +57,7 @@ std::vector<Common::Models::Block> BlockChainController::getBlocks(unsigned int 
 
   std::vector<Common::Models::Block> blocks;
   for (unsigned int id = lastBlockID - blockCount + 1; id <= lastBlockID; id++) {
-    Common::optional_ref<Block> blockRef = blockchain_->getBlock(id);
+    Common::optional_ref<Block> blockRef = blockchain_->getBlock(static_cast<int>(id));
     if (blockRef) {
       Common::Models::Block block = {
         .id = blockRef->get().id(),
