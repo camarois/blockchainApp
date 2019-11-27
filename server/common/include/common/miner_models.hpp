@@ -230,9 +230,6 @@ struct Block {
   int nonce;
   std::string hash;
   std::string content;
-
-//  Block(int id, int nonce, std::string hash, std::string content) :
-//    id(id), nonce(nonce), hash(hash), content(content) {}
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -256,7 +253,6 @@ inline void from_json(const nlohmann::json& j, Block& obj) {
 struct GetBlocksResponse {
   std::string token;
   std::vector<Block> blocks;
-  unsigned int minerID;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -264,7 +260,6 @@ inline void to_json(nlohmann::json& j, const GetBlocksResponse& obj) {
   j = {
     {kToken, obj.token},
     {kBlocks, obj.blocks},
-    {kMinerID, obj.minerID}
   };
 }
 
@@ -272,7 +267,6 @@ inline void to_json(nlohmann::json& j, const GetBlocksResponse& obj) {
 inline void from_json(const nlohmann::json& j, GetBlocksResponse& obj) {
   j.at(kToken).get_to(obj.token);
   j.at(kBlocks).get_to(obj.blocks);
-  j.at(kMinerID).get_to(obj.minerID);
 }
 
 }  // namespace Models

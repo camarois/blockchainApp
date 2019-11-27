@@ -56,7 +56,7 @@ std::vector<Common::Models::Block> BlockChainController::getBlocks(unsigned int 
   }
 
   std::vector<Common::Models::Block> blocks;
-  for (unsigned int id = lastBlockID - blockCount; id < lastBlockID; id++) {
+  for (unsigned int id = lastBlockID - blockCount + 1; id <= lastBlockID; id++) {
     Common::optional_ref<Block> blockRef = blockchain_->getBlock(id);
     if (blockRef) {
       Common::Models::Block block = {
@@ -65,7 +65,7 @@ std::vector<Common::Models::Block> BlockChainController::getBlocks(unsigned int 
         .hash = blockRef->get().hash(),
         .content = blockRef->get().hash(),
       };
-      blocks.emplace(blocks.end(), block);
+      blocks.push_back(block);
     } else {
       Common::Logger::get()->info("Failed to get block #" + std::to_string(id) + "\n");
       //blocks.emplace(-1, -1, "error", "error");

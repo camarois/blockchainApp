@@ -137,7 +137,7 @@ void ZMQWorker::handleSubServer() {
         Common::Models::GetBlocksRequest req = nlohmann::json::parse(request.command);
         if (req.minerID == Common::Database::get()->getSelfId()) {
           auto blocks = blockchainController_.getBlocks(req.blockCount);
-          sendGetBlocksResponse(req.token, blocks, req.minerID);
+          sendGetBlocksResponse(req.token, blocks);
         }
       } else {
         Common::Logger::get()->error("Type not found: " + received.type + "\n");
@@ -272,11 +272,10 @@ void ZMQWorker::sendBlockSyncRequest() {
   sendToSocket(socketPubBlockchain_, message);
 }
 
-void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks, unsigned int minerID) {
+void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks) {
   Common::Models::GetBlocksResponse response = {
     .token = token,
     .blocks = blocks,
-    .minerID = minerID,
   };
     
   Common::Models::ZMQMessage message = {
