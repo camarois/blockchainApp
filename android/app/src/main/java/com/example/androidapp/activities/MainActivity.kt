@@ -52,11 +52,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             // restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
             try {
-                //val response = restService.postLoginAsync(LoginRequest(username, password))
-                //val accountType = if (response.edition) AccountTypes.EDITION else AccountTypes.CONSULTATION
+                val response = restService.postLoginAsync(LoginRequest(username, password))
+                val accountType = if (response.edition) AccountTypes.EDITION else AccountTypes.CONSULTATION
                 val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
                     putExtra("username", username)
-                    putExtra("type", AccountTypes.EDITION)//accountType)
+                    putExtra("type", accountType)
                 }
                 startActivity(intent)
             } catch (e: AuthFailureError) {
