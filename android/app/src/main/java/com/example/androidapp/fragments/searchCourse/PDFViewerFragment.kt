@@ -12,10 +12,11 @@ import java.io.File
 
 class PDFViewerFragment(file: File) : Fragment() {
 
-    val pdf = file
+    private val pdf = file
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment

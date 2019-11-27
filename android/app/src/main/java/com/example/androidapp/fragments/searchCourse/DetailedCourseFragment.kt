@@ -26,7 +26,6 @@ import kotlin.coroutines.CoroutineContext
 import java.io.FileOutputStream
 import java.io.File
 
-
 class DetailedCourseFragment(
     private val course: CourseItem,
     private val students: List<StudentItem>
@@ -97,8 +96,6 @@ class DetailedCourseFragment(
 
             swapFragment(File(getReportPath(filename)))
         }
-
-
     }
     private fun getReportPath(filename: String): String {
         val file = File(Environment.getExternalStorageDirectory().path, "Classbook")
@@ -108,7 +105,7 @@ class DetailedCourseFragment(
         return file.absolutePath + "/" + filename + ".pdf"
     }
 
-    private fun swapFragment(file : File) {
+    private fun swapFragment(file: File) {
         val transaction = fragmentManager!!.beginTransaction()
         val frag = PDFViewerFragment(file)
         transaction.replace(R.id.detailed_course_fragment, frag)

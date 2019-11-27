@@ -131,7 +131,7 @@ class RegisterCourseFragment : Fragment() {
         val studentGrade = grade.text.toString()
 
         if (studentLastName.isNotEmpty() && studentFirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
-            if(studentGrade in acceptedGrades) {
+            if (studentGrade in acceptedGrades) {
                 registeredStudents.add(
                     registeredStudents.size,
                     StudentItem(
