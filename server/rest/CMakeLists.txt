@@ -22,6 +22,13 @@ target_include_directories(rest PRIVATE
     ${COMMON_SRCS_DIR}/include
 )
 
+if(BUILD_ARMV7)
+    set(additional_libs
+        -static-libgcc
+        -static-libstdc++
+    )
+endif()
+
 target_link_libraries(rest PRIVATE
     ${COMMON_LIBS_DIR}/libcommon.a
     ${EXTERNAL_LIBS_DIR}/libpistache.a
@@ -34,4 +41,5 @@ target_link_libraries(rest PRIVATE
     pthread
     sqlite3
     stdc++fs
+    ${additional_libs}
 )
