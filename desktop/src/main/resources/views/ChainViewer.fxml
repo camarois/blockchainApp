@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Button?>
 
-<VBox fx:id="vboxLogs" prefHeight="465.0" prefWidth="1460.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LogsViewer">
+<VBox fx:id="vboxLogs" prefHeight="465.0" prefWidth="1460.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ChainViewerController">
 <children>
    <HBox alignment="CENTER">
       <children>
-         <Label text="Logs du serveur et des miners">
+         <Label text="Affichage de la chaine de blocs">
             <font>
                <Font size="24.0" />
             </font>
@@ -22,6 +23,11 @@
                <Insets />
             </HBox.margin>
          </Label>
+            <ComboBox fx:id="minerChooser" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
          <Button fx:id="RefreshBtn" alignment="CENTER" mnemonicParsing="false" onAction="#onClickRefresh" stylesheets="@../styles/buttonStyle.css" text="Rafraichir" textAlignment="CENTER">
             <font>
                <Font size="6.0" />
@@ -35,31 +41,26 @@
          <Insets bottom="15.0" left="50.0" right="15.0" top="15.0" />
       </VBox.margin>
    </HBox>
-   <TableView fx:id="logTableView" prefHeight="1000.0">
+   <TableView fx:id="chainTableView" prefHeight="1000.0">
       <columns>
-         <TableColumn fx:id="hourCol" text="Heure" prefWidth="200.0" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="idCol" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Id">
             <cellValueFactory>
-               <PropertyValueFactory property="hour" />
+               <PropertyValueFactory property="id" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="noCol" text="Numéro" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="noCol" style="-fx-alignment: CENTER;" text="Nonce">
             <cellValueFactory>
-               <PropertyValueFactory property="number" />
+               <PropertyValueFactory property="nonce" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="severityCol" text="Sévérité" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="hashCol" style="-fx-alignment: CENTER;" text="Hash">
             <cellValueFactory>
-               <PropertyValueFactory property="severity" />
+               <PropertyValueFactory property="hash" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="provenanceCol" text="Provenance" prefWidth="150.0" style="-fx-alignment: CENTER;">
+         <TableColumn fx:id="contentCol" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Content">
             <cellValueFactory>
-               <PropertyValueFactory property="provenance" />
-            </cellValueFactory>
-         </TableColumn>
-         <TableColumn fx:id="messageCol" sortable="false" text="Message">
-            <cellValueFactory>
-               <PropertyValueFactory property="message" />
+               <PropertyValueFactory property="content" />
             </cellValueFactory>
          </TableColumn>
       </columns>
@@ -75,4 +76,3 @@
    <Insets bottom="35.0" />
 </padding>
 </VBox>
-
