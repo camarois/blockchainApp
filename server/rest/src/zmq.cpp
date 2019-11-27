@@ -142,6 +142,10 @@ void ZMQWorker::handlePullFromMiner() {
         }
         receivedResponse(response.token, response.result);
       }
+      else if (message.type == Common::Models::kTypeGetBlocksResponse) {
+        auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
+        receivedResponse(response.token, response.result);
+      }
     }
     catch (const std::exception& e) {
       Common::Logger::get()->error(std::string("ZMQ/miners: ") + e.what() + "\n");
