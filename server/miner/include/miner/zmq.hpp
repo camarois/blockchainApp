@@ -32,7 +32,7 @@ class ZMQWorker {
   void sendBlockMined(int id, int nonce);
   void sendBlockSyncRequest();
   void sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks);
-  void sendGetBlocksResponse(const std::string& token, std::vector<std::string> blocks, unsigned int minerID);
+  void sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks, unsigned int minerID);
 
   std::atomic<bool> running_;
   std::atomic<bool> syncing_;

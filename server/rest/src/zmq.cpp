@@ -93,6 +93,15 @@ Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlReque
   return nlohmann::json::parse(request.get());
 }
 
+Common::Models::GetBlocksResponse ZMQWorker::getBlocks(const Common::Models::GetBlocksRequest& req) {
+  std::future<std::string> request = createRequest(Common::Models::toStr(req), Common::Models::kTypeGetBlocksRequest);
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
+  return nlohmann::json::parse(request.get());
+}
+
 Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
   auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
@@ -182,11 +191,11 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
   requests_.erase(token);
 }
 
-std::future<std::string> ZMQWorker::createRequest(const std::string& sql, const std::string& type) {
+std::future<std::string> ZMQWorker::createRequest(const std::string& json, const std::string& type) {
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
   Common::Models::ServerRequest request = {
-      .token = token, .command = sql, .lastBlockId = Common::Database::get()->getLastBlockId()};
+      .token = token, .command = json, .lastBlockId = Common::Database::get()->getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = type, .data = Common::Models::toStr(request)};
 
   requests_.emplace(token, std::promise<std::string>{});

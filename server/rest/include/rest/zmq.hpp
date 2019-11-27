@@ -20,6 +20,7 @@ class ZMQWorker {
 
   bool start();
   void join();
+  Common::Models::GetBlocksResponse getBlocks(const Common::Models::GetBlocksRequest& req);
   Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
   Common::Models::SqlResponse updateRequest(const Common::Models::SqlRequest& sql);
 
@@ -29,7 +30,7 @@ class ZMQWorker {
   bool sendId(const std::string& token, int id);
   bool sendRequest(const std::string& json);
   void receivedResponse(const std::string& token, const std::string& response);
-  std::future<std::string> createRequest(const std::string& sql, const std::string& type);
+  std::future<std::string> createRequest(const std::string& json, const std::string& type);
 
   static std::shared_ptr<ZMQWorker> instance;
 

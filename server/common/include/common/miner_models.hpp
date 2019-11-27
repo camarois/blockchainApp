@@ -39,6 +39,8 @@ const std::string kContent = "content";
 const std::string kFound = "found";
 const std::string kData = "data";
 const std::string kID = "id";
+const std::string kHash = "hash";
+const std::string kNonce = "nonce";
 const std::string kResult = "result";
 const std::string kToken = "token";
 const std::string kType = "type";
@@ -221,9 +223,37 @@ inline void from_json(const nlohmann::json& j, GetBlocksRequest& obj) {
   j.at(kMinerID).get_to(obj.minerID);
 }
 
+struct Block {
+  int id;
+  int nonce;
+  std::string hash;
+  std::string content;
+
+//  Block(int id, int nonce, std::string hash, std::string content) :
+//    id(id), nonce(nonce), hash(hash), content(content) {}
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const Block& obj) {
+  j = {
+    {kID, obj.id},
+    {kNonce, obj.nonce},
+    {kHash, obj.hash},
+    {kContent, obj.content}
+  };
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, Block& obj) {
+  j.at(kID).get_to(obj.id);
+  j.at(kNonce).get_to(obj.nonce);
+  j.at(kHash).get_to(obj.hash);
+  j.at(kContent).get_to(obj.content);
+}
+
 struct GetBlocksResponse {
   std::string token;
-  std::vector<std::string> blocks;
+  std::vector<Block> blocks;
   unsigned int minerID;
 };
 

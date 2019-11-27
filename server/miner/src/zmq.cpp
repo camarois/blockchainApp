@@ -272,7 +272,7 @@ void ZMQWorker::sendBlockSyncRequest() {
   sendToSocket(socketPubBlockchain_, message);
 }
 
-void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<std::string> blocks, unsigned int minerID) {
+void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks, unsigned int minerID) {
   Common::Models::GetBlocksResponse response = {
     .token = token,
     .blocks = blocks,
