@@ -275,7 +275,7 @@ void ZMQWorker::sendBlockSyncRequest() {
 void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks) {
   Common::Models::GetBlocksResponse response = {
     .token = token,
-    .blocks = blocks,
+    .blocks = std::move(blocks),
   };
     
   Common::Models::ZMQMessage message = {

@@ -205,8 +205,8 @@ inline void from_json(const nlohmann::json& j, ReadyResponse& obj) {
 
 struct GetBlocksRequest {
   std::string token;
-  unsigned int blockCount;
-  unsigned int minerID;
+  unsigned int blockCount = 0;
+  unsigned int minerID = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -226,8 +226,8 @@ inline void from_json(const nlohmann::json& j, GetBlocksRequest& obj) {
 }
 
 struct Block {
-  int id;
-  int nonce;
+  int id = -1;
+  int nonce = -1;
   std::string hash;
   std::string content;
 };
