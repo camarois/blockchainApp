@@ -17,9 +17,11 @@
         <activity
             android:name="com.example.androidapp.activities.SidePanelActivity"
             android:label="@string/title_activity_side_panel"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
                 android:name="com.example.androidapp.activities.MainActivity"
+                android:screenOrientation="portrait"
                 android:windowSoftInputMode="adjustResize"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

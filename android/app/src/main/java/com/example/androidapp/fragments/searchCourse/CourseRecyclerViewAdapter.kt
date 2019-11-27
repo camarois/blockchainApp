@@ -10,10 +10,6 @@ import com.example.androidapp.R
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment.OnListFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_course.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [CourseItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- */
 class CourseRecyclerViewAdapter(
     private val mValues: List<CourseItem>,
     private val mListener: OnListFragmentInteractionListener?
@@ -24,8 +20,6 @@ class CourseRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as CourseItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
             mListener?.onListFragmentInteraction(item)
         }
     }
