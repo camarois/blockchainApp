@@ -189,7 +189,7 @@ bool Database::containsAdmin(const Common::Models::ContainsAdminRequest& request
 
 std::optional<bool> Database::getRole(const Common::Models::GetRoleRequest& request) {
   Query query = Query(
-      "SELECT isAdmin FROM users "
+      "SELECT isEditor FROM users "
       "WHERE username = '%q' AND password = '%q';",
       request.loginRequest.username.c_str(),
       Common::FormatHelper::hash(request.loginRequest.password + request.salt).c_str());

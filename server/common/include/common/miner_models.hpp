@@ -55,6 +55,7 @@ const std::string kTypeMinerReady = "miner-ready";
 const std::string kTypeServerRequest = "get-request";
 const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
+const std::string kTypeLogRequest = "get-log-request";
 const std::string kSelfId = "self-id";
 
 struct SqlRequest {

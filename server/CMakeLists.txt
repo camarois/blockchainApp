@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-
 option(BUILD_ARMV7 "Build the project using ARMv7 toolchain" OFF)
 if(BUILD_ARMV7)
     include(${CMAKE_SOURCE_DIR}/cmake/armv7_setup.cmake)
@@ -15,6 +14,8 @@ set(CERT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cert)
 
 include(ExternalProject)
 include(cmake/third_party.cmake)
+include(cmake/coverage.cmake)
+add_code_coverage()
 
 add_subdirectory(common)
 
