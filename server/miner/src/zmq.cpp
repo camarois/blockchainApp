@@ -125,8 +125,7 @@ void ZMQWorker::handleSubServer() {
           printSqlRequest("ZMQ/blockchain: executing get log transaction: ", sql);
           sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
         }
-        else
-          continue;
+        continue;
       }
       else if (received.type == Common::Models::kTypeTransaction) {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
