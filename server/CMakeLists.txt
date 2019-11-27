@@ -26,7 +26,7 @@ add_subdirectory(miner)
 
 if(NOT BUILD_ARMV7)
     enable_testing()
-    # add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
 
 install(
