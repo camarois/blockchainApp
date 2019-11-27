@@ -102,6 +102,15 @@ Common::Models::GetBlocksResponse ZMQWorker::getBlocks(const Common::Models::Get
   return nlohmann::json::parse(request.get());
 }
 
+Common::Models::SqlResponse ZMQWorker::getLogRequest(const Common::Models::SqlRequest& sql) {
+  std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeLogRequest);
+  auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
+  if (status == std::future_status::timeout) {
+    throw std::runtime_error("Timeout exceeded, miner not responding");
+  }
+  return nlohmann::json::parse(request.get());
+}
+
 Common::Models::SqlResponse ZMQWorker::updateRequest(const Common::Models::SqlRequest& sql) {
   std::future<std::string> request = createRequest(Common::Models::toStr(sql), Common::Models::kTypeTransaction);
   auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
@@ -129,6 +138,7 @@ void ZMQWorker::handlePullFromMiner() {
         Common::Models::ReadyResponse response = nlohmann::json::parse(message.data);
         if (response.selfId == 0) {
           sendId(response.token, ++minersCount_);
+          Common::Logger::get()->info("Miner #" + std::to_string(minersCount_) + " is connected to server\n");
         }
         else {
           sendId(response.token, response.selfId);

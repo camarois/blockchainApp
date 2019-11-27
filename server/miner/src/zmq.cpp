@@ -100,14 +100,9 @@ void ZMQWorker::handleSubServer() {
       }
 
       if (syncing_) {
-        std::cout << "Can't accept message, in syncing state." << std::endl;
+        Common::Logger::get()->attention("Can't accept message, in syncing state.\n");
         continue;
       }
-      // while (syncing_) {
-      // std::cout << "Can't accept message, in syncing state." << std::endl;
-      //   std::this_thread::sleep_for(std::chrono::seconds(1));
-      // }
-
       if (received.type == Common::Models::kTypeMinerId) {
         if (request.token == token_) {
           auto selfId = std::stoi(request.command);
@@ -123,6 +118,15 @@ void ZMQWorker::handleSubServer() {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
         printSqlRequest("ZMQ/blockchain: executing get transaction: ", sql);
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
+      }
+      else if (received.type == Common::Models::kTypeLogRequest) {
+        Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
+        Common::Models::GetLogsRequest params = nlohmann::json::parse(sql.params);
+        if (params.provenance == Common::Database::get()->getSelfId()) {
+          printSqlRequest("ZMQ/blockchain: executing get log transaction: ", sql);
+          sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
+        }
+        continue;
       }
       else if (received.type == Common::Models::kTypeTransaction) {
         Common::Models::SqlRequest sql = nlohmann::json::parse(request.command);
@@ -174,7 +178,7 @@ void ZMQWorker::handleSubBlockchain() {
 
       if (received.type == Common::Models::kTypeBlockMined) {
         Common::Models::BlockMined blockMined = nlohmann::json::parse(received.data);
-        std::cout << "Received block mined with id " << blockMined.id << std::endl;
+        Common::Logger::get()->info("Received block mined with id " + std::to_string(blockMined.id) + "\n");
         if (blockchainController_.receivedBlockMined(blockMined.id, blockMined.nonce)) {
           Common::Logger::get()->info("ZMQ/blockchain: received nonce " + std::to_string(blockMined.nonce) +
                                       " for block #" + std::to_string(blockMined.id) + "\n");
@@ -219,7 +223,7 @@ void ZMQWorker::handleSubBlockchain() {
         }
       }
       else {
-        std::cerr << "ZMQ/blockchain: Type not found: " << received.type << std::endl;
+        Common::Logger::get()->error("ZMQ/blockchain: Type not found: " + received.type + "\n");
       }
     }
     catch (const std::exception& e) {
@@ -256,7 +260,7 @@ void ZMQWorker::sendResponse(const std::string& token, const std::string& result
 }
 
 void ZMQWorker::sendBlockMined(int id, int nonce) {
-  std::cout << "Sending mined block " << id << std::endl;
+  Common::Logger::get()->info("Sending mined block " + std::to_string(id) + "\n");
   Common::Models::BlockMined response = {.id = id, .nonce = nonce};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockMined,
                                         .data = Common::Models::toStr(response)};
@@ -264,7 +268,7 @@ void ZMQWorker::sendBlockMined(int id, int nonce) {
 }
 
 void ZMQWorker::sendBlockSyncRequest() {
-  std::cout << "Trying to sync" << std::endl;
+  Common::Logger::get()->info("Trying to sync\n");
   syncing_ = true;
   Common::Models::BlockSyncRequest sync = {.lastId = blockchainController_.getLastBlockId()};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncRequest,
@@ -287,7 +291,8 @@ void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Comm
 }
 
 void ZMQWorker::sendBlockSyncResponse(const std::vector<Common::Models::BlockMined>& blocks) {
-  std::cout << "Sending syncing blocks, from id " << blocks.front().id << " to " << blocks.back().id << std::endl;
+  Common::Logger::get()->info("Sending syncing blocks, from id " + std::to_string(blocks.front().id) + " to " +
+                              std::to_string(blocks.back().id) + "\n");
   Common::Models::BlockSyncResponse sync = {.blocks = blocks};
   Common::Models::ZMQMessage message = {.type = Common::Models::kTypeBlockSyncResponse,
                                         .data = Common::Models::toStr(sync)};

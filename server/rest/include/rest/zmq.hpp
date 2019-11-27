@@ -22,6 +22,7 @@ class ZMQWorker {
   void join();
   Common::Models::GetBlocksResponse getBlocks(const Common::Models::GetBlocksRequest& req);
   Common::Models::SqlResponse getRequest(const Common::Models::SqlRequest& sql);
+  Common::Models::SqlResponse getLogRequest(const Common::Models::SqlRequest& sql);
   Common::Models::SqlResponse updateRequest(const Common::Models::SqlRequest& sql);
 
  private:

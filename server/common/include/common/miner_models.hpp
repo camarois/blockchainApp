@@ -61,6 +61,7 @@ const std::string kTypeServerResponse = "get-response";
 const std::string kTypeTransaction = "update-transaction";
 const std::string kTypeGetBlocksRequest = "get-blocks-request";
 const std::string kTypeGetBlocksResponse = "get-blocks-response";
+const std::string kTypeLogRequest = "get-log-request";
 
 struct SqlRequest {
   Functions function = Functions::Unknown;
