@@ -2,17 +2,44 @@
 #include <common/models.hpp>
 #include <gtest/gtest.h>
 
-TEST(Sqlite3Tests, get_user) {
+TEST(Sqlite3Tests, add_and_get_user) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedlogin = {"Anne-Sophie Provencher", "LOL1234!"};
-  std::string expectedHash = "da6a850377faa387cea7c58a6ebd5935d5502a95aa0993848f8ae4ab8efc68ad";
-
   db.addUser({expectedlogin, false, false});
 
   auto salt = db.getSalt({expectedlogin.username});
   ASSERT_TRUE(salt.has_value());
   auto receivedUser = db.containsUser({expectedlogin, salt.value()});
   ASSERT_TRUE(receivedUser);
+}
+
+TEST(Sqlite3Tests, change_user_password) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::LoginRequest expectedlogin = {"Anne-Sophie Provencher", "LOL1234!"};
+  auto salt = db.getSalt({expectedlogin.username});
+  ASSERT_TRUE(salt.has_value());
+
+  db.setUserPassword({expectedlogin.username, {expectedlogin.password, "1234"}, salt.value(), false, false});
+  EXPECT_NO_THROW(db.containsUser({expectedlogin, salt.value()}));
+}
+
+TEST(Sqlite3Tests, get_admin) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::LoginRequest expectedlogin = {"admin", "equipe01"};
+  auto salt = db.getSalt({expectedlogin.username});
+  ASSERT_TRUE(salt.has_value());
+  auto receivedAdmin = db.containsAdmin({expectedlogin, salt.value(), true});
+  ASSERT_TRUE(receivedAdmin);
+}
+
+TEST(Sqlite3Tests, change_admin_password) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::LoginRequest expectedlogin = {"admin", "equipe01"};
+  auto salt = db.getSalt({expectedlogin.username});
+  ASSERT_TRUE(salt.has_value());
+
+  db.setUserPassword({expectedlogin.username, {expectedlogin.password, "1234"}, salt.value(), true, true});
+  EXPECT_NO_THROW(db.containsUser({expectedlogin, salt.value()}));
 }
 
 TEST(Sqlite3Tests, test_transaction) {  
