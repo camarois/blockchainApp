@@ -50,6 +50,8 @@ install(
 
 install(
     FILES ${CMAKE_BINARY_DIR}/rest/createDb.sql
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/cert/rootCA.crt
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/cert/rootCA.key
     DESTINATION usr/share/inf3995
 )
 
@@ -57,4 +59,9 @@ install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-miner.service
     ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-rest.service
     DESTINATION usr/lib/systemd/system
+)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995.env.example
+    DESTINATION etc
 )

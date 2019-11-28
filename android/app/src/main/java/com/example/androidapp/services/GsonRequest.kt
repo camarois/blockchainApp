@@ -51,6 +51,5 @@ class GsonRequest <T> (
         } catch (e: JsonSyntaxException) {
             Response.error(ParseError(e))
         }
-        // todo - catch timeout error globally
     }
 }

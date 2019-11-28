@@ -19,7 +19,6 @@ class GetCourseInfoFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_get_course_info, container, false)
     }
 
@@ -33,7 +32,7 @@ class GetCourseInfoFragment : Fragment() {
 
     private fun submit() {
         if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
-            Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         } else {
             val bundle = Bundle()
             bundle.putString("code", sigle.text.toString())

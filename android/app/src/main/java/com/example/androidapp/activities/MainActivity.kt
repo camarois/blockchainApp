@@ -20,26 +20,22 @@ import kotlin.coroutines.CoroutineContext
 import android.content.pm.PackageManager
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.ProgressDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.services.Utils
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
     private var restService: RestRequestService = get()
-    private val READ_STORAGE_PERMISSION_CODE: Int = 123
-    private val WRITE_STORAGE_PERMISSION_CODE: Int = 125
+    private val STORAGE_PERMISSION_CODE: Int = 123
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestReadStoragePermission()
-        requestWriteStoragePermission()
+        requestStoragePermission()
         Fabric.with(this, Crashlytics())
         job = Job()
         setContentView(R.layout.activity_main)
@@ -51,53 +47,27 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private suspend fun submitLogin() {
-        val pd = ProgressDialog(this)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
-
-        try {
+        Utils.processRequest(this@MainActivity) {
             val username = username_edit_text.text.toString()
             // restService.initServerUrl(username) // Activate this while developping
             val password = password_edit_text.text.toString()
-            val response = restService.postLoginAsync(LoginRequest(username, password))
-            var accountType = if (response.edition) {
-                AccountTypes.EDITION
-            } else {
-                AccountTypes.CONSULTATION
+            try {
+                val response = restService.postLoginAsync(LoginRequest(username, password))
+                val accountType = if (response.edition) AccountTypes.EDITION else AccountTypes.CONSULTATION
+                val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
+                    putExtra("username", username)
+                    putExtra("type", accountType)
+                }
+                startActivity(intent)
+            } catch (e: AuthFailureError) {
+                password_edit_text.setText("")
+                Toast.makeText(this@MainActivity, getString(R.string.error_auth),
+                    Toast.LENGTH_LONG).show()
             }
-
-            val intent = Intent(this@MainActivity, SidePanelActivity::class.java).apply {
-                putExtra("username", username)
-                putExtra("type", accountType)
-            }
-            startActivity(intent)
-        } catch (e: AuthFailureError) {
-            password_edit_text.setText("")
-            Toast.makeText(this, "Le nom d'usager et/ou le mot de passe est invalide",
-                Toast.LENGTH_LONG).show()
-        } catch (e: TimeoutError) {
-            Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
-                Toast.LENGTH_LONG).show()
         }
-
-        pd.dismiss()
     }
 
-    private fun requestReadStoragePermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-            return
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
-            Toast.makeText(this, "L'application utilise cette permission afin de lire des fichiers PDFs.", Toast.LENGTH_LONG).show()
-        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), READ_STORAGE_PERMISSION_CODE)
-    }
-
-    private fun requestWriteStoragePermission() {
+    private fun requestStoragePermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 WRITE_EXTERNAL_STORAGE
@@ -106,7 +76,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             return
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE))
-            Toast.makeText(this, "L'application utilise cette permission afin de téléverser des fichiers PDFs sur votre appareil.", Toast.LENGTH_LONG).show()
-        ActivityCompat.requestPermissions(this, arrayOf(WRITE_EXTERNAL_STORAGE), WRITE_STORAGE_PERMISSION_CODE)
+            Toast.makeText(this, getString(R.string.info_storage), Toast.LENGTH_LONG).show()
+        ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
     }
 }

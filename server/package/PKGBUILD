@@ -46,6 +46,8 @@ build() {
 
 package() {
     cd "${srcdir}/${_pkgname}/server/build"
+    mkdir -p "${pkgdir}/srv/inf3995/rest"
+    mkdir -p "${pkgdir}/srv/inf3995/miner"
 
     ninja install
 }
