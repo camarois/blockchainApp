@@ -15,6 +15,7 @@
 #include <iostream>
 #include <experimental/filesystem>
 #include <fstream>
+#include <common/base64.hpp>
 
 DECLARE_int32(FLAGS_port);
 
@@ -26,8 +27,9 @@ TEST(FileControllerTest, start) {
 }
 
 TEST(FileControllerTest, handle_requests) {
+  int portNumber = FLAGS_port + 1;
   Common::Database::init("file_controller_test.db");
-  Pistache::Port port(FLAGS_port);
+  Pistache::Port port(portNumber);
   Pistache::Address addr(Pistache::Ipv4::any(), port);
   Rest::MainController mainController(addr, 1, false);
   std::packaged_task<void()> task([&]() { mainController.start(); });
@@ -44,9 +46,8 @@ TEST(FileControllerTest, handle_requests) {
         .acronym = "inf3995",
         .trimester = 2,
     };
-    auto resp = postRequest("/fichier/notes", Common::Models::toStr(gradesRequest));
-    std::cout << "my content is " << resp << std::endl;
-    ASSERT_EQ(resp, zmqNotInit);
+    auto resp = postRequest(portNumber, "/fichier/notes", Common::Models::toStr(gradesRequest));
+    ASSERT_EQ(resp, Common::Base64::encode("content"));
   }
 
   auto status = future.wait_for(std::chrono::milliseconds(300));

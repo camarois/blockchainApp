@@ -23,8 +23,9 @@ TEST(InfoControllerTest, start) {
 }
 
 TEST(InfoControllerTest, handle_requests) {
+  int portNumber = FLAGS_port + 0;
   Common::Database::init("info_controller_test.db");
-  Pistache::Port port(FLAGS_port);
+  Pistache::Port port(portNumber);
   Pistache::Address addr(Pistache::Ipv4::any(), port);
   Rest::MainController mainController(addr, 1, false);
   std::packaged_task<void()> task([&]() { mainController.start(); });
@@ -37,7 +38,7 @@ TEST(InfoControllerTest, handle_requests) {
         .acronym = "inf3995",
         .trimester = 2,
     };
-    auto resp = postRequest("/info/cours", Common::Models::toStr(classesRequest));
+    auto resp = postRequest(portNumber, "/info/cours", Common::Models::toStr(classesRequest));
     ASSERT_EQ(resp, zmqNotInit);
   }
 
@@ -47,17 +48,17 @@ TEST(InfoControllerTest, handle_requests) {
         .trimester = "2",
         .id = "0",
     };
-    auto resp = postRequest("/info/etudiant", Common::Models::toStr(studentRequest));
+    auto resp = postRequest(portNumber, "/info/etudiant", Common::Models::toStr(studentRequest));
     ASSERT_EQ(resp, zmqNotInit);
   }
 
   {
-    auto resp = getRequest("/info/listeEtudiants");
+    auto resp = getRequest(portNumber, "/info/listeEtudiants");
     ASSERT_EQ(resp, zmqNotInit);
   }
 
   {
-    auto resp = getRequest("/info/listeCours");
+    auto resp = getRequest(portNumber, "/info/listeCours");
     ASSERT_EQ(resp, zmqNotInit);
   }
 

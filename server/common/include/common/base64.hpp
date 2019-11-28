@@ -96,6 +96,12 @@ inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
   return ret;
 }
 
+inline std::string encode(const std::string& bytes_to_encode) {
+  std::string bl = bytes_to_encode;
+  std::vector<unsigned char> vect(bl.begin(), bl.end());
+  return encode(vect);
+}
+
 inline std::string decode(const std::string& encodedString) {
   size_t inLen = encodedString.size();
   int i = 0;
