@@ -49,6 +49,10 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
   Common::Models::PasswordRequest passwordRequest = nlohmann::json::parse(request.body());
   std::string authHeader = request.headers().getRaw("Authorization").value();
   std::optional<std::string> username = Common::TokenHelper::decodeUsername(authHeader);
+  if (!username) {
+    response.send(Pistache::Http::Code::Forbidden, "Bad username format");
+    return;
+  }
   Common::Models::LoginRequest loginRequest = {username.value(), passwordRequest.oldPwd};
   Common::Models::GetSaltRequest getSaltRequest = {loginRequest.username};
   auto salt = Rest::ZMQWorker::get()->getRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
@@ -71,7 +75,7 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<int>();
   // Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
-  Common::Models::ChainResponse chainResponse = {"test", std::make_unique<Common::Models::ChainResponse>()};
+  Common::Models::ChainResponse chainResponse = {"test"};
   response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(chainResponse));
 }
 

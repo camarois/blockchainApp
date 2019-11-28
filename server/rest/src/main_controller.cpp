@@ -8,9 +8,10 @@ DECLARE_int32(buffer_size);
 
 namespace Rest {
 
-MainController::MainController(Pistache::Address addr, size_t thr)
-    : httpEndpoint_(addr),
-      router_(std::make_shared<Rest::CustomRouter>()),
+MainController::MainController(Pistache::Address addr, size_t thr, bool useSSL)
+    : useSSL_(useSSL),
+      httpEndpoint_(addr),
+      router_(std::make_shared<Rest::CustomRouter>(useSSL_)),
       // List of controllers:
       userController_(router_),
       pingController_(router_),
@@ -24,7 +25,9 @@ MainController::MainController(Pistache::Address addr, size_t thr)
 
 void MainController::start() {
   httpEndpoint_.setHandler(router_->handler());
-  httpEndpoint_.useSSL(FLAGS_cert, FLAGS_key);
+  if (useSSL_) {
+    httpEndpoint_.useSSL(FLAGS_cert, FLAGS_key);
+  }
   httpEndpoint_.serve();
 }
 

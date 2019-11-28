@@ -142,6 +142,7 @@ void ZMQWorker::handlePullFromMiner() {
         }
         else {
           sendId(response.token, response.selfId);
+          Common::Logger::get()->info("Miner #" + std::to_string(response.selfId) + " is connected to server\n");
         }
       }
       else if (message.type == Common::Models::kTypeServerResponse) {
