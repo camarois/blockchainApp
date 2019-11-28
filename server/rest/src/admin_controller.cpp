@@ -2,8 +2,8 @@
 #include <common/models.hpp>
 #include <common/token_helper.hpp>
 #include <gflags/gflags.h>
-#include <rest/admin_controller.hpp>
 #include <iostream>
+#include <rest/admin_controller.hpp>
 namespace Rest {
 
 AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
@@ -71,9 +71,7 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 void AdminController::handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
   Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
   int minerId = request.param(kId_).as<int>();
-  std::cout << minerId << std::endl;
   Common::Models::GetBlocksRequest getBlocksRequest = {chainRequest.lastBlocks, minerId};
-  std::cout << Common::Models::toStr(getBlocksRequest) << std::endl;
 
   Common::Models::GetBlocksResponse getBlocksResponse = Rest::ZMQWorker::get()->getBlocks(getBlocksRequest);
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(getBlocksResponse));

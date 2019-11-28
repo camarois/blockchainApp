@@ -30,6 +30,12 @@ public class ChainViewerController {
     @FXML
     public void initialize() {
         fillCombobox();
+        contentCol.prefWidthProperty().bind(
+                chainTableView.widthProperty()
+                        .subtract(idCol.widthProperty())
+                        .subtract(noCol.widthProperty())
+                        .subtract(hashCol.widthProperty())
+        );
     }
 
     public void onClickRefresh(ActionEvent actionEvent) {

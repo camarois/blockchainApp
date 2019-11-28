@@ -99,8 +99,6 @@ Common::Models::GetBlocksResponse ZMQWorker::getBlocks(const Common::Models::Get
   if (status == std::future_status::timeout) {
     throw std::runtime_error("Timeout exceeded, miner not responding");
   }
-  std::cout << "b4ret rest/getb" << std::endl;
-  std::cout << "now ret" << std::endl;
   return nlohmann::json::parse(request.get());
 }
 
@@ -155,9 +153,7 @@ void ZMQWorker::handlePullFromMiner() {
         receivedResponse(response.token, response.result);
       }
       else if (message.type == Common::Models::kTypeGetBlocksResponse) {
-        std::cout << message.data << std::endl;
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
-        std::cout << "ca roule" << std::endl;
         receivedResponse(response.token, response.result);
       }
     }
@@ -202,10 +198,8 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 
 void ZMQWorker::receivedResponse(const std::string& token, const std::string& response) {
   if (requests_.find(token) == requests_.end()) {
-    std::cout << "ret" << std::endl;
     return;
   }
-  std::cout << "recervedResponse" << std::endl;
   requests_.at(token).set_value(response);
   requests_.erase(token);
 }
