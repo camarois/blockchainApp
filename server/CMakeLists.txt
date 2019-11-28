@@ -60,3 +60,8 @@ install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995-rest.service
     DESTINATION usr/lib/systemd/system
 )
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995.env
+    DESTINATION etc
+)
