@@ -17,7 +17,7 @@ class BlockChain {
   explicit BlockChain(const std::filesystem::path& blockDir);
   static std::optional<BlockChain> fromDirectory(const std::filesystem::path& blockDir);
 
-  void addTransaction(const std::string& transaction);
+  void addTransaction(const std::string& transaction, int nonce);
   void saveAll();
   void clearAll();
   Common::optional_ref<Block> lastBlock();
