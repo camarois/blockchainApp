@@ -98,7 +98,7 @@ void AdminController::handleCreateAccount(const Pistache::Rest::Request& request
                                           Pistache::Http::ResponseWriter response) {
   Common::Models::AddUserRequest addUserRequest = nlohmann::json::parse(request.body());
   Rest::ZMQWorker::get()->updateRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
-  Common::Models::LoginResponse registerResponse = {};
+  Common::Models::RegisterResponse registerResponse = {addUserRequest.isAdmin, addUserRequest.isEditor};
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(registerResponse));
 }
 
