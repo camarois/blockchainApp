@@ -134,7 +134,7 @@ void ZMQWorker::handleSubServer() {
         auto block = blockchainController_.addTransaction(received.data);
         if (block) {
           sendBlockMined(block->get().id(), block->get().nonce());
-          std::this_thread::sleep_for(std::chrono::seconds(1));
+          std::this_thread::sleep_for(std::chrono::seconds(2));
         }
         sendResponse(request.token, Common::Models::toStr(Common::Database::get()->executeRequest(sql)));
       }
@@ -207,7 +207,7 @@ void ZMQWorker::handleSubBlockchain() {
                     << std::endl;
           for (const auto& block : response.blocks) {
             if (block.id > blockchainController_.getLastBlockId()) {
-              std::cout << "Syncing block #" << block.id << std::endl;
+              std::cout << "Syncing block #" << block.id << " with nonce " << block.nonce << std::endl;
               auto b = blockchainController_.addTransaction(block.data, block.nonce);
               for (auto i = 0; i < block.numberOfVerifications; ++i) {
                 b->get().increaseVerification();
