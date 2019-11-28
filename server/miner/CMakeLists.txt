@@ -16,6 +16,13 @@ target_include_directories(miner PRIVATE
     ${COMMON_SRCS_DIR}/include
 )
 
+if(BUILD_ARMV7)
+    set(additional_libs
+        -static-libgcc
+        -static-libstdc++
+    )
+endif()
+
 target_link_libraries(miner PRIVATE
     ${COMMON_LIBS_DIR}/libcommon.a
     ${EXTERNAL_LIBS_DIR}/libgflags.a
@@ -26,4 +33,5 @@ target_link_libraries(miner PRIVATE
     stdc++fs
     sqlite3
     uuid
+    ${additional_libs}
 )

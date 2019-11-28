@@ -6,6 +6,7 @@ After=network-online.target
 [Service]
 WorkingDirectory=/srv/inf3995/miner/
 ExecStart=/usr/bin/miner
+EnvironmentFile=/etc/inf3995.env
 
 [Install]
 WantedBy=multi-user.target

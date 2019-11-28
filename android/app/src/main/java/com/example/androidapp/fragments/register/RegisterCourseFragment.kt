@@ -1,7 +1,6 @@
 package com.example.androidapp.fragments.register
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import java.util.ArrayList
 import android.widget.Toast
 import com.android.volley.AuthFailureError
-import com.android.volley.TimeoutError
 import com.example.androidapp.TransactionRequest
 import com.example.androidapp.fragments.home.HomeFragment
 import com.example.androidapp.services.RestRequestService
@@ -45,6 +43,7 @@ class RegisterCourseFragment : Fragment() {
     private val PDF_UPLOAD_CODE = 111
     private var restService: RestRequestService = get()
     private val homeFragment: HomeFragment = HomeFragment()
+    private val acceptedGrades = arrayOf("A*", "A", "B+", "B", "C+", "C", "D+", "D", "E", "F", "IP", "IV", "S", "I", "J", "P", "R", "SE", "X", "Y", "Z")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +82,6 @@ class RegisterCourseFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_register_list, container, false)
 
-        // Set the adapter
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
@@ -104,8 +102,6 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                // this part hides the button immediately and waits bottom sheet
-                // to collapse to show
                 if (BottomSheetBehavior.STATE_EXPANDED == newState) {
                     addStudentButton.visibility = View.GONE
                 } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
@@ -135,12 +131,24 @@ class RegisterCourseFragment : Fragment() {
         val studentGrade = grade.text.toString()
 
         if (studentLastName.isNotEmpty() && studentFirstName.isNotEmpty() && studentCode.isNotEmpty() && studentGrade.isNotEmpty()) {
-            registeredStudents.add(registeredStudents.size, StudentItem(lastName.text.toString(), firstName.text.toString(), code.text.toString(), grade.text.toString()))
-            list.adapter?.notifyItemInserted(registeredStudents.size - 1)
-            list.smoothScrollToPosition(registeredStudents.size - 1)
-            resetView()
+            if (studentGrade in acceptedGrades) {
+                registeredStudents.add(
+                    registeredStudents.size,
+                    StudentItem(
+                        lastName.text.toString(),
+                        firstName.text.toString(),
+                        code.text.toString(),
+                        grade.text.toString()
+                    )
+                )
+                list.adapter?.notifyItemInserted(registeredStudents.size - 1)
+                list.smoothScrollToPosition(registeredStudents.size - 1)
+                resetView()
+            } else {
+                Toast.makeText(activity, getString(R.string.error_invalid_grade), Toast.LENGTH_SHORT).show()
+            }
         } else {
-            Toast.makeText(activity, "Il manque des informations!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -164,7 +172,7 @@ class RegisterCourseFragment : Fragment() {
             if (requestCode == PDF_UPLOAD_CODE) {
                 if (data == null) { return }
                 if (data.data.path == "") {
-                    Toast.makeText(activity, "Le fichier sélectionné est invalide.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, getString(R.string.error_invalid_file), Toast.LENGTH_SHORT).show()
                 } else {
                     pdfFilePath = getFilePath(data.data!!)
                     uploadPDFBtn.text = pdfFilePath.split("/").last()
@@ -191,13 +199,13 @@ class RegisterCourseFragment : Fragment() {
 
     suspend fun submit(values: List<StudentItem>) {
         if (pdfFilePath == "") {
-            Toast.makeText(activity, "Veuillez choisir un fichier PDF valide!", Toast.LENGTH_SHORT)
+            Toast.makeText(activity, getString(R.string.error_invalid_pdf), Toast.LENGTH_SHORT)
                 .show()
             return
         }
 
         if (class_name.text.isEmpty()) {
-            Toast.makeText(activity, "Veuillez entrer un sigle valide!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_invalid_code), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -210,29 +218,27 @@ class RegisterCourseFragment : Fragment() {
 
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        val pd = ProgressDialog(context)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
-
-        try {
-            restService.postTransactionAsync(
-                TransactionRequest(code, name, trimester, values, pdf)
-            )
-            Toast.makeText(activity, "Cours ajouté", Toast.LENGTH_LONG).show()
-            val transaction = activity!!.supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.curr_fragment, homeFragment)
-            register_fragment.visibility = View.GONE
-            val im = view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            im.hideSoftInputFromWindow(view!!.windowToken, 0)
-            transaction.commit()
-        } catch (e: AuthFailureError) {
-            Toast.makeText(activity, "Vous n'avez pas les permissions requises", Toast.LENGTH_LONG).show()
-        } catch (e: TimeoutError) {
-            Toast.makeText(activity, "Petit problème de connexion au serveur, veuillez réessayer!", Toast.LENGTH_LONG).show()
+        Utils.processRequest(context!!) {
+            try {
+                restService.postTransactionAsync(
+                    TransactionRequest(code, name, trimester, values, pdf)
+                )
+                Toast.makeText(activity, getString(R.string.info_course_success), Toast.LENGTH_LONG).show()
+                val transaction = activity!!.supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.curr_fragment, homeFragment)
+                register_fragment.visibility = View.GONE
+                val im =
+                    view!!.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                im.hideSoftInputFromWindow(view!!.windowToken, 0)
+                transaction.commit()
+            } catch (e: AuthFailureError) {
+                Toast.makeText(
+                    activity,
+                    getString(R.string.error_invalid_permissions),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-
-        pd.dismiss()
     }
 
     override fun onAttach(context: Context) {

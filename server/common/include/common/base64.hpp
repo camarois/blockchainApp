@@ -57,13 +57,13 @@ inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
     firstBlock.at(i++) = bytes_to_encode.at(in++);
     if (i == kFirstBlockSize) {
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock.at(i) = (firstBlock.at(i) & 0xfc) >> 2;
+      secondBlock.at(0) = (firstBlock.at(0) & 0xfc) >> 2;
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock.at(i) = ((firstBlock.at(i) & 0x03) << 4) + ((firstBlock.at(i) & 0xf0) >> 4);
+      secondBlock.at(1) = ((firstBlock.at(0) & 0x03) << 4) + ((firstBlock.at(1) & 0xf0) >> 4);
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock.at(i) = ((firstBlock.at(i) & 0x0f) << 2) + ((firstBlock.at(i) & 0xc0) >> 6);
+      secondBlock.at(2) = ((firstBlock.at(1) & 0x0f) << 2) + ((firstBlock.at(2) & 0xc0) >> 6);
       // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-      secondBlock.at(i) = firstBlock.at(i) & 0x3f;
+      secondBlock.at(3) = firstBlock.at(2) & 0x3f;
 
       for (i = 0; i < kSecondBlockSize; i++) {
         ret += kBase64Chars[secondBlock.at(i)];
@@ -74,18 +74,18 @@ inline std::string encode(const std::vector<unsigned char>& bytes_to_encode) {
 
   if (i != 0) {
     for (j = i; j < kFirstBlockSize; j++) {
-      firstBlock.at(i) = '\0';
+      firstBlock.at(j) = '\0';
     }
 
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock.at(i) = (firstBlock.at(i) & 0xfc) >> 2;
+    secondBlock.at(0) = (firstBlock.at(0) & 0xfc) >> 2;
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock.at(i) = ((firstBlock.at(i) & 0x03) << 4) + ((firstBlock.at(i) & 0xf0) >> 4);
+    secondBlock.at(1) = ((firstBlock.at(0) & 0x03) << 4) + ((firstBlock.at(1) & 0xf0) >> 4);
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, hicpp-signed-bitwise)
-    secondBlock.at(i) = ((firstBlock.at(i) & 0x0f) << 2) + ((firstBlock.at(i) & 0xc0) >> 6);
+    secondBlock.at(2) = ((firstBlock.at(1) & 0x0f) << 2) + ((firstBlock.at(2) & 0xc0) >> 6);
 
     for (j = 0; j < i + 1; j++) {
-      ret += kBase64Chars[secondBlock.at(i)];
+      ret += kBase64Chars[secondBlock.at(j)];
     }
 
     while (i++ < kFirstBlockSize) {
