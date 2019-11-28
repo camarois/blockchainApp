@@ -63,7 +63,7 @@
                <PropertyValueFactory property="hash" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="contentCol" prefWidth="150.0" style="-fx-alignment: LEFT;" text="Content">
+         <TableColumn fx:id="contentCol" prefWidth="150.0" style="-fx-alignment: CENTER-LEFT;" text="Content">
             <cellValueFactory>
                <PropertyValueFactory property="content" />
             </cellValueFactory>
