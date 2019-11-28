@@ -50,3 +50,4 @@ class GetCourseInfoFragment : Fragment() {
         course_info_fragment.visibility = View.GONE
     }
 }
+
