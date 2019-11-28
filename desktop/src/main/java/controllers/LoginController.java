@@ -42,7 +42,8 @@ public class LoginController {
         TabPane tabPane = new TabPane();
         try {
             Parent logsViewer = FXMLLoader.load(
-                    Objects.requireNonNull(getClass().getClassLoader().getResource("views/LogsViewer.fxml"))
+                    Objects.requireNonNull(getClass().getClassLoader()
+                          .getResource("views/LogsViewer.fxml"))
             );
             Tab logTab = new Tab("Logs", logsViewer);
             logTab.setClosable(false);

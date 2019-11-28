@@ -44,7 +44,6 @@ public class LogsViewer {
                         .subtract(provenanceCol.widthProperty())
         );
         logTableView.setItems(logsList);
-        updateTbl();
     }
 
     public void updateTbl() {
