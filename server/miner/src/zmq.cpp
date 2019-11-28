@@ -206,7 +206,7 @@ void ZMQWorker::handleSubBlockchain() {
           for (const auto& block : response.blocks) {
             if (block.id > blockchainController_.getLastBlockId()) {
               std::cout << "Syncing block #" << block.id << std::endl;
-              auto b = blockchainController_.addTransaction(block.data);
+              auto b = blockchainController_.addTransaction(block.data, block.nonce);
               for (auto i = 0; i < block.numberOfVerifications; ++i) {
                 b->get().increaseVerification();
               }
