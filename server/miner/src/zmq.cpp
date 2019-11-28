@@ -2,6 +2,7 @@
 #include <common/logger.hpp>
 #include <common/message_helper.hpp>
 #include <common/models.hpp>
+#include <gflags/gflags.h>
 #include <iostream>
 #include <magic_enum.hpp>
 #include <miner/zmq.hpp>
@@ -279,8 +280,18 @@ void ZMQWorker::sendBlockSyncRequest() {
 }
 
 void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks) {
+  std::vector<std::string> blocksCopy;
+  for (auto b : blocks) {
+    try {
+      blocksCopy.push_back(Common::Models::toStr(b));
+    }
+    catch (const std::exception& e) {
+      b.hash = "0";
+      blocksCopy.push_back(Common::Models::toStr(b));
+    }
+  }
   Common::Models::GetBlocksResponse result = {
-      .blocks = std::move(blocks),
+      .blocks = blocksCopy,
   };
 
   Common::Models::ServerResponse response = {
