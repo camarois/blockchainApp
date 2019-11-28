@@ -286,7 +286,7 @@ void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Comm
     .blocks = std::move(blocks),
   };
 
-  Common::Models::GetBlocksResponse response = {
+  Common::Models::ServerResponse response = {
     .token = token,
     .result = Common::Models::toStr(result),
   };
