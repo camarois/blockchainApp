@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import models.ChainRequest;
 import models.ChainResponse;
 import services.RestService;
 
@@ -23,6 +24,8 @@ public class ChainViewerController {
     public TableColumn contentCol;
     @FXML
     public ComboBox<String> minerChooser;
+    @FXML
+    public TableColumn verifNum;
 
     @FXML
     public void initialize() {
@@ -30,6 +33,8 @@ public class ChainViewerController {
     }
 
     public void onClickRefresh(ActionEvent actionEvent) {
+        String value = minerChooser.getValue();
+        getChainDataFromMiner(value.charAt(value.length() - 1));
     }
 
     public void fillCombobox() {
@@ -48,6 +53,12 @@ public class ChainViewerController {
     }
 
     private void getChainDataFromMiner(char miner) {
-        RestService.postRequestAsync(RestService.urls.getChain() + miner, ChainResponse.class, (e) -> {});
+        RestService.postRequestAsync(RestService.urls.getChain() + miner,
+            new ChainRequest(10),
+            ChainResponse.class,
+            (e) -> {
+                chainTableView.getItems().clear();
+                chainTableView.getItems().addAll(e.getBlocks());
+            });
     }
 }

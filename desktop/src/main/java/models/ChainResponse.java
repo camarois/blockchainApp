@@ -2,14 +2,17 @@ package models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ChainResponse {
-    @SerializedName("bloc")
-    private String bloc;
-    @SerializedName("suivant")
-    private ChainResponse nextBloc;
+import java.util.ArrayList;
 
-    public ChainResponse(String bloc, ChainResponse nextBloc) {
-        this.bloc = bloc;
-        this.nextBloc = nextBloc;
+public class ChainResponse {
+    @SerializedName("blocks")
+    private ArrayList<Block> blocks;
+
+    public ChainResponse(ArrayList<Block> blocks) {
+        this.blocks = blocks;
+    }
+
+    public ArrayList<Block> getBlocks() {
+        return blocks;
     }
 }

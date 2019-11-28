@@ -63,6 +63,11 @@
                <PropertyValueFactory property="content" />
             </cellValueFactory>
          </TableColumn>
+            <TableColumn fx:id="verifNum" prefWidth="176.5" text="Verif Number">
+               <cellValueFactory>
+                  <PropertyValueFactory property="verifNumber" />
+               </cellValueFactory>
+            </TableColumn>
       </columns>
       <VBox.margin>
          <Insets left="50.0" right="50.0" />
