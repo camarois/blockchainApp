@@ -2,8 +2,8 @@
 #include <common/models.hpp>
 #include <common/token_helper.hpp>
 #include <gflags/gflags.h>
+#include <iostream>
 #include <rest/admin_controller.hpp>
-
 namespace Rest {
 
 AdminController::AdminController(const std::shared_ptr<Rest::CustomRouter>& router) { setupRoutes(router); }
@@ -72,11 +72,13 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
-  // auto miner = request.param(kId_).as<int>();
-  // Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
-  Common::Models::ChainResponse chainResponse = {"test"};
-  response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(chainResponse));
+void AdminController::handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+  Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
+  int minerId = request.param(kId_).as<int>();
+  Common::Models::GetBlocksRequest getBlocksRequest = {chainRequest.lastBlocks, minerId};
+
+  Common::Models::GetBlocksResponse getBlocksResponse = Rest::ZMQWorker::get()->getBlocks(getBlocksRequest);
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(getBlocksResponse));
 }
 
 void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

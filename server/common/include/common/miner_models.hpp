@@ -48,7 +48,7 @@ const std::string kToken = "token";
 const std::string kType = "type";
 const std::string kFunction = "function";
 const std::string kParams = "params";
-const std::string kMinerID = "mined-id";
+const std::string kMinerID = "miner-id";
 const std::string kSelfId = "self-id";
 const std::string kNumberOfVerifications = "number-of-verifications";
 const std::string kTypeBlockSyncRequest = "block-sync-request";
@@ -205,23 +205,19 @@ inline void from_json(const nlohmann::json& j, ReadyResponse& obj) {
 }
 
 struct GetBlocksRequest {
-  std::string token;
-  unsigned int blockCount = 0;
-  unsigned int minerID = 0;
+  // std::string token = "0";
+  int blockCount = 0;
+  int minerID = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const GetBlocksRequest& obj) {
-  j = {
-    {kToken, obj.token},
-    {kBlockCount, obj.blockCount},
-    {kMinerID, obj.minerID}
-  };
+  j = {/*{kToken, obj.token},*/ {kBlockCount, obj.blockCount}, {kMinerID, obj.minerID}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, GetBlocksRequest& obj) {
-  j.at(kToken).get_to(obj.token);
+  /*j.at(kToken).get_to(obj.token);*/
   j.at(kBlockCount).get_to(obj.blockCount);
   j.at(kMinerID).get_to(obj.minerID);
 }
@@ -231,16 +227,12 @@ struct Block {
   int nonce = -1;
   std::string hash;
   std::string content;
+  int numberOfVerifications = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const Block& obj) {
-  j = {
-    {kID, obj.id},
-    {kNonce, obj.nonce},
-    {kHash, obj.hash},
-    {kContent, obj.content}
-  };
+  j = {{kID, obj.id}, {kNonce, obj.nonce}, {kHash, obj.hash}, {kContent, obj.content}, {kNumberOfVerifications, obj.numberOfVerifications}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
@@ -249,26 +241,39 @@ inline void from_json(const nlohmann::json& j, Block& obj) {
   j.at(kNonce).get_to(obj.nonce);
   j.at(kHash).get_to(obj.hash);
   j.at(kContent).get_to(obj.content);
+  j.at(kNumberOfVerifications).get_to(obj.numberOfVerifications);
 }
 
 struct GetBlocksResponse {
-  std::string token;
   std::vector<Block> blocks;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const GetBlocksResponse& obj) {
   j = {
-    {kToken, obj.token},
-    {kBlocks, obj.blocks},
+      {kBlocks, obj.blocks},
   };
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-inline void from_json(const nlohmann::json& j, GetBlocksResponse& obj) {
-  j.at(kToken).get_to(obj.token);
-  j.at(kBlocks).get_to(obj.blocks);
-}
+inline void from_json(const nlohmann::json& j, GetBlocksResponse& obj) { j.at(kBlocks).get_to(obj.blocks); }
+
+// struct ChainRequest
+// {
+//   int blockCount = 0;
+// };
+
+// // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+// inline void to_json(nlohmann::json& j, const ChainRequest& obj) {
+//   j = {
+//       {kBlockCount, obj.blockCount},
+//   };
+// }
+
+// // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+// inline void from_json(const nlohmann::json& j, ChainRequest& obj) { j.at(kBlockCount).get_to(obj.blockCount); }
+
+
 
 }  // namespace Models
 }  // namespace Common

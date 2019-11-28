@@ -201,7 +201,6 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
   if (requests_.find(token) == requests_.end()) {
     return;
   }
-
   requests_.at(token).set_value(response);
   requests_.erase(token);
 }

@@ -18,13 +18,20 @@ import java.util.*;
 public class LogsViewer {
     private List<String> provenance = List.of("serveurweb", "1", "2", "3");
     private ObservableList<LogsResponse.Log> logsList;
-    @FXML public VBox vboxLogs;
-    @FXML public TableColumn hourCol;
-    @FXML public TableColumn noCol;
-    @FXML public TableColumn severityCol;
-    @FXML public TableColumn provenanceCol;
-    @FXML public TableColumn messageCol;
-    @FXML private TableView<LogsResponse.Log> logTableView;
+    @FXML
+    public VBox vboxLogs;
+    @FXML
+    public TableColumn hourCol;
+    @FXML
+    public TableColumn noCol;
+    @FXML
+    public TableColumn severityCol;
+    @FXML
+    public TableColumn provenanceCol;
+    @FXML
+    public TableColumn messageCol;
+    @FXML
+    private TableView<LogsResponse.Log> logTableView;
 
     @FXML
     public void initialize() {
@@ -51,8 +58,9 @@ public class LogsViewer {
                 RestService.postRequestAsync(RestService.urls.getLogs() + origin, request,
                         LogsResponse.class, logsResponse -> {
                         logsResponse.logs.forEach((log) ->
-                                log.setProvenance(origin));
-                        logsList.addAll(logsResponse.logs); }, (e) ->
+                                    log.setProvenance(origin));
+                        logsList.addAll(logsResponse.logs);
+                    }, (e) ->
                                 showErrorDialog("Le journal de l'application n'a pu etre mis a jour."));
             }
         } catch (Exception e) {

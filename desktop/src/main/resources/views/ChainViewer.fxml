@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="vboxLogs" prefHeight="465.0" prefWidth="1460.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ChainViewerController">
+<children>
+   <HBox alignment="CENTER">
+      <children>
+         <Label text="Affichage de la chaine de blocs">
+            <font>
+               <Font size="24.0" />
+            </font>
+            <HBox.margin>
+               <Insets />
+            </HBox.margin>
+         </Label>
+            <ComboBox fx:id="minerChooser" onAction="#onComboBoxSelect" prefWidth="150.0" promptText="Choisir un mineur">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
+         <Button fx:id="RefreshBtn" alignment="CENTER" mnemonicParsing="false" onAction="#onClickRefresh" stylesheets="@../styles/buttonStyle.css" text="Rafraichir" textAlignment="CENTER">
+            <font>
+               <Font size="6.0" />
+            </font>
+            <HBox.margin>
+               <Insets left="20.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+      <VBox.margin>
+         <Insets bottom="15.0" left="50.0" right="15.0" top="15.0" />
+      </VBox.margin>
+   </HBox>
+   <TableView fx:id="chainTableView" prefHeight="1000.0">
+      <columns>
+         <TableColumn fx:id="idCol" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Id">
+            <cellValueFactory>
+               <PropertyValueFactory property="id" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn fx:id="noCol" style="-fx-alignment: CENTER;" text="Nonce">
+            <cellValueFactory>
+               <PropertyValueFactory property="nonce" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn fx:id="hashCol" style="-fx-alignment: CENTER;" text="Hash">
+            <cellValueFactory>
+               <PropertyValueFactory property="hash" />
+            </cellValueFactory>
+         </TableColumn>
+         <TableColumn fx:id="contentCol" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Content">
+            <cellValueFactory>
+               <PropertyValueFactory property="content" />
+            </cellValueFactory>
+         </TableColumn>
+            <TableColumn fx:id="verifNum" prefWidth="176.5" text="Verif Number">
+               <cellValueFactory>
+                  <PropertyValueFactory property="verifNumber" />
+               </cellValueFactory>
+            </TableColumn>
+      </columns>
+      <VBox.margin>
+         <Insets left="50.0" right="50.0" />
+      </VBox.margin>
+   </TableView>
+</children>
+<opaqueInsets>
+   <Insets bottom="10.0" />
+</opaqueInsets>
+<padding>
+   <Insets bottom="35.0" />
+</padding>
+</VBox>

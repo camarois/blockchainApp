@@ -1,27 +1,17 @@
 package services;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import constants.ServerUrls;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import models.LogsResponse;
-import models.LogsRequest;
-import models.ChaineRequest;
-import models.PasswordRequest;
-import models.LoginRequest;
-import models.LoginResponse;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 
-import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -30,10 +20,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Future;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutionException;
 
 import java.util.function.Consumer;
 import java.lang.String;
@@ -135,7 +123,7 @@ public class RestService {
     private static void initSslContext() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urls.getFirebase() + "server"))
+                    .uri(URI.create(urls.getFirebase() + "bern"))
                     .build();
 
             HttpResponse<String> response = HttpClient.newHttpClient()

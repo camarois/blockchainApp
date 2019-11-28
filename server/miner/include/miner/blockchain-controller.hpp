@@ -21,7 +21,7 @@ class BlockChainController {
   bool receivedBlockMined(int id, int nonce);
   int getLastBlockId();
   std::vector<Common::Models::BlockMined> getLastBlocks(int lastId);
-  std::vector<Common::Models::Block> getBlocks(unsigned int blockCount);
+  std::vector<Common::Models::Block> getBlocks(int blockCount);
 
  private:
   std::mt19937 rng_;
