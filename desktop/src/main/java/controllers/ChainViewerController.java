@@ -68,7 +68,7 @@ public class ChainViewerController {
             (chainResponse) -> {
                 chainTableView.getItems().clear();
                 if (chainResponse.getBlocks().isEmpty()) {
-                    showInformationadminDialog("La chaine de blocs est vide");
+                    showInformationDialog("La chaine de blocs est vide");
                 }
                 chainTableView.setRowFactory(tv -> new TableRow<Block>() {
                     @Override
