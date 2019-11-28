@@ -20,6 +20,12 @@ Common::optional_ref<Block> BlockChainController::addTransaction(const std::stri
   return blockchain_->lastBlock();
 }
 
+Common::optional_ref<Block> BlockChainController::addTransaction(const std::string& transaction, int nonce) {
+  blockchain_->addTransaction(transaction);
+  blockchain_->lastBlock()->get().queueNonce(nonce);
+  return blockchain_->lastBlock();
+}
+
 bool BlockChainController::receivedBlockMined(int id, int nonce) {
   blockchain_->lastBlock()->get().queueNonce(nonce);
   auto minedBlock = blockchain_->getBlock(id);
