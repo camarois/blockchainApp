@@ -31,30 +31,35 @@ TEST(User, get_salt_and_contains) {
       .isEditor = true,
   };
 
-  Common::Models::LoginRequest unexpectedUser = {"Joker", "muhaha"};
+  db.executeRequest({Common::Functions::AddUser, Common::Models::toStr(addUserRequest)});
+  db.executeRequest({Common::Functions::AddUser, Common::Models::toStr(addEditorRequest)});
 
-  db.addUser(addUserRequest);
-  db.addUser(addEditorRequest);
+  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
+  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(userSalt.found);
 
-  auto userSalt = db.getSalt({.username = expectedUser.username,});
-  ASSERT_TRUE(userSalt.has_value());
+  auto editorSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(editorSalt.found);
 
-  auto editorSalt = db.getSalt({.username = expectedEditor.username,});
-  ASSERT_TRUE(editorSalt.has_value());
+  Common::Models::ContainsUserRequest containsUserRequest = {expectedUser, userSalt.data};  
+  auto receivedUser = db.executeRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)});
+  ASSERT_TRUE(receivedUser.found);
 
-  auto receivedUser = db.containsUser({expectedUser, userSalt.value()});
-  ASSERT_TRUE(receivedUser);
-
-  auto receivedEditor = db.containsUser({expectedEditor, editorSalt.value()});
-  ASSERT_TRUE(receivedEditor);
+  Common::Models::ContainsUserRequest containsEditorRequest = {expectedUser, editorSalt.data};  
+  auto receivedEditor = db.executeRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsEditorRequest)});
+  ASSERT_TRUE(receivedEditor.found);
 }
 
 TEST(User, change_password) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
-  auto salt = db.getSalt({expectedUser.username});
-  ASSERT_TRUE(salt.has_value());
-  EXPECT_NO_THROW(db.setUserPassword({expectedUser.username, {expectedUser.password, "1234"}, salt.value(), false, false}));
+  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
+  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(userSalt.found);
+
+  Common::Models::SetUserPasswordRequest passwordRequest = {.username = expectedUser.username, {expectedUser.password, "1234"}, userSalt.data, false, false};
+  auto passwordResponse = db.executeRequest({Common::Functions::SetUserPassword, Common::Models::toStr(passwordRequest)});
+  ASSERT_FALSE(passwordResponse.found);
 }
 
 TEST(User, get_role) {
@@ -62,31 +67,41 @@ TEST(User, get_role) {
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
   Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
 
-  auto userSalt = db.getSalt({expectedUser.username});
-  ASSERT_TRUE(userSalt.has_value());
+  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
+  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(userSalt.found);
 
-  auto editorSalt = db.getSalt({expectedEditor.username});
-  ASSERT_TRUE(editorSalt.has_value());
+  getSaltRequest = {.username = expectedEditor.username,};
+  auto editorSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(editorSalt.found);
 
-  auto userRole = db.getRole({expectedUser, userSalt.value()});
-  ASSERT_FALSE(userRole.has_value());
+  Common::Models::GetRoleRequest getRoleRequest = {expectedUser, userSalt.data};
+  auto userRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
+  //ASSERT_EQ(userRole.data.value(), "0");
 
-  auto editorRole = db.getRole({expectedEditor, editorSalt.value()});
-  ASSERT_TRUE(editorRole.has_value());
+  getRoleRequest = {expectedEditor, editorSalt.data};
+  auto editorRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
+  //ASSERT_EQ(editorRole.data.value(), "1");
 }
 
 TEST(User, complete_delete) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
   Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
-  EXPECT_NO_THROW(db.deleteUser({expectedUser.username}));
-  EXPECT_NO_THROW(db.deleteUser({expectedEditor.username}));
+
+  Common::Models::DeleteAccountRequest deleteAccountRequest = {expectedUser.username};
+  EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
+
+  deleteAccountRequest = {expectedEditor.username};
+  EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
 }
 
+//TODO
 TEST(User, get_all) {
   Common::Database db("test-blockchain.db");
-  auto response = db.getAllUsers();
-  Common::Models::UserResponse receivedEditor = response.users.back();
+  auto response = db.executeRequest({Common::Functions::GetAllUsers, ""});
+  Common::Models::AllUsersResponse allUsers = nlohmann::json::parse(response.data);
+  Common::Models::UserResponse receivedEditor = allUsers.users.back();
   ASSERT_EQ(receivedEditor.username, "admin");
   ASSERT_TRUE(receivedEditor.isEditor);
   ASSERT_TRUE(receivedEditor.isAdmin);
@@ -95,19 +110,25 @@ TEST(User, get_all) {
 TEST(Admin, get_salt_and_contains) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"admin", "equipe01"};
-  auto salt = db.getSalt({expectedUser.username});
-  ASSERT_TRUE(salt.has_value());
+  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
+  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(userSalt.found);
   
-  auto receivedAdmin = db.containsAdmin({expectedUser, salt.value(), true});
-  ASSERT_TRUE(receivedAdmin);
+  Common::Models::ContainsAdminRequest containsAdminRequest = {expectedUser, userSalt.data, true};  
+  auto receivedAdmin = db.executeRequest({Common::Functions::ContainsAdmin, Common::Models::toStr(containsAdminRequest)});
+  ASSERT_TRUE(receivedAdmin.found);
 }
 
 TEST(Admin, change_password) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"admin", "equipe01"};
-  auto salt = db.getSalt({expectedUser.username});
-  ASSERT_TRUE(salt.has_value());
-  EXPECT_NO_THROW(db.setUserPassword({expectedUser.username, {expectedUser.password, "1234"}, salt.value(), true, true}));
+  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
+  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
+  ASSERT_TRUE(userSalt.found);
+
+  Common::Models::SetUserPasswordRequest passwordRequest = {.username = expectedUser.username, {expectedUser.password, "1234"}, userSalt.data, false, false};
+  auto passwordResponse = db.executeRequest({Common::Functions::SetUserPassword, Common::Models::toStr(passwordRequest)});
+  ASSERT_FALSE(passwordResponse.found);
 }
 
 TEST(Ips, add_and_contains_ip) {
@@ -134,6 +155,15 @@ TEST(Server, set_and_get_self_id) {
   ASSERT_EQ(id, expectedId);
 }
 
+TEST(Server, set_last_block_id_and_get_last_block_id) {
+  Common::Database db("test-blockchain.db");
+  int expectedId = 1;
+  ASSERT_EQ(db.getLastBlockId(), -1);
+  db.setLastBlockId(expectedId);
+  auto id = db.getLastBlockId();
+  ASSERT_EQ(id, expectedId);
+}
+
 TEST(Logs, add_log_and_get_logs) {
   Common::Database db("test-blockchain.db");
   int expectedProvenance = 0;
@@ -151,35 +181,91 @@ TEST(Logs, add_log_and_get_logs) {
   auto receivedLogs = db.getLogs({expectedLog.no, expectedProvenance});
   ASSERT_TRUE(receivedLogs.empty());
 
-  auto receivedLast20Logs = db.getLogs({0, expectedProvenance});
+  Common::Models::GetLogsRequest logsRequest = {0, expectedProvenance};
+  auto response = db.executeRequest({Common::Functions::GetLogs, Common::Models::toStr(logsRequest)});
+  auto receivedLast20Logs = nlohmann::json::parse(response.data);
   Common::Models::Information receivedLog = receivedLast20Logs.back();
+  
   ASSERT_EQ(receivedLog.no, expectedLog.no);
   ASSERT_EQ(receivedLog.severity, expectedLog.severity);
   ASSERT_EQ(receivedLog.time, expectedLog.time);
   ASSERT_EQ(receivedLog.message, expectedLog.message);
 }
 
-TEST(Transaction, test_transaction) {  
+TEST(Transaction, add_transaction) {  
   Common::Database db("test-blockchain.db");
-  Common::Models::Result expectedResult1 = {"Tremblay", "Michel", "12345678", "69.00"};
-  Common::Models::Result expectedResult2 = {"Smith", "John", "87654321", "42.00"};
+  Common::Models::Result expectedResult1 = {"Michel", "Tremblay", "12345678", "69.00"};
+  Common::Models::Result expectedResult2 = {"John", "Smith", "87654321", "42.00"};
   std::vector<Common::Models::Result> expectedResults;
   expectedResults.push_back(expectedResult1);
   expectedResults.push_back(expectedResult2);
 
   Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193, expectedResults};
-  std::optional<int> classId = db.checkForExistingClass({transaction.acronym, transaction.trimester});
-  if (classId){
-    db.deleteExistingClass(classId.value());
-    db.deleteExistingResults(classId.value());
+  Common::Models::CheckForExistingClassRequest checkForExistingClass = {transaction.acronym, transaction.trimester};
+  auto classIndex = db.executeRequest({Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
+  if (classIndex.found){
+    db.executeRequest({Common::Functions::DeleteExistingClass, classIndex.data});
+    db.executeRequest({Common::Functions::DeleteExistingResults, classIndex.data});
   }
-  int newClassId = db.addNewClass(transaction);
-  db.addNewResult({transaction, newClassId});
 
-  Common::Models::ClassesRequest classesRequest = {"inf3995", 20193};
-  classId = db.checkForExistingClass({classesRequest.acronym, classesRequest.trimester});
+  auto newClassId = db.executeRequest({Common::Functions::AddNewClass, Common::Models::toStr(transaction)});
+  Common::Models::AddNewResultRequest newResult = {transaction, std::stoi(newClassId.data)};
+  db.executeRequest({Common::Functions::AddNewResult, Common::Models::toStr(newResult)});
+
+  classIndex = db.executeRequest({Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
   std::vector<Common::Models::Result> receivedResults;
-  if (classId){
-    receivedResults = db.getClassResult(classId.value());
+  if (classIndex.found){
+    auto response = db.executeRequest({Common::Functions::GetClassResult,  classIndex.data});
+    ASSERT_TRUE(response.found);
+  }
+}
+
+TEST(Transaction, get_classes) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::ClassInfo expectedClass = {"inf3995", "Projet3", 20193};
+  auto response = db.executeRequest({Common::Functions::GetClasses, ""});
+  auto classes = nlohmann::json::parse(response.data);
+  Common::Models::ClassInfo receivedClass = classes.back();
+  ASSERT_EQ(expectedClass.acronym, receivedClass.acronym);
+  ASSERT_EQ(expectedClass.trimester, receivedClass.trimester);
+  ASSERT_EQ(expectedClass.name, receivedClass.name);
+}
+
+TEST(Transaction, get_student) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::StudentRequest expectedStudentResult = {"inf3995", "20193", "12345678"};
+  auto response = db.executeRequest({Common::Functions::GetStudentResult,  Common::Models::toStr(expectedStudentResult)});
+  std::vector<Common::Models::StudentResult> studentResults = nlohmann::json::parse(response.data);
+  ASSERT_EQ(expectedStudentResult.acronym, studentResults.back().acronym);
+  ASSERT_EQ(std::stoi(expectedStudentResult.trimester), studentResults.back().trimester);
+  ASSERT_EQ("69.00", studentResults.back().grade);
+}
+
+TEST(Transaction, get_students) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::Result expectedStudent1 = {"Tremblay", "Michel", "12345678"};
+  Common::Models::Result expectedStudent2 = {"Smith", "John", "87654321"};
+  auto response = db.executeRequest({Common::Functions::GetStudents, ""});
+  std::vector<Common::Models::StudentInfo> students = nlohmann::json::parse(response.data);
+  auto student = students.back();
+  students.pop_back();
+  ASSERT_EQ(expectedStudent2.firstName, student.firstName);
+  ASSERT_EQ(expectedStudent2.lastName, student.lastName);
+  ASSERT_EQ(expectedStudent2.id, student.id);
+
+  student = students.back();
+  ASSERT_EQ(expectedStudent1.firstName, student.firstName);
+  ASSERT_EQ(expectedStudent1.lastName, student.lastName);
+  ASSERT_EQ(expectedStudent1.id, student.id);
+}
+
+TEST(Transaction, delete_transaction) {
+  Common::Database db("test-blockchain.db");
+  Common::Models::TransactionRequest transaction = {"inf3995", "Projet3", 20193,};
+  Common::Models::CheckForExistingClassRequest checkForExistingClass = {"inf3995", 20193};
+  auto classIndex = db.executeRequest({Common::Functions::CheckForExistingClass, Common::Models::toStr(checkForExistingClass)});
+  if (classIndex.found){
+    db.executeRequest({Common::Functions::DeleteExistingClass, classIndex.data});
+    db.executeRequest({Common::Functions::DeleteExistingResults, classIndex.data});
   }
 }
