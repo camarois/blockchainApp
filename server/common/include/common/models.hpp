@@ -34,6 +34,8 @@ const std::string kMessage = "message";
 const std::string kPdf = "pdf";
 const std::string kListClasses = "listeClasses";
 const std::string kStudentsInfo = "listeEtudiant";
+const std::string kIsAdmin = "estAdmin";
+const std::string kIsEditor = "estEditeur";
 
 template <typename T>
 inline T fromStr(const std::string& str) {
@@ -70,6 +72,22 @@ inline void to_json(nlohmann::json& j, const LoginResponse& obj) { j = {{kEditio
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, LoginResponse& obj) { j.at(kEdition).get_to(obj.edition); }
+
+struct RegisterResponse {
+  bool isAdmin;
+  bool isEdition;
+};
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void to_json(nlohmann::json& j, const RegisterResponse& obj) { 
+  j = {{kIsAdmin, obj.isAdmin}, {kIsEditor, obj.isEdition}};
+}
+
+// NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
+inline void from_json(const nlohmann::json& j, RegisterResponse& obj) { 
+  j.at(kIsAdmin).get_to(obj.isAdmin); 
+  j.at(kIsEditor).get_to(obj.isEdition);
+}
 
 struct PasswordRequest {
   std::string oldPwd;

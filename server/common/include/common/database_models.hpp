@@ -10,8 +10,6 @@ namespace Common {
 namespace Models {
 
 const std::string kLoginRequest = "loginRequest";
-const std::string kIsAdmin = "estAdmin";
-const std::string kIsEditor = "estEditeur";
 const std::string kPasswordRequest = "passwordRequest";
 const std::string kSalt = "salt";
 const std::string kTransactionRequest = "transactionRequest";
