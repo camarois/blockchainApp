@@ -205,19 +205,19 @@ inline void from_json(const nlohmann::json& j, ReadyResponse& obj) {
 }
 
 struct GetBlocksRequest {
-  std::string token = "0";
+  // std::string token = "0";
   int blockCount = 0;
   int minerID = 0;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void to_json(nlohmann::json& j, const GetBlocksRequest& obj) {
-  j = {{kToken, obj.token}, {kBlockCount, obj.blockCount}, {kMinerID, obj.minerID}};
+  j = {/*{kToken, obj.token},*/ {kBlockCount, obj.blockCount}, {kMinerID, obj.minerID}};
 }
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, GetBlocksRequest& obj) {
-  j.at(kToken).get_to(obj.token);
+  /*j.at(kToken).get_to(obj.token);*/
   j.at(kBlockCount).get_to(obj.blockCount);
   j.at(kMinerID).get_to(obj.minerID);
 }

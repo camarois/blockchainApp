@@ -93,13 +93,14 @@ Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlReque
   return nlohmann::json::parse(request.get());
 }
 
-Common::Models::GetBlocksResponse ZMQWorker::getBlocks(const Common::Models::GetBlocksRequest& req) {
+Common::Models::GetBlocsResult ZMQWorker::getBlocks(const Common::Models::GetBlocksRequest& req) {
   std::future<std::string> request = createRequest(Common::Models::toStr(req), Common::Models::kTypeGetBlocksRequest);
   auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
   if (status == std::future_status::timeout) {
     throw std::runtime_error("Timeout exceeded, miner not responding");
   }
   std::cout << "b4ret rest/getb" << std::endl;
+  std::cout << "now ret" << std::endl;
   return nlohmann::json::parse(request.get());
 }
 
@@ -201,9 +202,10 @@ bool ZMQWorker::sendRequest(const std::string& json) {
 
 void ZMQWorker::receivedResponse(const std::string& token, const std::string& response) {
   if (requests_.find(token) == requests_.end()) {
+    std::cout << "ret" << std::endl;
     return;
   }
-
+  std::cout << "recervedResponse" << std::endl;
   requests_.at(token).set_value(response);
   requests_.erase(token);
 }

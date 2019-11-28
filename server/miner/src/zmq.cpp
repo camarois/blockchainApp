@@ -142,7 +142,7 @@ void ZMQWorker::handleSubServer() {
         if (req.minerID == Common::Database::get()->getSelfId()) {
           auto blocks = blockchainController_.getBlocks(req.blockCount);
           std::cout << "toot" << std::endl;
-          sendGetBlocksResponse(req.token, blocks);
+          sendGetBlocksResponse(request.token, blocks);
         }
       } else {
         Common::Logger::get()->error("Type not found: " + received.type + "\n");
