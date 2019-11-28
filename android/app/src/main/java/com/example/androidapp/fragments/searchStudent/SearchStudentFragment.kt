@@ -14,6 +14,8 @@ import com.example.androidapp.StudentItem
 import com.example.androidapp.services.RestRequestService
 import com.example.androidapp.services.Utils
 import kotlinx.android.synthetic.main.fragment_register_list.*
+import kotlinx.android.synthetic.main.fragment_register_list.list
+import kotlinx.android.synthetic.main.fragment_student_list.*
 import kotlinx.android.synthetic.main.fragment_student_list.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,15 +50,25 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
         launch {
             Utils.processRequest(context!!) {
                 val newStudents = restService.getStudentListAsync()
+
                 for (element in newStudents.listeEtudiant) {
                     students.add(element)
                     list.adapter?.notifyItemInserted(students.size - 1)
+                }
+
+                if(newStudents.listeEtudiant.isNotEmpty()) {
+                    emptyList.visibility = View.GONE
+                    list.visibility = View.VISIBLE
+                } else {
+                    emptyList.visibility = View.VISIBLE
+                    list.visibility = View.GONE
                 }
             }
         }
 
         viewCreated.adapter =
             StudentRecyclerViewAdapter(students, listener)
+
         super.onViewCreated(view, savedInstanceState)
     }
 
