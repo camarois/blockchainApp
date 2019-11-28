@@ -1,6 +1,6 @@
 _pkgname='inf3995'
 pkgname="${_pkgname}-git"
-pkgver=r970.ea0de47
+pkgver=r989.4e22dea
 pkgrel=1
 pkgdesc='Rest/Miner applications'
 arch=('i686' 'x86_64' 'armv7h')
@@ -10,7 +10,7 @@ depends=('curl')
 makedepends=('cmake' 'ninja' 'git')
 options=(!buildflags)
 source=('inf3995-reset.sh')
-md5sums=('6d0cfdb6c619e2c05907069253200983')
+md5sums=('33613c1391f4eb73b0843a6522d909b2')
 
 prepare() {
     if [[ -d "${srcdir}/${_pkgname}" ]]; then

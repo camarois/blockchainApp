@@ -5,7 +5,7 @@ After=network-online.target
 
 [Service]
 WorkingDirectory=/srv/inf3995/rest/
-ExecStart=/usr/bin/rest
+ExecStart=/usr/bin/rest --timeout 30
 EnvironmentFile=/etc/inf3995.env
 
 [Install]
