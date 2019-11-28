@@ -70,7 +70,7 @@
     <string name="error_invalid_permissions">Vous n\'avez pas les permissions requises</string>
     <string name="info_pdf_success">Les résultats de ce cours ont été téléversés dans vos dossiers.</string>
     <string name="error_invalid_grade">Veuillez entrer une note valide</string>
-    <string name="error_no_internet">Pas d\'accès Internet! Veuillez vérifier l\'état de votre connexion</string>
+    <string name="error_no_internet">Une erreur est survenue, veuillez vérifier l\'état de votre connexion</string>
     <string name="error_general">Une erreur est survenue, veuillez réessayer</string>
     <string name="error_invalid_trimester">Veuillez entrer un trimestre valide!</string>
     <string name="empty_classes">Aucun cours dans la base de données</string>
