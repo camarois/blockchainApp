@@ -72,9 +72,9 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-void AdminController::handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+void AdminController::handleChain(const Pistache::Rest::Request& /*request*/, Pistache::Http::ResponseWriter response) {
   // auto miner = request.param(kId_).as<int>();
-  Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
+  // Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
   Common::Models::ChainResponse chainResponse = {"test"};
   response.send(Pistache::Http::Code::I_m_a_teapot, Common::Models::toStr(chainResponse));
 }

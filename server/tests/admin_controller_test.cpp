@@ -68,6 +68,35 @@ TEST(AdminControllerTest, handle_requests) {
     ASSERT_EQ(resp, Common::Models::toStr(chainResponse));
   }
 
+  {
+    Common::Models::LogsRequest logsRequest = {
+        .last = 1,
+    };
+    auto resp = postRequest(portNumber, "/admin/logs/1", Common::Models::toStr(logsRequest));
+    ASSERT_EQ(resp, zmqNotInit);
+  }
+
+  {
+    Common::Models::AddUserRequest addUserRequest = {
+        .loginRequest = {"user", "pass"},
+        .isAdmin = false,
+        .isEditor = false,
+    };
+    auto resp = postRequest(portNumber, "/admin/creationcompte", Common::Models::toStr(addUserRequest));
+    ASSERT_EQ(resp, zmqNotInit);
+  }
+
+  {
+    Common::Models::DeleteAccountRequest deleteAccountRequest = {.username = "user"};
+    auto resp = postRequest(portNumber, "/admin/suppressioncompte", Common::Models::toStr(deleteAccountRequest));
+    ASSERT_EQ(resp, zmqNotInit);
+  }
+
+  {
+    auto resp = getRequest(portNumber, "/admin/listeUsagers");
+    ASSERT_EQ(resp, zmqNotInit);
+  }
+
   auto status = future.wait_for(std::chrono::milliseconds(300));
   ASSERT_EQ(status, std::future_status::timeout);
 }

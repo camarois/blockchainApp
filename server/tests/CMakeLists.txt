@@ -81,6 +81,24 @@ create_test(admin_controller_test
 )
 add_dependencies(admin_controller_test deps_file_tests)
 
+create_test(transaction_controller_test
+    transaction_controller_test.cpp
+    ${controller_files}
+)
+add_dependencies(transaction_controller_test deps_file_tests)
+
+create_test(user_controller_test
+    user_controller_test.cpp
+    ${controller_files}
+)
+add_dependencies(user_controller_test deps_file_tests)
+
+create_test(ping_controller_test
+    ping_controller_test.cpp
+    ${controller_files}
+)
+add_dependencies(ping_controller_test deps_file_tests)
+
 # create_test(block_tests 
 #     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
 #     block_test.cpp
