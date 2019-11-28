@@ -49,29 +49,36 @@ std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(int 
   return lastBlocks;
 }
 
-std::vector<Common::Models::Block> BlockChainController::getBlocks(unsigned int blockCount) {
-  unsigned int lastBlockID = getLastBlockId();
+std::vector<Common::Models::Block> BlockChainController::getBlocks(int blockCount) {
+  int lastBlockID = getLastBlockId();
   if (blockCount == 0 || blockCount > lastBlockID) {
     blockCount = lastBlockID;
   }
+  std::cout << "count" << blockCount << std::endl;
+  std::cout << "lbid" << lastBlockID << std::endl;
 
   std::vector<Common::Models::Block> blocks;
-  for (unsigned int id = lastBlockID - blockCount + 1; id <= lastBlockID; id++) {
+  for (int id = lastBlockID - blockCount + 1; id <= lastBlockID; id++) {
+    std::cout << "count" << blockCount << std::endl;
+    std::cout << "lbid" << lastBlockID << std::endl;
+    std::cout << "id" << id << std::endl;
     Common::optional_ref<Block> blockRef = blockchain_->getBlock(static_cast<int>(id));
     if (blockRef) {
       Common::Models::Block block = {
-        .id = blockRef->get().id(),
-        .nonce = blockRef->get().nonce(),
-        .hash = blockRef->get().hash(),
-        .content = blockRef->get().hash(),
+          .id = blockRef->get().id(),
+          .nonce = blockRef->get().nonce(),
+          .hash = blockRef->get().hash(),
+          .content = blockRef->get().hash(),
       };
       blocks.push_back(block);
-    } else {
+    }
+    else {
       Common::Logger::get()->info("Failed to get block #" + std::to_string(id) + "\n");
-      //blocks.emplace(-1, -1, "error", "error");
+      // blocks.emplace(-1, -1, "error", "error");
     }
   }
 
+  std::cout << "out" << std::endl;
   return blocks;
 }
 
