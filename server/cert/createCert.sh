@@ -51,5 +51,12 @@ fi
 
 openssl req -new -sha256 -nodes -out "$1.csr" -newkey rsa:2048 -keyout "$1.key" \
     -config <(printf "%s" "$conf")
+
+if [[ -z ${ROOT_CA_PASS+x} ]]; then
+    with_pass=()
+else
+    with_pass=("-passin" "pass:$ROOT_CA_PASS")
+fi
+
 openssl x509 -req -in "$1.csr" -CA "$ROOT_CA_CRT" -CAkey "$ROOT_CA_KEY" -CAcreateserial \
-    -out "$1.crt" -days 500 -sha256 -extfile <(printf "%s" "$ext")
+    -out "$1.crt" -days 500 -sha256 "${with_pass[@]}" -extfile <(printf "%s" "$ext")
