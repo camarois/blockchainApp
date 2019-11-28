@@ -41,4 +41,8 @@ public class Block {
     public int getVerifNumber() {
         return verifNumber;
     }
+
+    public void setVerifNumber(int maxVal) {
+        verifNumber = maxVal;
+    }
 }

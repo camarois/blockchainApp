@@ -11,6 +11,8 @@ import models.ChainRequest;
 import models.ChainResponse;
 import services.RestService;
 
+import java.util.ArrayList;
+
 public class ChainViewerController {
     @FXML
     public TableView<Block> chainTableView;
@@ -66,7 +68,7 @@ public class ChainViewerController {
             (chainResponse) -> {
                 chainTableView.getItems().clear();
                 if (chainResponse.getBlocks().isEmpty()) {
-                    showInformationDialog("La chaine de blocs est vide");
+                    showInformationadminDialog("La chaine de blocs est vide");
                 }
                 chainTableView.setRowFactory(tv -> new TableRow<Block>() {
                     @Override
@@ -85,6 +87,17 @@ public class ChainViewerController {
                         }
                     }
                 });
+
+                int maxVal = 1;
+                ArrayList<Block> blocks = chainResponse.getBlocks();
+                for (int i = blocks.size() - 1; i >= 0; i--) {
+                    if (blocks.get(i).getVerifNumber() > maxVal) {
+                        maxVal = blocks.get(i).getVerifNumber();
+                    } else if (blocks.get(i).getVerifNumber() < maxVal) {
+                        blocks.get(i).setVerifNumber(maxVal);
+                    }
+                }
+
                 chainTableView.getItems().addAll(chainResponse.getBlocks());
 
                 chainTableView.setFixedCellSize(80);
