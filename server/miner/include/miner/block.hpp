@@ -14,8 +14,9 @@ class Block {
  public:
   Block();
   explicit Block(int id, const std::string& previous);
-  static std::optional<Block> fromBlockFile(const std::filesystem::path& blockDir);
+  static std::optional<Block> fromBlockFile(const std::filesystem::path& blockPath);
 
+  void setBlockDir(const std::filesystem::path& blockDir);
   void setData(const std::string& data);
   void mine(int difficulty);
   void save() const;

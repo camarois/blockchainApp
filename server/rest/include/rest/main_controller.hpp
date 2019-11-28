@@ -18,11 +18,12 @@ namespace Rest {
 
 class MainController {
  public:
-  explicit MainController(Pistache::Address addr, size_t thr);
+  explicit MainController(Pistache::Address addr, size_t thr, bool useSSL = true);
 
   void start();
 
  private:
+  bool useSSL_ = true;
   Pistache::Http::Endpoint httpEndpoint_;
   std::shared_ptr<Rest::CustomRouter> router_;
   Rest::UserController userController_;

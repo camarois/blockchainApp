@@ -109,7 +109,6 @@ class DetailedCourseFragment(
         val transaction = fragmentManager!!.beginTransaction()
         val frag = PDFViewerFragment(file)
         transaction.replace(R.id.detailed_course_fragment, frag)
-        transaction.addToBackStack("detailedCourseFragment")
         transaction.commit()
     }
 }

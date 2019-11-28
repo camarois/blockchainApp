@@ -2,7 +2,7 @@
 #include <common/models.hpp>
 #include <gtest/gtest.h>
 
-TEST(Sqlite3Tests, get_salt) {
+TEST(DatabaseTest, get_salt) {
   Common::Database db("test-blockchain.db");
 
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
