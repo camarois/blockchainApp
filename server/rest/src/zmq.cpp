@@ -206,6 +206,7 @@ void ZMQWorker::receivedResponse(const std::string& token, const std::string& re
 }
 
 std::future<std::string> ZMQWorker::createRequest(const std::string& json, const std::string& type) {
+  std::this_thread::sleep_for(std::chrono::seconds(1));
   std::string token = uuids::to_string(uuids::uuid_system_generator{}());
 
   Common::Models::ServerRequest request = {
