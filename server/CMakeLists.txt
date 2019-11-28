@@ -62,6 +62,6 @@ install(FILES
 )
 
 install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995.env
+    ${CMAKE_CURRENT_SOURCE_DIR}/systemd/inf3995.env.example
     DESTINATION etc
 )
