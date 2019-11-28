@@ -123,7 +123,7 @@ public class RestService {
     private static void initSslContext() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urls.getFirebase() + "server"))
+                    .uri(URI.create(urls.getFirebase() + "bern"))
                     .build();
 
             HttpResponse<String> response = HttpClient.newHttpClient()
