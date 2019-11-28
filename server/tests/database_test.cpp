@@ -1,6 +1,18 @@
 #include <common/database.hpp>
+#include <common/format_helper.hpp>
 #include <common/models.hpp>
 #include <gtest/gtest.h>
+
+TEST(Singleton, init_and_get) {
+  EXPECT_THROW(Common::Database::get(), std::runtime_error);
+  Common::Database::init("test-blockchain.db");
+  EXPECT_NO_THROW(Common::Database::get());
+};
+
+TEST(Sqlite_error, get_error) {
+  Common::SqliteErr sqliteError;
+  ASSERT_EQ(sqliteError.message(), "");
+};
 
 TEST(User, get_salt_and_contains) {
   Common::Database db("test-blockchain.db");
@@ -66,8 +78,18 @@ TEST(User, get_role) {
 TEST(User, complete_delete) {
   Common::Database db("test-blockchain.db");
   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
-  
+  Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
   EXPECT_NO_THROW(db.deleteUser({expectedUser.username}));
+  EXPECT_NO_THROW(db.deleteUser({expectedEditor.username}));
+}
+
+TEST(User, get_all) {
+  Common::Database db("test-blockchain.db");
+  auto response = db.getAllUsers();
+  Common::Models::UserResponse receivedEditor = response.users.back();
+  ASSERT_EQ(receivedEditor.username, "admin");
+  ASSERT_TRUE(receivedEditor.isEditor);
+  ASSERT_TRUE(receivedEditor.isAdmin);
 }
 
 TEST(Admin, get_salt_and_contains) {
@@ -86,6 +108,55 @@ TEST(Admin, change_password) {
   auto salt = db.getSalt({expectedUser.username});
   ASSERT_TRUE(salt.has_value());
   EXPECT_NO_THROW(db.setUserPassword({expectedUser.username, {expectedUser.password, "1234"}, salt.value(), true, true}));
+}
+
+TEST(Ips, add_and_contains_ip) {
+  Common::Database db("test-blockchain.db");
+  std::string expectedIp = "192.0.0.0";
+  db.addIp(expectedIp);
+  auto ip = db.containsIp(expectedIp);
+  ASSERT_TRUE(ip);
+}
+
+TEST(Ips, get_all) {
+  Common::Database db("test-blockchain.db");
+  std::string expectedIp = "192.0.0.0";
+  auto ips = db.getIps();
+  ASSERT_TRUE(std::find(ips.begin(), ips.end(), expectedIp) != ips.end());
+}
+
+TEST(Server, set_and_get_self_id) {
+  Common::Database db("test-blockchain.db");
+  int expectedId = 1;
+  ASSERT_FALSE(db.getSelfId());
+  db.setSelfId(expectedId);
+  auto id = db.getSelfId();
+  ASSERT_EQ(id, expectedId);
+}
+
+TEST(Logs, add_log_and_get_logs) {
+  Common::Database db("test-blockchain.db");
+  int expectedProvenance = 0;
+  int expectedLogSession = 1;
+  Common::Models::Information expectedLog = {
+    .no = 5,
+    .severity = "0",
+    .time = Common::FormatHelper::nowStr(),
+    .message = "TEST ERROR LOG",
+  };
+
+  db.addLogSession();
+  db.addLog(expectedLog.no, std::stoi(expectedLog.severity), expectedProvenance, expectedLog.time, expectedLog.message, expectedLogSession);
+  
+  auto receivedLogs = db.getLogs({expectedLog.no, expectedProvenance});
+  ASSERT_TRUE(receivedLogs.empty());
+
+  auto receivedLast20Logs = db.getLogs({0, expectedProvenance});
+  Common::Models::Information receivedLog = receivedLast20Logs.back();
+  ASSERT_EQ(receivedLog.no, expectedLog.no);
+  ASSERT_EQ(receivedLog.severity, expectedLog.severity);
+  ASSERT_EQ(receivedLog.time, expectedLog.time);
+  ASSERT_EQ(receivedLog.message, expectedLog.message);
 }
 
 TEST(Transaction, test_transaction) {  
