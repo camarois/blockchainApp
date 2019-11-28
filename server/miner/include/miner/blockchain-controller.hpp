@@ -24,6 +24,7 @@ class BlockChainController {
   std::vector<Common::Models::Block> getBlocks(int blockCount);
 
  private:
+  std::random_device rd_;
   std::mt19937 rng_;
   std::uniform_int_distribution<std::mt19937::result_type> dist_;
 

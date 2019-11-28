@@ -42,14 +42,13 @@ std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockPath
     Block block = json.get<Block>();
     block.setBlockDir(blockPath.parent_path());
     return block;
-  } catch (nlohmann::json::exception& e) {
+  }
+  catch (nlohmann::json::exception& e) {
     return {};
   }
 }
 
-void Block::setBlockDir(const std::filesystem::path& blockDir) {
-  blockDir_ = blockDir;
-}
+void Block::setBlockDir(const std::filesystem::path& blockDir) { blockDir_ = blockDir; }
 
 void Block::setData(const std::string& data) {
   dirty_ = true;
@@ -61,7 +60,9 @@ void Block::mine(int difficulty) {
   while (invalid) {
     if (!receivedNonces_.empty()) {
       nonce_ = receivedNonces_.front();
+      dirty_ = true;
       receivedNonces_.pop();
+      std::cout << "Dequeuing this nonce " << nonce_ << std::endl;
     }
 
     std::string blockHash = hash();
@@ -79,6 +80,7 @@ void Block::mine(int difficulty) {
   while (!receivedNonces_.empty()) {
     receivedNonces_.pop();
   }
+  std::cout << "Finishing with this nonce " << nonce_ << std::endl;
 }
 
 void Block::save() const {
@@ -108,7 +110,9 @@ std::string Block::hash() {
     return hash_;
   }
 
-  std::string json = static_cast<nlohmann::json>(*this).dump();
+  auto block = static_cast<nlohmann::json>(*this);
+  block[kNumberOfVerifications_] = 0;
+  std::string json = block.dump();
   std::vector<unsigned char> hash(picosha2::k_digest_size);
   picosha2::hash256(json.begin(), json.end(), hash.begin(), hash.end());
   hash_ = picosha2::bytes_to_hex_string(hash.begin(), hash.end());

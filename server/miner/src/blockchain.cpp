@@ -43,8 +43,10 @@ std::optional<BlockChain> BlockChain::fromDirectory(const std::filesystem::path&
   return blockchain;
 }
 
-void BlockChain::addTransaction(const std::string& transaction) {
+void BlockChain::addTransaction(const std::string& transaction, int nonce) {
   createBlock(transaction);
+  std::cout << "Queuing nonce " << nonce << std::endl;
+  lastBlock()->get().queueNonce(nonce);
   lastBlock()->get().mine(difficulty_);
   saveAll();
 }
