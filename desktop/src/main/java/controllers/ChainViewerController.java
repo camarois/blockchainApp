@@ -37,7 +37,7 @@ public class ChainViewerController {
                         .subtract(idCol.widthProperty())
                         .subtract(noCol.widthProperty())
                         .subtract(hashCol.widthProperty())
-                        .subtract(verifNum.widthProperty())
+        //                        .subtract(verifNum.widthProperty())
         );
     }
 
@@ -80,7 +80,7 @@ public class ChainViewerController {
                             setStyle("-fx-background-color: #ff7979; -fx-border-color: black; -fx-border-width: 1px;");
                         } else if (item.getVerifNumber() == 2) {
                             setStyle("-fx-background-color: #ffe55f; -fx-border-color: black; -fx-border-width: 1px;");
-                        } else if (item.getVerifNumber() == 3) {
+                        } else if (item.getVerifNumber() >= 3) {
                             setStyle("-fx-background-color: #7eff86; -fx-border-color: black; -fx-border-width: 1px;");
                         } else {
                             setStyle("");

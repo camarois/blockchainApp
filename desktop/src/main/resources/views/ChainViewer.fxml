@@ -53,11 +53,11 @@
                <PropertyValueFactory property="nonce" />
             </cellValueFactory>
          </TableColumn>
-         <TableColumn fx:id="verifNum" prefWidth="100" text="Verif Number">
-            <cellValueFactory>
-               <PropertyValueFactory property="verifNumber" />
-            </cellValueFactory>
-         </TableColumn>
+         <!--         <TableColumn fx:id="verifNum" prefWidth="100" text="Verif Number">-->
+         <!--            <cellValueFactory>-->
+         <!--               <PropertyValueFactory property="verifNumber" />-->
+         <!--            </cellValueFactory>-->
+         <!--         </TableColumn>-->
          <TableColumn fx:id="hashCol" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Hash">
             <cellValueFactory>
                <PropertyValueFactory property="hash" />
