@@ -64,3 +64,4 @@ _deps
 !rootCA.key
 package/*
 !package/PKGBUILD
+!package/inf3995-reset.sh
