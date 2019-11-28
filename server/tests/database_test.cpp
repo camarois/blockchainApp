@@ -38,6 +38,7 @@ TEST(User, get_salt_and_contains) {
   auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   ASSERT_TRUE(userSalt.found);
 
+  getSaltRequest = {.username = expectedEditor.username,};
   auto editorSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
   ASSERT_TRUE(editorSalt.found);
 
@@ -45,9 +46,17 @@ TEST(User, get_salt_and_contains) {
   auto receivedUser = db.executeRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsUserRequest)});
   ASSERT_TRUE(receivedUser.found);
 
-  Common::Models::ContainsUserRequest containsEditorRequest = {expectedUser, editorSalt.data};  
+  Common::Models::ContainsUserRequest containsEditorRequest = {expectedEditor, editorSalt.data};  
   auto receivedEditor = db.executeRequest({Common::Functions::ContainsUser, Common::Models::toStr(containsEditorRequest)});
   ASSERT_TRUE(receivedEditor.found);
+
+  Common::Models::GetRoleRequest getRoleRequest = {expectedUser, userSalt.data};
+  auto userRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
+  ASSERT_EQ(userRole.data, "0");
+
+  getRoleRequest = {expectedEditor, editorSalt.data};
+  auto editorRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
+  ASSERT_EQ(editorRole.data, "1");
 }
 
 TEST(User, change_password) {
@@ -62,41 +71,18 @@ TEST(User, change_password) {
   ASSERT_FALSE(passwordResponse.found);
 }
 
-TEST(User, get_role) {
-  Common::Database db("test-blockchain.db");
-  Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
-  Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
+// TEST(User, complete_delete) {
+//   Common::Database db("test-blockchain.db");
+//   Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
+//   Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
 
-  Common::Models::GetSaltRequest getSaltRequest = {.username = expectedUser.username,};
-  auto userSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
-  ASSERT_TRUE(userSalt.found);
+//   Common::Models::DeleteAccountRequest deleteAccountRequest = {expectedUser.username};
+//   EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
 
-  getSaltRequest = {.username = expectedEditor.username,};
-  auto editorSalt = db.executeRequest({Common::Functions::GetSalt, Common::Models::toStr(getSaltRequest)});
-  ASSERT_TRUE(editorSalt.found);
+//   deleteAccountRequest = {expectedEditor.username};
+//   EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
+// }
 
-  Common::Models::GetRoleRequest getRoleRequest = {expectedUser, userSalt.data};
-  auto userRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
-  //ASSERT_EQ(userRole.data.value(), "0");
-
-  getRoleRequest = {expectedEditor, editorSalt.data};
-  auto editorRole = db.executeRequest({Common::Functions::GetRole, Common::Models::toStr(getRoleRequest)});
-  //ASSERT_EQ(editorRole.data.value(), "1");
-}
-
-TEST(User, complete_delete) {
-  Common::Database db("test-blockchain.db");
-  Common::Models::LoginRequest expectedUser = {"Anne-Sophie Provencher", "LOL1234!"};
-  Common::Models::LoginRequest expectedEditor = {"Jolyne Rodrigue", "editrice"};
-
-  Common::Models::DeleteAccountRequest deleteAccountRequest = {expectedUser.username};
-  EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
-
-  deleteAccountRequest = {expectedEditor.username};
-  EXPECT_NO_THROW(db.executeRequest({Common::Functions::DeleteUser, Common::Models::toStr(deleteAccountRequest)}));
-}
-
-//TODO
 TEST(User, get_all) {
   Common::Database db("test-blockchain.db");
   auto response = db.executeRequest({Common::Functions::GetAllUsers, ""});
@@ -135,7 +121,7 @@ TEST(Ips, add_and_contains_ip) {
   Common::Database db("test-blockchain.db");
   std::string expectedIp = "192.0.0.0";
   db.addIp(expectedIp);
-  auto ip = db.containsIp(expectedIp);
+  bool ip = db.containsIp(expectedIp);
   ASSERT_TRUE(ip);
 }
 
@@ -149,7 +135,6 @@ TEST(Ips, get_all) {
 TEST(Server, set_and_get_self_id) {
   Common::Database db("test-blockchain.db");
   int expectedId = 1;
-  ASSERT_FALSE(db.getSelfId());
   db.setSelfId(expectedId);
   auto id = db.getSelfId();
   ASSERT_EQ(id, expectedId);
