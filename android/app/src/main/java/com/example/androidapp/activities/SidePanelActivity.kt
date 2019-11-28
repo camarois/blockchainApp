@@ -56,7 +56,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 )
                 val frag = DetailedCourseFragment(course, response.students)
                 transaction.replace(R.id.course_list_fragment, frag)
-                transaction.addToBackStack(null)
                 transaction.commit()
             }
         }
@@ -71,7 +70,6 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
                 val frag = DetailedStudentFragment(student, response.results)
 
                 transaction.replace(R.id.student_list_fragment, frag)
-                transaction.addToBackStack(null)
                 transaction.commit()
             }
         }

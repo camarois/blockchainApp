@@ -72,4 +72,5 @@
     <string name="error_invalid_grade">Veuillez entrer une note valide</string>
     <string name="error_no_internet">Pas d\'accès Internet! Veuillez vérifier l\'état de votre connexion</string>
     <string name="error_general">Une erreur est survenue, veuillez réessayer</string>
+    <string name="error_invalid_trimester">Veuillez entrer un trimestre valide!</string>
 </resources>

@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.fragment_get_course_info.*
 class GetCourseInfoFragment : Fragment() {
 
     private val registerCourseFragment = RegisterCourseFragment()
+    private val validateCodeRegex = Regex("^[A-Z]{3}[0-9]{4}[A-Z]?\$")
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,6 +36,15 @@ class GetCourseInfoFragment : Fragment() {
         if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
             Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         } else {
+            if(trimester.text.length != 5) {
+                Toast.makeText(activity, getString(R.string.error_invalid_trimester), Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if(!validateCodeRegex.matches(sigle.text)) {
+                Toast.makeText(activity, getString(R.string.error_invalid_code), Toast.LENGTH_SHORT).show()
+                return
+            }
             val bundle = Bundle()
             bundle.putString("code", sigle.text.toString())
             bundle.putString("name", name.text.toString())
