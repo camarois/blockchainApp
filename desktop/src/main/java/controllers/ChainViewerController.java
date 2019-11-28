@@ -35,6 +35,7 @@ public class ChainViewerController {
                         .subtract(idCol.widthProperty())
                         .subtract(noCol.widthProperty())
                         .subtract(hashCol.widthProperty())
+                        .subtract(verifNum.widthProperty())
         );
     }
 
