@@ -48,6 +48,6 @@ public class ChainViewerController {
     }
 
     private void getChainDataFromMiner(char miner) {
-        RestService.getRequestAsync(RestService.urls.getChain() + miner, ChainResponse.class, (e) -> {});
+        RestService.postRequestAsync(RestService.urls.getChain() + miner, ChainResponse.class, (e) -> {});
     }
 }

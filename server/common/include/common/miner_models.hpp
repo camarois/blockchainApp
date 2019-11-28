@@ -258,27 +258,22 @@ inline void to_json(nlohmann::json& j, const GetBlocksResponse& obj) {
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
 inline void from_json(const nlohmann::json& j, GetBlocksResponse& obj) { j.at(kBlocks).get_to(obj.blocks); }
 
-// struct GetBlocksResponse {
-//   std::string token;
-//   std::string result;
-//   int lastBlockId = -1;
+// struct ChainRequest
+// {
+//   int blockCount = 0;
 // };
 
 // // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-// inline void to_json(nlohmann::json& j, const GetBlocksResponse& obj) {
+// inline void to_json(nlohmann::json& j, const ChainRequest& obj) {
 //   j = {
-//       {kToken, obj.token},
-//       {kResult, obj.result},
-//       {kLastID, obj.lastBlockId},
+//       {kBlockCount, obj.blockCount},
 //   };
 // }
 
 // // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
-// inline void from_json(const nlohmann::json& j, GetBlocksResponse& obj) {
-//   j.at(kToken).get_to(obj.token);
-//   j.at(kResult).get_to(obj.result);
-//   j.at(kLastID).get_to(obj.lastBlockId);
-// }
+// inline void from_json(const nlohmann::json& j, ChainRequest& obj) { j.at(kBlockCount).get_to(obj.blockCount); }
+
+
 
 }  // namespace Models
 }  // namespace Common

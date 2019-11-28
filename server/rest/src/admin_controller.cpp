@@ -12,7 +12,7 @@ void AdminController::setupRoutes(const std::shared_ptr<Rest::CustomRouter>& rou
   router->post(kBasePath_ + "login", Pistache::Rest::Routes::bind(&AdminController::handleLogin, this), false);
   router->post(kBasePath_ + "logout", Pistache::Rest::Routes::bind(&AdminController::handleLogout, this));
   router->post(kBasePath_ + "motdepasse", Pistache::Rest::Routes::bind(&AdminController::handlePassword, this));
-  router->post(kBasePath_ + "chaine", Pistache::Rest::Routes::bind(&AdminController::handleChain, this));
+  router->post(kBasePath_ + "chaine/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleChain, this));
   router->post(kBasePath_ + "logs/" + kId_, Pistache::Rest::Routes::bind(&AdminController::handleLogs, this));
   router->post(kBasePath_ + "creationcompte",
                Pistache::Rest::Routes::bind(&AdminController::handleCreateAccount, this));
@@ -69,7 +69,12 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  Common::Models::GetBlocksRequest getBlocksRequest = nlohmann::json::parse(request.body());
+  Common::Models::ChainRequest chainRequest = nlohmann::json::parse(request.body());
+  int minerId = request.param(kId_).as<int>();
+  std::cout << minerId << std::endl;
+  Common::Models::GetBlocksRequest getBlocksRequest = {chainRequest.lastBlocks, minerId};
+  std::cout << Common::Models::toStr(getBlocksRequest) << std::endl;
+
   Common::Models::GetBlocksResponse getBlocksResponse = Rest::ZMQWorker::get()->getBlocks(getBlocksRequest);
   response.send(Pistache::Http::Code::Ok, Common::Models::toStr(getBlocksResponse));
 }
