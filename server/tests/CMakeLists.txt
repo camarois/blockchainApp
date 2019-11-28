@@ -1,6 +1,7 @@
+add_code_coverage_all_targets(EXCLUDE tests/* build/*)
+
 function(create_test test_name)
     add_executable(${test_name} ${ARGN})
-    add_code_coverage_all_targets(EXCLUDE tests/* build/*)
     target_code_coverage(${test_name} ALL EXCLUDE tests/* build/*)
     add_test(${test_name} ${test_name})
 endfunction()
@@ -33,11 +34,11 @@ add_custom_target(database_test_database
 )
 add_dependencies(database_test database_test_database)
 
-# create_test(block_tests 
-#     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
-#     block_test.cpp
-#     utils.cpp
-# )
+create_test(block_tests 
+    ${CMAKE_SOURCE_DIR}/miner/src/block.cpp
+    block_test.cpp
+    utils.cpp
+)
 
 # create_test(blockchain_tests 
 #     ${CMAKE_SOURCE_DIR}/miner/src/block.cpp

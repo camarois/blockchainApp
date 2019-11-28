@@ -27,10 +27,10 @@ Block::Block(int id, const std::string& previous) : Block() {
   previousHash_ = previous;
 }
 
-std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir) {
-  std::ifstream blockFile(blockDir, std::ifstream::in);
+std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockPath) {
+  std::ifstream blockFile(blockPath, std::ifstream::in);
   if (blockFile.fail()) {
-    Common::Logger::get()->error("Couldn't open `" + blockDir.string() + "`\n");
+    Common::Logger::get()->error("Couldn't open `" + blockPath.string() + "`\n");
     return {};
   }
 
@@ -38,7 +38,17 @@ std::optional<Block> Block::fromBlockFile(const std::filesystem::path& blockDir)
   blockFile >> json;
   blockFile.close();
 
-  return json.get<Block>();
+  try {
+    Block block = json.get<Block>();
+    block.setBlockDir(blockPath.parent_path());
+    return block;
+  } catch (nlohmann::json::exception& e) {
+    return {};
+  }
+}
+
+void Block::setBlockDir(const std::filesystem::path& blockDir) {
+  blockDir_ = blockDir;
 }
 
 void Block::setData(const std::string& data) {
