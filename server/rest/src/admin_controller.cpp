@@ -69,10 +69,9 @@ void AdminController::handlePassword(const Pistache::Rest::Request& request, Pis
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void AdminController::handleChain(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  //Common::Models::GetBlocksRequest getBlocksRequest = nlohmann::json::parse(request.body());
-  Common::Models::GetBlocsResult getBlocsResult = Rest::ZMQWorker::get()->getBlocks({10, 1});
-  std::cout << "nice" << std::endl;
-  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(getBlocsResult));
+  Common::Models::GetBlocksRequest getBlocksRequest = nlohmann::json::parse(request.body());
+  Common::Models::GetBlocksResponse getBlocksResponse = Rest::ZMQWorker::get()->getBlocks(getBlocksRequest);
+  response.send(Pistache::Http::Code::Ok, Common::Models::toStr(getBlocksResponse));
 }
 
 void AdminController::handleLogs(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {

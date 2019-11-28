@@ -52,13 +52,14 @@ std::vector<Common::Models::BlockMined> BlockChainController::getLastBlocks(int 
 std::vector<Common::Models::Block> BlockChainController::getBlocks(int blockCount) {
   int lastBlockID = getLastBlockId();
   if (blockCount == 0 || blockCount > lastBlockID) {
-    blockCount = lastBlockID;
+    blockCount = lastBlockID + 1;
   }
   std::cout << "count" << blockCount << std::endl;
   std::cout << "lbid" << lastBlockID << std::endl;
 
   std::vector<Common::Models::Block> blocks;
   for (int id = lastBlockID - blockCount + 1; id <= lastBlockID; id++) {
+    std::cout << "LOOP" << std::endl;
     std::cout << "count" << blockCount << std::endl;
     std::cout << "lbid" << lastBlockID << std::endl;
     std::cout << "id" << id << std::endl;
@@ -69,6 +70,7 @@ std::vector<Common::Models::Block> BlockChainController::getBlocks(int blockCoun
           .nonce = blockRef->get().nonce(),
           .hash = blockRef->get().hash(),
           .content = blockRef->get().data(),
+          .numberOfVerifications = blockRef->get().numberOfVerifications(),
       };
       blocks.push_back(block);
     }

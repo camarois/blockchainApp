@@ -93,7 +93,7 @@ Common::Models::SqlResponse ZMQWorker::getRequest(const Common::Models::SqlReque
   return nlohmann::json::parse(request.get());
 }
 
-Common::Models::GetBlocsResult ZMQWorker::getBlocks(const Common::Models::GetBlocksRequest& req) {
+Common::Models::GetBlocksResponse ZMQWorker::getBlocks(const Common::Models::GetBlocksRequest& req) {
   std::future<std::string> request = createRequest(Common::Models::toStr(req), Common::Models::kTypeGetBlocksRequest);
   auto status = request.wait_for(std::chrono::seconds(FLAGS_timeout));
   if (status == std::future_status::timeout) {
