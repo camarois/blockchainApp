@@ -10,7 +10,7 @@ namespace Rest {
 
 class CustomRouter : public Pistache::Rest::Router {
  public:
-  CustomRouter() = default;
+  CustomRouter(bool useSSL = true);
 
   void addRoute(Pistache::Http::Method method, const std::string& url, const Pistache::Rest::Route::Handler& handler,
                 bool requiresAuth = true);
@@ -19,6 +19,7 @@ class CustomRouter : public Pistache::Rest::Router {
   void post(const std::string& url, const Pistache::Rest::Route::Handler& handler, bool requiresAuth = true);
 
  private:
+  bool useSSL_;
   const std::string kDefaultBody_ = "NULL";
   const size_t kMaxPrintBody_ = 200;
 };
