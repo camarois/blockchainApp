@@ -1,19 +1,19 @@
 package controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import models.Block;
 import models.ChainRequest;
 import models.ChainResponse;
 import services.RestService;
 
 public class ChainViewerController {
     @FXML
-    public TableView chainTableView;
+    public TableView<Block> chainTableView;
     @FXML
     public TableColumn idCol;
     @FXML
@@ -62,9 +62,52 @@ public class ChainViewerController {
         RestService.postRequestAsync(RestService.urls.getChain() + miner,
             new ChainRequest(10),
             ChainResponse.class,
-            (e) -> {
+            (chainResponse) -> {
                 chainTableView.getItems().clear();
-                chainTableView.getItems().addAll(e.getBlocks());
-            });
+                if (chainResponse.getBlocks().isEmpty()) {
+                    showInformationDialog("La chaine de blocs est vide");
+                }
+                chainTableView.setRowFactory(tv -> new TableRow<Block>() {
+                    @Override
+                    public void updateItem(Block item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else if (item.getVerifNumber() == 1) {
+                            setStyle("-fx-background-color: #ff7979; -fx-border-color: black; -fx-border-width: 1px;");
+                        } else if (item.getVerifNumber() == 2) {
+                            setStyle("-fx-background-color: #ffe55f; -fx-border-color: black; -fx-border-width: 1px;");
+                        } else if (item.getVerifNumber() == 3) {
+                            setStyle("-fx-background-color: #7eff86; -fx-border-color: black; -fx-border-width: 1px;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
+                });
+                chainTableView.getItems().addAll(chainResponse.getBlocks());
+
+                chainTableView.setFixedCellSize(80);
+                chainTableView.prefHeightProperty().bind(Bindings.size(chainTableView.getItems())
+                        .multiply(chainTableView.getFixedCellSize()).add(40));
+
+            }, (e) -> {
+                chainTableView.getItems().clear();
+                showErrorDialog("Le mineur est inaccessible");
+            }
+        );
+    }
+
+    private void showInformationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Attention!");
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Attention!");
+        alert.setHeaderText(message);
+        alert.showAndWait();
     }
 }
