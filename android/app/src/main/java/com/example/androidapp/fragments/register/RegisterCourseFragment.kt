@@ -204,11 +204,6 @@ class RegisterCourseFragment : Fragment() {
             return
         }
 
-        if (class_name.text.isEmpty()) {
-            Toast.makeText(activity, getString(R.string.error_invalid_code), Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val pdf = convertToBase64(File(pdfFilePath))
 
         val bundle = this.arguments ?: return

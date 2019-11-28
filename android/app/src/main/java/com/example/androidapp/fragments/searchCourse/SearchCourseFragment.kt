@@ -13,7 +13,8 @@ import com.example.androidapp.CourseItem
 import com.example.androidapp.R
 import com.example.androidapp.services.RestRequestService
 import com.example.androidapp.services.Utils
-import kotlinx.android.synthetic.main.fragment_register_list.*
+import kotlinx.android.synthetic.main.fragment_course_list.*
+import kotlinx.android.synthetic.main.fragment_register_list.list
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,6 +43,14 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
                 for (element in newCourses.listeClasses) {
                     courses.add(element)
                     list.adapter?.notifyItemInserted(courses.size - 1)
+                }
+
+                if (newCourses.listeClasses.isNotEmpty()) {
+                    emptyList.visibility = View.GONE
+                    list.visibility = View.VISIBLE
+                } else {
+                    emptyList.visibility = View.VISIBLE
+                    list.visibility = View.GONE
                 }
             }
         }
