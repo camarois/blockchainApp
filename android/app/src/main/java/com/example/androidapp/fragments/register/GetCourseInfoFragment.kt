@@ -36,12 +36,12 @@ class GetCourseInfoFragment : Fragment() {
         if (sigle.text.isEmpty() || name.text.isEmpty() || trimester.text.isEmpty()) {
             Toast.makeText(activity, getString(R.string.info_missing_data), Toast.LENGTH_SHORT).show()
         } else {
-            if(trimester.text.length != 5) {
+            if (trimester.text.length != 5) {
                 Toast.makeText(activity, getString(R.string.error_invalid_trimester), Toast.LENGTH_SHORT).show()
                 return
             }
 
-            if(!validateCodeRegex.matches(sigle.text)) {
+            if (!validateCodeRegex.matches(sigle.text)) {
                 Toast.makeText(activity, getString(R.string.error_invalid_code), Toast.LENGTH_SHORT).show()
                 return
             }
@@ -61,4 +61,3 @@ class GetCourseInfoFragment : Fragment() {
         course_info_fragment.visibility = View.GONE
     }
 }
-

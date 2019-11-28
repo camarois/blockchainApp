@@ -56,7 +56,7 @@ class SearchStudentFragment : Fragment(), CoroutineScope {
                     list.adapter?.notifyItemInserted(students.size - 1)
                 }
 
-                if(newStudents.listeEtudiant.isNotEmpty()) {
+                if (newStudents.listeEtudiant.isNotEmpty()) {
                     emptyList.visibility = View.GONE
                     list.visibility = View.VISIBLE
                 } else {

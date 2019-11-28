@@ -44,8 +44,8 @@ class SearchCourseFragment : Fragment(), CoroutineScope {
                     courses.add(element)
                     list.adapter?.notifyItemInserted(courses.size - 1)
                 }
-                4
-                if(newCourses.listeClasses.isNotEmpty()) {
+
+                if (newCourses.listeClasses.isNotEmpty()) {
                     emptyList.visibility = View.GONE
                     list.visibility = View.VISIBLE
                 } else {
