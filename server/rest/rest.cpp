@@ -16,8 +16,8 @@ DEFINE_string(db, "rest.db", "Path to sqlite db file");                   // NOL
 DEFINE_int32(port, 8080, "REST http port");                               // NOLINT
 DEFINE_int32(threads, 4, "Number of threads");                            // NOLINT
 DEFINE_string(transactions, "transactions/", "Path to transactions");     // NOLINT
-DEFINE_int32(buffer_size, 1000000, "Maximum number of bytes in buffer");  // NOLINT
-DEFINE_int32(timeout, 10, "Maximum number of seconds before timeout");    // NOLINT
+DEFINE_int32(buffer_size, 4000000, "Maximum number of bytes in buffer");  // NOLINT
+DEFINE_int32(timeout, 100, "Maximum number of seconds before timeout");   // NOLINT
 
 int main(int argc, char* argv[]) {
   Common::GflagsHelper::init("Rest service", argc, argv);
