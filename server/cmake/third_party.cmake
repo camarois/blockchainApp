@@ -117,6 +117,23 @@ ExternalProject_Add(libpicosha2
     UPDATE_DISCONNECTED ON
 )
 
+ExternalProject_Add(libdigestpp
+    GIT_REPOSITORY https://github.com/kerukuro/digestpp.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND mkdir -p ${CMAKE_BINARY_DIR}/externals/include/digestpp
+                 && cp -n -v ${CMAKE_BINARY_DIR}/libdigestpp/src/libdigestpp/digestpp.hpp
+                             ${CMAKE_BINARY_DIR}/externals/include/digestpp
+                 && cp -n -v ${CMAKE_BINARY_DIR}/libdigestpp/src/libdigestpp/hasher.hpp
+                             ${CMAKE_BINARY_DIR}/externals/include/digestpp
+                 && cp -n -v -r ${CMAKE_BINARY_DIR}/libdigestpp/src/libdigestpp/algorithm
+                                ${CMAKE_BINARY_DIR}/externals/include/digestpp
+                 && cp -n -v -r ${CMAKE_BINARY_DIR}/libdigestpp/src/libdigestpp/detail
+                                ${CMAKE_BINARY_DIR}/externals/include/digestpp
+    PREFIX libdigestpp
+    UPDATE_DISCONNECTED ON
+)
+
 ExternalProject_Add(libstduuid
     GIT_REPOSITORY https://github.com/mariusbancila/stduuid.git
     CONFIGURE_COMMAND ""

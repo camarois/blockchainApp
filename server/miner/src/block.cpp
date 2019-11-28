@@ -9,6 +9,7 @@
 #include <nlohmann/json.hpp>
 #include <picosha2.h>
 #include <sstream>
+#include <digestpp/digestpp.hpp>
 
 DECLARE_string(blockchain);
 
@@ -99,9 +100,10 @@ std::string Block::hash() {
   }
 
   std::string json = static_cast<nlohmann::json>(*this).dump();
-  std::vector<unsigned char> hash(picosha2::k_digest_size);
-  picosha2::hash256(json.begin(), json.end(), hash.begin(), hash.end());
-  hash_ = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
+  //std::vector<unsigned char> hash(picosha2::k_digest_size);
+  //picosha2::hash256(json.begin(), json.end(), hash.begin(), hash.end());
+  //hash_ = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
+  hash_ = digestpp::sha256().absorb(json.begin(), json.end()).hexdigest();
   dirty_ = false;
 
   return hash_;
