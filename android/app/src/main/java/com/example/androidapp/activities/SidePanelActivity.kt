@@ -1,6 +1,5 @@
 package com.example.androidapp.activities
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.findNavController
@@ -11,8 +10,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import com.android.volley.TimeoutError
 import com.example.androidapp.AccountTypes
 import com.example.androidapp.CourseRequest
 import com.example.androidapp.CourseItem
@@ -25,6 +22,7 @@ import com.example.androidapp.fragments.searchStudent.SearchStudentFragment
 import com.example.androidapp.fragments.searchCourse.SearchCourseFragment
 import com.example.androidapp.fragments.searchStudent.DetailedStudentFragment
 import com.example.androidapp.services.RestRequestService
+import com.example.androidapp.services.Utils
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_side_panel.*
 import kotlinx.android.synthetic.main.app_bar_side_panel.*
@@ -37,54 +35,6 @@ import org.koin.android.ext.android.get
 import kotlin.coroutines.CoroutineContext
 
 class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragment.OnListFragmentInteractionListener, SearchStudentFragment.OnListFragmentInteractionListener, RegisterCourseFragment.OnListFragmentInteractionListener {
-    override fun onListFragmentInteraction(course: CourseItem) {
-        launch {
-            val pd = ProgressDialog(this@SidePanelActivity)
-            pd.setMessage("En attente d'une réponse des mineurs...")
-            pd.setCancelable(false)
-            pd.show()
-            try {
-                val transaction = supportFragmentManager.beginTransaction()
-                val response = restService.postCourseInfoAsync(
-                    CourseRequest(
-                        course.code,
-                        course.trimester.toInt()
-                    )
-                )
-                val frag = DetailedCourseFragment(course, response.students)
-                transaction.replace(R.id.course_list_fragment, frag)
-                transaction.addToBackStack(null)
-                transaction.commit()
-            } catch (e: TimeoutError) {
-                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
-                    Toast.LENGTH_LONG).show()
-            }
-            pd.dismiss()
-        }
-    }
-
-    override fun onListFragmentInteraction(student: StudentItem) {
-        launch {
-            val pd = ProgressDialog(this@SidePanelActivity)
-            pd.setMessage("En attente d'une réponse des mineurs...")
-            pd.setCancelable(false)
-            pd.show()
-            try {
-                val transaction = supportFragmentManager.beginTransaction()
-                val response =
-                    restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
-                val frag = DetailedStudentFragment(student, response.results)
-                transaction.replace(R.id.student_list_fragment, frag)
-                transaction.addToBackStack(null)
-                transaction.commit()
-            } catch (e: TimeoutError) {
-                Toast.makeText(this@SidePanelActivity, "Petit problème de connexion au serveur, veuillez réessayer!",
-                    Toast.LENGTH_LONG).show()
-            }
-            pd.dismiss()
-        }
-    }
-
     private lateinit var job: Job
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var restService: RestRequestService = get()
@@ -94,23 +44,52 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
+    override fun onListFragmentInteraction(course: CourseItem) {
+        launch {
+            Utils.processRequest(this@SidePanelActivity) {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response = restService.postCourseInfoAsync(
+                    CourseRequest(
+                        course.code,
+                        course.trimester.toInt()
+                    )
+                )
+                val frag = DetailedCourseFragment(course, response.students)
+                transaction.replace(R.id.course_list_fragment, frag)
+                transaction.commit()
+            }
+        }
+    }
+
+    override fun onListFragmentInteraction(student: StudentItem) {
+        launch {
+            Utils.processRequest(this@SidePanelActivity) {
+                val transaction = supportFragmentManager.beginTransaction()
+                val response =
+                    restService.postStudentInfoAsync(StudentRequest("*", "*", student.code))
+                val frag = DetailedStudentFragment(student, response.results)
+
+                transaction.replace(R.id.student_list_fragment, frag)
+                transaction.commit()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
         setContentView(R.layout.activity_side_panel)
         setSupportActionBar(sidePanelToolbar)
 
+        username = intent.getStringExtra("username")
+        type = intent!!.getSerializableExtra("type") as AccountTypes
+
         val navController = findNavController(R.id.sidePanelFragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_search, R.id.nav_course_search, R.id.nav_settings, R.id.nav_register
             ), sidePanelDrawerLayout
         )
-
-        username = intent.getStringExtra("username")
-        type = intent!!.getSerializableExtra("type") as AccountTypes
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         sidePanelNavigationView.setupWithNavController(navController)
@@ -143,19 +122,11 @@ class SidePanelActivity : AppCompatActivity(), CoroutineScope, SearchCourseFragm
         }
     }
     private suspend fun logout() {
-        val pd = ProgressDialog(this@SidePanelActivity)
-        pd.setMessage("En attente d'une réponse des mineurs...")
-        pd.setCancelable(false)
-        pd.show()
-        try {
+        Utils.processRequest(this@SidePanelActivity) {
             restService.postLogoutAsync()
             val intent = Intent(this@SidePanelActivity, MainActivity::class.java).apply { }
             startActivity(intent)
-        } catch (e: TimeoutError) {
-        Toast.makeText(this, "Petit problème de connexion au serveur, veuillez réessayer!",
-            Toast.LENGTH_LONG).show()
         }
-        pd.dismiss()
     }
 
     override fun onSupportNavigateUp(): Boolean {

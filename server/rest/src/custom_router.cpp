@@ -11,6 +11,8 @@
 
 namespace Rest {
 
+CustomRouter::CustomRouter(bool useSSL) { useSSL_ = useSSL; }
+
 void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& url,
                             const Pistache::Rest::Route::Handler& handler, bool requiresAuth) {
   auto callback = [=](const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
@@ -18,7 +20,7 @@ void CustomRouter::addRoute(Pistache::Http::Method method, const std::string& ur
     body = body.length() > kMaxPrintBody_ ? body.substr(0, kMaxPrintBody_) + " [...]" : body;
     try {
       Common::Logger::get()->info(url + "\n" + body);
-      if (requiresAuth) {
+      if (requiresAuth && useSSL_) {
         std::string authHeader = request.headers().getRaw("Authorization").value();
         std::optional<std::string> optToken = Common::TokenHelper::decode(authHeader);
         if (optToken) {

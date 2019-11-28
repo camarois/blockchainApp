@@ -6,7 +6,7 @@ set(toolchain ${TOOLCHAIN_DIR}/x-tools7h/arm-unknown-linux-gnueabihf)
 set(ENV{CC}  ${toolchain}/bin/arm-unknown-linux-gnueabihf-gcc)
 set(ENV{CPP} ${toolchain}/bin/arm-unknown-linux-gnueabihf-g++)
 set(ENV{CFLAGS}   "-I${SYSROOT_DIR}/usr/include -L${SYSROOT_DIR}/usr/lib --sysroot=${SYSROOT_DIR}")
-set(ENV{CPPFLAGS} "-I${SYSROOT_DIR}/usr/include -L${SYSROOT_DIR}/usr/lib --sysroot=${SYSROOT_DIR} -static-libstdc++")
+set(ENV{CPPFLAGS} "-I${SYSROOT_DIR}/usr/include -L${SYSROOT_DIR}/usr/lib --sysroot=${SYSROOT_DIR}")
 
 set(CMAKE_C_COMPILER   ${toolchain}/bin/arm-unknown-linux-gnueabihf-gcc)
 set(CMAKE_CXX_COMPILER ${toolchain}/bin/arm-unknown-linux-gnueabihf-g++)
