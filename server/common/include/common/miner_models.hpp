@@ -245,7 +245,7 @@ inline void from_json(const nlohmann::json& j, Block& obj) {
 }
 
 struct GetBlocksResponse {
-  std::vector<std::string> blocks;
+  std::vector<Common::Models::Block> blocks;
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming, google-runtime-references)
