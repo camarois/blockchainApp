@@ -28,12 +28,12 @@ Common::optional_ref<Block> BlockChainController::addTransaction(const std::stri
 
 bool BlockChainController::receivedBlockMined(int id, int nonce) {
   auto minedBlock = blockchain_->getBlock(id);
-  minedBlock->get().queueNonce(nonce);
   if (!minedBlock) {
     std::this_thread::sleep_for(std::chrono::seconds(1));  // Give miner a chance to mine it by itself
     minedBlock = blockchain_->getBlock(id);
   }
   if (minedBlock) {
+    minedBlock->get().queueNonce(nonce);
     minedBlock->get().increaseVerification();
     minedBlock->get().save();
   }
