@@ -68,7 +68,7 @@ std::vector<Common::Models::Block> BlockChainController::getBlocks(int blockCoun
       Common::Models::Block block = {
           .id = blockRef->get().id(),
           .nonce = blockRef->get().nonce(),
-          .hash = blockRef->get().hash(),
+          .hash = blockRef->get().previousHash(),
           .content = blockRef->get().data(),
           .numberOfVerifications = blockRef->get().numberOfVerifications(),
       };
