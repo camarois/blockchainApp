@@ -226,10 +226,9 @@ void Database::setUserPassword(const Common::Models::SetUserPasswordRequest& req
   Query query = Query(
       "UPDATE users "
       "SET password = '%q' "
-      "WHERE username = '%q' AND password = '%q' AND isAdmin = '%q' AND isEditor = '%q';",
+      "WHERE username = '%q' AND password = '%q';",
       Common::FormatHelper::hash(request.passwordRequest.newPwd + request.salt).c_str(), request.username.c_str(),
-      Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str(),
-      std::to_string(int(request.isAdmin)).c_str(), std::to_string(int(request.isEditor)).c_str());
+      Common::FormatHelper::hash(request.passwordRequest.oldPwd + request.salt).c_str());
   Statement statement = Statement(db_, query);
   statement.step();
 }

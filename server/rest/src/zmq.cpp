@@ -147,8 +147,8 @@ void ZMQWorker::handlePullFromMiner() {
       }
       else if (message.type == Common::Models::kTypeServerResponse) {
         auto response = Common::Models::fromStr<Common::Models::ServerResponse>(message.data);
-        std::cout << "Setting last block id " << response.lastBlockId << std::endl;
         if (response.lastBlockId > Common::Database::get()->getLastBlockId()) {
+        std::cout << "Setting last block id " << response.lastBlockId << std::endl;
           Common::Database::get()->setLastBlockId(response.lastBlockId);
         }
         receivedResponse(response.token, response.result);
