@@ -58,7 +58,7 @@
          <!--               <PropertyValueFactory property="verifNumber" />-->
          <!--            </cellValueFactory>-->
          <!--         </TableColumn>-->
-         <TableColumn fx:id="hashCol" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Hash">
+         <TableColumn fx:id="hashCol" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Hash précédent">
             <cellValueFactory>
                <PropertyValueFactory property="hash" />
             </cellValueFactory>
