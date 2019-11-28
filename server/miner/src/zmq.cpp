@@ -279,8 +279,20 @@ void ZMQWorker::sendBlockSyncRequest() {
 }
 
 void ZMQWorker::sendGetBlocksResponse(const std::string& token, std::vector<Common::Models::Block> blocks) {
+  std::vector<std::string> blocksCopy;
+  for (auto b : blocks) {
+    try {
+      blocksCopy.push_back(Common::Models::toStr(b));
+    }
+    catch (const std::exception& e) {
+      auto id = b.id;
+      b = blocks.front();
+      b.id = id;
+      blocksCopy.push_back(Common::Models::toStr(b));
+    }
+  }
   Common::Models::GetBlocksResponse result = {
-      .blocks = std::move(blocks),
+      .blocks = blocksCopy,
   };
 
   Common::Models::ServerResponse response = {
